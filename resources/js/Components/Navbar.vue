@@ -42,8 +42,8 @@ let options = {
 
 <style>
     img{
-        max-height: 140%;
-        min-height: 90%;
+        max-height: 120%;
+        min-height: 80%;
     }
     .logo{
         min-height: 80%;

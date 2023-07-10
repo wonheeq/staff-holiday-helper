@@ -104,9 +104,14 @@ let list = [
 
 <template>
     <div class="flex flex-col bg-white w-full rounded-md">
-        <div class="flex flex-row justify-between px-6 mt-5">
+        <div class="grid grid-cols-3 px-6 mt-5">
             <p class="text-4xl font-bold">Messages:</p>
-            <div class="text-4xl">
+            <div class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl">
+                <img src="images/warning.svg" />
+                <p class="text-center">You have {{ unread }} unacknowleged messages.</p>
+                <img src="images/warning.svg" />
+            </div>
+            <div class="text-4xl justify-self-end">
                 <button class="px-4 border border-gray-300 border-2">
                     All
                 </button>
@@ -115,19 +120,14 @@ let list = [
                 </button>
             </div>
         </div>
-        <div class="flex flex-row justify-between absolute self-center mt-5 px-4 text-xl w-2/5 bg-red-400 text-white p-2 rounded-3xl">
-            <img src="images/warning.svg" />
-            <p>You have {{ unread }} unacknowleged messages.</p>
-            <img src="images/warning.svg" />
-        </div>
-            <RecycleScroller
-                class="scroller bg-white border border-black mx-6 h-90 mb-4 mt-6"
-                :items="list"
-                :item-size="10"
-                :key-field="id"
-                :buffer="600"
-                v-slot="{ item }" >
-                <ScrollListItem :source="item"></ScrollListItem>
+        <RecycleScroller
+            class="scroller bg-white border border-black mx-6 h-90 mb-4 mt-6"
+            :items="list"
+            :item-size="10"
+            :key-field="id"
+            :buffer="600"
+            v-slot="{ item }" >
+            <ScrollListItem :source="item"></ScrollListItem>
         </RecycleScroller>
     </div>
 </template>
