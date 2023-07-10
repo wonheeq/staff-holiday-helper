@@ -124,7 +124,8 @@ let list = [
                 class="scroller bg-white border border-black mx-6 h-90 mb-4 mt-6"
                 :items="list"
                 :item-size="10"
-                key-field="id"
+                :key-field="id"
+                :buffer="600"
                 v-slot="{ item }" >
                 <ScrollListItem :source="item"></ScrollListItem>
         </RecycleScroller>
