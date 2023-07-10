@@ -127,7 +127,7 @@ let list = [
                 :key-field="id"
                 :buffer="600"
                 v-slot="{ item }" >
-                <ScrollListItem :source="item">test</ScrollListItem>
+                <ScrollListItem :source="item"></ScrollListItem>
         </RecycleScroller>
     </div>
 </template>
