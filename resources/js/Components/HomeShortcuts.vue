@@ -11,7 +11,7 @@ let copyEmail = () => {
 </script>
 
 <template>
-    <div class="flex flex-col ml-4 w-4/5 items-center">
+    <div class="flex flex-col ml-4 items-center">
         <div class="flex flex-row">
             <div class="flex flex-col items-center text-2xl">
                 <p>Welcome {{ props.user.firstName }},</p>
@@ -20,7 +20,7 @@ let copyEmail = () => {
                 </p>
             </div>
         </div>
-        <div class="grid grid-cols-3 bg-white rounded-md p-6 w-3/5 mt-2 h-full drop-shadow-md">
+        <div class="grid grid-cols-3 bg-white rounded-md p-6 w-4/5 mt-2 h-full drop-shadow-md">
             <Shortcut class="bg-green-200" href="Bookings">
                 Your Leave Applications
                 <template #content>

@@ -23,7 +23,7 @@ let user = {
                 <HomeShortcuts :user="user" class="h-30"></HomeShortcuts>
                 <HomeMessages class="ml-8 mt-6 h-41 drop-shadow-md	"></HomeMessages>
             </div>
-            <HomeCalendar class="h-72.5 ml-12 w-3/12 mr-4 mb-4 drop-shadow-md	"></HomeCalendar>
+            <HomeCalendar class="h-72.5 ml-10 w-3/12 mr-4 mb-4 drop-shadow-md	"></HomeCalendar>
         </div>
     </main>
 </template>
