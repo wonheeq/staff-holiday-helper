@@ -20,7 +20,7 @@ let copyEmail = () => {
                 </p>
             </div>
         </div>
-        <div class="grid grid-cols-3 bg-white rounded-md p-6 w-3/5 mt-2 h-full">
+        <div class="grid grid-cols-3 bg-white rounded-md p-6 w-3/5 mt-2 h-full drop-shadow-md">
             <Shortcut class="bg-green-200" href="Bookings">
                 Your Leave Applications
                 <template #content>
