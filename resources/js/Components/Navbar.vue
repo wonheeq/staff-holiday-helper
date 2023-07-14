@@ -22,7 +22,7 @@ let options = {
             <div class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row space-x-4">
                 <div class="flex flex-col justify-center items-center" v-for="option in options.left" >
-                    <NavLink :href="option.caption" class="flex flex-col justify-center items-center">
+                    <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
                         <img :src="option.source"/>
                         <p class="text-sm">{{ option.caption }}</p>
                     </NavLink>
@@ -31,7 +31,7 @@ let options = {
         </div>
         <div class="flex flex-row space-x-4 mr-2 my-2">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
-                <NavLink :href="option.caption" class="flex flex-col justify-center items-center">
+                <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
                     <img :src="option.source"/>
                     <p class="text-sm">{{ option.caption }}</p>
                 </NavLink>

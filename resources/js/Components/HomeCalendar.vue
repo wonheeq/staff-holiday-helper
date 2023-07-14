@@ -40,10 +40,14 @@ let attributes = ref([
 
 <template>
 <div class="bg-white rounded-md">
-    <p class="text-4xl font-bold text-center m-4">Your Itinerary</p>
-    <Calendar :rows="3" borderless expanded transparent :attributes="attributes">
-
-    </Calendar>
+    <p class="text-4xl font-bold text-center m-4 mt-8 mb-8">Your Itinerary</p>
+    <Calendar
+        :rows="3"
+        borderless
+        expanded
+        transparent
+        :attributes="attributes"
+    />
     <div class="px-6">
         <p class="text-2xl font-bold">Legend</p>
         <div class="flex flex-row my-2">

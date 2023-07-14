@@ -17,7 +17,32 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    return Inertia::render('Landing', []);
+    /*
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+    */
+});
+
+Route::get('/home', function () {
     return Inertia::render('Home', []);
+    /*
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+    */
+});
+
+
+Route::get('/bookings', function () {
+    return Inertia::render('Bookings', []);
     /*
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),

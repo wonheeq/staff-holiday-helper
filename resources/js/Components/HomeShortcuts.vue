@@ -21,7 +21,7 @@ let copyEmail = () => {
             </div>
         </div>
         <div class="grid grid-cols-3 bg-white rounded-md p-6 w-4/5 mt-2 h-full drop-shadow-md">
-            <Shortcut class="bg-green-200" href="Bookings">
+            <Shortcut class="bg-green-200" href="/bookings">
                 Your Leave Applications
                 <template #content>
                     <ul class="text-left">
@@ -34,13 +34,13 @@ let copyEmail = () => {
                     <div class="h-3 mt-auto mb-12 bg-green-400"></div>
                 </template>
             </Shortcut>
-            <Shortcut class="bg-orange-200 pt-20" href="Create">
+            <Shortcut class="bg-orange-200 pt-20" href="/create">
                 Create New Leave Application
                 <template #strip>
                     <div class="h-3 mt-auto mb-12 bg-orange-400"></div>
                 </template>
             </Shortcut>
-            <Shortcut class="bg-purple-200" href="Subs">
+            <Shortcut class="bg-purple-200" href="/sub">
                 Your Substitutions
                 <template #content>
                     <p>3 upcoming substitutions.</p>
