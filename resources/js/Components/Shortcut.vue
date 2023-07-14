@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/vue3';
 let props = defineProps({ stripBG: String, href: String });
 </script>
 <template>
-    <Link :href="props.href" class="flex flex-col justfiy-between rounded-3xl mx-2 text-2xl text-center h-full">
+    <Link :href="props.href" class="flex flex-col justfiy-between rounded-3xl mx-4 text-2xl text-center h-full">
         <div class="font-bold text-2xl p-4 justify-center mt-4" >
             <slot />
         </div>

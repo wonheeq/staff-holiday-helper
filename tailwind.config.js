@@ -18,11 +18,6 @@ export default {
             dropShadow: {
                 'md': '0 4px 6px rgba(0, 0, 0, 0.3)',
             },
-            height: {
-                '30': '30rem',
-                '72.5': '72.5rem',
-                '41': '41rem',
-            },
         },
     },
 

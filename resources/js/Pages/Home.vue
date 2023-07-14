@@ -16,14 +16,23 @@ let user = {
 
 <template>
     <main>
-        <div class="h-4"></div>
-        <Navbar class="h-24 mx-4"></Navbar>
-        <div class="flex flex-row mt-12">
-            <div class="flex flex-col w-9/12 items-center">
-                <HomeShortcuts :user="user" class="h-30"></HomeShortcuts>
-                <HomeMessages class="ml-8 mt-6 h-41 drop-shadow-md	"></HomeMessages>
+        <div class="margin-fix"></div>
+        <Navbar class="h-[7vh] mx-4"></Navbar>
+        <div class="flex screen mx-4 mt-4">
+            <div class="flex flex-col items-center w-10/12 mr-4">
+                <HomeShortcuts :user="user" class="h-2/5 w-3/5"></HomeShortcuts>
+                <HomeMessages class="h-3/5 mt-4 drop-shadow-md"></HomeMessages>
             </div>
-            <HomeCalendar class="h-72.5 ml-10 w-3/12 mr-4 mb-4 drop-shadow-md	"></HomeCalendar>
+            <HomeCalendar class="h-full w-2/12 mb-4 drop-shadow-md"></HomeCalendar>
         </div>
     </main>
 </template>
+
+<style>
+.screen {
+    height: calc(92vh - 2rem);
+}
+.margin-fix{
+    height: 1rem;
+}
+</style>

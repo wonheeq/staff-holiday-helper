@@ -46,7 +46,7 @@ let options = {
         min-height: 80%;
     }
     .logo{
-        min-height: 80%;
+        min-height: 20%;
         max-height: 80%;
     }
 </style>

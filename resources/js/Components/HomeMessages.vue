@@ -12,7 +12,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a555555',
-        titleUserName: 'John Cena'
+        titleUserName: 'John Cena',
+        acknowledged: false,
     },
     {
         id: 2,
@@ -22,7 +23,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a455624',
-        titleUserName: 'Manager 123'
+        titleUserName: 'Manager 123',
+        acknowledged: false,
     },
     {
         id: 3,
@@ -33,7 +35,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a543666',
-        titleUserName: 'Admin 49'
+        titleUserName: 'Admin 49',
+        acknowledged: false,
     },
     { 
         id: 4,
@@ -44,7 +47,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a555555',
-        titleUserName: 'John Cena'
+        titleUserName: 'asdfaw',
+        acknowledged: false,
     },
     {
         id: 5,
@@ -54,7 +58,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a455624',
-        titleUserName: 'Manager 123'
+        titleUserName: 'Manager 32423',
+        acknowledged: false,
     },
     {
         id: 6,
@@ -65,7 +70,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a543666',
-        titleUserName: 'Admin 49'
+        titleUserName: 'Admin 333',
+        acknowledged: false,
     },
     { 
         id: 7,
@@ -76,7 +82,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a555555',
-        titleUserName: 'John Cena'
+        titleUserName: 'John 234123',
+        acknowledged: false,
     },
     {
         id: 8,
@@ -86,7 +93,8 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a455624',
-        titleUserName: 'Manager 123'
+        titleUserName: 'Manager 43433',
+        acknowledged: false,
     },
     {
         id: 9,
@@ -97,9 +105,11 @@ let list = [
         ],
         timestamp: '14:23 11/07/2023',
         titleUserId: 'a543666',
-        titleUserName: 'Admin 49'
+        titleUserName: 'Admin 12',
+        acknowledged: false,
     },
 ];
+let viewing = 'unacknowledged';
 </script>
 
 <template>
@@ -111,7 +121,7 @@ let list = [
                 <p class="text-center">You have {{ unread }} unacknowleged messages.</p>
                 <img src="images/warning.svg" />
             </div>
-            <div class="text-4xl justify-self-end">
+            <div class="text-2xl justify-self-end">
                 <button class="px-4 border border-gray-300 border-2">
                     All
                 </button>
@@ -121,7 +131,7 @@ let list = [
             </div>
         </div>
         <RecycleScroller
-            class="scroller bg-white border border-black mx-6 h-90 mb-4 mt-6"
+            class="scroller bg-white border border-black mx-6 mb-4 mt-6"
             :items="list"
             :item-size="10"
             :key-field="id"
