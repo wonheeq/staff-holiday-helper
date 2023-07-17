@@ -1,5 +1,5 @@
 <script setup>
-import ScrollListItem from './ScrollListItem.vue';
+import Message from './Message.vue';
 import { RecycleScroller } from 'vue-virtual-scroller';
 let unread = 3;
 let list = [
@@ -114,30 +114,30 @@ let viewing = 'unacknowledged';
 
 <template>
     <div class="flex flex-col bg-white w-full rounded-md">
-        <div class="grid grid-cols-3 px-6 mt-5">
-            <p class="text-4xl font-bold">Messages:</p>
-            <div class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl">
-                <img src="images/warning.svg" />
-                <p class="text-center">You have {{ unread }} unacknowleged messages.</p>
-                <img src="images/warning.svg" />
+        <div class="grid grid-cols-4 1440:p-4 p-2">
+            <p class="1440:text-4xl text-xl font-bold">Messages:</p>
+            <div class="flex col-span-2 justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                <img src="images/warning.svg" class="warning"/>
+                <p class="text-center text-sm 1440:text-2xl">You have {{ unread }} unacknowleged messages.</p>
+                <img src="images/warning.svg" class="warning"/>
             </div>
             <div class="text-2xl justify-self-end">
-                <button class="px-4 border border-gray-300 border-2">
+                <button class="text-base 1440:text-4xl px-4 border border-gray-300 border-2">
                     All
                 </button>
-                <button class="px-4 border border-black border-2">
+                <button class="text-base 1440:text-4xl px-4 border border-black border-2">
                     Unacknowleged
                 </button>
             </div>
         </div>
         <RecycleScroller
-            class="scroller bg-white border border-black mx-6 mb-4 mt-6"
+            class="scroller bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 "
             :items="list"
             :item-size="10"
             :key-field="id"
             :buffer="600"
             v-slot="{ item }" >
-            <ScrollListItem :source="item"></ScrollListItem>
+            <Message :source="item"></Message>
         </RecycleScroller>
     </div>
 </template>
@@ -145,5 +145,9 @@ let viewing = 'unacknowledged';
 <style>
 .scroller {
   overflow-y: scroll;
+}
+.warning{
+    width: 2.5vw;
+    height: 2.5vh;
 }
 </style>
