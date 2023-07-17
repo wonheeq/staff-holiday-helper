@@ -15,8 +15,8 @@ let copyEmail = (e) => {
     <div class="flex flex-row justify-between bg-gray-200 p-2">
         <div class="flex flex-col">
             <div class="flex flex-row items-center">
-                <p class="text-sm 1440:text-lg font-bold">{{ props.source.title }}</p>
-                <p class="text-sm 1440:text-lg ml-2">by {{ props.source.titleUserName }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl font-bold">{{ props.source.title }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl ml-2">by {{ props.source.titleUserName }}</p>
                 <img
                     class="ml-1.5 email"
                     src="images/mail.svg"
@@ -24,10 +24,10 @@ let copyEmail = (e) => {
                     @click="copyEmail(props.source.titleUserId)"
                     />
             </div>
-            <p v-for="p in props.source.content" class="laptop:text-xs">
+            <p v-for="p in props.source.content" class="text-xs 1080:text-base 1440:text-lg">
                 {{ p }}
             </p>
-            <p class="text-xs 1440:text-sm">Message created at {{ props.source.timestamp }}</p>
+            <p class="text-xs 1080:text-sm 1440:text-base">Message created at {{ props.source.timestamp }}</p>
         </div>
         <div v-show="props.source.title=='Substitution Request'" class="flex flex-row justify-evenly pl-2 w-36 1440:w-48 border-l-4 border-white">
             <div class="flex flex-col justify-center">
@@ -60,6 +60,14 @@ let copyEmail = (e) => {
     width: 18px;
 }
 
+/* 1080p */
+@media 
+(min-width: 1290px) {
+.email{
+    height: 22px;
+    width: 22px;
+}
+}
 /* 1440p */
 @media 
 (min-width: 1930px) {

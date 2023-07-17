@@ -13,7 +13,7 @@ let copyEmail = () => {
 <template>
     <div class="flex flex-col items-center">
         <div class="flex flex-row">
-            <div class="flex flex-col items-center 1440:text-2xl">
+            <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl">
                 <p>Welcome {{ props.user.firstName }},</p>
                 <p>Your line manager is currently {{ props.user.lineManager.name }}
                     <input @click="copyEmail" type="image" class="1440:h-8 align-middle" src="images/mail.svg" v-b-tooltip.hover title="Copy Email Address to Clipboard"/>
@@ -24,7 +24,7 @@ let copyEmail = () => {
             <Shortcut class="bg-green-200" href="/bookings">
                 Your Leave Applications
                 <template #content>
-                    <ul class="text-left text-xs 1440:text-lg">
+                    <ul class="text-left text-xs 1080:text-base 1440:text-lg">
                         <li>1 Approved</li>
                         <li>1 Pending</li>
                         <li>1 Denied</li>
@@ -36,7 +36,7 @@ let copyEmail = () => {
             </Shortcut>
             <Shortcut class="bg-orange-200" href="/create">
                 <template #content>
-                    <p class="laptop:mt-4 text-sm 1440:text-2xl font-bold">Create New Leave Application</p>
+                    <p class="laptop:mt-4 text-sm 1080:text-xl 1440:text-2xl font-bold">Create New Leave Application</p>
                 </template>
                 <template #strip>
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-orange-400"></div>
@@ -45,8 +45,8 @@ let copyEmail = () => {
             <Shortcut class="bg-purple-200" href="/sub">
                 Your Substitutions
                 <template #content>
-                    <p class="text-xs 1440:text-lg">3 upcoming substitutions.</p>
-                    <p class="1440:mt-4 mt-2 text-xs 1440:text-lg">Next: 12 Aug</p>
+                    <p class="text-xs 1080:text-base 1440:text-lg">3 upcoming substitutions.</p>
+                    <p class="1440:mt-4 mt-2 text-xs 1080:text-base 1440:text-lg">Next: 12 Aug</p>
                 </template>
                 <template #strip>
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-purple-400"></div>

@@ -48,7 +48,7 @@ let attributes = ref([
 
 <template>
 <div class="bg-white rounded-md flex flex-col">
-    <p class="text-2xl 1440:text-4xl font-bold text-center mx-4 mt-6">Your Itinerary</p>
+    <p class="text-2xl 1080:text-3xl 1440:text-4xl font-bold text-center mx-4 mt-6">Your Itinerary</p>
     <Calendar
         :rows="rows"
         borderless
@@ -59,22 +59,22 @@ let attributes = ref([
     >
     </Calendar>
     <div class="px-6 mt-auto mb-4">
-        <p class="text-lg 1440:text-2xl font-bold">Legend</p>
+        <p class="text-lg 1080:text-xl 1440:text-3xl font-bold">Legend</p>
         <div class="flex flex-row my-2 items-center">
             <div class="bg-green-400 dot mr-2"></div>
-            <p class="text-sm 1440:text-md">Approved Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl">Approved Booking</p>
         </div>
         <div class="flex flex-row mb-2 items-center">
             <div class="bg-orange-400 dot mr-2"></div>
-            <p class="text-sm 1440:text-md">Pending Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl">Pending Booking</p>
         </div>
         <div class="flex flex-row mb-2 items-center">
             <div class="bg-red-400 dot mr-2"></div>
-            <p class="text-sm 1440:text-md">Rejected Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl">Rejected Booking</p>
         </div>
         <div class="flex flex-row items-center">
             <div class="bg-purple-400 dot mr-2"></div>
-            <p class="text-sm 1440:text-md">Substitutions</p>
+            <p class="text-sm 1080:text-base 1440:text-xl">Substitutions</p>
         </div>
     </div>
 </div>
