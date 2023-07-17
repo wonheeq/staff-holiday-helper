@@ -1,7 +1,7 @@
 <script setup>
 import Message from './Message.vue';
 import { RecycleScroller } from 'vue-virtual-scroller';
-let unread = 3;
+let unread = 90;
 let list = [
     { 
         id: 1,
@@ -116,10 +116,12 @@ let viewing = 'unacknowledged';
     <div class="flex flex-col bg-white w-full rounded-md">
         <div class="grid grid-cols-4 1440:p-4 p-2">
             <p class="1440:text-4xl text-xl font-bold">Messages:</p>
-            <div class="flex col-span-2 justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
-                <img src="images/warning.svg" class="warning"/>
-                <p class="text-center text-sm 1440:text-2xl">You have {{ unread }} unacknowleged messages.</p>
-                <img src="images/warning.svg" class="warning"/>
+            <div class="flex col-span-2 ">
+                <div v-if="unread > 0" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                    <img src="images/warning.svg" class="warning"/>
+                    <p class="text-center text-sm 1440:text-2xl">You have {{ unread }} unacknowleged messages.</p>
+                    <img src="images/warning.svg" class="warning"/>
+                </div>
             </div>
             <div class="text-2xl justify-self-end">
                 <button class="text-base 1440:text-4xl px-4 border border-gray-300 border-2">
