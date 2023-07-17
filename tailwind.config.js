@@ -15,6 +15,7 @@ export default {
             'laptop': '710px',
             '1080': '1290px',
             '1440': '1930px',
+            '4k': '3700px',
         },
         extend: {
             fontFamily: {

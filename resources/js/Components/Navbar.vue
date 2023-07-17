@@ -24,7 +24,7 @@ let options = {
                 <div class="flex flex-col justify-center items-center" v-for="option in options.left" >
                     <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
                         <img :src="option.source"/>
-                        <p class="text-xs 1080:text-sm 1440:text-sm">{{ option.caption }}</p>
+                        <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                     </NavLink>
                 </div>
             </div>
@@ -33,7 +33,7 @@ let options = {
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
                 <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
                     <img :src="option.source"/>
-                    <p class="text-xs 1080:text-sm 1440:text-sm">{{ option.caption }}</p>
+                    <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                 </NavLink>
             </div>
         </div>
@@ -70,6 +70,18 @@ img{
     }
     .logo{
         height: 105%;
+        width: auto;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3700px) {
+    img {
+        height: 90px;
+        width: 90px;
+    }
+    .logo{
+        height: 103%;
         width: auto;
     }
 }

@@ -8,8 +8,9 @@ const { mapCurrent } = useScreens({
     'laptop': '710px',
     '1080p': '1290px',
     '1440p': '1930px',
+    '2160p': '3700px',
 });
-const rows = mapCurrent({ '1440p': 3, '1080p': 2 }, 1);
+const rows = mapCurrent({ '2160p': 6, '1440p': 3, '1080p': 2 }, 1);
 
 const day = 86400000;
 let attributes = ref([
@@ -48,7 +49,7 @@ let attributes = ref([
 
 <template>
 <div class="bg-white rounded-md flex flex-col">
-    <p class="text-2xl 1080:text-3xl 1440:text-4xl font-bold text-center mx-4 mt-6">Your Itinerary</p>
+    <p class="text-2xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold text-center mx-4 mt-6">Your Itinerary</p>
     <Calendar
         :rows="rows"
         borderless
@@ -59,22 +60,22 @@ let attributes = ref([
     >
     </Calendar>
     <div class="px-6 mt-auto mb-4">
-        <p class="text-lg 1080:text-xl 1440:text-3xl font-bold">Legend</p>
+        <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend</p>
         <div class="flex flex-row my-2 items-center">
             <div class="bg-green-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl">Approved Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
         </div>
         <div class="flex flex-row mb-2 items-center">
             <div class="bg-orange-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl">Pending Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
         </div>
         <div class="flex flex-row mb-2 items-center">
             <div class="bg-red-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl">Rejected Booking</p>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
         </div>
         <div class="flex flex-row items-center">
             <div class="bg-purple-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl">Substitutions</p>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
         </div>
     </div>
 </div>

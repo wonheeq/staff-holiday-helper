@@ -115,19 +115,19 @@ let viewing = 'unacknowledged';
 <template>
     <div class="flex flex-col bg-white w-full rounded-md">
         <div class="grid grid-cols-4 1440:p-4 p-2">
-            <p class="1080:text-3xl 1440:text-4xl text-xl font-bold">Messages:</p>
+            <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
             <div class="flex col-span-2 ">
                 <div v-if="unread > 0" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
                     <img src="images/warning.svg" class="warning"/>
-                    <p class="text-center text-sm 1080:text-base 1440:text-2xl">You have {{ unread }} unacknowleged messages.</p>
+                    <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">You have {{ unread }} unacknowleged messages.</p>
                     <img src="images/warning.svg" class="warning"/>
                 </div>
             </div>
             <div class="text-2xl justify-self-end">
-                <button class="text-base 1080:text-3xl 1440:text-4xl px-4 border border-gray-300 border-2">
+                <button class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-gray-300 border-2">
                     All
                 </button>
-                <button class="text-base 1080:text-3xl 1440:text-4xl px-4 border border-black border-2">
+                <button class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-black border-2">
                     Unacknowleged
                 </button>
             </div>

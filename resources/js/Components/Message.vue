@@ -15,8 +15,8 @@ let copyEmail = (e) => {
     <div class="flex flex-row justify-between bg-gray-200 p-2">
         <div class="flex flex-col">
             <div class="flex flex-row items-center">
-                <p class="text-sm 1080:text-lg 1440:text-xl font-bold">{{ props.source.title }}</p>
-                <p class="text-sm 1080:text-lg 1440:text-xl ml-2">by {{ props.source.titleUserName }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.title }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.titleUserName }}</p>
                 <img
                     class="ml-1.5 email"
                     src="images/mail.svg"
@@ -24,30 +24,30 @@ let copyEmail = (e) => {
                     @click="copyEmail(props.source.titleUserId)"
                     />
             </div>
-            <p v-for="p in props.source.content" class="text-xs 1080:text-base 1440:text-lg">
+            <p v-for="p in props.source.content" class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
                 {{ p }}
             </p>
-            <p class="text-xs 1080:text-sm 1440:text-base">Message created at {{ props.source.timestamp }}</p>
+            <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ props.source.timestamp }}</p>
         </div>
-        <div v-show="props.source.title=='Substitution Request'" class="flex flex-row justify-evenly pl-2 w-36 1440:w-48 border-l-4 border-white">
+        <div v-show="props.source.title=='Substitution Request'" class="flex flex-row justify-evenly pl-2 w-36 1440:w-48 4k:w-60 border-l-4 border-white">
             <div class="flex flex-col justify-center">
                 <button class="flex flex-col items-center">
                     <img src="images/accept.svg"/>
-                    <p class="text-sm">Accept</p>
+                    <p class="text-sm 1440:text-lg">Accept</p>
                 </button>
             </div>
             <div class="flex flex-col justify-center">
                 <button class="flex flex-col items-center">
                     <img src="images/reject.svg"/>
-                    <p class="text-sm">Reject</p>
+                    <p class="text-sm 1440:text-lg">Reject</p>
                 </button>
             </div>
         </div>
-        <div v-show="props.source.title!='Substitution Request'" class="flex flex-row justify-evenly space-x-2 px-4 w-36 1440:w-48 border-l-4 border-white">
+        <div v-show="props.source.title!='Substitution Request'" class="flex flex-row justify-evenly space-x-2 px-4 w-36 1440:w-48 4k:w-60 border-l-4 border-white">
             <div class="flex flex-col justify-center ">
                 <button class="flex flex-col items-center">
                     <img src="images/acknowledge.svg"/>
-                    <p class="text-sm">Acknowledge</p>
+                    <p class="text-sm 1440:text-lg">Acknowledge</p>
                 </button>
             </div>
         </div>
@@ -74,6 +74,14 @@ let copyEmail = (e) => {
 .email{
     height: 24px;
     width: 24px;
+}
+}
+/* 4k */
+@media 
+(min-width: 3700px) {
+.email{
+    height: 40px;
+    width: 40px;
 }
 }
 </style>
