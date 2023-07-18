@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,5 +21,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('messages', [MessageController::class, 'get']);
-
-Route::get('get-user/{id}', [UserController::class, 'getUser']);
