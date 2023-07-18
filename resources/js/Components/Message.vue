@@ -1,6 +1,7 @@
 <script setup>
 
 let props = defineProps({
+    isAcknowledged: Boolean,
     source: Object,
 });
 
@@ -16,18 +17,18 @@ let copyEmail = (e) => {
         <div class="flex flex-col">
             <div class="flex flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.title }}</p>
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.titleUserName }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.sender_name }}</p>
                 <img
                     class="ml-1.5 email"
                     src="images/mail.svg"
                     v-b-tooltip.hover title="Copy Email Address to Clipboard"
-                    @click="copyEmail(props.source.titleUserId)"
+                    @click="copyEmail(props.source.sender_id)"
                     />
             </div>
-            <p v-for="p in props.source.content" class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
-                {{ p }}
+            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
+                {{ props.source.content }}
             </p>
-            <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ props.source.timestamp }}</p>
+            <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>
         <div v-show="props.source.title=='Substitution Request'" class="flex flex-row justify-evenly pl-2 w-36 1440:w-48 4k:w-60 border-l-4 border-white">
             <div class="flex flex-col justify-center">
@@ -43,9 +44,10 @@ let copyEmail = (e) => {
                 </button>
             </div>
         </div>
-        <div v-show="props.source.title!='Substitution Request'" class="flex flex-row justify-evenly space-x-2 px-4 w-36 1440:w-48 4k:w-60 border-l-4 border-white">
+        <div v-show="props.source.title!='Substitution Request' && !isAcknowledged" class="flex flex-row justify-evenly space-x-2 px-4 w-36 1440:w-48 4k:w-60 border-l-4 border-white">
             <div class="flex flex-col justify-center ">
-                <button class="flex flex-col items-center">
+                <button @click="props.source.acknowledged = 1"
+                    class="flex flex-col items-center">
                     <img src="images/acknowledge.svg"/>
                     <p class="text-sm 1440:text-lg">Acknowledge</p>
                 </button>

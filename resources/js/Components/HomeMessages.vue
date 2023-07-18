@@ -1,115 +1,19 @@
 <script setup>
 import Message from './Message.vue';
-import { RecycleScroller } from 'vue-virtual-scroller';
-let unread = 90;
-let list = [
-    { 
-        id: 1,
-        title: 'Substitution Request',
-        content: [
-            'You have been asked to substitute as [Role] in [Unit Name] ([Unit Code]) in [Course Name].',
-            'Duration: 00:00 02/10/2024 - 00:00 06/10/2024'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a555555',
-        titleUserName: 'John Cena',
-        acknowledged: false,
-    },
-    {
-        id: 2,
-        title: 'Leave Approved',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been approved.',
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a455624',
-        titleUserName: 'Manager 123',
-        acknowledged: false,
-    },
-    {
-        id: 3,
-        title: 'Leave Rejected',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been rejected.',
-            'Reason: Not enough leave left.'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a543666',
-        titleUserName: 'Admin 49',
-        acknowledged: false,
-    },
-    { 
-        id: 4,
-        title: 'Substitution Request',
-        content: [
-            'You have been asked to substitute as [Role] in [Unit Name] ([Unit Code]) in [Course Name].',
-            'Duration: 00:00 02/10/2024 - 00:00 06/10/2024'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a555555',
-        titleUserName: 'asdfaw',
-        acknowledged: false,
-    },
-    {
-        id: 5,
-        title: 'Leave Approved',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been approved.',
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a455624',
-        titleUserName: 'Manager 32423',
-        acknowledged: false,
-    },
-    {
-        id: 6,
-        title: 'Leave Rejected',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been rejected.',
-            'Reason: Not enough leave left.'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a543666',
-        titleUserName: 'Admin 333',
-        acknowledged: false,
-    },
-    { 
-        id: 7,
-        title: 'Substitution Request',
-        content: [
-            'You have been asked to substitute as [Role] in [Unit Name] ([Unit Code]) in [Course Name].',
-            'Duration: 00:00 02/10/2024 - 00:00 06/10/2024'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a555555',
-        titleUserName: 'John 234123',
-        acknowledged: false,
-    },
-    {
-        id: 8,
-        title: 'Leave Approved',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been approved.',
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a455624',
-        titleUserName: 'Manager 43433',
-        acknowledged: false,
-    },
-    {
-        id: 9,
-        title: 'Leave Rejected',
-        content: [
-            'Your leave request starting 00:00 11/09/2024 has been rejected.',
-            'Reason: Not enough leave left.'
-        ],
-        timestamp: '14:23 11/07/2023',
-        titleUserId: 'a543666',
-        titleUserName: 'Admin 12',
-        acknowledged: false,
-    },
-];
-let viewing = 'unacknowledged';
+import VueScrollingTable from "vue-scrolling-table";
+import "/node_modules/vue-scrolling-table/dist/style.css";
+import { useMessageStore } from '@/stores/MessageStore';
+import { onMounted, ref, reactive, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+let messageStore = useMessageStore();
+const { filteredMessages, messages } = storeToRefs(messageStore);
+const { fetchMessages } = messageStore;
+
+onMounted(() => {
+    fetchMessages();
+});
+let deadAreaColor = "#FFFFFF";
+let viewing = ref("unread");
 </script>
 
 <template>
@@ -117,36 +21,66 @@ let viewing = 'unacknowledged';
         <div class="grid grid-cols-4 1440:p-4 p-2">
             <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
             <div class="flex col-span-2 ">
-                <div v-if="unread > 0" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                <div v-if="filteredMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
                     <img src="images/warning.svg" class="warning"/>
-                    <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">You have {{ unread }} unacknowleged messages.</p>
+                    <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
+                        You have {{ filteredMessages.length }} unacknowleged messages.
+                    </p>
                     <img src="images/warning.svg" class="warning"/>
                 </div>
             </div>
             <div class="text-2xl justify-self-end">
-                <button class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-gray-300 border-2">
+                <button
+                @click="viewing = 'all'"
+                :class="{
+                'border-black font-bold': viewing === 'all',
+                'border-gray-500': viewing === 'unread',
+                }"
+                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
                     All
                 </button>
-                <button class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-black border-2">
+                <button
+                @click="viewing = 'unread'"
+                :class="{
+                'border-black font-bold': viewing === 'unread',
+                'border-gray-500': viewing === 'all',
+                }"
+                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
                     Unacknowleged
                 </button>
             </div>
         </div>
-        <RecycleScroller
-            class="scroller bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 "
-            :items="list"
-            :item-size="10"
-            :key-field="id"
-            :buffer="600"
-            v-slot="{ item }" >
-            <Message :source="item"></Message>
-        </RecycleScroller>
+        <div v-if="viewing==='all'" class="bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div v-for="item in messages" :key="item.id" class="mb-2">
+                        <Message :source="item" :isAcknowledged="true"></Message>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="viewing==='unread'" class="bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
+                        <Message :source="item"></Message>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
     </div>
 </template>
 
 <style>
 .scroller {
-  overflow-y: scroll;
+  overflow-y: auto;
+  height: 90%;
 }
 .warning{
     width: 2.5vw;
