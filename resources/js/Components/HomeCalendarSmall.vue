@@ -8,9 +8,9 @@ const { mapCurrent } = useScreens({
     'laptop': '710px',
     '1080p': '1290px',
     '1440p': '1930px',
-    '2160p': '3700px',
+    '4k': '3700px',
 });
-const rows = mapCurrent({ '2160p': 6, '1440p': 3, '1080p': 2 }, 1);
+const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 
 const day = 86400000;
 let attributes = ref([
@@ -49,7 +49,17 @@ let attributes = ref([
 
 <template>
 <div class="bg-white rounded-md flex flex-col">
-    <p class="text-2xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold text-center mx-4 mt-6">Your Itinerary</p>
+    <div class="flex mx-4 mt-4 items-center">
+        <button class="absolute">
+            <img src="/images/fullscreen.svg"
+                class="enlarge"
+                @click="$emit('enlargeCalendar')"
+            />
+        </button>
+        <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl font-bold mx-auto">
+            Your Itinerary
+        </p>
+    </div>
     <Calendar
         :rows="rows"
         borderless
@@ -87,5 +97,33 @@ let attributes = ref([
   width: 25px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.enlarge {
+    height: 30px;
+    width: auto;
+}
+
+/* 1080p */
+@media 
+(min-width: 1290px) {
+   .enlarge {
+        height: 36px;
+    }
+}
+/* 1440p */
+@media 
+(min-width: 1930px) {
+    .enlarge {
+        height: 40px;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3700px) {
+    .enlarge {
+        height: 50px;
+        width: auto;
+    }
 }
 </style>
