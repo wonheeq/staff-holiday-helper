@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('sender_id')->references('id')->on('users');
             $table->string('title');
             $table->text('content');
+            $table->boolean('is_nominated_multiple');
             $table->boolean('acknowledged');
             $table->timestamps();
         });

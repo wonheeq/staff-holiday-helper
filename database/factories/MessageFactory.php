@@ -18,10 +18,17 @@ class MessageFactory extends Factory
      */
     public function definition(): array
     {
+        $selectedTitle = fake()->randomElement(TITLES);
+        $isNominatedMultiple = false;
+        if ($selectedTitle == 'Substitution Request') {
+            // random
+            $isNominatedMultiple = fake()->numberBetween(0,1) == 1;
+        }
         return [
-            'title' => TITLES[rand(0, count(TITLES) - 1)],
+            'title' => $selectedTitle,
             'content' => fake()->realText(fake()->numberBetween(10,100)),
             'acknowledged' => fake()->numberBetween(0,1),
+            'is_nominated_multiple' => $isNominatedMultiple,
             'receiver_id' => fake()->randomElement(User::pluck('id')),
             'sender_id' => fake()->randomElement(User::pluck('id')),
         ];
