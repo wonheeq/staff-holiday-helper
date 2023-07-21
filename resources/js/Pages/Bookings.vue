@@ -1,74 +1,53 @@
 <script setup>
 import LoggedInView from "@/Components/LoggedInView.vue";
-import 'vue-good-table-next/dist/vue-good-table-next.css';
-import { VueGoodTable } from 'vue-good-table-next';
-let list = [
-    {
-        id: "1",
-        name: "jeff",
-        num: 123,
-    },
-    {
-        id: "2",
-        name: "asdas",
-        num: 3,
-    },
-    {
-        id: "3",
-        name: "jefsdsdf",
-        num: 54,
-    },
-    {
-        id: "4",
-        name: "ddd",
-        num: 122343,
-    },
-    {
-        id: "5",
-        name: "dasd",
-        num: 44,
-    },
+import BookingsNavbar from "@/Components/BookingsNavbar.vue";
+import BookingsMessage from "@/Components/BookingsMessage.vue";
+import VueScrollingTable from "vue-scrolling-table";
+import "/node_modules/vue-scrolling-table/dist/style.css";
+import { useApplicationStore } from '@/stores/ApplicationStore';
+import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+let applicationStore = useApplicationStore();
+const { applications } = storeToRefs(applicationStore);
+const { fetchApplications } = applicationStore;
+
+onMounted(() => {
+    fetchApplications();
+});
+const options = [
+    { id: 'applications', title: 'Applications'},
+    { id: 'create', title: 'Create New Application'},
+    { id: 'subs', title: 'Your Substitutions'},
 ];
-
-let columns = [
-    {
-        label: 'ID',
-        field: 'id',
-    },
-    {
-        label: 'Name',
-        field: 'name',
-    },
-    {
-        label: 'Number',
-        field: 'num',
-        type: 'number',
-    },
-];
-
-let onSearch = () => {
-
-};
+let deadAreaColor = "#FFFFFF";
+let activeScreen = ref("test");
 </script>
 
 <template>
     <LoggedInView>
-        <div class="flex screen mx-4 mt-4">
-           Bookings page
-
-           <div>
-                <VueGoodTable
-                    :rows="list"
-                    :columns="columns"
-                    :search-options="{
-                    enabled: true,
-                }">
-
-                </VueGoodTable>
-           </div>
+        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+            <BookingsNavbar
+                class="h-[5%]"
+                :options="options"
+                @screen-changed="screen => activeScreen = screen"
+            />
+            <VueScrollingTable
+                class="p-4 rounded-bl-md rounded-br-md rounded-tr-md"
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div v-for="item in applications" :key="item.id" class="mb-2">
+                        <BookingsMessage :source="item"></BookingsMessage>
+                    </div>
+                </template>
+            </VueScrollingTable>
         </div>
     </LoggedInView>
 </template>
 
 <style>
+.screen {
+    height: calc(93vh - 3rem);
+}
 </style>

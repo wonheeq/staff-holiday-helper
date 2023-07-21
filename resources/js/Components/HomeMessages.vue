@@ -3,7 +3,7 @@ import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted, ref, reactive, computed } from 'vue';
+import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 let messageStore = useMessageStore();
 const { filteredMessages, messages } = storeToRefs(messageStore);
