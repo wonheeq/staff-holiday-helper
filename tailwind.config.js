@@ -12,10 +12,10 @@ export default {
 
     theme: {
         screens: {        
-            'laptop': '710px',
-            '1080': '1290px',
-            '1440': '1930px',
-            '4k': '3700px',
+            'laptop': '1360px',
+            '1080': '1920px',
+            '1440': '2560px',
+            '4k': '3840px',
         },
         extend: {
             fontFamily: {

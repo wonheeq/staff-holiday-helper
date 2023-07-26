@@ -51,7 +51,7 @@ img{
 }
 /* 1080p */
 @media 
-(min-width: 1290px) {
+(min-width: 1920px) {
     img {
         height: 38px;
         width: 38px;
@@ -63,7 +63,7 @@ img{
 }
 /* 1440p */
 @media 
-(min-width: 1930px) {
+(min-width: 2560px) {
     img {
         height: 50px;
         width: 50px;
@@ -75,7 +75,7 @@ img{
 }
 /* 2160p */
 @media 
-(min-width: 3700px) {
+(min-width: 3840px) {
     img {
         height: 90px;
         width: 90px;

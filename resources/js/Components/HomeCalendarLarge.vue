@@ -5,10 +5,10 @@ import { ref } from 'vue';
 import { useScreens } from 'vue-screen-utils';
 
 const { mapCurrent } = useScreens({
-    'laptop': '710px',
-    '1080p': '1290px',
-    '1440p': '1930px',
-    '4k': '3700px',
+    'laptop': '760px',
+    '1080p': '1920px',
+    '1440p': '2560px',
+    '4k': '3840px',
 });
 const rows = mapCurrent({ '4k': 6, '1440p': 4, '1080p': 3 }, 2);
 
@@ -88,41 +88,41 @@ let attributes = ref([
             </div>
         </div>
     </div>
-    </template>
-    
-    <style>
-    .dot {
-      height: 25px;
-      width: 25px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    
+</template>
+
+<style>
+.dot {
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.enlarge {
+    height: 30px;
+    width: auto;
+}
+
+/* 1080p */
+@media 
+(min-width: 1920px) {
     .enlarge {
-        height: 30px;
+        height: 36px;
+    }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .enlarge {
+        height: 40px;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .enlarge {
+        height: 50px;
         width: auto;
     }
-    
-    /* 1080p */
-    @media 
-    (min-width: 1290px) {
-       .enlarge {
-            height: 36px;
-        }
-    }
-    /* 1440p */
-    @media 
-    (min-width: 1930px) {
-        .enlarge {
-            height: 40px;
-        }
-    }
-    /* 2160p */
-    @media 
-    (min-width: 3700px) {
-        .enlarge {
-            height: 50px;
-            width: auto;
-        }
-    }
-    </style>
+}
+</style>

@@ -42,7 +42,7 @@ let copyEmail = (e) => {
 
 /* 1080p */
 @media 
-(min-width: 1290px) {
+(min-width: 1920px) {
 .email{
     height: 22px;
     width: 22px;
@@ -50,7 +50,7 @@ let copyEmail = (e) => {
 }
 /* 1440p */
 @media 
-(min-width: 1930px) {
+(min-width: 2560px) {
 .email{
     height: 24px;
     width: 24px;
@@ -58,7 +58,7 @@ let copyEmail = (e) => {
 }
 /* 4k */
 @media 
-(min-width: 3700px) {
+(min-width: 3840px) {
 .email{
     height: 40px;
     width: 40px;

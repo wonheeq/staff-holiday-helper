@@ -1,6 +1,6 @@
 <script setup>
 import LoggedInView from "@/Components/LoggedInView.vue";
-import BookingsNavbar from "@/Components/BookingsNavbar.vue";
+import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import BookingsMessage from "@/Components/BookingsMessage.vue";
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
@@ -20,19 +20,21 @@ const options = [
     { id: 'subs', title: 'Your Substitutions'},
 ];
 let deadAreaColor = "#FFFFFF";
-let activeScreen = ref("test");
+let activeScreen = ref("applications");
+const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
 </script>
 
 <template>
     <LoggedInView>
         <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
-            <BookingsNavbar
+            <SubpageNavbar
                 class="h-[5%]"
                 :options="options"
                 @screen-changed="screen => activeScreen = screen"
             />
             <VueScrollingTable
-                class="p-4 rounded-bl-md rounded-br-md rounded-tr-md"
+                v-show="activeScreen === 'applications'" 
+                :class="subpageClass"
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
             >
@@ -42,6 +44,18 @@ let activeScreen = ref("test");
                     </div>
                 </template>
             </VueScrollingTable>
+            <div
+                v-show="activeScreen === 'create'" 
+                :class="subpageClass"
+            >
+                Create subpage
+            </div>
+            <div
+                v-show="activeScreen === 'subs'" 
+                :class="subpageClass"
+            >
+                Sub subpage
+            </div>
         </div>
     </LoggedInView>
 </template>
