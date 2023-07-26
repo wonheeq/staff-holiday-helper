@@ -1,6 +1,6 @@
 <script setup>
 //import NavLink from '@/Components/NavLink.vue';
-import { ref, defineEmits, defineProps } from 'vue';
+import { ref } from 'vue';
 const props = defineProps({ options: Object });
 const emit = defineEmits(['screenChanged']);
 let selected = ref("applications");
