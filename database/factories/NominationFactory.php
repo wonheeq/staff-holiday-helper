@@ -20,6 +20,7 @@ class NominationFactory extends Factory
             'applicationNo' => fake()->randomElement(Application::pluck('id')),
             'task' => fake()->randomElement($units),
             'nominee' => fake()->randomElement(User::pluck('id')),
+            'status' => fake()->randomElement(['U', 'Y', 'N']),
         ];
     }
 }

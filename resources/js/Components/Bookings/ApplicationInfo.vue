@@ -1,4 +1,6 @@
 <script setup>
+import ApplicationInfoOptions from './ApplicationInfoOptions.vue';
+import ApplicationNominationData from './ApplicationNominationData.vue';
 import { ref } from 'vue';
 let props = defineProps({ source: Object });
 
@@ -45,10 +47,18 @@ let toggleImage = (isVisible) => {
                 </div>
             </div>
         </div>
-        <div class="flex flex-col w-1/6 bg-gray-200 text-4xl ml-2">
-            <p :class="statusColour[source.status]" class="p-2">
+        <div class="flex flex-col w-1/5 bg-gray-200 text-4xl ml-2 p-2">
+            <p :class="statusColour[source.status]">
                 {{ statusText[source.status] }}
             </p>
+            <ApplicationNominationData
+                v-show="toggleContent"
+                :nominations="source.nominations"
+            />
+            <ApplicationInfoOptions
+                class="flex"
+                v-show="toggleContent"
+            />
         </div>
         <div class="flex flex-col bg-white">
             <button

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nominee');
             $table->foreign('nominee')->references('id')->on('users');
             $table->text('task');
+            $table->char('status', 1);
             $table->timestamps();
         });
     }

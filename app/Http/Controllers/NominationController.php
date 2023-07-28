@@ -25,6 +25,7 @@ class NominationController extends Controller
                 "name" => $name,
                 "user_id" => $nominee,
                 "task" => $nomination['task'],
+                "status" => $nomination['status'],
             ));
         }
 
