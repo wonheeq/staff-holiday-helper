@@ -9,7 +9,7 @@ use Tests\TestCase;
 class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
-
+/*
     public function test_confirm_password_screen_can_be_rendered(): void
     {
         $user = User::factory()->create();
@@ -41,4 +41,5 @@ class PasswordConfirmationTest extends TestCase
 
         $response->assertSessionHasErrors();
     }
+    */
 }

@@ -22,5 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::get('messages', [MessageController::class, 'get']);
-Route::get('applications', [ApplicationController::class, 'get']);
+Route::get('messages/{user_id}', [MessageController::class, 'getMessages']);
+Route::get('applications/{user_id}', [ApplicationController::class, 'getApplications']);

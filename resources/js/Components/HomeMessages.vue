@@ -57,7 +57,7 @@ let viewing = ref("unread");
             >
                 <template #tbody>
                     <div v-for="item in messages" :key="item.id" class="mb-2">
-                        <Message :source="item" :isAcknowledged="true"></Message>
+                        <Message :source="item"></Message>
                     </div>
                 </template>
             </VueScrollingTable>

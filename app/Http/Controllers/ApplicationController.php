@@ -8,10 +8,14 @@ use App\Models\User;
 
 class ApplicationController extends Controller
 {
-    public function get(Request $request)
+    public function getApplications(Request $request, String $user_id)
     {
-        // temporary user
-        $user_id = User::inRandomOrder()->limit(1)->get()[0]['id'];
+        // Check if user exists for given user id
+        if (!User::find($user_id)) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'User does not exist.'], 500);
+        }
+
         $applications = Application::orderBy('created_at', 'desc')->where('accountNo', $user_id)->get();
         
         foreach ($applications as $val) {

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useUserStore } from './UserStore';
 import axios from "axios";
 
 export let useApplicationStore = defineStore('applications', {
@@ -9,7 +10,7 @@ export let useApplicationStore = defineStore('applications', {
     actions: {
         async fetchApplications() {
             try {
-                const resp = await axios.get('/api/applications');
+                const resp = await axios.get('/api/applications/' + useUserStore().userId);
                 this.applications = resp.data;
               }
               catch (error) {

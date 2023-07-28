@@ -1,7 +1,6 @@
 <script setup>
 import MessageResponses from './MessageResponses.vue';
 let props = defineProps({
-    isAcknowledged: Boolean,
     source: Object,
 });
 
@@ -30,7 +29,9 @@ let copyEmail = (e) => {
             </p>
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>
-        <MessageResponses :is-acknowledged="isAcknowledged" :source="source"/>
+        <MessageResponses
+            :source="source"
+        />
     </div>
 </template>
 
