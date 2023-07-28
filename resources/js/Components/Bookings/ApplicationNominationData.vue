@@ -1,5 +1,5 @@
 <script setup>
-let props = defineProps({ nominations: Object });
+let props = defineProps({ nominations: Object, appStatus: String });
 
 const pClass = "text-sm";
 </script>
@@ -8,11 +8,14 @@ const pClass = "text-sm";
     <p :class="pClass">
         Nominees Accepted: {{ nominations.filter(n => n.status === 'Y').length }}/{{ nominations.length }}
     </p>
-    <p :class="pClass">
+    <p v-if="appStatus === 'P'" :class="pClass">
         Nominees Undecided: {{ nominations.filter(n => n.status === 'U').length  }}
     </p>
-    <p :class="pClass">
+    <p v-if="appStatus === 'P'" :class="pClass">
         Nominees Rejected: {{ nominations.filter(n => n.status === 'N').length  }}
+    </p>
+    <p v-if="appStatus === 'U'" :class="pClass">
+        [Awaiting Line Manager Decision]
     </p>
 </div>
 </template>
