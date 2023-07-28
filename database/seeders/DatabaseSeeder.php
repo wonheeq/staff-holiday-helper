@@ -16,7 +16,16 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory(5)->create();
         \App\Models\Message::factory(30)->create();
         \App\Models\Application::factory(10)->create();
-        \App\Models\Nomination::factory(100)->create();
+
+         // generate 3 nominations for each application
+        $allApplications = \App\Models\Application::get();
+        foreach ($allApplications as $application) {
+            $appId = $application['id'];
+            \App\Models\Nomination::factory(3)->create([
+                'applicationNo' => $appId,
+            ]);
+        }
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
