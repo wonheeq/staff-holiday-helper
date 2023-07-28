@@ -12,7 +12,7 @@ const statusText = {
 };
 const statusColour = {
     "P": "text-yellow-500",
-    "U": "text-yellow-500",
+    "U": "text-blue-500",
     "Y": "text-green-500",
     "N": "text-red-500",
 };
@@ -54,6 +54,7 @@ let toggleImage = (isVisible) => {
             <ApplicationNominationData
                 v-show="toggleContent"
                 :nominations="source.nominations"
+                :appStatus="source.status"
             />
             <ApplicationInfoOptions
                 class="flex"
