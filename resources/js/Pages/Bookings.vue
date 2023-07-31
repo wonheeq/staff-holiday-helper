@@ -16,7 +16,7 @@ let props = defineProps({
         default: 'apps',
     }
 });
-const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
+const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
 </script>
 
 <template>
@@ -31,14 +31,16 @@ const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[
             <ApplicationsSubpage
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
+                class="p-4 h-[95%]"
             />
             <CreateSubpage
                 v-show="activeScreen === 'create'" 
-                :class="subpageClass"
+                :subpageClass="subpageClass"
             />
             <SubstitutionsSubpage
                 v-show="activeScreen === 'subs'" 
                 :class="subpageClass"
+                class="p-4 h-[95%]"
             />
         </div>
     </AuthenticatedLayout>

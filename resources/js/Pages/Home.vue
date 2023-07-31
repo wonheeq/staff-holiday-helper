@@ -1,8 +1,8 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import HomeShortcuts from "@/Components/HomeShortcuts.vue";
-import HomeCalendarSmall from "@/Components/HomeCalendarSmall.vue";
-import HomeCalendarLarge from "@/Components/HomeCalendarLarge.vue";
+import CalendarSmall from "@/Components/CalendarSmall.vue";
+import CalendarLarge from "@/Components/CalendarLarge.vue";
 import HomeMessages from "@/Components/HomeMessages.vue";
 import { ref } from "vue";
 
@@ -25,12 +25,12 @@ let calendarLarge = ref(false);
                 <HomeShortcuts :user="user" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                 <HomeMessages class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"></HomeMessages>
             </div>
-            <HomeCalendarSmall
+            <CalendarSmall
                 class="flex w-1/5 1440:w-2/12 drop-shadow-md"
                 @enlarge-calendar="calendarLarge=true"    
             />
         </div>
-        <HomeCalendarLarge
+        <CalendarLarge
             class="screen mx-4 mt-4 drop-shadow-md"
             v-show="calendarLarge"
             @shrink-calendar="calendarLarge=false"

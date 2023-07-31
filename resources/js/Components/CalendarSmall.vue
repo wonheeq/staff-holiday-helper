@@ -4,6 +4,8 @@ import 'v-calendar/style.css';
 import { ref } from 'vue';
 import { useScreens } from 'vue-screen-utils';
 let emit = defineEmits(['enlarge-calendar']);
+
+let props = defineProps({ disableEnlarge: Boolean });
 const { mapCurrent } = useScreens({
     'laptop': '760px',
     '1080p': '1920px',
@@ -50,7 +52,7 @@ let attributes = ref([
 <template>
 <div class="bg-white rounded-md flex flex-col">
     <div class="flex mx-4 mt-4 items-center">
-        <button class="absolute">
+        <button class="absolute" v-show="!disableEnlarge">
             <img src="/images/fullscreen.svg"
                 class="enlarge"
                 @click="$emit('enlarge-calendar')"
