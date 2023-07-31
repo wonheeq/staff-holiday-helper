@@ -26,13 +26,27 @@ let attributes = ref([
         dates: [
             [Date.now() + 1 * day, new Date(Date.now() + 5 * day)]
         ],
+        popover: {
+            label: 'Approved (XX/XX/2023 12:00 AM - XX/XX/2023 12:00 AM)'
+        },
     },
     {
         highlight: 'red',
         dates: [
-            [Date.now() + 38 * day, new Date(Date.now() + 39 * day)],
+            [Date.now() + 38 * day, new Date(Date.now() + 39 * day)]
+        ],
+        popover: {
+            label: 'Rejected by System: A nominee has declined to takeover a responsibility.'
+        },
+    },
+    {
+        highlight: 'red',
+        dates: [
             [Date.now() + 13 * day, new Date(Date.now() + 15 * day)]
         ],
+        popover: {
+            label: 'Rejected by Line Manager: Not enough leave remaining.'
+        },
     },
     {
         highlight: 'orange',
@@ -45,6 +59,9 @@ let attributes = ref([
         dates: [
             [Date.now() + 40 * day, new Date(Date.now() + 43 * day)]
         ],
+        popover: {
+            label: 'COMP2007: Something something (XX/XX/2023 12:00 AM - XX/XX/2023 12:00 AM)'
+        },
     },
 ]);
 </script>
