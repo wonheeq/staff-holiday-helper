@@ -1,6 +1,7 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
-
+import NavOption from './NavOption.vue';
+let emit = defineEmits(['open-settings']);
 let options = {
     left: [
         { source: "images/home.svg", caption: "Home" },
@@ -9,7 +10,9 @@ let options = {
         { source: "images/admin.svg", caption: "Admin" },
     ],
     right: [
-        { source: "images/account.svg", caption: "Settings" },
+        { source: "images/account.svg", caption: "Settings", noLink: () => {
+            emit('open-settings');
+        } },
         { source: "images/logout.svg", caption: "Logout" },
     ]
 };
@@ -31,10 +34,17 @@ let options = {
         </div>
         <div class="flex flex-row space-x-2 1440:space-x-4 mr-2 my-2">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
-                <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
+                <NavLink v-if="option.noLink == null" :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
                     <img :src="option.source"/>
                     <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                 </NavLink>
+                <NavOption v-if="option.noLink"
+                    class="flex flex-col justify-center items-center"
+                    @click="option.noLink()"
+                >
+                    <img :src="option.source"/>
+                    <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
+                </NavOption>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@ import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
 import { ref } from 'vue';
 import { useScreens } from 'vue-screen-utils';
-
+let emit = defineEmits(['enlarge-calendar']);
 const { mapCurrent } = useScreens({
     'laptop': '760px',
     '1080p': '1920px',
@@ -53,7 +53,7 @@ let attributes = ref([
         <button class="absolute">
             <img src="/images/fullscreen.svg"
                 class="enlarge"
-                @click="$emit('enlargeCalendar')"
+                @click="$emit('enlarge-calendar')"
             />
         </button>
         <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl font-bold mx-auto">

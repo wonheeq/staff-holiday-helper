@@ -4,6 +4,8 @@ import 'v-calendar/style.css';
 import { ref } from 'vue';
 import { useScreens } from 'vue-screen-utils';
 
+let emit = defineEmits(['shrink-calendar']);
+
 const { mapCurrent } = useScreens({
     'laptop': '760px',
     '1080p': '1920px',
@@ -52,7 +54,7 @@ let attributes = ref([
             <button class="absolute">
                 <img src="/images/fullscreen-exit.svg"
                     class="enlarge"
-                    @click="$emit('shrinkCalendar')"
+                    @click="emit('shrink-calendar')"
                 />
             </button>
             <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl font-bold mx-auto">
