@@ -4,28 +4,32 @@ import NavOption from './NavOption.vue';
 let emit = defineEmits(['open-settings']);
 let options = {
     left: [
-        { source: "images/home.svg", caption: "Home" },
-        { source: "images/booking.svg", caption: "Bookings" },
-        { source: "images/manager.svg", caption: "Manager" },
-        { source: "images/admin.svg", caption: "Admin" },
+        { source: "/images/home.svg", caption: "Home" },
+        { source: "/images/booking.svg", caption: "Bookings" },
+        { source: "/images/manager.svg", caption: "Manager" },
+        { source: "/images/admin.svg", caption: "Admin" },
     ],
     right: [
-        { source: "images/account.svg", caption: "Settings", noLink: () => {
+        { source: "/images/account.svg", caption: "Settings", noLink: () => {
             emit('open-settings');
         } },
-        { source: "images/logout.svg", caption: "Logout" },
+        { source: "/images/logout.svg", caption: "Logout" },
     ]
+};
+
+let formatLink = (link) => {
+    return "/" + link.toLowerCase();
 };
 </script>
 
 <template>
     <div class="flex flex-row justify-between border-2 rounded-md bg-white drop-shadow-md">
         <div class="flex flex-row space-x-4 ml-4 my-2 items-center">
-            <img src="images/logo.svg" class="logo"/>
+            <img src="/images/logo.svg" class="logo"/>
             <div class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row space-x-2 1440:space-x-4">
                 <div class="flex flex-col justify-center items-center" v-for="option in options.left" >
-                    <NavLink :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
+                    <NavLink :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
                         <img :src="option.source"/>
                         <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                     </NavLink>
@@ -34,7 +38,7 @@ let options = {
         </div>
         <div class="flex flex-row space-x-2 1440:space-x-4 mr-2 my-2">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
-                <NavLink v-if="option.noLink == null" :href="option.caption.toLowerCase()" class="flex flex-col justify-center items-center">
+                <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
                     <img :src="option.source"/>
                     <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                 </NavLink>
@@ -56,7 +60,7 @@ img{
     width: 22px;
 }
 .logo{
-    height: 130%;
+    height: 36px;
     width: auto;
 }
 /* 1080p */
@@ -67,7 +71,7 @@ img{
         width: 38px;
     }
     .logo{
-        height: 110%;
+        height: 60px;
         width: auto;
     }
 }
@@ -79,7 +83,7 @@ img{
         width: 50px;
     }
     .logo{
-        height: 105%;
+        height: 80px;
         width: auto;
     }
 }
@@ -87,11 +91,11 @@ img{
 @media 
 (min-width: 3840px) {
     img {
-        height: 90px;
-        width: 90px;
+        height: 70px;
+        width: 70px;
     }
     .logo{
-        height: 103%;
+        height: 120px;
         width: auto;
     }
 }

@@ -25,7 +25,7 @@
         height:100%;
         }
     .bg-img {
-        background: url('images/background.svg') no-repeat center top; 
+        background: url('/images/background.svg') no-repeat center top; 
         background-size: cover;
         height: 100vh;
     }

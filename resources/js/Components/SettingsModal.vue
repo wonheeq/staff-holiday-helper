@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch, reactive } from 'vue';
-let props = defineProps({ opened: Boolean });
 let emit = defineEmits(['close-settings']);
 
 let errors = reactive([]);
@@ -15,8 +14,10 @@ const MIN_LENGTH = 10;
 const MAX_LENGTH = 30;
 const hasUppercase = new RegExp("(?=.*[A-Z])");
 const hasLowercase = new RegExp("(?=.*[a-z])");
+const hasWhitespace = new RegExp("/\s/");
 const hasDigit = new RegExp("\\d");
 
+// Validate and push any error messages to the error array
 let validatePasswords = () => {
     errors.length = 0;
 
@@ -35,11 +36,12 @@ let validatePasswords = () => {
     if (!hasDigit.test(password.password)) {
         errors.push("Password must contain at least one number.");
     }
-};
 
-watch(password, () => {
-    validatePasswords();
+    if (hasWhitespace.test(password.password)) {
+        errors.push("Password must not contain spaces.");
+    }
 
+    // Check if passwords match and activate submit button if so
     if (password.password !== password.confirm) {
         errors.push("Passwords do not match.");
         buttonActive = false;
@@ -47,6 +49,11 @@ watch(password, () => {
     else if (password.password == password.confirm && errors.length == 0) {
         buttonActive = true;
     }
+};
+
+// Watch password object for changes
+watch(password, () => {
+    validatePasswords();
 });
 
 let handleChangePassword = () => {
@@ -72,7 +79,7 @@ let resetView = () => {
                     Change Password
                 </p>
                 <button @click="resetView(); emit('close-settings');">
-                    <img src="images/close.svg"
+                    <img src="/images/close.svg"
                     class="close-button"
                 />
                 </button>

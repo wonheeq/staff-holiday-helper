@@ -42,16 +42,29 @@ Route::get('/home', function () {
 
 
 Route::get('/bookings', function () {
-    return Inertia::render('Bookings', []);
-    /*
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+    return Inertia::render('Bookings', [
+        'activeScreen' => 'apps'
     ]);
-    */
 });
+
+Route::get('/bookings/apps', function () {
+    return Inertia::render('Bookings', [
+        'activeScreen' => 'apps'
+    ]);
+});
+
+Route::get('/bookings/create', function () {
+    return Inertia::render('Bookings', [
+        'activeScreen' => 'create'
+    ]);
+});
+
+Route::get('/bookings/subs', function () {
+    return Inertia::render('Bookings', [
+        'activeScreen' => 'subs'
+    ]);
+});
+
 
 /*
 Route::get('/dashboard', function () {

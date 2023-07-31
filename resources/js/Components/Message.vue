@@ -19,7 +19,7 @@ let copyEmail = (e) => {
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.sender_name }}</p>
                 <img
                     class="ml-1.5 email"
-                    src="images/mail.svg"
+                    src="/images/mail.svg"
                     v-b-tooltip.hover title="Copy Email Address to Clipboard"
                     @click="copyEmail(props.source.sender_id)"
                     />

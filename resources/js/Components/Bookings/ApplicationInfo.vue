@@ -20,10 +20,10 @@ const statusColour = {
 let toggleContent = ref(false);
 let toggleImage = (isVisible) => {
     if (isVisible) {
-        return 'images/triangle_up.svg';
+        return '/images/triangle_up.svg';
     }
 
-    return 'images/triangle_down.svg';
+    return '/images/triangle_down.svg';
 }
 </script>
 <template>

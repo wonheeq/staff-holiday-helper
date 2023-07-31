@@ -22,11 +22,11 @@ let viewing = ref("unread");
             <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
             <div class="flex col-span-2 ">
                 <div v-if="filteredMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
-                    <img src="images/warning.svg" class="warning"/>
+                    <img src="/images/warning.svg" class="warning"/>
                     <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
                         You have {{ filteredMessages.length }} unacknowleged messages.
                     </p>
-                    <img src="images/warning.svg" class="warning"/>
+                    <img src="/images/warning.svg" class="warning"/>
                 </div>
             </div>
             <div class="text-2xl justify-self-end">

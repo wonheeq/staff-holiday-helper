@@ -1,31 +1,35 @@
 <script setup>
-import LoggedInView from "@/Components/LoggedInView.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
 import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
-import Modal from '@/Components/Modal.vue';
-import { ref } from 'vue';
 
 const options = [
-    { id: 'applications', title: 'Applications'},
+    { id: 'apps', title: 'Applications'},
     { id: 'create', title: 'Create New Application'},
     { id: 'subs', title: 'Your Substitutions'},
 ];
-let activeScreen = ref("applications");
+let props = defineProps({
+    activeScreen: {
+        type: String,
+        default: 'apps',
+    }
+});
 const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
 </script>
 
 <template>
-    <LoggedInView>
+    <AuthenticatedLayout>
         <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
                 :options="options"
+                :activeScreen="activeScreen"
                 @screen-changed="screen => activeScreen = screen"
             />
             <ApplicationsSubpage
-                v-show="activeScreen === 'applications'" 
+                v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
             />
             <CreateSubpage
@@ -37,7 +41,7 @@ const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[
                 :class="subpageClass"
             />
         </div>
-    </LoggedInView>
+    </AuthenticatedLayout>
 </template>
 
 <style>
