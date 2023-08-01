@@ -34,6 +34,7 @@ const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
                 class="p-4 h-[95%]"
             />
             <CreateSubpage
+                class="h-[95%]"
                 v-show="activeScreen === 'create'" 
                 :subpageClass="subpageClass"
             />

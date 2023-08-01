@@ -35,7 +35,7 @@ let calcDuration = (dates) => {
 };
 </script>
 <template>
-    <div>
+    <div class="h-[90%]">
         <div class="flex flex-col w-fit h-full">
             <div class="mb-8">
                 <p class="text-4xl">

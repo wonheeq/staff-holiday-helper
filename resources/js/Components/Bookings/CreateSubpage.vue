@@ -12,16 +12,21 @@ let period = reactive({
 });
 </script>
 <template>
-    <div class="flex bg-transparent w-full h-full">
-        <div class="w-5/6 flex flex-col p-4 mr-4" :class="subpageClass">
+    <div class="flex bg-transparent subpage-height">
+        <div class="w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
             <p class="text-5xl h-[8%] font-bold">
                 Create New Leave Application:
             </p>
-            <div class="grid grid-cols-2 h-[92%]">
-                <CreateSubpagePeriod :period="period"/>
-                <CreateSubpageNominations />
+            <div class="grid grid-cols-3 h-[92%]">
+                <CreateSubpagePeriod :period="period" class="h-full" />
+                <CreateSubpageNominations class="col-span-2"/>
             </div>
         </div>
-        <CalendarSmall class="w-1/6 flex flex-col" :disableEnlarge="true"/>
+        <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
     </div>
 </template>
+<style>
+.subpage-height {
+    height: calc(0.95 * (93vh - 3rem));
+}
+</style>
