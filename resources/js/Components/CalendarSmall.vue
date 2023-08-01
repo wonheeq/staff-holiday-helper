@@ -1,8 +1,18 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useScreens } from 'vue-screen-utils';
+import { useCalendarStore } from '@/stores/CalendarStore';
+import { storeToRefs } from 'pinia';
+let calendarStore = useCalendarStore();
+const { calendarData } = storeToRefs(calendarStore);
+const { fetchCalendarData } = calendarStore;
+
+onMounted(() => {
+    fetchCalendarData();
+});
+
 let emit = defineEmits(['enlarge-calendar']);
 
 let props = defineProps({ disableEnlarge: Boolean });
@@ -13,57 +23,6 @@ const { mapCurrent } = useScreens({
     '4k': '3840px',
 });
 const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
-
-const day = 86400000;
-let attributes = ref([
-    {
-        key: 'today',
-        bar: true,
-        dates: new Date(),
-    },
-    {
-        highlight: 'green',
-        dates: [
-            [Date.now() + 1 * day, new Date(Date.now() + 5 * day)]
-        ],
-        popover: {
-            label: 'Approved (XX/XX/2023 12:00 AM - XX/XX/2023 12:00 AM)'
-        },
-    },
-    {
-        highlight: 'red',
-        dates: [
-            [Date.now() + 38 * day, new Date(Date.now() + 39 * day)]
-        ],
-        popover: {
-            label: 'Rejected by System: A nominee has declined to takeover a responsibility.'
-        },
-    },
-    {
-        highlight: 'red',
-        dates: [
-            [Date.now() + 13 * day, new Date(Date.now() + 15 * day)]
-        ],
-        popover: {
-            label: 'Rejected by Line Manager: Not enough leave remaining.'
-        },
-    },
-    {
-        highlight: 'orange',
-        dates: [
-            [Date.now() + 27 * day, new Date(Date.now() + 31 * day)]
-        ],
-    },
-    {
-        highlight: 'purple',
-        dates: [
-            [Date.now() + 40 * day, new Date(Date.now() + 43 * day)]
-        ],
-        popover: {
-            label: 'COMP2007: Something something (XX/XX/2023 12:00 AM - XX/XX/2023 12:00 AM)'
-        },
-    },
-]);
 </script>
 
 <template>
@@ -84,7 +43,7 @@ let attributes = ref([
         borderless
         expanded
         transparent
-        :attributes="attributes"
+        :attributes="calendarData"
         trim-weeks
     >
     </Calendar>

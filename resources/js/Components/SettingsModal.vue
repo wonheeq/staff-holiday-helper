@@ -3,12 +3,31 @@ import { ref, watch, reactive } from 'vue';
 let emit = defineEmits(['close-settings']);
 
 let errors = reactive([]);
-let displaySuccess = ref(true);
+let displaySuccess = ref(false);
 let buttonActive = ref(false);
 let password = reactive({
     password: "",
     confirm: ""
 });
+let fieldType = reactive({
+    password: {
+        type: "password",
+        image: "/images/Eye_light.svg"
+    },
+    confirm: {
+        type: "password",
+        image: "/images/Eye_light.svg"
+    },
+})
+let switchVis = (field) => {
+    if (field.type === "password" ) {
+        field.type = "text";
+        field.image = "/images/Eye_fill.svg";
+    } else {
+        field.type = "password";
+        field.image = "/images/Eye_light.svg";
+    }
+};
 
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 30;
@@ -69,7 +88,11 @@ let resetView = () => {
     buttonActive = false;
     password.password = "";
     password.confirm = "";
-}
+    fieldType.password.type = "password";
+    fieldType.confirm.type = "password";
+    fieldType.password.image = "/images/Eye_light.svg";
+    fieldType.confirm.image = "/images/Eye_light.svg";
+};
 </script>
 <template>
     <div class="grid place-items-center fixed inset-0 backdrop-blur-sm bg-black/60">
@@ -87,23 +110,35 @@ let resetView = () => {
             <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
                 <div class="w-full">
                     <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
-                    <input v-model="password.password"
-                        class="w-full 4k:h-16 4k:text-2xl"
-                        type="password"
-                        @keydown.space.prevent
-                        @copy.prevent
-                        @paste.prevent 
-                    />
+                    <div class="flex items-center h-full w-full">
+                        <input v-model="password.password"
+                            class="w-[90%] 4k:h-16 4k:text-2xl"
+                            :type="fieldType.password.type"
+                            @keydown.space.prevent
+                            @copy.prevent
+                            @paste.prevent
+                        >
+                        <button @click="switchVis(fieldType.password)" class="h-full w-[10%]">
+                            <img :src="fieldType.password.image"
+                                class="h-full w-full">
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-2 1440:pt-4 w-full">
                     <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
-                    <input v-model="password.confirm"
-                        class="w-full 4k:h-16 4k:text-2xl"
-                        type="password"
-                        @keydown.space.prevent
-                        @copy.prevent
-                        @paste.prevent
-                    />
+                    <div class="flex items-center h-full w-full">
+                        <input v-model="password.confirm"
+                            class="w-[90%] 4k:h-16 4k:text-2xl"
+                            :type="fieldType.confirm.type"
+                            @keydown.space.prevent
+                            @copy.prevent
+                            @paste.prevent
+                        >
+                        <button @click="switchVis(fieldType.confirm)" class="h-full w-[10%]">
+                            <img :src="fieldType.confirm.image"
+                                class="h-full w-full">
+                        </button>
+                    </div>
                 </div>
                 <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
                     <p class="text-xs 1440:text-base 4k:text-xl text-red-500 w-full text-center"

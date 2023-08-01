@@ -48,8 +48,21 @@ class DatabaseSeeder extends Seeder
             'receiver_id' => $test_id,
         ]);
 
-        \App\Models\Application::factory(10)->create([
+        \App\Models\Application::factory(1)->create([
             'accountNo' => $test_id,
+            'status' => 'Y'
+        ]);
+        \App\Models\Application::factory(1)->create([
+            'accountNo' => $test_id,
+            'status' => 'N'
+        ]);
+        \App\Models\Application::factory(1)->create([
+            'accountNo' => $test_id,
+            'status' => 'U'
+        ]);
+        \App\Models\Application::factory(1)->create([
+            'accountNo' => $test_id,
+            'status' => 'P'
         ]);
 
         // get applications for test user

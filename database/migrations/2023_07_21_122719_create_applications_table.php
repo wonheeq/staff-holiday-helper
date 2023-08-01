@@ -18,6 +18,9 @@ return new class extends Migration
             $table->dateTime('start');
             $table->dateTime('end');
             $table->char('status', 1);
+            $table->string('processedBy');
+            $table->foreign('processedBy')->references('id')->on('users');
+            $table->string('rejectReason');
             $table->timestamps();
         });
     }
