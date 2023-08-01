@@ -54,6 +54,10 @@ const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
             <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
         </div>
         <div class="flex flex-row mb-2 items-center">
+            <div class="bg-blue-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Undecided Booking</p>
+        </div>
+        <div class="flex flex-row mb-2 items-center">
             <div class="bg-orange-400 dot mr-2"></div>
             <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
         </div>

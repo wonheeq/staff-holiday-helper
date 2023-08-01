@@ -8,6 +8,9 @@ use App\Models\Nomination;
 use App\Models\Application;
 use \DateTime;
 
+use Illuminate\Support\Facades\Log;
+
+
 class CalendarController extends Controller
 {
     public function getCalendarData(Request $request, String $user_id) {
@@ -18,7 +21,65 @@ class CalendarController extends Controller
         }
 
         $data = array();
+        
+        $appData = $this->handleApplications($user_id);
+        $nomData = $this->handleSubstitutions($user_id);
 
+        $data = $this->addToArray($data, $appData);
+        $data = $this->addToArray($data, $nomData);
+
+
+        return response()->json($data);
+    }
+
+    private function addToArray(array $arr1, array $arr2) {
+        foreach ($arr2 as $e) {
+            array_push($arr1, $e);
+        }
+        return $arr1;
+    }
+
+    private function handleSubstitutions(String $user_id) {
+        $data = array();
+
+        $nominations = Nomination::where("nominee", "=", $user_id)->get();
+
+        // Iterate through each nomination
+        foreach ($nominations as $nomination) {
+            // Grab application details of accepted nominations
+            if ($nomination['status'] == 'Y') {
+                $application = Application::where("id", "=", $nomination['applicationNo'])->get()[0];
+                
+                if ($application != null) {
+                    $startDate = date_format(new DateTime($application['start']), "d/m/Y H:i");
+                    $endDate = date_format(new DateTime($application['end']), "d/m/Y H:i");
+                    $applicationMaker = User::where("id", "=", $application['accountNo'])->get()[0]['name'];
+                    $task = $nomination['task'];
+
+                    $content = "{$task} for {$applicationMaker} ({$startDate} - {$endDate})";
+
+                    $rangeData = array(
+                        'highlight' => 'purple',
+                        'dates' => [
+                            [
+                                $application['start'],
+                                $application['end']
+                            ]
+                        ],
+                        'popover' => [
+                            'label' => $content,
+                        ]
+                    );
+                    array_push($data, $rangeData);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    private function handleApplications(String $user_id) {
+        $data = array();
         // Get all applications of user
         $applications = Application::where("accountNo", "=" , $user_id)->get();
 
@@ -115,7 +176,6 @@ class CalendarController extends Controller
                 }
             }
         }
-
-        return response()->json($data);
+        return $data;
     }
 }

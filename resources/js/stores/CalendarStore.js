@@ -12,7 +12,9 @@ export let useCalendarStore = defineStore('calendar', {
             try {
                 const resp = await axios.get('/api/calendar/' + useUserStore().userId);
                 this.calendarData = resp.data;
-                this.calendarData.push({
+
+                // Use unshift to push to front
+                this.calendarData.unshift({
                     key: 'today',
                     bar: true,
                     dates: new Date(),

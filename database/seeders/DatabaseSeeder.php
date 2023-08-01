@@ -17,14 +17,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Message::factory(30)->create();
         \App\Models\Application::factory(10)->create();
 
-         // generate 3 nominations for each application
-        $allApplications = \App\Models\Application::get();
-        foreach ($allApplications as $application) {
-            $appId = $application['id'];
-            \App\Models\Nomination::factory(3)->create([
-                'applicationNo' => $appId,
-            ]);
-        }
 
         // \App\Models\User::factory(10)->create();
 
@@ -65,15 +57,14 @@ class DatabaseSeeder extends Seeder
             'status' => 'P'
         ]);
 
-        // get applications for test user
-        $applications = \App\Models\Application::where('accountNo', $test_id)->get();
 
-        // generate 3 nominations for each application
-        foreach ($applications as $application) {
-            $appId = $application['id'];
-            \App\Models\Nomination::factory(3)->create([
-                'applicationNo' => $appId,
-            ]);
-        }
+         // generate 5 nominations for each application
+         $allApplications = \App\Models\Application::get();
+         foreach ($allApplications as $application) {
+             $appId = $application['id'];
+             \App\Models\Nomination::factory(5)->create([
+                 'applicationNo' => $appId,
+             ]);
+         }
     }
 }

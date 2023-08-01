@@ -11,7 +11,7 @@ const statusText = {
     "N": "Denied",
 };
 const statusColour = {
-    "P": "text-yellow-500",
+    "P": "text-orange-500",
     "U": "text-blue-500",
     "Y": "text-green-500",
     "N": "text-red-500",

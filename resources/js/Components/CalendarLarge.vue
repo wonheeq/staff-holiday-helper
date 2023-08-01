@@ -1,8 +1,18 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useScreens } from 'vue-screen-utils';
+import { useCalendarStore } from '@/stores/CalendarStore';
+import { storeToRefs } from 'pinia';
+let calendarStore = useCalendarStore();
+const { calendarData } = storeToRefs(calendarStore);
+const { fetchCalendarData } = calendarStore;
+
+onMounted(() => {
+    fetchCalendarData();
+});
+
 
 let emit = defineEmits(['shrink-calendar']);
 
@@ -13,40 +23,6 @@ const { mapCurrent } = useScreens({
     '4k': '3840px',
 });
 const rows = mapCurrent({ '4k': 6, '1440p': 4, '1080p': 3 }, 2);
-
-const day = 86400000;
-let attributes = ref([
-    {
-        key: 'today',
-        bar: true,
-        dates: new Date(),
-    },
-    {
-        highlight: 'green',
-        dates: [
-            [Date.now() + 1 * day, new Date(Date.now() + 5 * day)]
-        ],
-    },
-    {
-        highlight: 'red',
-        dates: [
-            [Date.now() + 38 * day, new Date(Date.now() + 39 * day)],
-            [Date.now() + 13 * day, new Date(Date.now() + 15 * day)]
-        ],
-    },
-    {
-        highlight: 'orange',
-        dates: [
-            [Date.now() + 27 * day, new Date(Date.now() + 31 * day)]
-        ],
-    },
-    {
-        highlight: 'purple',
-        dates: [
-            [Date.now() + 40 * day, new Date(Date.now() + 43 * day)]
-        ],
-    },
-]);
 </script>
 <template>
     <div class="bg-white rounded-md flex flex-col">
@@ -67,7 +43,7 @@ let attributes = ref([
             borderless
             expanded
             transparent
-            :attributes="attributes"
+            :attributes="calendarData"
         >
         </Calendar>
         <div class="absolute flex items-center bottom-2 1440:bottom-4 px-4 space-x-4">
