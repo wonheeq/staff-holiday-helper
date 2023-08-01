@@ -53,6 +53,10 @@ function handleSelectAll() {
     }
 }
 
+const numSelectedNominations = computed(() => {
+    return nominations.value.filter(nomination => nomination.selected).length;
+});
+
 const filteredNominations = computed(() => {
     let filtered = nominations.value.filter(nomination => nomination.role.toLowerCase().includes(roleFilter.value.toLowerCase()));
 
@@ -105,7 +109,7 @@ const filteredNominations = computed(() => {
                 </div>
                 <div class="flex flex-col w-96 mr-7">
                     <p class="text-xl">
-                        Staff Member
+                        Select Staff Member for {{ numSelectedNominations }} Entries
                     </p>
                     <NomineeDropdown
                         class="w-full"
