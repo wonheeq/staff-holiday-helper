@@ -14,8 +14,8 @@ class NominationControllerTest extends TestCase
     private Application $application;
     private array $nominations;
 
-    protected function setUp(): void {
-        parent::setUp();
+    protected function setup(): void {
+        parent::setup();
 
         // create temp user
         $this->user = User::factory()->create();
@@ -33,8 +33,8 @@ class NominationControllerTest extends TestCase
         }
     }
 
-    protected function tearDown(): void {
-        parent::tearDown();
+    protected function teardown(): void {
+        parent::teardown();
 
         // delete nominations then application then user
         foreach ($this->nominations as $nomination) {
