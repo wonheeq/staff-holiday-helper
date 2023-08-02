@@ -30,14 +30,6 @@ Route::get('/', function () {
 
 Route::get('/home', function () {
     return Inertia::render('Home', []);
-    /*
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-    */
 });
 
 
