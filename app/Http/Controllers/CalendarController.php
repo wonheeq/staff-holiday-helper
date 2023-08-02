@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class CalendarController extends Controller
 {
     public function getCalendarData(Request $request, String $user_id) {
+        Log::debug($user_id);
         // Check if user exists for given user id
         if (!User::find($user_id)) {
             // User does not exist, return exception
