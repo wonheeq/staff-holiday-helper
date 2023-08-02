@@ -1,5 +1,6 @@
 <script setup>
-import { reactive, ref, computed } from "vue";
+import axios from "axios"; 
+import { reactive, ref, computed, onMounted } from "vue";
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Nomination from "./Nomination.vue";
@@ -13,14 +14,25 @@ let deadAreaColor = "#FFFFFF";
 
 let allSelected = ref(false);
 let roleFilter = ref("");
-let staffMembers = reactive([
-    'Person A',
-    'Person B',
-    'Person C',
-    'Person D',
-    'Person E',
-    'gahetrw4trsSDFHO43ALSKJFDA',
-]);
+let staffMembers = reactive([]);
+
+
+let fetchStaffMembers = async() => {
+    try {
+        const resp = await axios.get('/api/getBookingOptions/a000000');
+        staffMembers = resp.data;
+    } catch (error) {
+        alert("Failed to load data: Please try again");
+        console.log(error);
+    }
+}; 
+
+const dataReady = ref(false);
+
+onMounted(async () => {
+    await fetchStaffMembers();
+    dataReady.value = true;
+});
 
 function handleDropdownStaffSelection(selection) {
     for (let nomination of nominations.value) {
@@ -80,7 +92,7 @@ const filteredNominations = computed(() => {
 });
 </script>
 <template>
-    <div class="flex flex-col w-full pageHeight">
+    <div class="flex flex-col w-full pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%]">
             <p class="text-4xl">
                 Nominate Substitutes:
@@ -107,7 +119,7 @@ const filteredNominations = computed(() => {
                         />
                     </div>
                 </div>
-                <div class="flex flex-col w-96 mr-7">
+                <div class="flex flex-col w-96 mr-6">
                     <p class="text-xl">
                         Select Staff Member for {{ numSelectedNominations }} Entries
                     </p>
