@@ -4,8 +4,57 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "376346d9da891b59aa9a9cec16551406",
+    "content-hash": "b29c509e97f694d851d154ef169f6641",
     "packages": [
+        {
+            "name": "asahasrabuddhe/laravel-mjml",
+            "version": "0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asahasrabuddhe/laravel-mjml.git",
+                "reference": "b452d81b182c0b0361cd256539d8d8496f6cedde"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asahasrabuddhe/laravel-mjml/zipball/b452d81b182c0b0361cd256539d8d8496f6cedde",
+                "reference": "b452d81b182c0b0361cd256539d8d8496f6cedde",
+                "shasum": ""
+            },
+            "require": {
+                "soundasleep/html2text": "~2.0.0",
+                "symfony/process": "^4.0.0|^5.0.0|^6.0.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~6.25.0",
+                "php-coveralls/php-coveralls": "^2.5.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Asahasrabuddhe\\LaravelMJML\\Providers\\MJMLServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Asahasrabuddhe\\LaravelMJML\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Ajitem Sahasrabuddhe",
+                    "email": "ajitem.s@outlook.com"
+                }
+            ],
+            "description": "A package that enables using MJML with Laravel Mailables.",
+            "support": {
+                "issues": "https://github.com/asahasrabuddhe/laravel-mjml/issues",
+                "source": "https://github.com/asahasrabuddhe/laravel-mjml/tree/0.7.0"
+            },
+            "time": "2022-12-27T14:48:15+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.11.0",
@@ -3065,6 +3114,61 @@
                 }
             ],
             "time": "2023-04-15T23:01:58+00:00"
+        },
+        {
+            "name": "soundasleep/html2text",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/soundasleep/html2text.git",
+                "reference": "aa214620d7beecd5cef8b1c32102a9204edb82f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/soundasleep/html2text/zipball/aa214620d7beecd5cef8b1c32102a9204edb82f5",
+                "reference": "aa214620d7beecd5cef8b1c32102a9204edb82f5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": "^7.0|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0|^8.0|^9.0",
+                "soundasleep/component-tests": "^0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Soundasleep\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jevon Wright",
+                    "homepage": "https://jevon.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP script to convert HTML into a plain text format",
+            "homepage": "https://github.com/soundasleep/html2text",
+            "keywords": [
+                "email",
+                "html",
+                "php",
+                "text"
+            ],
+            "support": {
+                "email": "support@jevon.org",
+                "issues": "https://github.com/soundasleep/html2text/issues",
+                "source": "https://github.com/soundasleep/html2text/tree/2.0.0"
+            },
+            "time": "2022-01-29T19:05:09+00:00"
         },
         {
             "name": "symfony/console",
