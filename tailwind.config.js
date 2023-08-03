@@ -24,6 +24,10 @@ export default {
             dropShadow: {
                 'md': '0 4px 6px rgba(0, 0, 0, 0.3)',
             },
+            gridTemplateColumns: {
+                // Simple 16 column grid
+                'auto': 'repeat(auto-fit, minmax(10rem, 1fr))',
+            },
         },
     },
 

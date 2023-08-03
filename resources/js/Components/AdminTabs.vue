@@ -2,7 +2,6 @@
     
     import SubpageNavbar from './SubpageNavbar.vue';
     import { onMounted, ref } from 'vue';
-    import { storeToRefs } from 'pinia';
     
     const options = [
     { id: 'viewData', title: 'View/Edit Data'},
@@ -10,7 +9,6 @@
     { id: 'sysSettings', title: 'System Settings'},
     ];
 
-    let deadAreaColor = "#FFFFFF";
     let activeScreen = ref("applications");
     const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
 

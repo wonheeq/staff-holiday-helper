@@ -61,6 +61,12 @@ Route::get('/bookings/subs', function () {
     ]);
 });
 
+Route::get('/admin', function () {
+    return Inertia::render('Administration', [
+        'activeScreen' => 'apps'
+    ]);
+});
+
 Route::get('/send-email', [EmailController::class, 'sendEmail']);
 
 /*

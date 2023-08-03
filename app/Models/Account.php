@@ -10,6 +10,6 @@ class Account extends Model
     use HasFactory;
 
 
-    // protected $table = 'test_accounts';
+    // protected $table = 'accounts';
     // protected $guarded = [];
 }

@@ -1,28 +1,24 @@
 <script>
-    
-    //import Navbar from './Navbar.vue';
+    import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import AdminTabs from '@/Components/AdminTabs.vue';
 
     export default{
     components:{
-         'admintabs':AdminTabs
+         'admintabs':AdminTabs,
+         'AuthenticatedLayout':AuthenticatedLayout
     }
 }
 
 </script>
 
 <template>
-
-    <!--<main>
-        <div class="margin-fix"></div>
-        <Navbar class="h-[7vh] mx-4"></Navbar>
-       < !--<slot />-- > 
-    </main>-->
- 
-<div class="tabarea">
-    <admintabs/>  
-</div>  
-
+    <AuthenticatedLayout>
+        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+            <div class="tabarea">
+                <admintabs/>  
+            </div> 
+        </div> 
+    </AuthenticatedLayout>
 </template>
 
 <style>
@@ -35,6 +31,10 @@
     margin: 0;
     width: 100%;
     min-height: 100vh;
+    }
+
+    .screen {
+        height: calc(93vh - 3rem);
     }
     /*body {
         background-image: url('/images/background.svg');
