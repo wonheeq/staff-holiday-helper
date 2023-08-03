@@ -28,6 +28,10 @@ Route::get('/', function () {
     */
 });
 
+Route::get('/reset', function () {
+    return Inertia::render('Reset', []);
+});
+
 Route::get('/home', function () {
     return Inertia::render('Home', []);
 });
@@ -71,4 +75,3 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 */
-
