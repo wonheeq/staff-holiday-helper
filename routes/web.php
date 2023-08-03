@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmailController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -61,6 +61,7 @@ Route::get('/bookings/subs', function () {
     ]);
 });
 
+Route::get('/send-email', [EmailController::class, 'sendEmail']);
 
 /*
 Route::get('/dashboard', function () {
