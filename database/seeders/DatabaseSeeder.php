@@ -18,6 +18,46 @@ class DatabaseSeeder extends Seeder
         \App\Models\Application::factory(10)->create();
 
 
+        // Creating 4 Line Manager Accounts for other to use for superiorNo foreign key: ['112237t', '123456a', '441817e', '877873p']
+        \App\Models\Account::factory(1)->create([
+            'accountNo' => '112237t',
+            'aType' => 'lmanager', 
+            'lName' => fake()->lastName(),
+            'fNames' => fake()->firstName(),
+            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null
+        ]);
+
+        \App\Models\Account::factory(1)->create([
+            'accountNo' => '123456a',
+            'aType' => 'lmanager', 
+            'lName' => fake()->lastName(),
+            'fNames' => fake()->firstName(),
+            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null
+        ]);
+
+        \App\Models\Account::factory(1)->create([
+            'accountNo' => '441817e',
+            'aType' => 'lmanager', 
+            'lName' => fake()->lastName(),
+            'fNames' => fake()->firstName(),
+            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null
+        ]);
+
+        \App\Models\Account::factory(1)->create([
+            'accountNo' => '877873p',
+            'aType' => 'lmanager', 
+            'lName' => fake()->lastName(),
+            'fNames' => fake()->firstName(),
+            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null
+        ]);
+
+
+        \App\Models\Account::factory(50)->create();
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
