@@ -10,35 +10,35 @@ use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
 {
-    private String $accountNo = "delete1";
-    private array $applications;
+    private Account $user;
+    private $applications;
 
-    public function setup(): void {
+
+    protected function setup(): void {
         parent::setup();
 
-        Account::factory()->create([
-            'accountNo' => $this->accountNo
-        ]);
+        $this->user = Account::factory()->create();
     
-        Application::factory(5)->create([
-            'accountNo' => $this->accountNo
-        ]);
+        Log::debug($this->user['accountNo']);
 
-        $this->applications = Application::where('applicationNo', $this->accountNo)->get()->toArray();
+        $this->applications = Application::factory(5)->create([
+            'accountNo' => $this->user['accountNo']
+        ]);
     }
 
-    public function teardown(): void {
-        parent::teardown();
-        Application::where('accountNo', $this->accountNo)->delete();
-        Account::where('accountNo', $this->accountNo)->delete();
+    protected function teardown(): void {
+        Application::where('accountNo', $this->user['accountNo'])->delete();
+        $this->user->delete();
+
         $this->applications = null;
-        $this->user = null;
+
+        parent::teardown();
     }
 
     public function test_api_request_for_applications_successful(): void
     {
         // Check for valid response
-        $response = $this->getJson("/api/applications/{$this->accountNo}");
+        $response = $this->getJson("/api/applications/{$this->user['accountNo']}");
         $response->assertStatus(200);
     }
 
@@ -52,7 +52,7 @@ class ApplicationControllerTest extends TestCase
     public function test_api_request_for_applications_valid_length(): void
     {
         // Test if amount of applications matches
-        $response = $this->getJson("/api/applications/{$this->accountNo}");
+        $response = $this->getJson("/api/applications/{$this->user['accountNo']}");
         $array = $response->getData();
         $this->assertTrue(count($array) == count($this->applications));
     }
@@ -60,14 +60,14 @@ class ApplicationControllerTest extends TestCase
     public function test_api_request_for_applications_content_is_json(): void
     {
         // Check if response is json
-        $response = $this->getJson("/api/applications/{$this->accountNo}");
+        $response = $this->getJson("/api/applications/{$this->user['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_applications_content_is_valid(): void
     {
         // Check if correct structure
-        $response = $this->get("/api/applications/{$this->accountNo}");
+        $response = $this->get("/api/applications/{$this->user['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'applicationNo',
@@ -83,7 +83,7 @@ class ApplicationControllerTest extends TestCase
         // Check if returned applications for correct user
         $array = json_decode($response->content());
         foreach ($array as $app) {
-            $this->assertTrue($app->accountNo == $this->accountNo);
+            $this->assertTrue($app->accountNo == $this->user['accountNo']);
         }
     }
 }
