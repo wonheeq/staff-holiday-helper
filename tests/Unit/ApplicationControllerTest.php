@@ -25,8 +25,6 @@ class ApplicationControllerTest extends TestCase
                 'accountNo' => $this->user->accountNo
             ]));
         }
-
-        Log::debug($this->applications);
     }
 
     public function teardown(): void {
