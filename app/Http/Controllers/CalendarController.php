@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Account;
 use App\Models\Nomination;
 use App\Models\Application;
 use \DateTime;
@@ -13,18 +13,17 @@ use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
-    public function getCalendarData(Request $request, String $user_id) {
-        Log::debug($user_id);
+    public function getCalendarData(Request $request, String $accountNo) {
         // Check if user exists for given user id
-        if (!User::find($user_id)) {
+        if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'User does not exist.'], 500);
+            return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
         $data = array();
         
-        $appData = $this->handleApplications($user_id);
-        $nomData = $this->handleSubstitutions($user_id);
+        $appData = $this->handleApplications($accountNo);
+        $nomData = $this->handleSubstitutions($accountNo);
 
         $data = $this->addToArray($data, $appData);
         $data = $this->addToArray($data, $nomData);
@@ -40,21 +39,21 @@ class CalendarController extends Controller
         return $arr1;
     }
 
-    private function handleSubstitutions(String $user_id) {
+    private function handleSubstitutions(String $accountNo) {
         $data = array();
 
-        $nominations = Nomination::where("nominee", "=", $user_id)->get();
+        $nominations = Nomination::where("nomineeNo", "=", $accountNo)->get();
 
         // Iterate through each nomination
         foreach ($nominations as $nomination) {
             // Grab application details of accepted nominations
             if ($nomination['status'] == 'Y') {
-                $application = Application::where("id", "=", $nomination['applicationNo'])->get()[0];
+                $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
                 
                 if ($application != null) {
                     $startDate = date_format(new DateTime($application['start']), "d/m/Y H:i");
                     $endDate = date_format(new DateTime($application['end']), "d/m/Y H:i");
-                    $applicationMaker = User::where("id", "=", $application['accountNo'])->get()[0]['name'];
+                    $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first()['name'];
                     $task = $nomination['task'];
 
                     $content = "{$task} for {$applicationMaker} ({$startDate} - {$endDate})";
@@ -63,8 +62,8 @@ class CalendarController extends Controller
                         'highlight' => 'purple',
                         'dates' => [
                             [
-                                $application['start'],
-                                $application['end']
+                                new DateTime($application['start']),
+                                new DateTime($application['end'])
                             ]
                         ],
                         'popover' => [
@@ -79,10 +78,10 @@ class CalendarController extends Controller
         return $data;
     }
 
-    private function handleApplications(String $user_id) {
+    private function handleApplications(String $accountNo) {
         $data = array();
         // Get all applications of user
-        $applications = Application::where("accountNo", "=" , $user_id)->get();
+        $applications = Application::where("accountNo", "=" , $accountNo)->get();
 
         // Iterate through each application and add data to data array
         foreach ($applications as $app) {
@@ -93,8 +92,8 @@ class CalendarController extends Controller
                         'highlight' => 'green',
                         'dates' => [
                             [
-                                $app['start'],
-                                $app['end']
+                                new DateTime($app['start']),
+                                new DateTime($app['end'])
                             ]
                         ],
                         'popover' => [
@@ -106,14 +105,14 @@ class CalendarController extends Controller
                 }
                 case 'N': {
                     // Application is rejected
-                    $manager = User::find($app['processedBy']);
+                    $manager = Account::where('accountNo', $app['processedBy'])->first();
 
                     $rangeData = array(
                         'highlight' => 'red',
                         'dates' => [
                             [
-                                $app['start'],
-                                $app['end']
+                                new DateTime($app['start']),
+                                new DateTime($app['end'])
                             ]
                         ],
                         'popover' => [
@@ -129,8 +128,8 @@ class CalendarController extends Controller
                         'highlight' => 'blue',
                         'dates' => [
                             [
-                                $app['start'],
-                                $app['end']
+                                new DateTime($app['start']),
+                                new DateTime($app['end'])
                             ]
                         ],
                         'popover' => [
@@ -144,7 +143,7 @@ class CalendarController extends Controller
                     // Application is Pending status
                     
                     // Get nominations for application
-                    $nominations = Nomination::where('applicationNo', $app['id'])->get();
+                    $nominations = Nomination::where('applicationNo', $app['applicationNo'])->get();
 
                     $nomineesResponded = 0;
                     $nomineesTotal = 0;
@@ -160,8 +159,8 @@ class CalendarController extends Controller
                         'highlight' => 'orange',
                         'dates' => [
                             [
-                                $app['start'],
-                                $app['end']
+                                new DateTime($app['start']),
+                                new DateTime($app['end'])
                             ]
                         ],
                         'popover' => [
