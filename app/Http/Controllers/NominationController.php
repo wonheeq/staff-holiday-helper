@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Nomination;
+use App\Models\AccountRole;
+use App\Models\Role;
 
 class NominationController extends Controller
 {
@@ -15,20 +17,31 @@ class NominationController extends Controller
         // iteration through each nomination
         foreach ($nominations as $nomination) {
             // get nominee id from nomination
-            $nominee = $nomination['nominee'];
+            $nomineeNo = $nomination['nomineeNo'];
 
             // get name of nominee from user controller
-            $nominee_user = app(UserController::class)->getUser($nominee);
-            $name = $nominee_user['name'];
+            $nominee_user = app(UserController::class)->getUser($nomineeNo);
+            $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
+
+            $task = $this->getRoleFromAccountRoleId($nomination['accountRoleId']);
 
             array_push($users, array(
                 "name" => $name,
-                "user_id" => $nominee,
-                "task" => $nomination['task'],
+                "accountNo" => $nomineeNo,
+                "task" => $task,
                 "status" => $nomination['status'],
             ));
         }
 
         return $users;
     }   
+
+    private function getRoleFromAccountRoleId($accountRoleId) {
+        $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
+        $role = Role::where('roleId', $accountRole['roleId'])->first();
+        $roleName = $role['name'];
+
+        $task = "UNITCODE Unit Name - {$roleName}";
+        return $task;
+    }
 }

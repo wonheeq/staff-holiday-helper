@@ -29,16 +29,16 @@ let toggleImage = (isVisible) => {
 <template>
     <div class="flex flex-row bg-white mr-4">
         <div class="flex flex-col w-5/6 bg-gray-200 p-2">
-            <p class="text-xl font-bold">{{ source.start }} - {{ source.end }}</p>
+            <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
                 <div class="flex flex-row">
                     <p class="font-medium mr-2">Application ID:</p>
-                    {{ source.id }}
+                    {{ source.applicationNo }}
                 </div>
                 <div>
                     <p class="font-medium">Substitute/s:</p>
                     <p v-for="nomination in source.nominations">
-                        → {{ nomination.name }} ({{ nomination.user_id }}) - [{{ nomination.user_id }}@curtin.edu.au]    {{ nomination.task }}
+                        → {{ nomination.name }} ({{ nomination.accountNo }}) - [{{ nomination.user_id }}@curtin.edu.au]    {{ nomination.task }}
                     </p>
                 </div>
                 <div class="flex flex-row">
