@@ -9,6 +9,9 @@ use App\Models\Role;
 
 class NominationController extends Controller
 {
+    /*
+    Returns all nominations, formatted, for the given application number
+    */
     public function getNominations($appNo)
     {
         $nominations = Nomination::where('applicationNo', $appNo)->get();
@@ -23,6 +26,7 @@ class NominationController extends Controller
             $nominee_user = app(UserController::class)->getUser($nomineeNo);
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
 
+            // Get name of role associated with the account role
             $task = $this->getRoleFromAccountRoleId($nomination['accountRoleId']);
 
             array_push($users, array(
@@ -36,10 +40,15 @@ class NominationController extends Controller
         return $users;
     }   
 
+    /*
+    Returns the formatted role name of the given AccountRoleId
+    */
     private function getRoleFromAccountRoleId($accountRoleId) {
         $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
         $role = Role::where('roleId', $accountRole['roleId'])->first();
         $roleName = $role['name'];
+
+        // TODO: use unitId, majorId, courseId to determin real name of task after they are implemented
 
         $task = "UNITCODE Unit Name - {$roleName}";
         return $task;

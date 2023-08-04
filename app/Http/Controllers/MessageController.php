@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
+    /*
+    Returns all messages, formatted,  for the given account
+    */
     public function getMessages(Request $request, String $accountNo)
     {
         // Check if Account exists for given accountNo
@@ -22,9 +25,17 @@ class MessageController extends Controller
             ->where('receiverNo', $accountNo)
             ->get();
         
+        // Add in sendername of each message
         foreach ($messages as $val) {
-            $sender = app(UserController::class)->getUser($val["senderNo"]);
-            $val["senderName"] = "{$sender['fName']} {$sender['lName']}";
+            if ($val['senderNo'] != null) {
+                // if sender is not null, then sender is a user
+                $sender = app(UserController::class)->getUser($val["senderNo"]);
+                $val["senderName"] = "{$sender['fName']} {$sender['lName']}";
+            }
+            else {
+                // senderNo is null, therefore sender is the system
+                $val["senderName"] = "SYSTEM";
+            }
         }
 
         return response()->json($messages);
