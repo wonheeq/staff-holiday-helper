@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/accounts', AccountController::class);
-Route::get('messages/{user_id}', [MessageController::class, 'getMessages']);
-Route::get('applications/{user_id}', [ApplicationController::class, 'getApplications']);
-Route::get('calendar/{user_id}', [CalendarController::class, 'getCalendarData']);
-Route::get('getBookingOptions/{user_id}', [BookingController::class, 'getBookingOptions']);
+Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
+Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
+Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
+Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);

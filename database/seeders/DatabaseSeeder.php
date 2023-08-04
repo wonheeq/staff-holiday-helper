@@ -23,32 +23,32 @@ class DatabaseSeeder extends Seeder
         $ROLE_NAMES = ["Unit Coordinator", "Major Coordinator", "Course Coordinator", "Lecturer", "Tutor"];
 
         foreach($ROLE_NAMES as $name) {
-            Role::factory()->create([
+            Role::factory()->raw([
                 'name' => $name
             ]);
         }
         
         // Create one line manager
-        $lineManager = Account::factory(1)->create([
+        $lineManager = Account::factory(1)->raw([
             'accountType' => 'lmanager',
             'superiorNo' => null,
         ]);
 
         // Create 5 accounts
-        $accounts = Account::factory(5)->create([
+        $accounts = Account::factory(5)->raw([
             'superiorNo' => $lineManager->accountNo,
         ]);
         
         // Each account gets 3 random AccountRoles
         foreach ($accounts as $account) {
-            AccountRole::factory(3)->create([
+            AccountRole::factory(3)->raw([
                 'accountNo' => $account->accountNo,
             ]);
         }
 
         // Each account gets 4 applications
         foreach ($accounts as $account) {
-            $applications = Application::factory(4)->create([
+            $applications = Application::factory(4)->raw([
                 'accountNo' => $account->accountNo,
                 'processedBy' => $lineManager->accountNo,
             ]);
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
                 // Get list of AccountRoleIds associated with applicant
                 $accountRoleIds = AccountRole::where('accountNo', $account->accountNo)->get()->pluck('accountRoleId');
                 
-                Nomination::factory(3)->create([
+                Nomination::factory(3)->raw([
                     'applicationNo' => $application->applicationNo,
                     'accountRoleId' => fake()->randomElement($accountRoleIds),
                 ]);
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
         
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
-            Message::factory(10)->create([
+            Message::factory(10)->raw([
                 'receiverNo' => $account->accountNo,
             ]);
         }
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         // TEST USER
         $test_id = '000000a';
 
-        Account::factory()->create([
+        Account::factory()->raw([
             'accountNo' => $test_id,
             'fName' => 'Static',
             'lName' => 'Test User',
@@ -86,27 +86,27 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 10 roles for test user
-        AccountRole::factory(10)->create([
+        AccountRole::factory(10)->raw([
             'accountNo' => $test_id
         ]);
 
         // create 4 of each type of application status for the test user
-        Application::factory()->create([
+        Application::factory()->raw([
             'accountNo' => $test_id,
             'processedBy' => $lineManager->accountNo,
             'status' => 'Y',
         ]);
-        Application::factory()->create([
+        Application::factory()->raw([
             'accountNo' => $test_id,
             'processedBy' => $lineManager->accountNo,
             'status' => 'N',
         ]);
-        Application::factory()->create([
+        Application::factory()->raw([
             'accountNo' => $test_id,
             'processedBy' => $lineManager->accountNo,
             'status' => 'U',
         ]);
-        Application::factory()->create([
+        Application::factory()->raw([
             'accountNo' => $test_id,
             'processedBy' => $lineManager->accountNo,
             'status' => 'P',
@@ -119,13 +119,13 @@ class DatabaseSeeder extends Seeder
             // Get list of AccountRoleIds associated with applicant
             $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
             
-            Nomination::factory(3)->create([
+            Nomination::factory(3)->raw([
                 'applicationNo' => $application->applicationNo,
                 'accountRoleId' => fake()->randomElement($accountRoleIds),
             ]);
         }
 
-        Message::factory(10)->create([
+        Message::factory(10)->raw([
             'receiverNo' => $test_id,
         ]);
     }

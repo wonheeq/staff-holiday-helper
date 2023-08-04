@@ -15,13 +15,13 @@ let copyEmail = (e) => {
     <div class="flex flex-row justify-between bg-gray-200 p-2">
         <div class="flex flex-col">
             <div class="flex flex-row items-center">
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.title }}</p>
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.sender_name }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.subject }}</p>
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.senderName }}</p>
                 <img
                     class="ml-1.5 email"
                     src="/images/mail.svg"
                     v-b-tooltip.hover title="Copy Email Address to Clipboard"
-                    @click="copyEmail(props.source.sender_id)"
+                    @click="copyEmail(props.source.senderNo)"
                     />
             </div>
             <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
