@@ -39,10 +39,6 @@ class CalendarController extends Controller
         return $arr1;
     }
 
-    private function formatDate(DateTime $original) {
-        return date_format($original, "Y-m-d");
-    }
-
     private function handleSubstitutions(String $accountNo) {
         $data = array();
 
@@ -55,8 +51,8 @@ class CalendarController extends Controller
                 $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
                 
                 if ($application != null) {
-                    $startDate = $this->formatDate(new DateTime($application['start']));
-                    $endDate = $this->formatDate(new DateTime($application['end']));
+                    $startDate = $application['sDate'];
+                    $endDate = $application['eDate'];
                     $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first()['name'];
                     $task = $nomination['task'];
 
@@ -66,8 +62,8 @@ class CalendarController extends Controller
                         'highlight' => 'purple',
                         'dates' => [
                             [
-                                $this->formatDate(new DateTime($application['start'])),
-                                $this->formatDate(new DateTime($application['end']))
+                                $application['sDate'],
+                                $application['eDate']
                             ]
                         ],
                         'popover' => [
@@ -96,8 +92,8 @@ class CalendarController extends Controller
                         'highlight' => 'green',
                         'dates' => [
                             [
-                                $this->formatDate(new DateTime($app['start'])),
-                                $this->formatDate(new DateTime($app['end']))
+                                $app['sDate'],
+                                $app['eDate']
                             ]
                         ],
                         'popover' => [
@@ -110,17 +106,17 @@ class CalendarController extends Controller
                 case 'N': {
                     // Application is rejected
                     $manager = Account::where('accountNo', $app['processedBy'])->first();
-
+                    $rejector = $manager != null ? "{$manager['fName']} {$manager['lName']}" : 'System';
                     $rangeData = array(
                         'highlight' => 'red',
                         'dates' => [
                             [
-                                $this->formatDate(new DateTime($app['start'])),
-                                $this->formatDate(new DateTime($app['end']))
+                                $app['sDate'],
+                                $app['eDate']
                             ]
                         ],
                         'popover' => [
-                            'label' => "Rejected by {$manager['name']}: {$app['rejectReason']}",
+                            'label' => "Rejected by {$rejector}: {$app['rejectReason']}",
                         ]
                     );
                     array_push($data, $rangeData);
@@ -132,8 +128,8 @@ class CalendarController extends Controller
                         'highlight' => 'blue',
                         'dates' => [
                             [
-                                $this->formatDate(new DateTime($app['start'])),
-                                $this->formatDate(new DateTime($app['end']))
+                                $app['sDate'],
+                                $app['eDate']
                             ]
                         ],
                         'popover' => [
@@ -163,8 +159,8 @@ class CalendarController extends Controller
                         'highlight' => 'orange',
                         'dates' => [
                             [
-                                $this->formatDate(new DateTime($app['start'])),
-                                $this->formatDate(new DateTime($app['end']))
+                                $app['sDate'],
+                                $app['eDate']
                             ]
                         ],
                         'popover' => [
