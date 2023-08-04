@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accountRoles', function (Blueprint $table) {
+        Schema::create('account_roles', function (Blueprint $table) {
             $table->id('accountRoleId');
             $table->char('accountNo', 7);
             $table->unsignedBigInteger('roleId');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('accountRoles',function (Blueprint $table) {
+        Schema::table('account_roles',function (Blueprint $table) {
             $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
             $table->foreign('roleId')->references('roleId')->on('roles')->cascadeOnUpdate();
         });
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accountRoles');
+        Schema::dropIfExists('account_roles');
     }
 };
