@@ -4,23 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Application;
-use App\Models\User;
+use App\Models\Account;
 
 class ApplicationController extends Controller
 {
-    public function getApplications(Request $request, String $user_id)
+    public function getApplications(Request $request, String $accountNo)
     {
         // Check if user exists for given user id
-        if (!User::find($user_id)) {
+        if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'User does not exist.'], 500);
+            return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-        $applications = Application::orderBy('created_at', 'desc')->where('accountNo', $user_id)->get();
+        $applications = Application::orderBy('created_at', 'desc')->where('accountNo', $accountNo)->get();
         
         foreach ($applications as $val) {
             // get nominations for application
-            $nominations = app(NominationController::class)->getNominations($val["id"]);
+            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
             $val["nominations"] = $nominations;
         }
 
