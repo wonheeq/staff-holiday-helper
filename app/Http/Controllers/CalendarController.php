@@ -39,6 +39,10 @@ class CalendarController extends Controller
         return $arr1;
     }
 
+    private function formatDate(DateTime $original) {
+        return date_format($original, "Y-m-d");
+    }
+
     private function handleSubstitutions(String $accountNo) {
         $data = array();
 
@@ -51,8 +55,8 @@ class CalendarController extends Controller
                 $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
                 
                 if ($application != null) {
-                    $startDate = date_format(new DateTime($application['start']), "d/m/Y H:i");
-                    $endDate = date_format(new DateTime($application['end']), "d/m/Y H:i");
+                    $startDate = $this->formatDate(new DateTime($application['start']));
+                    $endDate = $this->formatDate(new DateTime($application['end']));
                     $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first()['name'];
                     $task = $nomination['task'];
 
@@ -62,8 +66,8 @@ class CalendarController extends Controller
                         'highlight' => 'purple',
                         'dates' => [
                             [
-                                new DateTime($application['start']),
-                                new DateTime($application['end'])
+                                $this->formatDate(new DateTime($application['start'])),
+                                $this->formatDate(new DateTime($application['end']))
                             ]
                         ],
                         'popover' => [
@@ -92,8 +96,8 @@ class CalendarController extends Controller
                         'highlight' => 'green',
                         'dates' => [
                             [
-                                new DateTime($app['start']),
-                                new DateTime($app['end'])
+                                $this->formatDate(new DateTime($app['start'])),
+                                $this->formatDate(new DateTime($app['end']))
                             ]
                         ],
                         'popover' => [
@@ -111,8 +115,8 @@ class CalendarController extends Controller
                         'highlight' => 'red',
                         'dates' => [
                             [
-                                new DateTime($app['start']),
-                                new DateTime($app['end'])
+                                $this->formatDate(new DateTime($app['start'])),
+                                $this->formatDate(new DateTime($app['end']))
                             ]
                         ],
                         'popover' => [
@@ -128,8 +132,8 @@ class CalendarController extends Controller
                         'highlight' => 'blue',
                         'dates' => [
                             [
-                                new DateTime($app['start']),
-                                new DateTime($app['end'])
+                                $this->formatDate(new DateTime($app['start'])),
+                                $this->formatDate(new DateTime($app['end']))
                             ]
                         ],
                         'popover' => [
@@ -159,8 +163,8 @@ class CalendarController extends Controller
                         'highlight' => 'orange',
                         'dates' => [
                             [
-                                new DateTime($app['start']),
-                                new DateTime($app['end'])
+                                $this->formatDate(new DateTime($app['start'])),
+                                $this->formatDate(new DateTime($app['end']))
                             ]
                         ],
                         'popover' => [
