@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('accountRoles', function (Blueprint $table) {
             $table->id('accountRoleId');
-            $table->unsignedBigInteger('accountNo');
+            $table->char('accountNo', 7);
             $table->unsignedBigInteger('roleId');
             /* 
             $table->unsignedBigInteger('unitId')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration
         });
 
         Schema::table('accountRoles',function (Blueprint $table) {
-            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('roleId')->references('roleId')->on('roles')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('roleId')->references('roleId')->on('roles')->cascadeOnUpdate();
         });
     }
 

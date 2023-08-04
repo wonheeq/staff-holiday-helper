@@ -20,10 +20,8 @@ return new class extends Migration
             $table->char('processedBy', 7);
             $table->text('rejectReason');
             $table->timestamps();
-        });
 
-        Schema::table('applications',function (Blueprint $table) {
-            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
         });
     }
 

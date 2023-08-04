@@ -18,14 +18,10 @@ return new class extends Migration
             $table->string('lName', 20)->nullable();
             // No size limit on password for now, unsure about encryption
             $table->string('password');
-            $table->char('superiorNo')->nullable();
+            $table->char('superiorNo', 7)->nullable();
             // Left out schoolId for now, not necessary for home page or bookings page
             $table->rememberToken();
             $table->timestamps();
-        });
-
-        Schema::table('accounts',function (Blueprint $table) {
-            $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 
