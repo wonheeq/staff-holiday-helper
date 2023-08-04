@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         }
         
         // Create one line manager
-        $lineManager = Account::factory(1)->raw([
+        $lineManager = Account::factory()->raw([
             'accountType' => 'lmanager',
             'superiorNo' => null,
         ]);

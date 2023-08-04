@@ -24,7 +24,7 @@ return new class extends Migration
         Schema::table('nominations',function (Blueprint $table) {
             $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
             $table->foreign('nomineeNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
-            $table->foreign('accountRoleId')->references('accountRoleId')->on('accountRoles')->cascadeOnUpdate();
+            $table->foreign('accountRoleId')->references('accountRoleId')->on('account_roles')->cascadeOnUpdate();
         });
     }
 
