@@ -13,7 +13,7 @@ class MessageController extends Controller
     public function getMessages(Request $request, String $accountNo)
     {
         // Check if Account exists for given accountNo
-        if (!Account::where('accountNo', $accountNo)->get()) {
+        if (!Account::where('accountNo', $accountNo)->first()) {
             // Account does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
