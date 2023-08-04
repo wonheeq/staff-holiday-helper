@@ -7,9 +7,16 @@ use App\Models\Account;
 
 class BookingController extends Controller
 {
+    /*
+    Returns a list of all account numbers in the system that belong to the same school
+    as the account for the given account number.
+    This list excludes the given account number.
+    This list has "Self Nomination" at the front of the array
+    */
     public function getBookingOptions(Request $request, String $accountNo) {
-        $users = Account::where("accountNo", "!=", $accountNo)->get();
+        // Todo: Check for schoolId after it gets implemented 
 
+        $users = Account::where("accountNo", "!=", $accountNo)->get();
         $data = ["Self Nomination"];
 
         foreach ($users as $user) {
