@@ -24,8 +24,7 @@ return new class extends Migration
         // Making 'superiorNo' a foreign key of 'accountNo'
         // https://stackoverflow.com/a/65396800 
         Schema::table('accounts',function (Blueprint $table) {
-            $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();    
-        
+            $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 

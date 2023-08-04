@@ -3,7 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User;
+use App\Models\Account;
+use App\Models\Application;
 define("TITLES", ["Substitution Request", "Leave Approved", "Leave Rejected"]); 
 
 /**
@@ -18,19 +19,13 @@ class MessageFactory extends Factory
      */
     public function definition(): array
     {
-        $selectedTitle = fake()->randomElement(TITLES);
-        $isNominatedMultiple = false;
-        if ($selectedTitle == 'Substitution Request') {
-            // random
-            $isNominatedMultiple = fake()->numberBetween(0,1) == 1;
-        }
         return [
-            'title' => $selectedTitle,
+            'applicationNo' => fake()->randomElement(Application::pluck("applicationNo")),
+            'receiverNo' => fake()->randomElement(Account::pluck("accountNo")),
+            'senderNo' => fake()->randomElement(Account::pluck("accountNo")),
+            'subject' => fake()->randomElement(TITLES),
             'content' => fake()->realText(fake()->numberBetween(10,100)),
-            'acknowledged' => fake()->numberBetween(0,1),
-            'is_nominated_multiple' => $isNominatedMultiple,
-            'receiver_id' => fake()->randomElement(User::pluck('id')),
-            'sender_id' => fake()->randomElement(User::pluck('id')),
+            'acknowledged' => fake()->numberBetween(0,1) == 1,
         ];
     }
 }
