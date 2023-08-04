@@ -17,22 +17,17 @@ class ApplicationControllerTest extends TestCase
         parent::setup();
 
         $this->user = Account::factory()->create();
-        $this->applications = array();
+        Application::factory(5)->create([
+            'accountNo' => $this->user->accountNo
+        ]);
 
-
-        for($i = 0; $i < 5; $i++) {
-            array_push($this->applications, Application::factory()->create([
-                'accountNo' => $this->user->accountNo
-            ]));
-        }
+        $this->applications = Application::where('applicationNo', $this->user->accountNo)->get()->toArray();
     }
 
     public function teardown(): void {
         parent::teardown();
-        foreach ($this->applications as $app) {
-            Application::where('applicationNo', $app['applicationNo'])->delete();
-        }
-        Account::where('accountNo', $this->user['accountNo'])->delete();
+        //Application::where('applicationNo', $this->user->accountNo)->delete();
+        //Account::where('accountNo', $this->user->accountNo)->delete();
     }
 
     public function test_api_request_for_applications_successful(): void
