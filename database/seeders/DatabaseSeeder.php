@@ -83,30 +83,30 @@ class DatabaseSeeder extends Seeder
             'schoolId' => fake()->numberBetween(101, 114)
         // Create 5 accounts
         $accounts = Account::factory(5)->raw([
-            'superiorNo' => $lineManager->accountNo,
+            'superiorNo' => $lineManager['accountNo'],
         ]);
         
         // Each account gets 3 random AccountRoles
         foreach ($accounts as $account) {
             AccountRole::factory(3)->raw([
-                'accountNo' => $account->accountNo,
+                'accountNo' => $account['accountNo'],
             ]);
         }
 
         // Each account gets 4 applications
         foreach ($accounts as $account) {
             $applications = Application::factory(4)->raw([
-                'accountNo' => $account->accountNo,
-                'processedBy' => $lineManager->accountNo,
+                'accountNo' => $account['accountNo'],
+                'processedBy' => $lineManager['accountNo'],
             ]);
 
             // Generate 4 nominations for each application
             foreach ($applications as $application) {
                 // Get list of AccountRoleIds associated with applicant
-                $accountRoleIds = AccountRole::where('accountNo', $account->accountNo)->get()->pluck('accountRoleId');
+                $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
                 
                 Nomination::factory(3)->raw([
-                    'applicationNo' => $application->applicationNo,
+                    'applicationNo' => $application['applicationNo'],
                     'accountRoleId' => fake()->randomElement($accountRoleIds),
                 ]);
             }
@@ -115,7 +115,7 @@ class DatabaseSeeder extends Seeder
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             Message::factory(10)->raw([
-                'receiverNo' => $account->accountNo,
+                'receiverNo' => $account['accountNo'],
             ]);
         }
 
@@ -128,7 +128,7 @@ class DatabaseSeeder extends Seeder
             'fName' => 'Static',
             'lName' => 'Test User',
             'password' => 'test',
-            'superiorNo' => $lineManager->accountNo,
+            'superiorNo' => $lineManager['accountNo'],
             'remember_token' => Str::random(10),
         ]);
 
@@ -140,22 +140,22 @@ class DatabaseSeeder extends Seeder
         // create 4 of each type of application status for the test user
         Application::factory()->raw([
             'accountNo' => $test_id,
-            'processedBy' => $lineManager->accountNo,
+            'processedBy' => $lineManager['accountNo'],
             'status' => 'Y',
         ]);
         Application::factory()->raw([
             'accountNo' => $test_id,
-            'processedBy' => $lineManager->accountNo,
+            'processedBy' => $lineManager['accountNo'],
             'status' => 'N',
         ]);
         Application::factory()->raw([
             'accountNo' => $test_id,
-            'processedBy' => $lineManager->accountNo,
+            'processedBy' => $lineManager['accountNo'],
             'status' => 'U',
         ]);
         Application::factory()->raw([
             'accountNo' => $test_id,
-            'processedBy' => $lineManager->accountNo,
+            'processedBy' => $lineManager['accountNo'],
             'status' => 'P',
         ]);
 
@@ -167,7 +167,7 @@ class DatabaseSeeder extends Seeder
             $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
             
             Nomination::factory(3)->raw([
-                'applicationNo' => $application->applicationNo,
+                'applicationNo' => $application['applicationNo'],
                 'accountRoleId' => fake()->randomElement($accountRoleIds),
             ]);
         }
