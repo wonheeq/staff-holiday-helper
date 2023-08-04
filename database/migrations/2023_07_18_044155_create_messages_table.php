@@ -12,16 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->id()->increments();
-            $table->string('receiver_id');
-            $table->foreign('receiver_id')->references('id')->on('users');
-            $table->string('sender_id');
-            $table->foreign('sender_id')->references('id')->on('users');
-            $table->string('title');
+            $table->id("messageId");
+            $table->unsignedBigInteger("applicationNo");
+            $table->char('receiverNo', 7);
+            $table->char('senderNo', 7)->nullable();
+            $table->string('subject', 40);
             $table->text('content');
-            $table->boolean('is_nominated_multiple');
             $table->boolean('acknowledged');
             $table->timestamps();
+        });
+
+        Schema::table('accounts',function (Blueprint $table) {
+            $table->foreign('receiverNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign('senderNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 
