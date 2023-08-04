@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Account;
 
 class UserController extends Controller
 {
-    public function getUser($id)
+    public function getUser($accountNo)
     {
-        $user = User::find($id);
+        $user = Account::find($accountNo);
         return $user;
     }   
 }
