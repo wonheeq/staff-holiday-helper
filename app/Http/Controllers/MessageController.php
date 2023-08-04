@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\Account;
 
+use Illuminate\Support\Facades\Log;
+
 class MessageController extends Controller
 {
     public function getMessages(Request $request, String $accountNo)
     {
         // Check if Account exists for given accountNo
-        if (!Account::find($accountNo)) {
+        if (!Account::where('accountNo', $accountNo)->get()) {
             // Account does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
@@ -22,7 +24,7 @@ class MessageController extends Controller
         
         foreach ($messages as $val) {
             $sender = app(UserController::class)->getUser($val["senderNo"]);
-            $val["senderName"] = $sender["fName"] + " " + $sender["lName"];
+            $val["senderName"] = "{$sender['fName']} {$sender['lName']}";
         }
 
         return response()->json($messages);

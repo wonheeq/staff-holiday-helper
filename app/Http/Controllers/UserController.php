@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function getUser($accountNo)
     {
-        $user = Account::find($accountNo);
+        $user = Account::where('accountNo', $accountNo)->get()[0];
         return $user;
     }   
 }
