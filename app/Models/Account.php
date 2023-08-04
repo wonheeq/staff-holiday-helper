@@ -11,6 +11,7 @@ class Account extends Model
     public $incrementing = false;
 
     protected $primaryKey = 'accountNo';
+    protected $keyType = 'string';
 
     // protected $table = 'accounts';
     // protected $guarded = [];
