@@ -12,16 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {
-            $table->id();
-            $table->string('accountNo');
-            $table->foreign('accountNo')->references('id')->on('users');
-            $table->dateTime('start');
-            $table->dateTime('end');
+            $table->id("applicationNo");
+            $table->char('accountNo', 7);
+            $table->timestamp('sDate');
+            $table->timestamp('eDate');
             $table->char('status', 1);
-            $table->string('processedBy');
-            $table->foreign('processedBy')->references('id')->on('users');
-            $table->string('rejectReason');
+            $table->char('processedBy', 7);
+            $table->text('rejectReason');
             $table->timestamps();
+        });
+
+        Schema::table('applications',function (Blueprint $table) {
+            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 
