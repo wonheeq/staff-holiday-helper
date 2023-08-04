@@ -10,6 +10,8 @@ class Account extends Model
     use HasFactory;
     public $incrementing = false;
 
+    protected $primaryKey = 'accountNo';
+
     // protected $table = 'accounts';
     // protected $guarded = [];
 }
