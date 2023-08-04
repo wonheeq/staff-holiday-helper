@@ -22,9 +22,9 @@ return new class extends Migration
         });
 
         Schema::table('nominations',function (Blueprint $table) {
-            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('nomineeNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('accountRoleId')->references('accountRoleId')->on('accountRoles')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
+            $table->foreign('nomineeNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('accountRoleId')->references('accountRoleId')->on('accountRoles')->cascadeOnUpdate();
         });
     }
 

@@ -22,10 +22,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('accounts',function (Blueprint $table) {
-            $table->foreign('receiverNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('senderNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate()->nullOnDelete();
+        Schema::table('messages',function (Blueprint $table) {
+            $table->foreign('receiverNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('senderNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
         });
     }
 
