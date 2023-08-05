@@ -18,7 +18,7 @@ export default {
                 },
                 {
                 label: 'Account Type',
-                field: 'aType',
+                field: 'accountType',
                 },
                 {
                 label: 'Surname',
@@ -27,7 +27,11 @@ export default {
                 },
                 {
                 label: 'Other Names',
-                field: 'fNames',
+                field: 'fName',
+                },
+                {
+                label: 'School',
+                field: 'schoolId',
                 },
                 {
                 label: 'Line Manager',
