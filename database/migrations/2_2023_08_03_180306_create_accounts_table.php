@@ -18,11 +18,12 @@ return new class extends Migration
             $table->string('fName', 30)->nullable();
             $table->string('password', 64); 
             $table->char('superiorNo', 7)->nullable();
-            $table->integer('schoolId', 3); 
+            $table->integer('schoolId')->length(3); 
             $table->timestamps();
         });
 
         // Making 'superiorNo' a foreign key of 'accountNo'
+        // Making 'schoolId' a foreign key of 'schoolId' in 'schools'
         // https://stackoverflow.com/a/65396800 
         Schema::table('accounts',function (Blueprint $table) {
             $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();

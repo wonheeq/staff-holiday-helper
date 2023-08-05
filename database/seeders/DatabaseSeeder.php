@@ -17,42 +17,70 @@ class DatabaseSeeder extends Seeder
         \App\Models\Message::factory(30)->create();
         \App\Models\Application::factory(10)->create();
 
+        // schools - All 14 curtin schools shown on faculty pages on Curtin Website
+        $schools = array(
+            array('schoolId' => '101', 'name' => 'Curtin Medical School'), 
+            array('schoolId' => '102', 'name' => 'Curtin School of Allied Health'),
+            array('schoolId' => '103', 'name' => 'Curtin School of Nursing'),
+            array('schoolId' => '104', 'name' => 'Curtin School of Population Health'),
+            array('schoolId' => '105', 'name' => 'Curtin Business School'), 
+            array('schoolId' => '106', 'name' => 'Curtin Law School'),
+            array('schoolId' => '107', 'name' => 'School of Design and the Built Environment'),
+            array('schoolId' => '108', 'name' => 'School of Education'),
+            array('schoolId' => '109', 'name' => 'School of Media, Creative Arts and Social Inquiry'), 
+            array('schoolId' => '110', 'name' => 'School of Civil and Mechanical Engineering'),
+            array('schoolId' => '111', 'name' => 'School of Earth and Planetary Sciences'),
+            array('schoolId' => '112', 'name' => 'School of Electrical Engineering, Computing and Mathematical Sciences'),
+            array('schoolId' => '113', 'name' => 'School of Molecular and Life Sciences'), 
+            array('schoolId' => '114', 'name' => 'WA School of Mines: Minerals, Energy and Chemical Engineering')
+         );
+        
+         foreach ($schools as $school) {
+            \App\Models\School::create([
+              'schoolId' => $school['schoolId'],
+              'name' => $school['name'],
+            ]);
+         }
 
         // Creating 4 Line Manager Accounts for other to use for superiorNo foreign key: ['112237t', '123456a', '441817e', '877873p']
         \App\Models\Account::factory(1)->create([
             'accountNo' => '112237t',
-            'aType' => 'lmanager', 
+            'accountType' => 'lmanager', 
             'lName' => fake()->lastName(),
-            'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null
+            'fName' => fake()->firstName(),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null,
+            'schoolId' => fake()->numberBetween(101, 114)
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '123456a',
-            'aType' => 'lmanager', 
+            'accountType' => 'lmanager', 
             'lName' => fake()->lastName(),
-            'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null
+            'fName' => fake()->firstName(),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null,
+            'schoolId' => fake()->numberBetween(101, 114)
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '441817e',
-            'aType' => 'lmanager', 
+            'accountType' => 'lmanager', 
             'lName' => fake()->lastName(),
-            'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null
+            'fName' => fake()->firstName(),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null,
+            'schoolId' => fake()->numberBetween(101, 114)
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '877873p',
-            'aType' => 'lmanager', 
+            'accountType' => 'lmanager', 
             'lName' => fake()->lastName(),
-            'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null
+            'fName' => fake()->firstName(),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'superiorNo' =>  null,
+            'schoolId' => fake()->numberBetween(101, 114)
         ]);
 
 
