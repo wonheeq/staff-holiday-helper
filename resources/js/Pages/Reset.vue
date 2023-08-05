@@ -7,7 +7,7 @@
  -->
 
 <script setup>
-import PasswordForm from "@/Components/PasswordForm.vue";
+import PasswordForm from "@/Components/Landing/PasswordForm.vue";
 </script>
 
 <template>
