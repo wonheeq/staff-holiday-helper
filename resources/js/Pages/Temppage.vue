@@ -15,8 +15,8 @@ const user = ref();
 async function handleLogin() {
     await axios.get("/sanctum/csrf-cookie");
     await axios.post("login", {
-        accountNo: formData.accountNo,
-        password: formData.pswd,
+        accountNo: formData.value.accountNo,
+        pswd: formData.value.pswd,
     });
 
     // let {data} = await axios.get("http://localhost:8000/api/user");

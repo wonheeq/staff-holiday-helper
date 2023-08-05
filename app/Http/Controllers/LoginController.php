@@ -22,7 +22,6 @@ class LoginController extends Controller
         error_log('after validation');
 
 
-        error_log(print_r($credentials));
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('home');
