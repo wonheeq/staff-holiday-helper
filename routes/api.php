@@ -29,3 +29,4 @@ Route::get('messages/{user_id}', [MessageController::class, 'getMessages']);
 Route::get('applications/{user_id}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{user_id}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{user_id}', [BookingController::class, 'getBookingOptions']);
+Route::get('/schools', SchoolController::class);
