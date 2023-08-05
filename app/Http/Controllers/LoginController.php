@@ -26,5 +26,9 @@ class LoginController extends Controller
             $request->session()->regenerate();
             return redirect()->intended('home');
         }
+
+        return back()->withErrors([
+            'accountNo' => 'Provided credentials do not match',
+        ])->onlyInput('accountNo');
     }
 }
