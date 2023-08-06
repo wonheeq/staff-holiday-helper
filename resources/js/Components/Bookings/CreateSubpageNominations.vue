@@ -3,6 +3,7 @@ import axios from "axios";
 import { reactive, ref, computed, onMounted } from "vue";
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
+import Swal from 'sweetalert2'
 import Nomination from "./Nomination.vue";
 import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { useNominationStore } from '@/stores/NominationStore';
@@ -10,6 +11,8 @@ import { storeToRefs } from 'pinia';
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
+
+let emit = defineEmits(['resetFields']);
 
 let deadAreaColor = "#FFFFFF";
 
@@ -105,6 +108,33 @@ const filteredNominations = computed(() => {
     return filtered;
 });
 
+function resetFields() {
+    for (let nomination of nominations.value) {
+        nomination.nomination = "";
+        nomination.selected = false;
+        nomination.visible = true;
+    }
+    allSelected = false;
+    selfNominationAll = false;
+    emit('resetFields');
+}
+
+function cancelApplication() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Cancel Application?',
+        text: 'This will reset all fields on this page.',
+        showDenyButton: true,
+        confirmButtonText: 'Yes',
+        confirmButtonColor: '#22C55E',
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            resetFields();
+        }
+    });
+}
+
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
@@ -181,7 +211,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     <p>This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.</p>
                 </div>
                 <div class="flex justify-between h-1/2 space-x-16">
-                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2">
+                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="cancelApplication()"
+                    >
                         Cancel Application
                     </button>
                     <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2">
