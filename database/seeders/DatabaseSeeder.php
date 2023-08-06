@@ -67,27 +67,10 @@ class DatabaseSeeder extends Seeder
             ]);
          }
 
-        // Creating 4 Line Manager Accounts for other to use for superiorNo foreign key: ['112237t', '123456a', '441817e', '877873p']
-        \App\Models\Account::factory(1)->create([
-            'accountNo' => '112237t',
-            'accountType' => 'lmanager', 
-            'lName' => fake()->lastName(),
-            'fName' => fake()->firstName(),
-            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null,
-            'schoolId' => fake()->numberBetween(101, 114)
-        ]);
+       
 
-        \App\Models\Account::factory(1)->create([
-            'accountNo' => '123456a',
-            'accountType' => 'lmanager', 
-            'lName' => fake()->lastName(),
-            'fName' => fake()->firstName(),
-            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
-            'superiorNo' =>  null,
-            'schoolId' => fake()->numberBetween(101, 114)
-        // Create 5 accounts
-        Account::factory(5)->create([
+        // Create 30 accounts
+        Account::factory(30)->create([
             'superiorNo' => $lineManagerNo,
         ]);
 
