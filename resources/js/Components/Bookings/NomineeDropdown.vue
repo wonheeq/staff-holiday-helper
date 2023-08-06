@@ -10,6 +10,7 @@ let props = defineProps({
         type: Object,
         default: {},
     },
+    isDisabled: Boolean,
 });
 
 let dropdownSearch = ref("");
@@ -24,24 +25,32 @@ function handleSelection(label) {
     displayOptions.value = false;
     emit('optionSelected', label);
 };
+
+const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div class="flex flex-col">
         <div class="flex flex-row">
             <input type="text"
+                :class="isDisabled ? disabledClass : ''"
                 class="h-8 w-full"
                 v-model="dropdownSearch"
                 @focusin="displayOptions=true"
+                :disabled="isDisabled"
             />
             <button class="w-8"
+                :class="isDisabled ? disabledClass : ''"
                 @click="displayOptions = !displayOptions"
+                :disabled="isDisabled"
             >
                 <img :src="getButtonSrc(displayOptions)"
-                class="border-y border-r border-colour h-full w-full"/>
+                    class="border-y border-r h-full w-full"
+                    :class="isDisabled ? disabledClass : 'border-colour'"
+                />
             </button>
         </div>
         <div class="bg-white border-x border-b border-black h-40 z-10"
-            v-show="displayOptions"
+            v-show="displayOptions && !isDisabled"
         >
             <VueScrollingTable
                 class="w-full"

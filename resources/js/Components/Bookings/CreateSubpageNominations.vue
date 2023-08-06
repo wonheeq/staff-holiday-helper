@@ -12,6 +12,7 @@ const { nominations } = storeToRefs(nominationStore);
 
 let deadAreaColor = "#FFFFFF";
 
+let selfNominationAll = ref(false);
 let allSelected = ref(false);
 let roleFilter = ref("");
 let staffMembers = reactive([]);
@@ -65,6 +66,14 @@ function handleSelectAll() {
     }
 }
 
+function handleSelfNominateAll() {
+    if (selfNominationAll) {
+        for (let nomination of nominations.value) {
+            nomination.nomination = "Self Nomination";
+        }
+    }
+}
+
 const numSelectedNominations = computed(() => {
     return nominations.value.filter(nomination => nomination.selected).length;
 });
@@ -90,6 +99,8 @@ const filteredNominations = computed(() => {
 
     return filtered;
 });
+
+const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div class="flex flex-col w-full pageHeight" v-if="dataReady">
@@ -105,8 +116,10 @@ const filteredNominations = computed(() => {
                         </p>
                         <input type="checkbox"
                             class="w-8 h-8"
+                            :class="selfNominationAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
+                            :disabled="selfNominationAll"
                         />
                     </div>
                     <div class="w-full">
@@ -115,7 +128,9 @@ const filteredNominations = computed(() => {
                         </p>
                         <input type="text"
                             class="h-8 w-2/3"
-                            v-model="roleFilter"    
+                            :class="selfNominationAll ? disabledClass : ''"
+                            v-model="roleFilter"
+                            :disabled="selfNominationAll"
                         />
                     </div>
                 </div>
@@ -126,7 +141,8 @@ const filteredNominations = computed(() => {
                     <NomineeDropdown
                         class="w-full"
                         :options="staffMembers"
-                        @optionSelected="(selection) => handleDropdownStaffSelection(selection)"    
+                        @optionSelected="(selection) => handleDropdownStaffSelection(selection)"
+                        :isDisabled="selfNominationAll"
                     />
                 </div>
             </div>
@@ -144,6 +160,7 @@ const filteredNominations = computed(() => {
                             v-for="nomination in filteredNominations"
                             :nomination="nomination"
                             :options="staffMembers"
+                            :isDisabled="selfNominationAll"
                         />
                         </div>
                     </template>
@@ -151,7 +168,11 @@ const filteredNominations = computed(() => {
             </div>
             <div class="h-[10%]">
                 <div class="flex items-center space-x-2 py-2 h-1/2">
-                    <input type="checkbox"/>
+                    <input type="checkbox"
+                        class="h-8 w-8"
+                        v-model="selfNominationAll"
+                        @click="handleSelfNominateAll()"    
+                    />
                     <p>This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.</p>
                 </div>
                 <div class="flex justify-between h-1/2 space-x-16">
