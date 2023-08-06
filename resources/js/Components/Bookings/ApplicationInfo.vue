@@ -38,7 +38,7 @@ let toggleImage = (isVisible) => {
                 <div>
                     <p class="font-medium">Substitute/s:</p>
                     <p v-for="nomination in source.nominations">
-                        → {{ nomination.name }} ({{ nomination.accountNo }}) - [{{ nomination.user_id }}@curtin.edu.au]    {{ nomination.task }}
+                        → {{ nomination.name }} - [{{ nomination.accountNo }}@curtin.edu.au]    {{ nomination.task }}
                     </p>
                 </div>
                 <div class="flex flex-row">

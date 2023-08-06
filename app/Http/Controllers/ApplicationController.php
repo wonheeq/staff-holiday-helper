@@ -80,6 +80,13 @@ class ApplicationController extends Controller
     } 
 
     /*
+    Returns a date formatted to mysql timestamp
+    */
+    private function formatDate(string $date) {
+        return strtotime(str_replace('T', ' ', $date));
+    }
+
+    /*
     Creates a new Application in the database if the content is valid.
     Returns an Application encoded in json.
     */
@@ -90,16 +97,19 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
 
+        Log::debug($this->formatDate($data['sDate']));
+
         $application = Application::create([
             'accountNo' => $data['accountNo'],
-            'sDate' => $data['sDate'],
-            'eDate' => $data['eDate'],
+            'sDate' => $this->formatDate($data['sDate']),
+            'eDate' => $this->formatDate($data['eDate']),
             'status' => 'P',
         ]);
 
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
+            Log::debug($nominee);
             Nomination::create([
                 'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nominee,
