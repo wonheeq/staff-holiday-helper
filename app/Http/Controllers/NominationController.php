@@ -27,7 +27,7 @@ class NominationController extends Controller
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
 
             // Get name of role associated with the account role
-            $task = $this->getRoleFromAccountRoleId($nomination['accountRoleId']);
+            $task = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
 
             array_push($users, array(
                 "name" => $name,
