@@ -143,6 +143,9 @@ function submitApplication() {
         'accountNo': userId.value,
         'selfNominateAll': selfNominateAll.value,
     }
+
+    allSelected = false;
+    selfNominateAll = false;
     // pass data to parent to handle
     emit('submitApplication', data);
 }

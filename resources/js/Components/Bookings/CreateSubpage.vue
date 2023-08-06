@@ -18,6 +18,12 @@ let period = reactive({
 function resetFields() {
     period.start = null;
     period.end = null;
+
+    for (let nomination of nominations.value) {
+        nomination.nomination = "";
+        nomination.selected = false;
+        nomination.visible = true;
+    }
 }
 
 function calcDateDiff(d1, d2) {
@@ -92,9 +98,17 @@ function createApplication(data) {
         data.nominations = formatNominations();
         data.sDate = period.start;
         data.eDate = period.end;
+
+        resetFields();
+        
         axios.post('/api/createApplication', data)
             .then(res => {
-                alert(res.data);
+                if (res.status == 200) {
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully created application.'
+                    });
+                }
             }).catch(err => {
             console.log(err)
         });
@@ -102,6 +116,7 @@ function createApplication(data) {
     else {
         Swal.fire({
            icon: "error",
+           title: "Error",
            text:  errors
         });
     }

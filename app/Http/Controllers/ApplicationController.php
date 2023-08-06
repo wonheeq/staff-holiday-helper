@@ -7,7 +7,7 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
 use \DateTime;
-use Illuminate\Support\Facades\Log;
+//use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -83,7 +83,7 @@ class ApplicationController extends Controller
     Returns a date formatted to mysql timestamp
     */
     private function formatDate(string $date) {
-        return strtotime(str_replace('T', ' ', $date));
+        return str_replace('T', ' ', $date);
     }
 
     /*
@@ -97,8 +97,6 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
 
-        Log::debug($this->formatDate($data['sDate']));
-
         $application = Application::create([
             'accountNo' => $data['accountNo'],
             'sDate' => $this->formatDate($data['sDate']),
@@ -109,7 +107,7 @@ class ApplicationController extends Controller
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
-            Log::debug($nominee);
+
             Nomination::create([
                 'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nominee,
@@ -118,6 +116,6 @@ class ApplicationController extends Controller
             ]);
         }
 
-        return response()->json($application);
+        response()->json(['success' => 'success'], 200);
     }
 }
