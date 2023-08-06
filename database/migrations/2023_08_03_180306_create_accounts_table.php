@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('aType', 21);
             $table->string('lName', 20);
             $table->string('fNames', 30)->nullable();
-            $table->string('pswd', 60);
+            $table->string('password', 60);
             $table->char('superiorNo', 7)->nullable();
             $table->timestamps();
         });
