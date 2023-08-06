@@ -5,12 +5,15 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Models\Account;
+use App\Models\AccountRole;
 use App\Models\Application;
+use App\Models\Nomination;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
 {
     private Account $user;
+    private $accountRoles;
     private $applications;
 
 
@@ -18,8 +21,10 @@ class ApplicationControllerTest extends TestCase
         parent::setup();
 
         $this->user = Account::factory()->create();
-    
-        Log::debug($this->user['accountNo']);
+
+        $this->accountRoles = AccountRole::factory(3)->create([
+            'accountNo' => $this->user->accountNo,
+        ]);
 
         $this->applications = Application::factory(5)->create([
             'accountNo' => $this->user['accountNo']
@@ -27,10 +32,18 @@ class ApplicationControllerTest extends TestCase
     }
 
     protected function teardown(): void {
+        $arr = AccountRole::where('accountNo', $this->user['accountNo'])->get();
+        foreach ($arr as $a) {
+            Nomination::where('accountRoleId', $a->accountRoleId)->delete();
+        }
+        AccountRole::where('accountNo', $this->user['accountNo'])->delete();
         Application::where('accountNo', $this->user['accountNo'])->delete();
+
+
         $this->user->delete();
 
         $this->applications = null;
+        $this->accountRoles = null;
 
         parent::teardown();
     }
@@ -85,5 +98,181 @@ class ApplicationControllerTest extends TestCase
         foreach ($array as $app) {
             $this->assertTrue($app->accountNo == $this->user['accountNo']);
         }
+    }
+
+
+    public function test_api_request_for_create_applications_successful(): void
+    {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_end_date_before_start_date(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2023-08-06 20:00:00',
+            'eDate' => '2023-08-01 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_start_date_after_end_date(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-01 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_date_is_before_current_date(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2023-08-04 20:00:00',
+            'eDate' => '2023-08-05 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_nomination_missing_nomineeno(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-04 20:00:00',
+            'eDate' => '2030-08-05 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => "",
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_nomination_missing_accountroleid(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-04 20:00:00',
+            'eDate' => '2030-08-05 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => "",
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_nominations_are_null(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-04 20:00:00',
+            'eDate' => '2030-08-05 20:00:00',
+            'nominations' => null,
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_create_applications_unsuccessful_nominations_are_empty(): void
+    {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-04 20:00:00',
+            'eDate' => '2030-08-05 20:00:00',
+            'nominations' => [],
+        ]);
+        $response->assertStatus(500);
     }
 }
