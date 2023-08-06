@@ -117,12 +117,27 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
 
-        $application = Application::create([
-            'accountNo' => $data['accountNo'],
-            'sDate' => $this->formatDate($data['sDate']),
-            'eDate' => $this->formatDate($data['eDate']),
-            'status' => 'P',
-        ]);
+
+        // If self nominated for all, application status should be Undecided
+        if ($data['selfNominateAll']) {
+            $application = Application::create([
+                'accountNo' => $data['accountNo'],
+                'sDate' => $this->formatDate($data['sDate']),
+                'eDate' => $this->formatDate($data['eDate']),
+                'status' => 'U',
+            ]);
+        }
+        else {
+            $application = Application::create([
+                'accountNo' => $data['accountNo'],
+                'sDate' => $this->formatDate($data['sDate']),
+                'eDate' => $this->formatDate($data['eDate']),
+                'status' => 'P',
+            ]);
+        }
+       
+
+        // TODO: Implement notifiying of related parties
 
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
