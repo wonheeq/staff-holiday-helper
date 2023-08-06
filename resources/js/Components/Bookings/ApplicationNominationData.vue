@@ -16,12 +16,12 @@ const pClass = "text-sm";
             Nominees Rejected: {{ nominations && nominations.filter(n => n.status === 'N').length  }}
         </p>
         <p v-if="appStatus === 'U'" :class="pClass">
-            [Awaiting Line Manager Decision]
+            Awaiting Line Manager Decision
         </p>
     </div>
     <div v-if="nominations == null">
         <p v-if="appStatus === 'U'" :class="pClass">
-            [Awaiting Line Manager Decision]
+            Awaiting Line Manager Decision
         </p>
     </div>
 </div>
