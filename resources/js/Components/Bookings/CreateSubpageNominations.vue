@@ -6,17 +6,20 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2'
 import Nomination from "./Nomination.vue";
 import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
-import { useNominationStore } from '@/stores/NominationStore';
 import { storeToRefs } from 'pinia';
+import { useUserStore } from "@/stores/UserStore";
+import { useNominationStore } from '@/stores/NominationStore';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
 
-let emit = defineEmits(['resetFields']);
+let emit = defineEmits(['resetFields', 'submitApplication']);
 
 let deadAreaColor = "#FFFFFF";
 
-let selfNominationAll = ref(false);
+let selfNominateAll = ref(false);
 let allSelected = ref(false);
 let roleFilter = ref("");
 let staffMembers = reactive([]);
@@ -72,7 +75,7 @@ function handleSelectAll() {
 }
 
 function handleSelfNominateAll() {
-    if (selfNominationAll) {
+    if (selfNominateAll) {
         for (let nomination of nominations.value) {
             nomination.nomination = "Self Nomination";
             nomination.selected = false;
@@ -115,7 +118,7 @@ function resetFields() {
         nomination.visible = true;
     }
     allSelected = false;
-    selfNominationAll = false;
+    selfNominateAll = false;
     emit('resetFields');
 }
 
@@ -135,6 +138,15 @@ function cancelApplication() {
     });
 }
 
+function submitApplication() {
+    let data = {
+        'accountNo': userId,
+        'selfNominateAll': selfNominateAll,
+    }
+    // pass data to parent to handle
+    emit('submitApplication', data);
+}
+
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
@@ -151,10 +163,10 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="checkbox"
                             class="w-8 h-8"
-                            :class="selfNominationAll ? disabledClass : ''"
+                            :class="selfNominateAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
-                            :disabled="selfNominationAll"
+                            :disabled="selfNominateAll"
                         />
                     </div>
                     <div class="w-full">
@@ -163,9 +175,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="text"
                             class="h-8 w-2/3"
-                            :class="selfNominationAll ? disabledClass : ''"
+                            :class="selfNominateAll ? disabledClass : ''"
                             v-model="roleFilter"
-                            :disabled="selfNominationAll"
+                            :disabled="selfNominateAll"
                         />
                     </div>
                 </div>
@@ -177,7 +189,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         class="w-full"
                         :options="staffMembers"
                         @optionSelected="(selection) => handleDropdownStaffSelection(selection)"
-                        :isDisabled="selfNominationAll"
+                        :isDisabled="selfNominateAll"
                     />
                 </div>
             </div>
@@ -195,7 +207,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             v-for="nomination in filteredNominations"
                             :nomination="nomination"
                             :options="staffMembers"
-                            :isDisabled="selfNominationAll"
+                            :isDisabled="selfNominateAll"
                         />
                         </div>
                     </template>
@@ -205,7 +217,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 <div class="flex items-center space-x-2 py-2 h-1/2">
                     <input type="checkbox"
                         class="h-8 w-8"
-                        v-model="selfNominationAll"
+                        v-model="selfNominateAll"
                         @click="handleSelfNominateAll()"    
                     />
                     <p>This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.</p>
@@ -216,7 +228,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     >
                         Cancel Application
                     </button>
-                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2">
+                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="submitApplication()"
+                    >
                         Submit Application
                     </button>
                 </div>
