@@ -23,21 +23,28 @@ class LoginController extends Controller
         // dd($credentials);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            if (Auth::check()) {
-                return response()->json([
-                    'response' => 'success',
-                    'url' => Session::get('url.intended', url('/home')),
-                ]);
-            } else {
-                return response()->json([
-                    'response' => 'fail',
-                    'error' => 'Login did not work',
-                ]);
-            }
+            return response()->json([
+                'response' => 'success',
+                'url' => Session::get('url.intended', url('/home')),
+            ]);
         }
         return response()->json([
             'response' => 'fail',
             'error' => 'Invalid Credentials',
+        ]);
+    }
+
+    public function checkLogin()
+    {
+        if (Auth::check()) {
+            return response()->json([
+                'response' => 'success',
+                'error' => 'logged in',
+            ]);
+        }
+        return response()->json([
+            'response' => 'fail',
+            'error' => 'not logged in',
         ]);
     }
 
