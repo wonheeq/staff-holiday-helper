@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id("applicationNo");
             $table->char('accountNo', 7);
-            $table->timestamp('sDate');
-            $table->timestamp('eDate');
-            $table->char('status', 1);
-            $table->char('processedBy', 7);
-            $table->text('rejectReason');
+            $table->timestamp('sDate')->nullable();
+            $table->timestamp('eDate')->nullable();
+            $table->char('status', 1)->default('P');
+            $table->char('processedBy', 7)->nullable();
+            $table->text('rejectReason')->nullable();
             $table->timestamps();
 
             $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();

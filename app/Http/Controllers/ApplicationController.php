@@ -101,7 +101,7 @@ class ApplicationController extends Controller
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
             Nomination::create([
-                'applicationNo' => $application['applicationNo'],
+                'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nominee,
                 'accountRoleId' => $nomination['accountRoleId'],
                 'status' => 'U'
