@@ -141,7 +141,7 @@ function cancelApplication() {
 function submitApplication() {
     let data = {
         'accountNo': userId,
-        'selfNominateAll': selfNominateAll,
+        'selfNominateAll': selfNominateAll.value,
     }
     // pass data to parent to handle
     emit('submitApplication', data);

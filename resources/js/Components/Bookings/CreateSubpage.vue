@@ -52,12 +52,12 @@ function validateApplication(data) {
 
     // Not self nominated for all and a nomination is missing/empty
     if (!data.selfNominateAll && nominations.value.filter(nomination => nomination.nomination == "").length > 0) {
-        errors.push("End date/time cannot be earlier than start date/time");
+        errors.push("Missing nomination/s");
     }
 
     // Selected "Self Nomination" for all nominations but did not select agreement
-    if (!data.selfNominateAll && nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.length) {
-        errors.push("You have selected Self nomination for all nominations but have not agreed to the no nominations terms.");
+    if (!data.selfNominateAll && nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length) {
+        errors.push("Selected Self Nomination for all nominations but have not agreed to the no nominations terms.");
     }
 
     return errors.length == 0;
