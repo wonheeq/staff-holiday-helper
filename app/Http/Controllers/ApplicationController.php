@@ -75,6 +75,11 @@ class ApplicationController extends Controller
             return false;
         }
 
+        // nominations is empty
+        if ($data['nominations'] == null || ($data['nominations'] && count($data['nominations']) == 0)) {
+            return false;
+        }
+
         if (!$data['selfNominateAll']) {
             $filteredForNull = array_filter($data['nominations'], function($var) {
                 if ($var['nomineeNo'] != null) {
@@ -96,6 +101,14 @@ class ApplicationController extends Controller
                 return false;
             }
         }
+
+        // An AccountRoleId is null
+        foreach ($data['nominations'] as $nomination) {
+            if ($nomination['accountRoleId'] == null) {
+                return false;
+            }
+        }
+
         return true;
     } 
 
