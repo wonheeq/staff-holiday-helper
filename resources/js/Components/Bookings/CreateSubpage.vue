@@ -10,6 +10,11 @@ let period = reactive({
     start: null,
     end: null,
 });
+
+function resetFields() {
+    period.start = null;
+    period.end = null;
+}
 </script>
 <template>
     <div class="flex bg-transparent subpage-height">
@@ -19,7 +24,7 @@ let period = reactive({
             </p>
             <div class="grid grid-cols-3 h-[92%]">
                 <CreateSubpagePeriod :period="period" class="h-full" />
-                <CreateSubpageNominations class="col-span-2"/>
+                <CreateSubpageNominations class="col-span-2" @resetFields="resetFields()"/>
             </div>
         </div>
         <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
