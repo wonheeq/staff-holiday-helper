@@ -39,8 +39,8 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => null,
         ]);
 
-        // Create 5 accounts
-        Account::factory(5)->create([
+        // Create 30 accounts
+        Account::factory(30)->create([
             'superiorNo' => $lineManagerNo,
         ]);
 
