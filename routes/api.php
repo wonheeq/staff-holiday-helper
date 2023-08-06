@@ -19,15 +19,18 @@ use App\Http\Controllers\BookingController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-Route::get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 
-Route::get('/accounts', AccountController::class);
+
+// Route::get('/accounts', AccountController::class);
+
+Route::middleware('auth:sanctum')->get('/accounts', AccountController::class);
+
+Route::get('/accounts', AccountController::class)->middleware('auth');
+
 Route::get('messages/{user_id}', [MessageController::class, 'getMessages']);
 Route::get('applications/{user_id}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{user_id}', [CalendarController::class, 'getCalendarData']);
