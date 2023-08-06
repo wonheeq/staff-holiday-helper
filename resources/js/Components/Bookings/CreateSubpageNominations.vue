@@ -81,7 +81,7 @@ function handleSelfNominateAll() {
             nomination.selected = false;
             nomination.visible = true;
         }
-        allSelected = false;
+        allSelected.value = false;
     }
 }
 
@@ -117,8 +117,8 @@ function resetFields() {
         nomination.selected = false;
         nomination.visible = true;
     }
-    allSelected = false;
-    selfNominateAll = false;
+    allSelected.value = false;
+    selfNominateAll.value = false;
     emit('resetFields');
 }
 
@@ -144,10 +144,11 @@ function submitApplication() {
         'selfNominateAll': selfNominateAll.value,
     }
 
-    allSelected = false;
-    selfNominateAll = false;
     // pass data to parent to handle
     emit('submitApplication', data);
+
+    allSelected.value = false;
+    selfNominateAll.value = false;
 }
 
 const disabledClass = "bg-gray-300 border-gray-100";
