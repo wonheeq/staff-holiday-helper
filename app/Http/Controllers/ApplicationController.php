@@ -7,7 +7,7 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
 use \DateTime;
-//use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -75,7 +75,7 @@ class ApplicationController extends Controller
             return false;
         }
 
-        if (!$data['selfNominateAll']) {
+        if (!$data['selfNominateAll'] == 1) {
             $filteredForNull = array_filter($data['nominations'], function($var) {
                 if ($var['nomineeNo'] != null) {
                     return $var;
@@ -117,9 +117,8 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
 
-
         // If self nominated for all, application status should be Undecided
-        if ($data['selfNominateAll']) {
+        if ($data['selfNominateAll'] == 1) {
             $application = Application::create([
                 'accountNo' => $data['accountNo'],
                 'sDate' => $this->formatDate($data['sDate']),
