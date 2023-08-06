@@ -5,8 +5,8 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 const formData = ref({
-    accountNo: 'test',
-    password: 'test'
+    accountNo: '123456c',
+    password: 'testPassword7'
 });
 
 const formDataTwo = ref({
@@ -27,10 +27,14 @@ async function handleLogin() {
 
         if( response.data.response == "success") {
             window.location.href = response.data.url
+            // errorMsg.value = response.data.error;
         } else {
             errorMsg.value = response.data.error;
         }
     })
+
+    // let {data} = await axios.get("/api/user");
+    // user.value = data;
 };
 
 async function handleCreate() {
@@ -45,6 +49,7 @@ async function handleCreate() {
 
 <template>
     <div>
+        {{ user }}
         {{ errorMsg }}
         <form action="#" @submit.prevent="handleLogin">
             <div>

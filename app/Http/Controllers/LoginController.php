@@ -23,10 +23,17 @@ class LoginController extends Controller
         // dd($credentials);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return response()->json([
-                'response' => 'success',
-                'url' => Session::get('url.intended', url('/home'))
-            ]);
+            if (Auth::check()) {
+                return response()->json([
+                    'response' => 'success',
+                    'url' => Session::get('url.intended', url('/home')),
+                ]);
+            } else {
+                return response()->json([
+                    'response' => 'fail',
+                    'error' => 'Login did not work',
+                ]);
+            }
         }
         return response()->json([
             'response' => 'fail',

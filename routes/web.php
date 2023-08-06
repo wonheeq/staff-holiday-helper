@@ -22,6 +22,10 @@ Route::post(
     [LoginController::class, 'authenticate']
 );
 
+// Route::get('login', function () {
+//     return Inertia::render('Temppage', []);
+// });
+
 Route::post(
     '/login/create',
     [LoginController::class, 'create']
@@ -30,19 +34,11 @@ Route::post(
 
 Route::get('/testlogintwo', function () {
     return Inertia::render('Temppage', []);
-});
+})->name('login');
 
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-    /*
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-    */
 });
 
 Route::get('/reset', function () {
@@ -52,6 +48,14 @@ Route::get('/reset', function () {
 Route::get('/home', function () {
     return Inertia::render('Home', []);
 });
+
+// Route::get('/home', function () {
+//     return Inertia::render('Home', []);
+// })->middleware('auth');
+
+// Route::middleware('auth:sanctum')->get('/home', function () {
+//     return Inertia::render('Home', []);
+// });
 
 
 Route::get('/bookings', function () {
