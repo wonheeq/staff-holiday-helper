@@ -46,7 +46,7 @@ class ApplicationController extends Controller
         $currentdate = new DateTime();
 
         // End date is earlier or equal to start date
-        
+        Log::debug($endDate->getTimestamp() - $startDate->getTimestamp());
         if (date_diff($endDate, $startDate)->invert == 1 ) {
             return false;
         }
