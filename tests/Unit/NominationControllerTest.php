@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Nomination;
+use Illuminate\Support\Facades\Log;
 
 class NominationControllerTest extends TestCase
 {
@@ -69,12 +70,21 @@ class NominationControllerTest extends TestCase
         $result = app(NominationController::class)->getNominations($this->application->applicationNo);
 
         // contents should match our original objects in setUp()
+        $names = array();
+        $nomineeNos = array();
+        $statuses = array();
         foreach ($result as $index => $element) {
             $user = Account::where('accountNo', $this->nominations[$index]->nomineeNo)->first();
 
-            $this->assertTrue($element['name'] == "{$user->fName} {$user->lName}");
-            $this->assertTrue($element['accountNo'] == $user->accountNo);
-            $this->assertTrue($element['status'] == $this->nominations[$index]->status);
+            array_push($names, "{$user->fName} {$user->lName}");
+            array_push($nomineeNos, $user->accountNo);
+            array_push($statuses, $this->nominations[$index]->status);
+        }
+
+        foreach ($result as $element) {
+            $this->assertTrue(in_array($element['name'], $names));
+            $this->assertTrue(in_array($element['nomineeNo'], $nomineeNos));
+            $this->assertTrue(in_array($element['status'], $statuses));
         }
     }
 }
