@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Account extends Model
 {
     use HasFactory;
+    public $incrementing = false;
 
+    protected $primaryKey = 'accountNo';
+    protected $keyType = 'string';
 
     // protected $table = 'accounts';
     // protected $guarded = [];

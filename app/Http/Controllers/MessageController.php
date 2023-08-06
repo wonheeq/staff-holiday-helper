@@ -4,25 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Message;
-use App\Models\User;
+use App\Models\Account;
+
+use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
-    public function getMessages(Request $request, String $user_id)
+    /*
+    Returns all messages, formatted,  for the given account
+    */
+    public function getMessages(Request $request, String $accountNo)
     {
-        // Check if user exists for given user id
-        if (!User::find($user_id)) {
-            // User does not exist, return exception
-            return response()->json(['error' => 'User does not exist.'], 500);
+        // Check if Account exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // Account does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-        $messages = Message::orderBy('created_at', 'desc')
-            ->where('receiver_id', $user_id)
+        $messages = Message::orderBy('created_at', 'asc')
+            ->where('receiverNo', $accountNo)
             ->get();
         
+        // Add in sendername of each message
         foreach ($messages as $val) {
-            $sender = app(UserController::class)->getUser($val["sender_id"]);
-            $val["sender_name"] = $sender["name"];
+            if ($val['senderNo'] != null) {
+                // if sender is not null, then sender is a user
+                $sender = app(UserController::class)->getUser($val["senderNo"]);
+                $val["senderName"] = "{$sender['fName']} {$sender['lName']}";
+            }
+            else {
+                // senderNo is null, therefore sender is the system
+                $val["senderName"] = "SYSTEM";
+            }
         }
 
         return response()->json($messages);

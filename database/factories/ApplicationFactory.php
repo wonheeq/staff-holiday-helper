@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User;
+use App\Models\Account;
 use \DateTime;
 
 class ApplicationFactory extends Factory
@@ -25,11 +25,11 @@ class ApplicationFactory extends Factory
         $end->modify("+{$daysToAdd2} days");
 
         return [
-            'accountNo' => fake()->randomElement(User::pluck('id')),
+            'accountNo' => fake()->randomElement(Account::pluck('accountNo')),
             'status' => fake()->randomElement(['Y', 'N', 'U', 'P']),
-            'start' => $start,
-            'end' => $end,
-            'processedBy' => fake()->randomElement(User::pluck('id')),
+            'sDate' => $start,
+            'eDate' => $end,
+            'processedBy' => fake()->randomElement(Account::pluck('accountNo')),
             'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
         ];
     }

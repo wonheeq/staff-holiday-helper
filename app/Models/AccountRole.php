@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class AccountRole extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'messageId';
-
+    protected $primaryKey = 'accountRoleId';
 }

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Nomination extends Model
 {
     use HasFactory;
+    public $incrementing = false;
 }

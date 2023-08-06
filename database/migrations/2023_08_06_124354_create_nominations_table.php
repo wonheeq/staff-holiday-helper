@@ -12,14 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nominations', function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('applicationNo');
-            $table->foreign('applicationNo')->references('id')->on('applications');
-            $table->string('nominee');
-            $table->foreign('nominee')->references('id')->on('users');
-            $table->text('task');
+            $table->char('nomineeNo', 7);
+            $table->unsignedBigInteger('accountRoleId');
             $table->char('status', 1);
             $table->timestamps();
+
+            $table->primary(['applicationNo', 'nomineeNo', 'accountRoleId']);
+        });
+
+        Schema::table('nominations',function (Blueprint $table) {
+            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
+            $table->foreign('nomineeNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('accountRoleId')->references('accountRoleId')->on('account_roles')->cascadeOnUpdate();
         });
     }
 

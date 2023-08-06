@@ -3,8 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User;
+use App\Models\Account;
 use App\Models\Application;
+use App\Models\AccountRole;
 
 class NominationFactory extends Factory
 {
@@ -16,10 +17,11 @@ class NominationFactory extends Factory
     public function definition(): array
     {
         $units = ["COMP2007: Unit Coordinator", "ISEC3001: Unit Coordinator", "COMP3001: Unit Coordinator"];
+        
         return [
-            'applicationNo' => fake()->randomElement(Application::pluck('id')),
-            'task' => fake()->randomElement($units),
-            'nominee' => fake()->randomElement(User::pluck('id')),
+            'applicationNo' => fake()->randomElement(Application::pluck('applicationNo')),
+            'accountRoleId' => fake()->randomElement(AccountRole::pluck('accountRoleId')),
+            'nomineeNo' => fake()->randomElement(Account::pluck('accountNo')),
             'status' => fake()->randomElement(['U', 'Y', 'N']),
         ];
     }
