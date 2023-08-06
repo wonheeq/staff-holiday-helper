@@ -140,7 +140,7 @@ function cancelApplication() {
 
 function submitApplication() {
     let data = {
-        'accountNo': userId,
+        'accountNo': userId.value,
         'selfNominateAll': selfNominateAll.value,
     }
     // pass data to parent to handle
