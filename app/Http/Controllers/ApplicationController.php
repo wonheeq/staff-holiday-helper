@@ -35,7 +35,6 @@ class ApplicationController extends Controller
     }
 
     private function validateApplication($data) {
-        Log::debug("pass1");
         // Date is empty
         if ($data['sDate'] == null || $data['eDate'] == null) {
             return false;
@@ -46,18 +45,16 @@ class ApplicationController extends Controller
         $currentdate = new DateTime();
 
         // End date is earlier or equal to start date
-        Log::debug($endDate->getTimestamp() - $startDate->getTimestamp());
-        if (date_diff($endDate, $startDate)->invert == 1 ) {
+        if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {
             return false;
         }
 
-        Log::debug("pass2");
         // A date is in the past
-        if (date_diff($startDate, $currentdate)->invert == 1 || date_diff($endDate, $currentdate)->invert == 1) {
+        if ($startDate->getTimestamp() - $currentdate->getTimestamp() <= 0
+            || $endDate->getTimestamp() - $currentdate->getTimestamp() <= 0 ) {
             return false;
         }
 
-        Log::debug("pass3");
         if (!$data['selfNominateAll']) {
             $filteredForNull = array_filter($data['nominations'], function($var) {
                 if ($var['nomineeNo'] != null) {
@@ -69,7 +66,6 @@ class ApplicationController extends Controller
                 return false;
             }
 
-            Log::debug("pass4");
             $filteredForSelfNom = array_filter($data['nominations'], function($var) {
                 if ($var['nomineeNo'] == "Self Nomination") {
                     return $var;
@@ -79,9 +75,6 @@ class ApplicationController extends Controller
             if (count($filteredForSelfNom) == count($data['nominations'])) {
                 return false;
             }
-
-
-        Log::debug("pass5");
         }
         return true;
     } 
