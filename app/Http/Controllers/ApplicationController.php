@@ -75,7 +75,7 @@ class ApplicationController extends Controller
             return false;
         }
 
-        if (!$data['selfNominateAll'] == 1) {
+        if (!$data['selfNominateAll']) {
             $filteredForNull = array_filter($data['nominations'], function($var) {
                 if ($var['nomineeNo'] != null) {
                     return $var;
@@ -118,7 +118,7 @@ class ApplicationController extends Controller
         }
 
         // If self nominated for all, application status should be Undecided
-        if ($data['selfNominateAll'] == 1) {
+        if ($data['selfNominateAll']) {
             $application = Application::create([
                 'accountNo' => $data['accountNo'],
                 'sDate' => $this->formatDate($data['sDate']),
