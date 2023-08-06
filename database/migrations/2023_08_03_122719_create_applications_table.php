@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id("applicationNo");
             $table->char('accountNo', 7);
             $table->timestamp('sDate');
-            $table->timestamp('eDate');
+            $table->timestamp('eDate')->nullable(); // Had to make nullable as would not allow two default value timestamps in one schema.
             $table->char('status', 1);
             $table->char('processedBy', 7);
-            $table->text('rejectReason');
+            $table->text('rejectReason')->nullable();
             $table->timestamps();
+        });
 
+        Schema::table('applications',function (Blueprint $table) {
             $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
         });
     }

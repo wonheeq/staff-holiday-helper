@@ -30,16 +30,9 @@ class DatabaseSeeder extends Seeder
                 'name' => $name
             ]);
         }
-        
-        // Create one line manager
-        $lineManagerNo = '000002L';
-        Account::factory()->create([
-            'accountNo' =>  $lineManagerNo,
-            'accountType' => 'lmanager',
-            'superiorNo' => null,
-        \App\Models\User::factory(5)->create();
-        \App\Models\Message::factory(30)->create();
+               
         \App\Models\Application::factory(10)->create();
+        \App\Models\Message::factory(30)->create();
         \App\Models\Unit::factory(15)->create();
 
         // schools - All 14 curtin schools shown on faculty pages on Curtin Website
@@ -67,12 +60,40 @@ class DatabaseSeeder extends Seeder
             ]);
          }
 
-       
+        // Creating 5 Line Manager Accounts for other to use for superiorNo foreign key: ['112237t', '123456a', '441817e', '877873p', '000002L']
+        $lineManagerNo = '000002L';
+        Account::factory()->create([
+            'accountNo' =>  $lineManagerNo,
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '112237t',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '123456a',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '441817e',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '877873p',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
 
         // Create 30 accounts
-        Account::factory(30)->create([
-            'superiorNo' => $lineManagerNo,
-        ]);
+        Account::factory(30)->create();
 
         $accounts = Account::get();
         
@@ -90,26 +111,28 @@ class DatabaseSeeder extends Seeder
                 'processedBy' => $lineManagerNo,
             ]);
 
+
         $applications = Application::where('accountNo', $account['accountNo'])->get();
 
-        // Generate 4 nominations for each application
-        foreach ($applications as $application) {
-            // Get list of AccountRoleIds associated with applicant
-            $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
-            
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[0],
-            ]);
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[1],
-            ]);
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[2],
-            ]);
-        };
+            // Generate 4 nominations for each application
+            foreach ($applications as $application) {
+                // Get list of AccountRoleIds associated with applicant
+                $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
+                
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[0],
+                ]);
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[1],
+                ]);
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[2],
+                ]);
+            }
+        }
         
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
@@ -128,7 +151,7 @@ class DatabaseSeeder extends Seeder
             'lName' => 'Test User',
             'password' => 'test',
             'superiorNo' => $lineManagerNo,
-            'remember_token' => Str::random(10),
+            //'remember_token' => Str::random(10),
         ]);
 
         // 10 roles for test user
