@@ -46,7 +46,7 @@ function validateApplication(data) {
     // A date is in the past
     let currentDate = new Date();
     if (period.end != null && period.start != null &&
-        (calcDateDiff(period.start, currentDate) < 0 || calcDateDiff(period.end, currentDate) < 0)) {
+        (calcDateDiff(period.start, currentDate) <= 0 || calcDateDiff(period.end, currentDate) <= 0)) {
         errors.push("Dates cannot be in the past");
     }
 
