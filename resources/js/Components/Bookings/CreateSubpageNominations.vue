@@ -9,6 +9,7 @@ import { useNominationStore } from '@/stores/NominationStore';
 import { storeToRefs } from 'pinia';
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
+const { fetchNominations } = nominationStore;
 
 let deadAreaColor = "#FFFFFF";
 
@@ -31,6 +32,7 @@ let fetchStaffMembers = async() => {
 const dataReady = ref(false);
 
 onMounted(async () => {
+    await fetchNominations();
     await fetchStaffMembers();
     dataReady.value = true;
 });
@@ -70,7 +72,10 @@ function handleSelfNominateAll() {
     if (selfNominationAll) {
         for (let nomination of nominations.value) {
             nomination.nomination = "Self Nomination";
+            nomination.selected = false;
+            nomination.visible = true;
         }
+        allSelected = false;
     }
 }
 
