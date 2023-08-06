@@ -41,3 +41,5 @@ Route::get('/courses', CourseController::class);
 Route::get('/majors', MajorController::class);
 Route::get('/units', UnitController::class);
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
+
+Route::post('createApplication', [ApplicationController::class, 'createApplication']);

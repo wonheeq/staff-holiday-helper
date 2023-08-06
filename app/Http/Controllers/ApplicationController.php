@@ -30,4 +30,14 @@ class ApplicationController extends Controller
 
         return response()->json($applications);
     }
+
+    /*
+    Validates and creates a new Application in the database if the content is valid.
+    Returns an Application encoded in json.
+    */
+    public function createApplication(Request $request) {
+        $data = $request->all();
+
+        
+    }
 }
