@@ -9,4 +9,6 @@ class Nomination extends Model
 {
     use HasFactory;
     public $incrementing = false;
+
+    protected $fillable = ['applicationNo', 'accountNo', 'nomineeNo', 'accountRoleId', 'status'];
 }

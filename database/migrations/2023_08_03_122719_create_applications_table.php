@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id("applicationNo");
             $table->char('accountNo', 7);
-            $table->timestamp('sDate');
+            $table->timestamp('sDate')->nullable();
             $table->timestamp('eDate')->nullable(); // Had to make nullable as would not allow two default value timestamps in one schema.
-            $table->char('status', 1);
-            $table->char('processedBy', 7);
+            $table->char('status', 1)->default('P');
+            $table->char('processedBy', 7)->nullable();
             $table->text('rejectReason')->nullable();
             $table->timestamps();
         });
