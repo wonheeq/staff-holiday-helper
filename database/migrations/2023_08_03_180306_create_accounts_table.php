@@ -16,16 +16,15 @@ return new class extends Migration
             $table->string('aType', 21);
             $table->string('lName', 20);
             $table->string('fNames', 30)->nullable();
-            $table->string('pswd', 64); 
+            $table->string('pswd', 60);
             $table->char('superiorNo', 7)->nullable();
             $table->timestamps();
         });
 
         // Making 'superiorNo' a foreign key of 'accountNo'
-        // https://stackoverflow.com/a/65396800 
-        Schema::table('accounts',function (Blueprint $table) {
-            $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();    
-        
+        // https://stackoverflow.com/a/65396800
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 

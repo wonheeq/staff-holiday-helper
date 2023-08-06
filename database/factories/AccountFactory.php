@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+
+
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Account>
@@ -18,10 +21,10 @@ class AccountFactory extends Factory
     {
         return [
             'accountNo' => fake()->unique()->bothify('######?'),
-            'aType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']), 
+            'aType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']),
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'pswd' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')),
             'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p'])
         ];
     }
