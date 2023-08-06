@@ -13,7 +13,7 @@ let props = defineProps({
                 {{ nomination.role }}
             </p>
         </div>
-        <div class="flex items-center">
+        <div class="flex">
             <p class="text-xl mr-8">
                 {{ nomination.nomination }}
             </p>
