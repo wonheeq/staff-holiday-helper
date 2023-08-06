@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\Account;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -38,6 +39,6 @@ class ApplicationController extends Controller
     public function createApplication(Request $request) {
         $data = $request->all();
 
-        
+        Log::debug($data);
     }
 }

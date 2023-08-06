@@ -63,9 +63,37 @@ function validateApplication(data) {
     return errors.length == 0;
 }
 
+function formatNomineeNo(nominee) {
+    if (nominee == "Self Nomination") {
+        return nominee;
+    }
+
+    // Should be formatted as "(XXXXXXX) - ZZZZZZZZZZZZ"
+    // We want to extract XXXXXXX, so start from index 1, 7 characters
+    return nominee.substr(1, 7);
+}
+
+function formatNominations() {
+    let result = [];
+
+    for (let nomination of nominations.value) {
+        result.push({
+            accountRoleId: nomination.accountRoleId,
+            nomineeNo: formatNomineeNo(nomination.nomination),
+        });
+    }
+}
+
 function createApplication(data) {
     if (validateApplication(data)) {
-
+        data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
+        data.nominations = formatNominations();
+        axios.post('/api/createApplication', data)
+            .then(res => {
+                alert(res.data);
+            }).catch(err => {
+            console.log(err)
+        });
     }
     else {
         Swal.fire({
