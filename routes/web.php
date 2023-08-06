@@ -22,13 +22,6 @@ Route::post(
     [LoginController::class, 'authenticate']
 );
 
-Route::get('/testloginone', function () {
-    return Inertia::render('Auth/Login', []);
-});
-
-Route::get('/testloginone', function () {
-    return Inertia::render('Auth/Login', []);
-});
 
 Route::get('/testlogintwo', function () {
     return Inertia::render('Temppage', []);

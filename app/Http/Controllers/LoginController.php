@@ -6,30 +6,29 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Session;
 
 
 
 class LoginController extends Controller
 {
-    public function authenticate(Request $request): RedirectResponse
+    public function authenticate(Request $request) //: RedirectResponse
     {
-        error_log('entered auth functino');
-
         $credentials = $request->validate([
             'accountNo' => ['required'],
             'pswd' => ['required'],
         ]);
-        error_log('after validation');
-
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('home');
+            return response()->json([
+                'response' => 'success',
+                'url' => Session::get('url.intended', url('/home'))
+            ]);
         }
-        error_log('after attempt');
-
-        return back()->withErrors([
-            'accountNo' => 'Provided credentials do not match',
-        ])->onlyInput('accountNo');
+        return response()->json([
+            'response' => 'fail',
+            'error' => 'Invalid Credentials',
+        ]);
     }
 }

@@ -10,23 +10,39 @@ const formData = ref({
 });
 
 const user = ref();
-
+const errorMsg = ref('');
 
 async function handleLogin() {
     await axios.get("/sanctum/csrf-cookie");
+
     await axios.post("login", {
         accountNo: formData.value.accountNo,
         pswd: formData.value.pswd,
-    });
+    }).then( function(response) {
+
+        if( response.data.response == "success") {
+            window.location.href = response.data.url
+        } else {
+            errorMsg.value = response.data.error;
+        }
+    }
+    )
+    };
+
+    // .then( function(response) {
+    //     console.log(response);
+    //     if(response.response == 'success') {
+    //         window.location.href = data.url;
+    //     }
 
     // let {data} = await axios.get("http://localhost:8000/api/user");
     // user.value = data;
-}
+
 </script>
 
 <template>
     <div>
-        {{ user }}
+        {{ errorMsg }}
         <form action="#" @submit.prevent="handleLogin">
             <div>
                 <input type="text" name="accountNo" v-model="formData.accountNo">
