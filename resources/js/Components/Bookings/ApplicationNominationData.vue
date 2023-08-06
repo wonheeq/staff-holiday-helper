@@ -20,16 +20,6 @@ const pClass = "text-sm";
         </p>
     </div>
     <div v-if="nominations == null">
-        <p :class="pClass">
-            <!---THIS IS ERRORNEOUS, AND SHOULD NOT APPEAR-->
-            Should not appear
-        </p>
-        <p v-if="appStatus === 'P'" :class="pClass">
-            Should not appear
-        </p>
-        <p v-if="appStatus === 'P'" :class="pClass">
-            Should not appear
-        </p>
         <p v-if="appStatus === 'U'" :class="pClass">
             [Awaiting Line Manager Decision]
         </p>
