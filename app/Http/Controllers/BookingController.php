@@ -50,6 +50,7 @@ class BookingController extends Controller
 
             // format and push data to result
             array_push($result, [
+                'accountRoleId' => $accountRole['accountRoleId'],
                 'selected' => false,
                 'role' => $roleName,
                 'nomination' => "",
