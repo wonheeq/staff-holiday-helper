@@ -21,37 +21,37 @@ class DatabaseSeeder extends Seeder
         // Creating 4 Line Manager Accounts for other to use for superiorNo foreign key: ['112237t', '123456a', '441817e', '877873p']
         \App\Models\Account::factory(1)->create([
             'accountNo' => '112237t',
-            'aType' => 'lmanager', 
+            'aType' => 'lmanager',
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
             'superiorNo' =>  null
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '123456a',
-            'aType' => 'lmanager', 
+            'aType' => 'lmanager',
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
             'superiorNo' =>  null
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '441817e',
-            'aType' => 'lmanager', 
+            'aType' => 'lmanager',
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
             'superiorNo' =>  null
         ]);
 
         \App\Models\Account::factory(1)->create([
             'accountNo' => '877873p',
-            'aType' => 'lmanager', 
+            'aType' => 'lmanager',
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
+            'password' => fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}'),
             'superiorNo' =>  null
         ]);
 
@@ -98,13 +98,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-         // generate 5 nominations for each application
-         $allApplications = \App\Models\Application::get();
-         foreach ($allApplications as $application) {
-             $appId = $application['id'];
-             \App\Models\Nomination::factory(5)->create([
-                 'applicationNo' => $appId,
-             ]);
-         }
+        // generate 5 nominations for each application
+        $allApplications = \App\Models\Application::get();
+        foreach ($allApplications as $application) {
+            $appId = $application['id'];
+            \App\Models\Nomination::factory(5)->create([
+                'applicationNo' => $appId,
+            ]);
+        }
     }
 }

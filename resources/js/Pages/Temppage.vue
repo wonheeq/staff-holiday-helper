@@ -6,7 +6,12 @@ axios.defaults.withCredentials = true;
 
 const formData = ref({
     accountNo: 'test',
-    pswd: 'test'
+    password: 'test'
+});
+
+const formDataTwo = ref({
+    accountNo: 'test',
+    password: 'test'
 });
 
 const user = ref();
@@ -17,7 +22,7 @@ async function handleLogin() {
 
     await axios.post("login", {
         accountNo: formData.value.accountNo,
-        pswd: formData.value.pswd,
+        password: formData.value.password,
     }).then( function(response) {
 
         if( response.data.response == "success") {
@@ -25,18 +30,16 @@ async function handleLogin() {
         } else {
             errorMsg.value = response.data.error;
         }
-    }
-    )
-    };
+    })
+};
 
-    // .then( function(response) {
-    //     console.log(response);
-    //     if(response.response == 'success') {
-    //         window.location.href = data.url;
-    //     }
+async function handleCreate() {
+    await axios.post("login/create", {
+        accountNo: formData.value.accountNo,
+        password: formData.value.password,
+    });
+}
 
-    // let {data} = await axios.get("http://localhost:8000/api/user");
-    // user.value = data;
 
 </script>
 
@@ -48,7 +51,7 @@ async function handleLogin() {
                 <input type="text" name="accountNo" v-model="formData.accountNo">
             </div>
             <div>
-                <input type="password" name="pswd" v-model="formData.pswd">
+                <input type="password" name="password" v-model="formData.password">
             </div>
             <div>
                 <button type="submit">Sign In</button>
@@ -57,7 +60,27 @@ async function handleLogin() {
                 {{ formData.accountNo }}
             </div>
             <div>
-                {{ formData.pswd }}
+                {{ formData.password }}
+            </div>
+        </form>
+
+
+
+        <form class="mt-20" action="#" @submit.prevent="handleCreate">
+            <div>
+                <input type="text" name="accountNo" v-model="formDataTwo.accountNo">
+            </div>
+            <div>
+                <input type="password" name="password" v-model="formDataTwo.password">
+            </div>
+            <div>
+                <button type="submit">Create User</button>
+            </div>
+            <div>
+                {{ formDataTwo.accountNo }}
+            </div>
+            <div>
+                {{ formDataTwo.password }}
             </div>
         </form>
     </div>

@@ -22,6 +22,11 @@ Route::post(
     [LoginController::class, 'authenticate']
 );
 
+Route::post(
+    '/login/create',
+    [LoginController::class, 'create']
+);
+
 
 Route::get('/testlogintwo', function () {
     return Inertia::render('Temppage', []);

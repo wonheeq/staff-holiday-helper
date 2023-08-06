@@ -24,7 +24,7 @@ class AccountFactory extends Factory
             'aType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']),
             'lName' => fake()->lastName(),
             'fNames' => fake()->firstName(),
-            'pswd' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')),
+            'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')),
             'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p'])
         ];
     }

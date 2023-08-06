@@ -13,13 +13,13 @@ class Account extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable;
     protected $fillable = [
         'accountNo',
-        'pswd',
+        'password',
     ];
 
-    public function getAuthPassword()
-    {
-        return $this->pswd;
-    }
+    // public function getAuthPassword()
+    // {
+    //     return $this->p;
+    // }
 
     // protected $table = 'accounts';
     // protected $guarded = [];
