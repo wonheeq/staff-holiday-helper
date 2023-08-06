@@ -31,7 +31,7 @@ class NominationController extends Controller
 
             array_push($users, array(
                 "name" => $name,
-                "accountNo" => $nomineeNo,
+                "nomineeNo" => $nomineeNo,
                 "task" => $task,
                 "status" => $nomination['status'],
             ));

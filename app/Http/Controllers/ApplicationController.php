@@ -28,10 +28,30 @@ class ApplicationController extends Controller
         foreach ($applications as $val) {
             // get nominations for application and insert
             $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
-            $val["nominations"] = $nominations;
+            
+            // check if is self nominated for all
+            if ($this->isSelfNominatedAll($nominations, $accountNo)) {
+                $val['isSelfNominatedAll'] = true;
+            }
+            else {
+                $val["nominations"] = $nominations;
+            }
         }
 
         return response()->json($applications);
+    }
+
+    /*
+    Returns true if for all elements, nomineeNo == accountNo
+    */
+    private function isSelfNominatedAll($nominations, $accountNo) {
+        foreach ($nominations as $nomination) {
+            if ($nomination['nomineeNo'] != $accountNo) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function validateApplication($data) {
