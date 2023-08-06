@@ -16,6 +16,8 @@ const formDataTwo = ref({
 
 const user = ref();
 const errorMsg = ref('');
+const status = ref('');
+
 
 async function handleLogin() {
     await axios.get("/sanctum/csrf-cookie");
@@ -27,14 +29,10 @@ async function handleLogin() {
 
         if( response.data.response == "success") {
             window.location.href = response.data.url
-            // errorMsg.value = response.data.error;
         } else {
             errorMsg.value = response.data.error;
         }
     })
-
-    // let {data} = await axios.get("/api/user");
-    // user.value = data;
 };
 
 async function handleCreate() {
@@ -42,6 +40,14 @@ async function handleCreate() {
         accountNo: formData.value.accountNo,
         password: formData.value.password,
     });
+}
+
+async function checkLogin() {
+    await axios.get("login/check").then(
+        function(response) {
+            status.value = response.data.error;
+        }
+    )
 }
 
 
@@ -88,6 +94,15 @@ async function handleCreate() {
                 {{ formDataTwo.password }}
             </div>
         </form>
+
+
+        <div>
+            <button @click="checkLogin" class="mt-20">check login</button>
+
+        </div>
+        <div>
+            {{ status }}
+        </div>
     </div>
 
 </template>

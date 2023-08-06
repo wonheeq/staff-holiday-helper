@@ -16,10 +16,27 @@ class Account extends Authenticatable
         'password',
     ];
 
-    // public function getAuthPassword()
-    // {
-    //     return $this->p;
-    // }
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'password' => 'hashed',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+    public function getAuthIdentifier()
+    {
+        return $this->accountNo;
+    }
+    public function getAuthIdentifierName()
+    {
+        return 'accountNo';
+    }
 
     // protected $table = 'accounts';
     // protected $guarded = [];

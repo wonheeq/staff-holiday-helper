@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Application;
@@ -19,43 +20,44 @@ use Inertia\Inertia;
 
 Route::post(
     '/login',
-    [LoginController::class, 'authenticate']
+    [AuthController::class, 'authenticate']
 );
 
-// Route::get('login', function () {
-//     return Inertia::render('Temppage', []);
-// });
-
 Route::post(
+    '/logout',
+    [AuthController::class, 'logout']
+);
+
+Route::get(
     '/login/create',
-    [LoginController::class, 'create']
+    [AuthController::class, 'create']
 );
 
 
 Route::get('/testlogintwo', function () {
     return Inertia::render('Temppage', []);
-})->name('login');
+});
 
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-});
+})->name('login');
 
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
 
-Route::get('/home', function () {
-    return Inertia::render('Home', []);
-});
+// Route::get('/home', function () {
+//     return Inertia::render('Home', []);
+// });
 
 // Route::get('/home', function () {
 //     return Inertia::render('Home', []);
 // })->middleware('auth');
 
-// Route::middleware('auth:sanctum')->get('/home', function () {
-//     return Inertia::render('Home', []);
-// });
+Route::middleware('auth:sanctum')->get('/home', function () {
+    return Inertia::render('Home', []);
+});
 
 
 Route::get('/bookings', function () {
