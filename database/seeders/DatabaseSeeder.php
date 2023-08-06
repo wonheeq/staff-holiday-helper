@@ -90,27 +90,26 @@ class DatabaseSeeder extends Seeder
                 'processedBy' => $lineManagerNo,
             ]);
 
-            $applications = Application::where('accountNo', $account['accountNo'])->get();
+        $applications = Application::where('accountNo', $account['accountNo'])->get();
 
-            // Generate 4 nominations for each application
-            foreach ($applications as $application) {
-                // Get list of AccountRoleIds associated with applicant
-                $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
-                
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[0],
-                ]);
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[1],
-                ]);
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[2],
-                ]);
-            }
-        }
+        // Generate 4 nominations for each application
+        foreach ($applications as $application) {
+            // Get list of AccountRoleIds associated with applicant
+            $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
+            
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[0],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[1],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[2],
+            ]);
+        };
         
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
