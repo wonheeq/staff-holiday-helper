@@ -82,12 +82,16 @@ function formatNominations() {
             nomineeNo: formatNomineeNo(nomination.nomination),
         });
     }
+
+    return result;
 }
 
 function createApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations();
+        data.sDate = period.start;
+        data.eDate = period.end;
         axios.post('/api/createApplication', data)
             .then(res => {
                 alert(res.data);
