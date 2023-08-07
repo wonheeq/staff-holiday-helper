@@ -14,6 +14,7 @@ async function handleReset() {
     console.log(staffEmail.value);
     await axios.post("reset-password", {
         email: staffEmail.value,
+        accountNo: staffID.value,
     }).then( function(response) {
         console.log(response);
         errorMsg.value = response.data.error;

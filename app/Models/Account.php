@@ -39,6 +39,11 @@ class Account extends Authenticatable
     {
         return 'accountNo';
     }
+    public function getEmailForPasswordReset()
+    {
+        $email = $this->accountNo . '@curtin.edu.au';
+        return $email;
+    }
 
     // protected $table = 'accounts';
     // protected $guarded = [];
