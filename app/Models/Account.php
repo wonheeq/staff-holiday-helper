@@ -41,7 +41,8 @@ class Account extends Authenticatable
     }
     public function getEmailForPasswordReset()
     {
-        $email = $this->accountNo . '@curtin.edu.au';
+        // $email = $this->accountNo . '@curtin.edu.au';
+        $email = $this->accountNo . '@test.com.au';
         return $email;
     }
 
