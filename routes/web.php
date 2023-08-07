@@ -90,18 +90,10 @@ Route::get('/forgot-password', function () {
     return Inertia::render('Reset', []);
 })->name('password.reqeust');
 
-Route::post('/forgot-password', function (Request $request) {
-
-    $request->validate(['email' => 'required|email']);
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
-
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with(['status' => __($status)])
-        : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
-
+Route::post(
+    '/reset-password',
+    [AuthController::class, 'reset']
+)->middleware('guest')->name('password.email');
 
 /*
 Route::middleware('auth')->group(function () {
