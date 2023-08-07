@@ -6,6 +6,9 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -82,11 +85,23 @@ Route::get(
     '/login/create',
     [AuthController::class, 'create']
 );
-/*
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-*/
+
+Route::get('/forgot-password', function () {
+    return Inertia::render('Reset', []);
+})->middleware('guest')->name('password.reqeust');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
 
 /*
 Route::middleware('auth')->group(function () {
