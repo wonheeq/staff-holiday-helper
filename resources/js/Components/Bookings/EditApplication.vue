@@ -3,7 +3,8 @@ import Modal from '../Modal.vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
-import { reactive } from 'vue';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 let nominationStore = useNominationStore();
@@ -26,6 +27,118 @@ function resetFields() {
     }
     isSelfNominateAll.value = false;
 }
+
+function calcDateDiff(d1, d2) {
+    return new Date(d1) - new Date(d2);
+}
+
+let errors = [];
+function validateApplication(data) {
+    errors = [];
+
+    // Date is empty
+    if (props.period.end == null || props.period.start == null) {
+        errors.push("Dates cannot be empty")
+    }
+
+    // End date is earlier than start date
+    if (props.period.end != null && props.period.start != null && calcDateDiff(props.period.end, props.period.start) < 0) {
+        errors.push("End date/time cannot be earlier than start date/time");
+    }
+
+    // End date is equal to start date
+    if (props.period.end != null && props.period.start != null && props.period.end == props.period.start) {
+        errors.push("End date/time cannot be the same as the start date/time");
+    }
+
+    // A date is in the past
+    let currentDate = new Date();
+    if (props.period.end != null && props.period.start != null &&
+        (calcDateDiff(props.period.start, currentDate) <= 0 || calcDateDiff(props.period.end, currentDate) <= 0)) {
+        errors.push("Dates cannot be in the past");
+    }
+
+    // Not self nominated for all and a nomination is missing/empty
+    if (!data.selfNominateAll && nominations.value.filter(nomination => nomination.nomination == "").length > 0) {
+        errors.push("Missing nomination/s");
+    }
+
+    // Selected "Self Nomination" for all nominations but did not select agreement
+    if (!data.selfNominateAll && nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length) {
+        errors.push("Selected Self Nomination for all nominations but have not agreed to the no nominations terms.");
+    }
+
+    return errors.length == 0;
+}
+
+function formatNomineeNo(nominee) {
+    if (nominee == "Self Nomination") {
+        return nominee;
+    }
+
+    // Should be formatted as "(XXXXXXX) - ZZZZZZZZZZZZ"
+    // We want to extract XXXXXXX, so start from index 1, 7 characters
+    return nominee.substr(1, 7);
+}
+
+function formatNominations() {
+    let result = [];
+
+    for (let nomination of nominations.value) {
+        result.push({
+            accountRoleId: nomination.accountRoleId,
+            nomineeNo: formatNomineeNo(nomination.nomination),
+        });
+    }
+
+    return result;
+}
+
+function handleEditApplication(data) {
+    if (validateApplication(data)) {
+        data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
+        data.nominations = formatNominations();
+        data.sDate = props.period.start;
+        data.eDate = props.period.end;
+        data.applicationNo = props.applicationNo;
+
+        resetFields();
+        
+        axios.post('/api/editApplication', data)
+            .then(res => {
+                if (res.status == 200) {
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully edited application.'
+                    }).then(() => {
+                        resetFields();
+                        emit('close');
+                    });
+                }
+                else {
+                    Swal.fire({
+                        icon: "error",
+                        title: 'Error',
+                        text: res.data,
+                    });
+                }
+            }).catch(err =>
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text:  err
+                });
+        });
+    }
+    else {
+        Swal.fire({
+           icon: "error",
+           title: "Error",
+           text:  errors
+        });
+    }
+}
 </script>
 <template>
 <Modal>
@@ -42,11 +155,12 @@ function resetFields() {
                 </button>
             </div>
             <div class="grid grid-cols-3 h-[92%]">
-                <CreateSubpagePeriod :period="period" :isEditing="true" class="h-full" />
+                <CreateSubpagePeriod :period="props.period" :isEditing="true" class="h-full" />
                 <CreateSubpageNominations
                     :isEditing="true"
                     :applicationNo="applicationNo"
                     @resetFields="resetFields()"
+                    @submitApplication="(data) => handleEditApplication(data)"
                     class="col-span-2"
                 />
             </div>

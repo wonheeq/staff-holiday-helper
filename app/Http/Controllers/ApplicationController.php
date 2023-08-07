@@ -166,6 +166,117 @@ class ApplicationController extends Controller
         response()->json(['success' => 'success'], 200);
     }
 
+     /*
+    Edits an Application in the database if the content is valid.
+    Returns an Application encoded in json.
+    */
+    public function editApplication(Request $request) {
+        $data = $request->all();
+        $accountNo = $data->accountNo;
+        // Check if user exists for given user id
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+    
+        if (!$this->validateApplication($data)) {
+            return response()->json(['error' => 'Application details invalid.'], 500);
+        }
+
+        // Get Old Nominations
+        $oldNominations = Nomination::where('applicationNo', $data['applicationNo']);
+        $newNominations = $data['nominations'];
+
+        $oldNomineeIds = array();
+        $newNomineeIds = array();
+
+        // put nomineeNos into arrays
+        foreach ($oldNominations as $nom) {
+            array_push($oldNomineeIds, $nom->nomineeNo);
+        }
+        foreach ($newNominations as $nom) {
+            array_push($newNomineeIds, $nom['nomineeNo']);
+        }
+
+        $nominationsToDelete = array();
+        $nominationsToCreate = array();
+        $nominationsToUpdate = array();
+     
+        // compare newNominations to oldNominations, add to respective array
+        foreach ($oldNominations as $old) {
+            if (in_array($old->nomineeNo, $newNomineeIds)) {
+                // old is in new
+                // needs to get updated
+                array_push($nominationsToUpdate, $old);
+            }
+            else {
+                // old is not in new
+                // needs to get deleted
+                array_push($nominationsToDelete, $old);
+            }
+        }
+
+        foreach ($newNomineeIds as $new) {
+            if (!in_array($new['nomineeNo'], $oldNomineeIds)) {
+                // new was NOT in old
+                // needs to get created
+                array_push($nominationsToCreate, $new);
+            }
+        }
+
+        // TODO: Implement notifiying of related parties of application edited
+
+
+        // EDIT APPLICATION
+        $application = Application::where('applicationNo', $data['applicationNo']);
+
+        // If self nominated for all, application status should be Undecided
+        if ($data['selfNominateAll']) {
+            $application->status = 'U';
+        }
+        else {
+            $application->status = 'P';
+        }
+       
+        // edit other attributes
+        $application->sDate = $this->formatDate($data['sDate']);
+        $application->eDate = $this->formatDate($data['eDate']);
+        $application->processedBy = null;
+        $application->rejectReason = null;
+        $application->save();
+
+        // TODO: Implement notifiying of related parties
+
+        // create new nominations
+        foreach ($nominationsToCreate as $nomination) {
+            // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
+            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
+
+            Nomination::create([
+                'applicationNo' => $application->applicationNo,
+                'nomineeNo' => $nominee,
+                'accountRoleId' => $nomination['accountRoleId'],
+                'status' => 'U'
+            ]);
+        }
+
+        // update old nominations
+        foreach ($nominationsToUpdate as $nomination) {
+            // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
+            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
+
+            $nomination->nomineeNo = $nominee;
+            $nomination->status = 'U';
+        }
+
+        // delete old nominations
+        foreach ($nominationsToDelete as $nomination) {
+            $nomination->delete();
+        }
+
+        response()->json(['success' => 'success'], 200);
+    }
+
 
     /*
     Cancels an application by setting it's status to Cancelled
