@@ -142,7 +142,6 @@ class BookingController extends Controller
         foreach ($accountRoles as $accountRole) {
             if (in_array($accountRole['accountRoleId'], $accountRoleIdsNominated)) {
                 // Skip to next if already in results array
-
                 continue;
             }
 

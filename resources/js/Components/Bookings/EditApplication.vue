@@ -11,15 +11,13 @@ const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 let emit = defineEmits(['close']);
 let props = defineProps({
     applicationNo: Number,
-    subpageClass: String
+    subpageClass: String,
+    period: Object,
 });
-let period = reactive({
-    start: null,
-    end: null
-})
+
 function resetFields() {
-    period.start = null;
-    period.end = null;
+    props.period.start = null;
+    props.period.end = null;
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
