@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Application;
@@ -17,70 +18,70 @@ use Inertia\Inertia;
 |
 */
 
-Route::post(
-    '/login',
-    [LoginController::class, 'authenticate']
-);
-
-
-Route::get('/testlogintwo', function () {
-    return Inertia::render('Temppage', []);
-});
 
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-    /*
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-    */
-});
+})->name('login');
 
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
 
-Route::get('/home', function () {
+Route::middleware('auth:sanctum')->get('/home', function () {
     return Inertia::render('Home', []);
 });
 
 
-Route::get('/bookings', function () {
+Route::middleware('auth:sanctum')->get('/bookings', function () {
     return Inertia::render('Bookings', [
         'activeScreen' => 'apps'
     ]);
 });
 
-Route::get('/bookings/apps', function () {
+Route::middleware('auth:sanctum')->get('/bookings/apps', function () {
     return Inertia::render('Bookings', [
         'activeScreen' => 'apps'
     ]);
 });
 
-Route::get('/bookings/create', function () {
+Route::middleware('auth:sanctum')->get('/bookings/create', function () {
     return Inertia::render('Bookings', [
         'activeScreen' => 'create'
     ]);
 });
 
-Route::get('/bookings/subs', function () {
+Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     return Inertia::render('Bookings', [
         'activeScreen' => 'subs'
     ]);
 });
 
-Route::get('/admin', function () {
+Route::middleware('auth:sanctum')->get('/admin', function () {
     return Inertia::render('Administration', [
         'activeScreen' => 'apps'
     ]);
 });
 
-Route::get('/send-email', [EmailController::class, 'sendEmail']);
+Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, 'sendEmail']);
 
+
+// ----------------------AUTHENTICATION RELATED ROUTES-------------------------
+
+Route::post(
+    '/login',
+    [AuthController::class, 'authenticate']
+);
+
+Route::post(
+    '/logout',
+    [AuthController::class, 'logout']
+);
+
+Route::get(
+    '/login/create',
+    [AuthController::class, 'create']
+);
 /*
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
