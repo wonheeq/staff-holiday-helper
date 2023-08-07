@@ -4,7 +4,8 @@ import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
 import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
-
+import EditApplication from "@/Components/Bookings/EditApplication.vue";
+import { ref } from 'vue';
 const options = [
     { id: 'apps', title: 'Applications'},
     { id: 'create', title: 'Create New Application'},
@@ -17,6 +18,12 @@ let props = defineProps({
     }
 });
 const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
+let isEditing = ref(false);
+let applicationNo = ref(null);
+function handleEditApplication(appNo) {
+    isEditing.value = true;
+    applicationNo.value = appNo;
+}
 </script>
 
 <template>
@@ -32,6 +39,7 @@ const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
                 class="p-4 h-[95%]"
+                @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
                 class="h-[95%]"
@@ -43,6 +51,14 @@ const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
                 :class="subpageClass"
                 class="p-4 h-[95%]"
             />
+            <Teleport to="body">
+                <EditApplication
+                    v-show="isEditing"
+                    :applicationNo="applicationNo"
+                    :subpageClass="subpageClass"
+                    @close="isEditing = false; applicationNo = false;"
+                />
+            </Teleport>
         </div>
     </AuthenticatedLayout>
 </template>
