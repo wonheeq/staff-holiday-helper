@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('applicationNo');
             $table->char('nomineeNo', 7);
             $table->unsignedBigInteger('accountRoleId');
-            $table->char('status', 1);
+            $table->char('status', 1)->default('U');
             $table->timestamps();
 
             $table->primary(['applicationNo', 'nomineeNo', 'accountRoleId']);

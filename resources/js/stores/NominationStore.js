@@ -1,49 +1,22 @@
 import { defineStore } from 'pinia';
+import { useUserStore } from './UserStore';
 
 export let useNominationStore = defineStore('nominations', {
     state: () => ({
-        nominations: [
-            {
-                selected: false,
-                role: 'COMP2007: Something something',
-                nomination: "",
-                visible: true,
-            },
-            {
-                selected: false,
-                role: 'COMP3007: Something something',
-                nomination: "",
-                visible: true,
-            },
-            {
-                selected: false,
-                role: 'COMP3001: Something something',
-                nomination: "",
-                visible: true,
-            },
-            {
-                selected: false,
-                role: 'ISEC2001: Something something',
-                nomination: "",
-                visible: true,
-            },
-            {
-                selected: false,
-                role: 'ISEC2007: Something something',
-                nomination: "",
-                visible: true,
-            },
-            {
-                selected: false,
-                role: 'ISAD3001: Something something',
-                nomination: "",
-                visible: true,
-            },
-        ],
+        nominations: [],
     }),
 
     actions: {
-        
+        async fetchNominations() {
+            try {
+                const resp = await axios.get('/api/getRolesForNominations/' + useUserStore().userId);
+                this.nominations = resp.data;
+              }
+              catch (error) {
+                alert(error)
+                console.log(error)
+            }
+        }
     },
 
     getters: {

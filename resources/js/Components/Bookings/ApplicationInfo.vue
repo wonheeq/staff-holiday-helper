@@ -2,6 +2,10 @@
 import ApplicationInfoOptions from './ApplicationInfoOptions.vue';
 import ApplicationNominationData from './ApplicationNominationData.vue';
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/UserStore';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 let props = defineProps({ source: Object });
 
 const statusText = {
@@ -37,8 +41,16 @@ let toggleImage = (isVisible) => {
                 </div>
                 <div>
                     <p class="font-medium">Substitute/s:</p>
-                    <p v-for="nomination in source.nominations">
-                        → {{ nomination.name }} ({{ nomination.accountNo }}) - [{{ nomination.user_id }}@curtin.edu.au]    {{ nomination.task }}
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
+                        <p v-if="nomination.nomineeNo != userId">
+                            → {{ nomination.name }} - [{{ nomination.accountNo }}@curtin.edu.au]    {{ nomination.task }}
+                        </p>
+                        <p v-if="nomination.nomineeNo == userId">
+                            → Self Nominated    {{ nomination.task }}
+                        </p>
+                    </div>
+                    <p v-if="source.isSelfNominatedAll">
+                        → N/A - Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row">

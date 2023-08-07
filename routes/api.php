@@ -29,3 +29,6 @@ Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
+Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
+
+Route::post('createApplication', [ApplicationController::class, 'createApplication']);
