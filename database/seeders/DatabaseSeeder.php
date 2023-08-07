@@ -39,56 +39,6 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => null,
         ]);
 
-        // Create 30 accounts
-        Account::factory(30)->create([
-            'superiorNo' => $lineManagerNo,
-        ]);
-
-        $accounts = Account::get();
-        
-        // Each account gets 3 random AccountRoles
-        foreach ($accounts as $account) {
-            AccountRole::factory(3)->create([
-                'accountNo' => $account['accountNo'],
-            ]);
-        }
-
-        // Each account gets 4 applications
-        foreach ($accounts as $account) {
-            Application::factory(4)->create([
-                'accountNo' => $account['accountNo'],
-                'processedBy' => $lineManagerNo,
-            ]);
-
-            $applications = Application::where('accountNo', $account['accountNo'])->get();
-
-            // Generate 4 nominations for each application
-            foreach ($applications as $application) {
-                // Get list of AccountRoleIds associated with applicant
-                $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
-                
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[0],
-                ]);
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[1],
-                ]);
-                Nomination::factory()->create([
-                    'applicationNo' => $application['applicationNo'],
-                    'accountRoleId' => $accountRoleIds[2],
-                ]);
-            }
-        }
-        
-        // Generate 10 messages for each account
-        foreach ($accounts as $account) {
-            Message::factory(10)->create([
-                'receiverNo' => $account['accountNo'],
-            ]);
-        }
-
 
         // TEST USER
         $test_id = '000000a';
@@ -131,7 +81,7 @@ class DatabaseSeeder extends Seeder
 
         $testApps = Application::where('accountNo', $test_id)->get();
 
-        // Generate 4 nominations for each application
+        // Generate 3 nominations for each application
         foreach ($testApps as $application) {
             // Get list of AccountRoleIds associated with applicant
             $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
@@ -153,5 +103,81 @@ class DatabaseSeeder extends Seeder
         Message::factory(10)->create([
             'receiverNo' => $test_id,
         ]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Create 30 accounts
+        Account::factory(30)->create([
+            'superiorNo' => $lineManagerNo,
+        ]);
+
+        $accounts = Account::get();
+        
+        // Each account gets 5 random AccountRoles
+        foreach ($accounts as $account) {
+            AccountRole::factory(5)->create([
+                'accountNo' => $account['accountNo'],
+            ]);
+        }
+
+        // Each account gets 4 applications
+        foreach ($accounts as $account) {
+            Application::factory(4)->create([
+                'accountNo' => $account['accountNo'],
+                'processedBy' => $lineManagerNo,
+            ]);
+
+            $applications = Application::where('accountNo', $account['accountNo'], 'and')
+                            ->where('accountNo', "!=", $test_id)->get();
+
+            // Generate 5 nominations for each application
+            foreach ($applications as $application) {
+                // Get list of AccountRoleIds associated with applicant
+                $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
+                
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[0],
+                ]);
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[1],
+                ]);
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[2],
+                ]);
+
+                // Nominate test user
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[3],
+                    'status' => 'Y',
+                ]);
+                Nomination::factory()->create([
+                    'applicationNo' => $application['applicationNo'],
+                    'accountRoleId' => $accountRoleIds[4],
+                    'status' => 'Y',
+                ]);
+            }
+        }
+        
+        // Generate 10 messages for each account
+        foreach ($accounts as $account) {
+            Message::factory(10)->create([
+                'receiverNo' => $account['accountNo'],
+            ]);
+        }
+
     }
 }
