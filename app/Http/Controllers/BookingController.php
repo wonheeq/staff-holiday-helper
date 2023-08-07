@@ -17,6 +17,12 @@ class BookingController extends Controller
     This list has "Self Nomination" at the front of the array
     */
     public function getBookingOptions(Request $request, String $accountNo) {
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
         // Todo: Check for schoolId after it gets implemented 
 
         $users = Account::where("accountNo", "!=", $accountNo)->get();
@@ -33,8 +39,8 @@ class BookingController extends Controller
     Returns a list of roles that the account has been assigned to, formatted.
     */
     public function getRolesForNominations(Request $request, String $accountNo) {
-         // Check if user exists for given accountNo
-         if (!Account::where('accountNo', $accountNo)->first()) {
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
