@@ -27,7 +27,7 @@ let staffMembers = reactive([]);
 
 let fetchStaffMembers = async() => {
     try {
-        const resp = await axios.get('/api/getBookingOptions/000000a');
+        const resp = await axios.get('/api/getBookingOptions/' + userId.value);
         staffMembers = resp.data;
     } catch (error) {
         alert("Failed to load data: Please try again");

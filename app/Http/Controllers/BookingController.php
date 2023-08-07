@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\AccountRole;
+use App\Models\Nomination;
+use App\Models\Application;
 
 class BookingController extends Controller
 {
@@ -15,6 +17,12 @@ class BookingController extends Controller
     This list has "Self Nomination" at the front of the array
     */
     public function getBookingOptions(Request $request, String $accountNo) {
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
         // Todo: Check for schoolId after it gets implemented 
 
         $users = Account::where("accountNo", "!=", $accountNo)->get();
@@ -31,8 +39,8 @@ class BookingController extends Controller
     Returns a list of roles that the account has been assigned to, formatted.
     */
     public function getRolesForNominations(Request $request, String $accountNo) {
-         // Check if user exists for given accountNo
-         if (!Account::where('accountNo', $accountNo)->first()) {
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
@@ -59,5 +67,53 @@ class BookingController extends Controller
         }
 
         return response()->json($result);
+    }
+
+    /*
+    Returns a list of substitutions the user has agreed to takeover
+    */
+    public function getSubstitutionsForUser(Request $request, String $accountNo) {
+         // Check if user exists for given accountNo
+         if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Get all nominations where the user is a nominee
+        $nominations = Nomination::where("nomineeNo", "=", $accountNo)->get();
+
+        $data = array();
+
+        // Iterate through each nomination
+        foreach ($nominations as $nomination) {
+            // Grab application details of accepted nominations
+            // Only get substitution data for accepted nominations
+            if ($nomination['status'] == 'Y') {
+                $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
+                
+                if ($application != null && $application['status'] == 'Y') {
+                    // Get details of accepted application
+
+                    $startDate = $application['sDate'];
+                    $endDate = $application['eDate'];
+                    $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first();
+                    $applicationMakerName = "{$applicationMaker['fName']} {$applicationMaker['lName']}";
+                    // Call Role Controller to get role descriptor
+                    $task = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
+
+                    $content = "{$task} for {$applicationMaker} ({$startDate} - {$endDate})";
+
+                    $subData = array(
+                        'sDate' => $startDate,
+                        'eDate' => $endDate,
+                        'task' => $task,
+                        'applicantName' => $applicationMakerName,
+                    );
+                    array_push($data, $subData);
+                }
+            }
+        }
+
+        return response()->json($data);
     }
 }
