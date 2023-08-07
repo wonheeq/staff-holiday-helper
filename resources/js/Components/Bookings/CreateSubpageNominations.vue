@@ -9,6 +9,7 @@ import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
 import { useUserStore } from "@/stores/UserStore";
 import { useNominationStore } from '@/stores/NominationStore';
+import { all } from "axios";
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
@@ -79,6 +80,21 @@ function handleSelectAll() {
             else {
                 nomination.selected = true;
             }
+        }
+    }
+}
+
+function handleSingleNominationSelected(value) {
+    if (!value) {
+        // value was false
+        // Check if all other nominations were selected
+        if (nominations.value.filter(nom => nom.selected).length == nominations.value.length - 1) {
+            allSelected.value = true;
+        }
+    }
+    else {
+        if (allSelected.value) {
+            allSelected.value = false;
         }
     }
 }
@@ -221,6 +237,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             :nomination="nomination"
                             :options="staffMembers"
                             :isDisabled="selfNominateAll"
+                            @nominationSelected="(value) => handleSingleNominationSelected(value)"
                         />
                         </div>
                     </template>
