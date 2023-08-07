@@ -7,18 +7,20 @@ import { useUserStore } from '@/stores/UserStore';
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let props = defineProps({ source: Object });
-
+let emit = defineEmits(['cancelApplication']);
 const statusText = {
     "P": "Pending",
     "U": "Undecided",
     "Y": "Approved",
     "N": "Denied",
+    "C": "Cancelled",
 };
 const statusColour = {
     "P": "text-orange-500",
     "U": "text-blue-500",
     "Y": "text-green-500",
     "N": "text-red-500",
+    "C": "text-gray-500",
 };
 
 let toggleContent = ref(false);
@@ -28,6 +30,10 @@ let toggleImage = (isVisible) => {
     }
 
     return '/images/triangle_down.svg';
+}
+
+function handleCancelApplication() {
+    emit('cancelApplication', props.source.applicationNo);
 }
 </script>
 <template>
@@ -71,6 +77,8 @@ let toggleImage = (isVisible) => {
             <ApplicationInfoOptions
                 class="flex"
                 v-show="toggleContent"
+                :status="source.status"
+                @cancelApplication="handleCancelApplication()"
             />
         </div>
         <div class="flex flex-col bg-white">

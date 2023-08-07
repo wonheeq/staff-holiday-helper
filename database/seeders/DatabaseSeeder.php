@@ -128,6 +128,11 @@ class DatabaseSeeder extends Seeder
             'processedBy' => $lineManagerNo,
             'status' => 'P',
         ]);
+        Application::factory()->create([
+            'accountNo' => $test_id,
+            'processedBy' => $lineManagerNo,
+            'status' => 'C',
+        ]);
 
         $testApps = Application::where('accountNo', $test_id)->get();
 
