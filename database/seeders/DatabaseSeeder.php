@@ -203,14 +203,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        Message::factory(10)->create([
-            'receiverNo' => $test_id,
-        ]);
-
-
-
-
-
 
 
 
