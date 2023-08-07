@@ -191,18 +191,17 @@ class ApplicationController extends Controller
         // Set application status to Cancelled
         $application->status = 'C';
         $application->save();
-        // TODO: Implement sending of cancelled application message
-        
-        // Delete each nomination associated with the application
+        // TODO: Implement sending of cancelled application message for user and line manager
+
+
+        // TODO: Implement sending of cancelled application message for nominees
         $nominations = Nomination::where('applicationNo', $applicationNo)->get();
         foreach ($nominations as $nomination) {
             $nomineeNo = $nomination['nomineeNo'];
-            // TODO: Implement sending of cancelled application message
-
-            // delete nomination
-            $nomination->delete();
         }
 
+        // Delete each nomination associated with the application
+        Nomination::where('applicationNo', $applicationNo)->delete();
         return response()->json(['success'], 200);
     }
 }
