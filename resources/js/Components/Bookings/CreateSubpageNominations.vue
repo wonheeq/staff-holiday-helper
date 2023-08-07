@@ -13,8 +13,15 @@ let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
-const { fetchNominations } = nominationStore;
+const { fetchNominations, fetchNominationsForApplicationNo } = nominationStore;
 
+let props = defineProps({
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
+    applicationNo: Number
+});
 let emit = defineEmits(['resetFields', 'submitApplication']);
 
 let deadAreaColor = "#FFFFFF";
@@ -38,7 +45,12 @@ let fetchStaffMembers = async() => {
 const dataReady = ref(false);
 
 onMounted(async () => {
-    await fetchNominations();
+    if (!props.isEditing) {
+        await fetchNominations();
+    }
+    else {
+        await fetchNominationsForApplicationNo(props.applicationNo);
+    }
     await fetchStaffMembers();
     dataReady.value = true;
 });
@@ -145,7 +157,13 @@ function submitApplication() {
     }
 
     // pass data to parent to handle
-    emit('submitApplication', data);
+    if (!props.isEditing) {
+        emit('submitApplication', data);
+    }
+    else 
+    {
+
+    }
 
     allSelected.value = false;
     selfNominateAll.value = false;
