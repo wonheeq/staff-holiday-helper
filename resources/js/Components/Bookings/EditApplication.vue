@@ -8,6 +8,10 @@ import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from '@/stores/ApplicationStore';
+
+import { useCalendarStore } from '@/stores/CalendarStore';
+let calendarStore = useCalendarStore();
+const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
 const { fetchApplications } = applicationStore;
 let nominationStore = useNominationStore();
@@ -115,6 +119,7 @@ function handleEditApplication(data) {
                         title: 'Successfully edited application.'
                     }).then(() => {
                         fetchApplications();
+                        fetchCalendarData();
                         resetFields();
                         emit('close');
                     });
