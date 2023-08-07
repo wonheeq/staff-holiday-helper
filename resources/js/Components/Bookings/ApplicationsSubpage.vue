@@ -5,13 +5,18 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
 import { onMounted } from 'vue';
+import { useCalendarStore } from '@/stores/CalendarStore';
+let calendarStore = useCalendarStore();
+const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
 const { fetchApplications } = applicationStore;
 
+
 onMounted(() => {
     fetchApplications();
 });
+
 let deadAreaColor = "#FFFFFF";
 </script>
 <template>
@@ -23,7 +28,7 @@ let deadAreaColor = "#FFFFFF";
             <div v-for="item in applications" :key="item.id" class="mb-2">
                 <ApplicationInfo
                     :source="item"
-                    @cancelApplication="item.status = 'C'"
+                    @cancelApplication="item.status = 'C'; fetchCalendarData()"
                 ></ApplicationInfo>
             </div>
         </template>
