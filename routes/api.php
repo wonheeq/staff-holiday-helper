@@ -30,7 +30,9 @@ Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplic
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
+Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
+Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);

@@ -6,6 +6,8 @@ let props = defineProps({
     isDisabled: Boolean
 });
 
+let emit = defineEmits(['nominationSelected']);
+
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
@@ -15,7 +17,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 class="h-8 w-8"
                 :class="isDisabled ? disabledClass : ''"
                 v-model="nomination.selected"
-                :disabled="isDisabled"    
+                :disabled="isDisabled"   
+                @click="emit('nominationSelected', nomination.selected)" 
             />
             <p class="text-xl">
                 {{ nomination.role }}

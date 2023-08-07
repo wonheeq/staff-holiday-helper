@@ -4,6 +4,15 @@ import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
 import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
+import EditApplication from "@/Components/Bookings/EditApplication.vue";
+import { ref, reactive } from 'vue';
+import { useNominationStore } from '@/stores/NominationStore';
+import { useApplicationStore } from "@/stores/ApplicationStore";
+import { storeToRefs } from 'pinia';
+let nominationStore = useNominationStore();
+const { fetchNominationsForApplicationNo } = nominationStore;
+let applicationStore = useApplicationStore();
+const { applications } = storeToRefs(applicationStore);
 
 const options = [
     { id: 'apps', title: 'Applications'},
@@ -16,7 +25,30 @@ let props = defineProps({
         default: 'apps',
     }
 });
+
+let period = reactive({
+    start: null,
+    end: null
+})
+
 const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
+let isEditing = ref(false);
+let applicationNo = ref(null);
+async function handleEditApplication(appNo) {
+    appNo = parseInt(appNo);
+    isEditing.value = true;
+    applicationNo.value = appNo;
+
+    for (let app of applications.value) {
+        if (app.applicationNo == appNo) {
+            period.start = app.sDate.replace(" ", "T");
+            period.end = app.eDate.replace(" ", "T");
+            break;
+        }
+    }
+
+    await fetchNominationsForApplicationNo(appNo);
+}
 </script>
 
 <template>
@@ -32,6 +64,7 @@ const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
                 class="p-4 h-[95%]"
+                @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
                 class="h-[95%]"
@@ -43,6 +76,15 @@ const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
                 :class="subpageClass"
                 class="p-4 h-[95%]"
             />
+            <Teleport to="body">
+                <EditApplication
+                    v-show="isEditing"
+                    :applicationNo="applicationNo"
+                    :subpageClass="subpageClass"
+                    :period="period"
+                    @close="isEditing = false; applicationNo = false;"
+                />
+            </Teleport>
         </div>
     </AuthenticatedLayout>
 </template>

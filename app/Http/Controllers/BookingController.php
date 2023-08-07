@@ -70,6 +70,100 @@ class BookingController extends Controller
     }
 
     /*
+    Returns the nominations for an application for each role that the account has been assigned to, formatted.
+    */
+    public function getNominationsForApplication(Request $request, String $accountNo, int $applicationNo) {
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if application exists
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        if ($application == null) {
+            // Application does not exist, return exception
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if application belongs to user
+        if ($application->accountNo != $accountNo) {
+            // Application does not belong to user, return exception
+            return response()->json(['error' => 'Application does not belong to user.'], 500);
+        }
+
+        $result = array();
+
+        // Get all Nominations associated with the applicationNo
+        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+        
+        $accountRoleIdsNominated = array();
+
+        // Iterate through each Nomination, extract the AccountRoleId
+        // Get RoleId from AccountRole
+        // Call RoleController->getRoleFromAccountRoleId() to get the role name
+        foreach ($nominations as $nomination) {
+            $accountRoleId = $nomination['accountRoleId'];
+            $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
+            $roleId = $accountRole->roleId;
+            $roleName = app(RoleController::class)->getRoleFromAccountRoleId($roleId);
+
+            $nomineeNo = $nomination->nomineeNo;
+            $nomination = "";
+            // check if nomineeNo == accountNo
+            if ($nomineeNo == $accountNo) {
+                // Self Nomination
+                $nomination = "Self Nomination";
+            }
+            else {
+                // Get name of nominee
+                $nominee = Account::where('accountNo', $nomineeNo)->first();
+                $nomination = "({$nomineeNo}) {$nominee['fName']} {$nominee['lName']}";
+            }
+
+            array_push($accountRoleIdsNominated, $accountRoleId);
+
+            // format and push data to result
+            array_push($result, [
+                'accountRoleId' => $accountRoleId,
+                'selected' => false,
+                'role' => $roleName,
+                'nomination' => $nomination,
+                'visible' => true,
+            ]);
+        }
+
+        // Add in any new roles that were assigned to the user after they made the application
+        // Get all AccountRoles associated with the accountNo
+        $accountRoles = AccountRole::where('accountNo', $accountNo)->get();
+        
+        // Iterate through each AccountRole, extract the roleId
+        // Call RoleController->getRoleFromAccountRoleId() to get the role name
+        foreach ($accountRoles as $accountRole) {
+            if (in_array($accountRole['accountRoleId'], $accountRoleIdsNominated)) {
+                // Skip to next if already in results array
+                continue;
+            }
+
+            $roleId = $accountRole['roleId'];
+            $roleName = app(RoleController::class)->getRoleFromAccountRoleId($roleId);
+
+            // format and push data to result
+            array_push($result, [
+                'accountRoleId' => $accountRole['accountRoleId'],
+                'selected' => false,
+                'role' => $roleName,
+                'nomination' => "",
+                'visible' => true,
+            ]);
+        }
+
+        return response()->json($result);
+    }
+
+
+
+    /*
     Returns a list of substitutions the user has agreed to takeover
     */
     public function getSubstitutionsForUser(Request $request, String $accountNo) {

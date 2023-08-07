@@ -92,11 +92,14 @@ class ApplicationController extends Controller
             }
 
             $filteredForSelfNom = array_filter($data['nominations'], function($var) {
-                if ($var['nomineeNo'] == "Self Nomination") {
+                if ($var['nomineeNo'] == $data['accountNo']) {
                     return $var;
                 }
             });
             // all nominations are self nomination but did not select agreement
+            $count1 = count($filteredForSelfNom);
+            $count2 = count($data['nominations']);
+            Log::debug("{$count1} == {$count2}");
             if (count($filteredForSelfNom) == count($data['nominations'])) {
                 return false;
             }
@@ -166,12 +169,130 @@ class ApplicationController extends Controller
         response()->json(['success' => 'success'], 200);
     }
 
+     /*
+    Edits an Application in the database if the content is valid.
+    Returns an Application encoded in json.
+    */
+    public function editApplication(Request $request) {
+        $data = $request->all();
+        $accountNo = $data['accountNo'];
+        // Check if user exists for given user id
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+    
+        if (!$this->validateApplication($data)) {
+            return response()->json(['error' => 'Application details invalid.'], 500);
+        }
+
+        // Get Old Nominations
+        $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
+        $newNominations = $data['nominations'];
+
+        $oldNomineeIds = array();
+        $newNomineeIds = array();
+
+        // put nomineeNos into arrays
+        foreach ($oldNominations as $nom) {
+            array_push($oldNomineeIds, $nom->nomineeNo);
+        }
+        foreach ($newNominations as $nom) {
+            array_push($newNomineeIds, $nom['nomineeNo']);
+        }
+
+        $nominationsToDelete = array();
+        $nominationsToCreate = array();
+        $nominationsToUpdate = array();
+     
+        // compare newNominations to oldNominations, add to respective array
+        foreach ($oldNominations as $old) {
+            if (in_array($old->nomineeNo, $newNomineeIds)) {
+                // old is in new
+                // needs to get updated
+                array_push($nominationsToUpdate, $old);
+            }
+            else {
+                // old is not in new
+                // needs to get deleted
+                array_push($nominationsToDelete, $old);
+            }
+        }
+
+        foreach ($newNominations as $new) {
+            if (!in_array($new, $oldNomineeIds)) {
+                // new was NOT in old
+                // needs to get created
+                array_push($nominationsToCreate, $new);
+            }
+        }
+
+        // TODO: Implement notifiying of related parties of application edited
+
+
+        // EDIT APPLICATION
+        $application = Application::where('applicationNo', $data['applicationNo'])->first();
+
+        // If self nominated for all, application status should be Undecided
+        if ($data['selfNominateAll']) {
+            $application->status = 'U';
+        }
+        else {
+            $application->status = 'P';
+        }
+       
+        // edit other attributes
+        $application->sDate = $this->formatDate($data['sDate']);
+        $application->eDate = $this->formatDate($data['eDate']);
+        $application->processedBy = null;
+        $application->rejectReason = null;
+        $application->save();
+
+        // TODO: Implement notifiying of related parties
+
+
+
+        // delete old nominations
+        foreach ($oldNominations as $nomination) {
+            $obj = Nomination::where('applicationNo', $application->applicationNo, "and")
+                        ->where('nomineeNo', $nomination->nomineeNo, "and")
+                        ->where('accountRoleId', $nomination->accountRoleId)->delete();
+        }
+
+        // create new nominations
+        foreach ($newNominations as $nomination) {
+            // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
+            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
+
+            if ($nominee == $accountNo) {
+                // self nomination so implicity accepted
+                Nomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nominee,
+                    'accountRoleId' => $nomination['accountRoleId'],
+                    'status' => 'Y'
+                ]);
+            }
+            else {
+                Nomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nominee,
+                    'accountRoleId' => $nomination['accountRoleId'],
+                    'status' => 'U'
+                ]);
+            }
+        }
+       
+        response()->json(['success' => 'success'], 200);
+    }
+
 
     /*
     Cancels an application by setting it's status to Cancelled
     Deletes Nominations for application
     */
-    public function cancelApplication(Request $request, String $accountNo, int $applicationNo) {
+    public function cancelApplication(Request $request, String $accountNo, String $appNo) {
+        $applicationNo = intval($appNo);
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception

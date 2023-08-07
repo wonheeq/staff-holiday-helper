@@ -9,17 +9,25 @@ import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
 import { useUserStore } from "@/stores/UserStore";
 import { useNominationStore } from '@/stores/NominationStore';
+import { all } from "axios";
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
-const { nominations } = storeToRefs(nominationStore);
+const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
 
+let props = defineProps({
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
+    applicationNo: Number
+});
 let emit = defineEmits(['resetFields', 'submitApplication']);
 
 let deadAreaColor = "#FFFFFF";
 
-let selfNominateAll = ref(false);
+let selfNominateAll = isSelfNominateAll;
 let allSelected = ref(false);
 let roleFilter = ref("");
 let staffMembers = reactive([]);
@@ -38,7 +46,9 @@ let fetchStaffMembers = async() => {
 const dataReady = ref(false);
 
 onMounted(async () => {
-    await fetchNominations();
+    if (!props.isEditing) {
+        await fetchNominations();
+    }
     await fetchStaffMembers();
     dataReady.value = true;
 });
@@ -70,6 +80,21 @@ function handleSelectAll() {
             else {
                 nomination.selected = true;
             }
+        }
+    }
+}
+
+function handleSingleNominationSelected(value) {
+    if (!value) {
+        // value was false
+        // Check if all other nominations were selected
+        if (nominations.value.filter(nom => nom.selected).length == nominations.value.length - 1) {
+            allSelected.value = true;
+        }
+    }
+    else {
+        if (allSelected.value) {
+            allSelected.value = false;
         }
     }
 }
@@ -212,6 +237,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             :nomination="nomination"
                             :options="staffMembers"
                             :isDisabled="selfNominateAll"
+                            @nominationSelected="(value) => handleSingleNominationSelected(value)"
                         />
                         </div>
                     </template>
@@ -229,13 +255,27 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 <div class="flex justify-between h-1/2 space-x-16">
                     <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
                         @click="cancelApplication()"
+                        v-if="!props.isEditing"
                     >
                         Cancel Application
                     </button>
+                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="cancelApplication()"
+                        v-if="props.isEditing"
+                    >
+                        Cancel Edit of Application
+                    </button>
                     <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
                         @click="submitApplication()"
+                        v-if="!props.isEditing"
                     >
                         Submit Application
+                    </button>
+                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="submitApplication()"
+                        v-if="props.isEditing"
+                    >
+                        Edit Application
                     </button>
                 </div>
             </div>

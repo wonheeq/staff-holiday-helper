@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
 {
-    private Account $user;
+    private Account $user, $otherUser;
     private $accountRoles;
     private $applications;
     private $nominations;
@@ -22,6 +22,8 @@ class ApplicationControllerTest extends TestCase
         parent::setup();
 
         $this->user = Account::factory()->create();
+
+        $this->otherUser = Account::factory()->create();
 
         $this->accountRoles = AccountRole::factory(3)->create([
             'accountNo' => $this->user->accountNo,
@@ -37,7 +39,7 @@ class ApplicationControllerTest extends TestCase
         // set nominations for first application
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
-            'accountRoleId' => $this->accountRoles[0]
+            'accountRoleId' => $this->accountRoles[0],
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
@@ -51,15 +53,20 @@ class ApplicationControllerTest extends TestCase
     }
 
     protected function teardown(): void {
-        $arr = AccountRole::where('accountNo', $this->user['accountNo'])->get();
+        $arr = Application::where('accountNo', $this->user->accountNo)->get();
         foreach ($arr as $a) {
-            Nomination::where('accountRoleId', $a->accountRoleId)->delete();
+            Nomination::where('applicationNo', $a->applicationNo)->delete();
         }
+
         AccountRole::where('accountNo', $this->user['accountNo'])->delete();
+
+        AccountRole::where('accountNo', $this->otherUser['accountNo'])->delete();
         Application::where('accountNo', $this->user['accountNo'])->delete();
 
 
+
         $this->user->delete();
+        $this->otherUser->delete();
 
         $this->applications = null;
         $this->accountRoles = null;
@@ -337,5 +344,325 @@ class ApplicationControllerTest extends TestCase
 
         $nominationsForApp = Nomination::where('applicationNo', $app->applicationNo)->get()->toArray();
         $this->assertFalse(count($nominationsForApp) > 0);
+    }
+
+
+
+
+
+
+
+    public function test_api_request_for_edit_applications_successful(): void
+    {
+        $firstApp = $this->applications[0];
+        // Check for valid response
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_invalid_account_no(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => 'ascascasc',
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_a_date_is_null(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => null,
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_a_end_date_is_earlier_than_start_date(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2020-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_end_date_same_as_start_date(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-06 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_a_date_is_in_the_past(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2000-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_nominations_is_null(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => null,
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_nominations_is_empty(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => []
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_nomineeNo_is_missing(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => null,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_all_nominations_are_selfnomination_but_self_nomination_not_selected(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_unsuccessful_an_accountRoleId_is_null(): void
+    {
+        $firstApp = $this->applications[0];
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => null,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_edit_applications_changes_data_successfully(): void
+    {
+        $firstApp = $this->applications[0];
+        $sDate = '2030-08-06 20:00:00';
+        $eDate = '2030-08-08 20:00:00';
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => $sDate,
+            'eDate' => $eDate,
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $application = Application::where('applicationNo', $firstApp->applicationNo)->first();
+        $this->assertTrue($application->accountNo == $this->user->accountNo);
+        $this->assertTrue($application->sDate == $sDate);
+        $this->assertTrue($application->eDate == $eDate);
+        $this->assertTrue($application->status == 'U');
+
+
+        $nominations = Nomination::where('applicationNo', $firstApp->applicationNo)->get();
+        foreach ($nominations as $nomination) {
+            $this->assertTrue($nomination->nomineeNo == $this->user->accountNo);
+        }
+
     }
 }

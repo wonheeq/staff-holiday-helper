@@ -12,7 +12,7 @@ let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
 const { fetchApplications } = applicationStore;
 
-
+let emit = defineEmits(["editApplication"]);
 onMounted(() => {
     fetchApplications();
 });
@@ -29,6 +29,7 @@ let deadAreaColor = "#FFFFFF";
                 <ApplicationInfo
                     :source="item"
                     @cancelApplication="item.status = 'C'; fetchCalendarData()"
+                    @editApplication="$emit('editApplication', item.applicationNo)"
                 ></ApplicationInfo>
             </div>
         </template>

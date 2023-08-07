@@ -9,7 +9,7 @@ import axios from 'axios';
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let props = defineProps({ source: Object });
-let emit = defineEmits(['cancelApplication']);
+let emit = defineEmits(['cancelApplication', 'editApplication']);
 const statusText = {
     "P": "Pending",
     "U": "Undecided",
@@ -53,7 +53,7 @@ async function handleCancelApplication() {
             axios.get("/api/cancelApplication/" + userId.value + "/" + props.source.applicationNo)
             .then((response) => {
                 if (response.status == 200) {
-                    emit('cancelApplication', props.source.applicationNo);
+                    emit('cancelApplication');
                 }
                 else {
                     alertFailedCancelApplication();
@@ -66,6 +66,11 @@ async function handleCancelApplication() {
         }
     });
 }
+
+function handleEditApplication() {
+    emit('editApplication');
+}
+
 </script>
 <template>
     <div class="flex flex-row bg-white mr-4">
@@ -110,6 +115,7 @@ async function handleCancelApplication() {
                 v-show="toggleContent"
                 :status="source.status"
                 @cancelApplication="handleCancelApplication()"
+                @editApplication="handleEditApplication()"
             />
         </div>
         <div class="flex flex-col bg-white">

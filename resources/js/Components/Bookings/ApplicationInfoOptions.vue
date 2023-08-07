@@ -3,9 +3,13 @@ let props = defineProps({
     status: String
 });
 
-let emit = defineEmits(['cancelApplication']);
+let emit = defineEmits(['cancelApplication', 'editApplication']);
 function handleCancelApplication() {
     emit('cancelApplication');
+}
+
+function handleEditApplication() {
+    emit('editApplication');
 }
 </script>
 <template>
@@ -13,7 +17,7 @@ function handleCancelApplication() {
         <button @click="handleCancelApplication()" v-show="status!='C'">
             <img class="option" src="/images/delete.svg" />
         </button>
-        <button class="ml-auto">
+        <button @click="handleEditApplication()" class="ml-auto">
             <img class="option" src="/images/edit.svg" />
         </button>
     </div>

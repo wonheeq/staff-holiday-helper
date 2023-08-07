@@ -10,5 +10,5 @@ class Application extends Model
     use HasFactory;
     protected $primaryKey = 'applicationNo';
 
-    protected $fillable = ['accountNo', 'sDate', 'eDate', 'status'];
+    protected $fillable = ['accountNo', 'sDate', 'eDate', 'status', 'processedBy', 'rejectReason'];
 }
