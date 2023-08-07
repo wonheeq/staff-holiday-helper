@@ -172,7 +172,7 @@ class ApplicationController extends Controller
     */
     public function editApplication(Request $request) {
         $data = $request->all();
-        $accountNo = $data->accountNo;
+        $accountNo = $data['accountNo'];
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
@@ -216,8 +216,8 @@ class ApplicationController extends Controller
             }
         }
 
-        foreach ($newNomineeIds as $new) {
-            if (!in_array($new['nomineeNo'], $oldNomineeIds)) {
+        foreach ($newNominations as $new) {
+            if (!in_array($new, $oldNomineeIds)) {
                 // new was NOT in old
                 // needs to get created
                 array_push($nominationsToCreate, $new);
@@ -228,7 +228,7 @@ class ApplicationController extends Controller
 
 
         // EDIT APPLICATION
-        $application = Application::where('applicationNo', $data['applicationNo']);
+        $application = Application::where('applicationNo', $data['applicationNo'])->first();
 
         // If self nominated for all, application status should be Undecided
         if ($data['selfNominateAll']) {
@@ -247,8 +247,18 @@ class ApplicationController extends Controller
 
         // TODO: Implement notifiying of related parties
 
+
+        // delete old nominations
+        foreach ($oldNominations as $nomination) {
+            Log::debug("DELETEING: {$application->applicationNo}-{$nomination->nomineeNo}-{$nomination->accountRoleId}");
+            $obj = Nomination::where('applicationNo', $application->applicationNo, "and")
+                        ->where('nomineeNo', $nomination->nomineeNo, "and")
+                        ->where('accountRoleId', $nomination->accountRoleId)->delete();
+
+        }
+
         // create new nominations
-        foreach ($nominationsToCreate as $nomination) {
+        foreach ($newNominations as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
 
@@ -259,21 +269,7 @@ class ApplicationController extends Controller
                 'status' => 'U'
             ]);
         }
-
-        // update old nominations
-        foreach ($nominationsToUpdate as $nomination) {
-            // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
-            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
-
-            $nomination->nomineeNo = $nominee;
-            $nomination->status = 'U';
-        }
-
-        // delete old nominations
-        foreach ($nominationsToDelete as $nomination) {
-            $nomination->delete();
-        }
-
+       
         response()->json(['success' => 'success'], 200);
     }
 
