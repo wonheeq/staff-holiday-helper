@@ -92,11 +92,14 @@ class ApplicationController extends Controller
             }
 
             $filteredForSelfNom = array_filter($data['nominations'], function($var) {
-                if ($var['nomineeNo'] == "Self Nomination") {
+                if ($var['nomineeNo'] == $data['accountNo']) {
                     return $var;
                 }
             });
             // all nominations are self nomination but did not select agreement
+            $count1 = count($filteredForSelfNom);
+            $count2 = count($data['nominations']);
+            Log::debug("{$count1} == {$count2}");
             if (count($filteredForSelfNom) == count($data['nominations'])) {
                 return false;
             }
@@ -288,7 +291,8 @@ class ApplicationController extends Controller
     Cancels an application by setting it's status to Cancelled
     Deletes Nominations for application
     */
-    public function cancelApplication(Request $request, String $accountNo, int $applicationNo) {
+    public function cancelApplication(Request $request, String $accountNo, String $appNo) {
+        $applicationNo = intval($appNo);
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
