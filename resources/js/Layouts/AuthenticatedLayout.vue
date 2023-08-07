@@ -6,16 +6,7 @@ import { ref } from 'vue';
 
 let settingsVisible = ref(false);
 
-// Post to logout method
-async function handleLogout() {
-    await axios.post("logout").then(
-        function(response) {
-            if( response.data.response == "success") {
-                // window.location.href = response.data.url
-            }
-        }
-    )
-}
+
 </script>
 
 <template>
@@ -23,8 +14,7 @@ async function handleLogout() {
         <div class="margin-fix"></div>
         <Navbar
             class="h-[7vh] mx-4"
-            @open-settings="settingsVisible = true"
-            @log-out="handleLogout"/>
+            @open-settings="settingsVisible = true"/>
         <slot />
         <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
     </main>

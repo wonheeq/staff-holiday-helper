@@ -14,14 +14,25 @@ let options = {
             emit('open-settings');
         } },
         { source: "/images/logout.svg", caption: "Logout", noLink: () => {
-            emit('log-out');
+            handleLogout();
         } },
-    ]
+    ],
 };
 
 let formatLink = (link) => {
     return "/" + link.toLowerCase();
 };
+
+// Post to logout method
+async function handleLogout() {
+    await axios.post("logout").then(
+        function(response) {
+            if( response.data.response == "success") {
+                window.location.href = response.data.url;
+            }
+        }
+    )
+}
 </script>
 
 <template>
