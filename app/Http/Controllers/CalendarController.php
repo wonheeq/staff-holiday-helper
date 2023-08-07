@@ -186,7 +186,7 @@ class CalendarController extends Controller
                     break;
                 }
                 default: {
-                    // erroroneous application status -- ignore silently
+                    // cancelled status -- ignore silently
                     break;
                 }
             }

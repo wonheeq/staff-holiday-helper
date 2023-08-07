@@ -21,7 +21,10 @@ let deadAreaColor = "#FFFFFF";
     >
         <template #tbody>
             <div v-for="item in applications" :key="item.id" class="mb-2">
-                <ApplicationInfo :source="item"></ApplicationInfo>
+                <ApplicationInfo
+                    :source="item"
+                    @cancelApplication="item.status = 'C'"
+                ></ApplicationInfo>
             </div>
         </template>
     </VueScrollingTable>
