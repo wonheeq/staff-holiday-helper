@@ -74,7 +74,7 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 Route::post(
     '/login',
     [AuthController::class, 'authenticate']
-)->middleware('guest');
+);
 
 Route::post(
     '/logout',
@@ -88,11 +88,12 @@ Route::get(
 
 Route::get('/forgot-password', function () {
     return Inertia::render('Reset', []);
-})->middleware('guest')->name('password.reqeust');
+})->name('password.reqeust');
 
 Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
+    dd();
 
+    $request->validate(['email' => 'required|email']);
     $status = Password::sendResetLink(
         $request->only('email')
     );

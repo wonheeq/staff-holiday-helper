@@ -1,8 +1,23 @@
 <script setup>
+import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref } from "vue";
 
 let showConf = ref(false);
+const staffID = ref('');
+const staffEmail = ref('');
+const errorMsg = ref('');
+
+
+async function handleReset() {
+    let staffEmail = staffID.value + '@curtin.edu.au';
+    await axios.post("forgot-password", {
+        email: staffEmail.value,
+    }).then( function(response) {
+        console.log(response);
+        errorMsg.value = response.data.error;
+    })
+}
 </script>
 
 <template>
@@ -13,16 +28,23 @@ let showConf = ref(false);
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
 
-        <!-- Staff ID -->
-        <div class="mb-5">
-            <landing-input title="Staff ID" inType="textType" ></landing-input>
-        </div>
+        <form action="#" @submit.prevent="handleReset">
+            <!-- Staff ID -->
+            <div class="mb-5">
+                <landing-input
+                    title="Staff ID"
+                    v-model="staffID"
+                    inType="textType" >
+                </landing-input>
+            </div>
 
-        <!-- Reset Button -->
-        <button
-            @click="showConf = !showConf"
-            class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-        >Reset Password</button>
+            <!-- Reset Button -->
+            <button
+                type="submit"
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
+            >Reset Password</button>
+        </form>
+        {{ errorMsg }}
 
         <!-- Back Button -->
         <div class="flex justify-between">
