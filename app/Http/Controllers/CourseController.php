@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
+use App\Models\Course;
 
 use Illuminate\Http\Request;
 
-class UnitController extends Controller
+class CourseController extends Controller
 {
     /**
      * Handle the incoming request.
      */
     public function __invoke(Request $request)
     {       
-        return Unit::all(); 
+        return Course::all(); 
     }
 }

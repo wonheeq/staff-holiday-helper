@@ -31,9 +31,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
                
-        \App\Models\Application::factory(10)->create();
         \App\Models\Message::factory(30)->create();
         \App\Models\Unit::factory(15)->create();
+        \App\Models\Course::factory(10)->create();
 
         // schools - All 14 curtin schools shown on faculty pages on Curtin Website
         $schools = array(

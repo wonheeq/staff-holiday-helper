@@ -8,7 +8,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UnitController;
-//use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseController;
 //use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
 
@@ -37,4 +37,5 @@ Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData'
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
 
 Route::get('/schools', SchoolController::class);
+Route::get('/courses', CourseController::class);
 Route::get('/units', UnitController::class);
