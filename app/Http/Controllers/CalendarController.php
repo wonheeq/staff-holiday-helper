@@ -65,10 +65,10 @@ class CalendarController extends Controller
                     // Get details of accepted application
                     $startDate = $application['sDate'];
                     $endDate = $application['eDate'];
-                    $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first()['name'];
-                    $task = $nomination['task'];
+                    $applicationMaker = Account::where("accountNo", "=", $application['accountNo'])->first();
+                    $task = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
 
-                    $content = "{$task} for {$applicationMaker} ({$startDate} - {$endDate})";
+                    $content = "{$task} for {$applicationMaker['fName']} {$applicationMaker['lName']} ({$startDate} - {$endDate})";
 
                     $rangeData = array(
                         'highlight' => 'purple',
