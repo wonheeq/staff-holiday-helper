@@ -74,12 +74,12 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 Route::post(
     '/login',
     [AuthController::class, 'authenticate']
-);
+)->middleware('guest');
 
 Route::post(
     '/logout',
     [AuthController::class, 'logout']
-);
+)->middleware('auth');
 
 Route::get(
     '/login/create',
