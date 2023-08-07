@@ -45,4 +45,5 @@ Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingC
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
+Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
