@@ -15,6 +15,7 @@ class ApplicationControllerTest extends TestCase
     private Account $user;
     private $accountRoles;
     private $applications;
+    private $nominations;
 
 
     protected function setup(): void {
@@ -29,6 +30,24 @@ class ApplicationControllerTest extends TestCase
         $this->applications = Application::factory(5)->create([
             'accountNo' => $this->user['accountNo']
         ]);
+
+        $firstApp = $this->applications[0];
+        $this->nominations = array();
+        
+        // set nominations for first application
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $firstApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0]
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $firstApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1]
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $firstApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2]
+        ]));
+
     }
 
     protected function teardown(): void {
@@ -274,5 +293,49 @@ class ApplicationControllerTest extends TestCase
             'nominations' => [],
         ]);
         $response->assertStatus(500);
+    }
+
+
+
+
+    public function test_api_request_for_cancelApplication_is_successful() : void {
+        $app = $this->applications[0];
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_cancelApplication_is_unsuccessful_user_does_not_exist(): void {
+        $app = $this->applications[0];
+        $response = $this->getJson("/api/cancelApplication/baduseracc/{$app->applicationNo}");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_cancelApplication_is_unsuccessful_application_does_not_exist(): void {
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/badapplicaitonno");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_cancelApplication_is_unsuccessful_application_does_not_belong_to_user(): void {
+        $app = $this->applications[0];
+        $response = $this->getJson("/api/cancelApplication/000000a/{$app->applicationNo}");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_cancelApplication_sets_status_correctly(): void {
+        $app = $this->applications[0];
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
+        $response->assertStatus(200);
+
+        $updatedApp = Application::where('applicationNo', $app->applicationNo)->first();
+        $this->assertTrue($updatedApp['status'] == 'C');
+    }
+
+    public function test_api_request_for_cancelApplication_deletes_nominations(): void {
+        $app = $this->applications[0];
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
+        $response->assertStatus(200);
+
+        $nominationsForApp = Nomination::where('applicationNo', $app->applicationNo)->get()->toArray();
+        $this->assertFalse(count($nominationsForApp) > 0);
     }
 }
