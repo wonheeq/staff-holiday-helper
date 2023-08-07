@@ -24,6 +24,7 @@ return new class extends Migration
 
         Schema::table('applications',function (Blueprint $table) {
             $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
+            $table->foreign('processedBy')->references('accountNo')->on('accounts')->cascadeOnUpdate();
         });
     }
 
