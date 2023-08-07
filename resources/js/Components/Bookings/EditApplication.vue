@@ -4,6 +4,10 @@ import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
 import { reactive } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useNominationStore } from '@/stores/NominationStore';
+let nominationStore = useNominationStore();
+const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 let emit = defineEmits(['close']);
 let props = defineProps({
     applicationNo: Number,
@@ -16,6 +20,13 @@ let period = reactive({
 function resetFields() {
     period.start = null;
     period.end = null;
+
+    for (let nomination of nominations.value) {
+        nomination.nomination = "";
+        nomination.selected = false;
+        nomination.visible = true;
+    }
+    isSelfNominateAll.value = false;
 }
 </script>
 <template>
@@ -27,7 +38,7 @@ function resetFields() {
                     Edit Leave Application (ID: {{ applicationNo }}):
                 </p>
                 <button class="h-full"
-                    @click="$emit('close')"
+                    @click="resetFields(); $emit('close')"
                 >
                     <img src="/images/close.svg" class="h-full w-full"/>
                 </button>
