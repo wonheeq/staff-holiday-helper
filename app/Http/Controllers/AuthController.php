@@ -65,7 +65,7 @@ class AuthController extends Controller
             $request->only('accountNo')
 
         );
-
+        // dd($status);
         return $status === Password::RESET_LINK_SENT
             ? back()->with(['status' => __($status)])
             : back()->withErrors(['email' => __($status)]);
