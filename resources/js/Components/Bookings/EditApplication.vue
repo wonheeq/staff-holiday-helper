@@ -35,6 +35,7 @@ function resetFields() {
             <div class="grid grid-cols-3 h-[92%]">
                 <CreateSubpagePeriod :period="period" :isEditing="true" class="h-full" />
                 <CreateSubpageNominations
+                    :isEditing="true"
                     :applicationNo="applicationNo"
                     @resetFields="resetFields()"
                     class="col-span-2"

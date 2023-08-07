@@ -6,6 +6,9 @@ import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
 import EditApplication from "@/Components/Bookings/EditApplication.vue";
 import { ref } from 'vue';
+import { useNominationStore } from '@/stores/NominationStore';
+let nominationStore = useNominationStore();
+const { fetchNominationsForApplicationNo } = nominationStore;
 const options = [
     { id: 'apps', title: 'Applications'},
     { id: 'create', title: 'Create New Application'},
@@ -20,9 +23,12 @@ let props = defineProps({
 const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
 let isEditing = ref(false);
 let applicationNo = ref(null);
-function handleEditApplication(appNo) {
+async function handleEditApplication(appNo) {
+    appNo = parseInt(appNo);
     isEditing.value = true;
     applicationNo.value = appNo;
+
+    await fetchNominationsForApplicationNo(appNo);
 }
 </script>
 

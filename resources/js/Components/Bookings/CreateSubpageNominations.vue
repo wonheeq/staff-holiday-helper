@@ -13,7 +13,7 @@ let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
-const { fetchNominations, fetchNominationsForApplicationNo } = nominationStore;
+const { fetchNominations } = nominationStore;
 
 let props = defineProps({
     isEditing: {
@@ -47,9 +47,6 @@ const dataReady = ref(false);
 onMounted(async () => {
     if (!props.isEditing) {
         await fetchNominations();
-    }
-    else {
-        await fetchNominationsForApplicationNo(props.applicationNo);
     }
     await fetchStaffMembers();
     dataReady.value = true;

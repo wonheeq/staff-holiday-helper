@@ -187,28 +187,7 @@ class DatabaseSeeder extends Seeder
             'status' => 'C',
         ]);
 
-        $testApps = Application::where('accountNo', $test_id)->get();
-
-        // Generate 3 nominations for each application
-        foreach ($testApps as $application) {
-            // Get list of AccountRoleIds associated with applicant
-            $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
-            
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[0],
-            ]);
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[1],
-            ]);
-            Nomination::factory()->create([
-                'applicationNo' => $application['applicationNo'],
-                'accountRoleId' => $accountRoleIds[2],
-            ]);
-        }
-
-
+        
 
 
 
@@ -278,6 +257,31 @@ class DatabaseSeeder extends Seeder
                 'receiverNo' => $account['accountNo'],
             ]);
         }
+
+
+
+
+        $testApps = Application::where('accountNo', $test_id)->get();
+
+        // Generate 3 nominations for each application
+        foreach ($testApps as $application) {
+            // Get list of AccountRoleIds associated with applicant
+            $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
+            
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[0],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[1],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[2],
+            ]);
+        }
+
 
     }
 }
