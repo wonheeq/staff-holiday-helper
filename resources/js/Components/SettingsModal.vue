@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, reactive } from 'vue';
+import Modal from './Modal.vue';
 let emit = defineEmits(['close-settings']);
 
 let errors = reactive([]);
@@ -95,7 +96,7 @@ let resetView = () => {
 };
 </script>
 <template>
-    <div class="grid place-items-center fixed inset-0 backdrop-blur-sm bg-black/60">
+    <Modal>
         <div class="bg-white w-1/5 min-w-[320px] 1080:min-w-[420px] h-fit rounded-md drop-shadow-md pl-2 pb-2 1440:pl-4 1440:pb-4">
             <div class="flex flex-row items-center justify-between">
                 <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold">
@@ -164,7 +165,7 @@ let resetView = () => {
                 </p>
             </div>
         </div>
-    </div>
+    </Modal>
 </template>
 <style>
 .close-button {
