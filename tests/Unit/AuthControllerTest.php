@@ -81,7 +81,7 @@ class AuthControllerTest extends TestCase
         // test that Json contains the fail with the correct message
         $response->assertJson([
             'response' => 'success',
-            'url' => 'http://localhost:8000/home',
+            'url' => 'http://localhost/home',
         ]);
     }
 
@@ -95,7 +95,7 @@ class AuthControllerTest extends TestCase
         // test that Json contains the fail with the correct message
         $response->assertJson([
             'response' => 'success',
-            'url' => 'http://localhost:8000',
+            'url' => 'http://localhost',
         ]);
     }
 }
