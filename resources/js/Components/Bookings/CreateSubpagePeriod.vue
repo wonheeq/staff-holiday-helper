@@ -3,8 +3,10 @@ import{ inject } from 'vue';
 const dayJS = inject("dayJS");
 let props = defineProps({
     period: Object,
-    isEditing: Boolean
-
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 let formatDate = (date) => {
@@ -41,13 +43,15 @@ let calcDuration = (dates) => {
 <template><div class="h-[90%]">
 	<div class="flex flex-col w-fit h-full">
 		<div class="mb-8">
-			<p class="text-4xl"> Enter start date and time: </p>
+			<p v-if="!props.isEditing" class="text-4xl"> Enter start date and time: </p>
+            <p v-if="props.isEditing" class="text-4xl"> Edit start date and time: </p>
 			<div class="flex mt-2 justify-between">
 				<input type="datetime-local" v-model="period.start" />
 			</div>
 		</div>
 		<div class="mb-8">
-			<p class="text-4xl"> Enter end date and time: </p>
+			<p v-if="!props.isEditing" class="text-4xl"> Enter end date and time: </p>
+            <p v-if="props.isEditing" class="text-4xl"> Edit end date and time: </p>
 			<div class="flex mt-2 justify-between">
 				<input type="datetime-local" v-model="period.end" />
 			</div>

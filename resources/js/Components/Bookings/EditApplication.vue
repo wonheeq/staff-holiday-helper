@@ -13,6 +13,10 @@ let period = reactive({
     start: null,
     end: null
 })
+function resetFields() {
+    period.start = null;
+    period.end = null;
+}
 </script>
 <template>
 <Modal>
@@ -31,10 +35,10 @@ let period = reactive({
             <div class="grid grid-cols-3 h-[92%]">
                 <CreateSubpagePeriod :period="period" :isEditing="true" class="h-full" />
                 <CreateSubpageNominations
-                    class="col-span-2"
+                    :applicationNo="applicationNo"
                     @resetFields="resetFields()"
-                    @submitApplication="(data) => createApplication(data)"
-                    />
+                    class="col-span-2"
+                />
             </div>
         </div>
         <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
