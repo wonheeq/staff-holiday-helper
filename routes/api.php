@@ -9,7 +9,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
-//use App\Http\Controllers\MajorController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
 
 
@@ -38,4 +38,5 @@ Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBooki
 
 Route::get('/schools', SchoolController::class);
 Route::get('/courses', CourseController::class);
+Route::get('/majors', MajorController::class);
 Route::get('/units', UnitController::class);
