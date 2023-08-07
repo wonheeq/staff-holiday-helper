@@ -4,6 +4,7 @@ import { useUserStore } from './UserStore';
 export let useNominationStore = defineStore('nominations', {
     state: () => ({
         nominations: [],
+        isSelfNominateAll: false,
     }),
 
     actions: {
@@ -21,6 +22,15 @@ export let useNominationStore = defineStore('nominations', {
             try {
                 const resp = await axios.get('/api/getNominationsForApplication/' + useUserStore().userId + "/" + applicationNo);
                 this.nominations = resp.data;
+                
+                this.isSelfNominateAll = true;
+                for (let nom of this.nominations) {
+                    if (nom.nomination != "Self Nomination") {
+                        this.isSelfNominateAll = false;
+                        break;
+                    }
+                }
+
               }
               catch (error) {
                 alert(error)

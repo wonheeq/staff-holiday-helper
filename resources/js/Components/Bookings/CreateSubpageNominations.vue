@@ -12,7 +12,7 @@ import { useNominationStore } from '@/stores/NominationStore';
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let nominationStore = useNominationStore();
-const { nominations } = storeToRefs(nominationStore);
+const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
 
 let props = defineProps({
@@ -26,7 +26,7 @@ let emit = defineEmits(['resetFields', 'submitApplication']);
 
 let deadAreaColor = "#FFFFFF";
 
-let selfNominateAll = ref(false);
+let selfNominateAll = isSelfNominateAll;
 let allSelected = ref(false);
 let roleFilter = ref("");
 let staffMembers = reactive([]);
