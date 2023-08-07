@@ -11,7 +11,7 @@ async function handleLogout() {
     await axios.post("logout").then(
         function(response) {
             if( response.data.response == "success") {
-                window.location.href = response.data.url
+                // window.location.href = response.data.url
             }
         }
     )

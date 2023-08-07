@@ -16,6 +16,7 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         // checks if credentials in the request meet the rules
+        // If it fails, returns 302 response
         $credentials = $request->validate([
             'accountNo' => ['required'],
             'password' => ['required'],
@@ -69,6 +70,5 @@ class AuthController extends Controller
             'password' => Hash::make('testPassword7'),
             'superiorNo' => '123456a',
         ]);
-        error_log('created user');
     }
 }
