@@ -7,6 +7,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+let applicationStore = useApplicationStore();
+const { fetchApplications } = applicationStore;
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 let emit = defineEmits(['close']);
@@ -111,6 +114,7 @@ function handleEditApplication(data) {
                         icon: "success",
                         title: 'Successfully edited application.'
                     }).then(() => {
+                        fetchApplications();
                         resetFields();
                         emit('close');
                     });
