@@ -1,32 +1,34 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
+import { storeToRefs } from 'pinia';
+import { useUserStore } from "@/stores/UserStore";
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 let deadAreaColor = "#FFFFFF";
 
-let substitutions = [
-    {
-        task: "test",
-        sDate: "2023-08-03 14:30",
-        eDate: "2023-08-04 14:30",
-        applicantName: "Test"
-    },
-    {
-        task: "test",
-        sDate: "2023-08-03 14:30",
-        eDate: "2023-08-04 14:30",
-        applicantName: "Test"
-    },
-    {
-        task: "test",
-        sDate: "2023-08-03 14:30",
-        eDate: "2023-08-04 14:30",
-        applicantName: "Test"
-    },
-];
+let substitutions = [];
 
+let fetchSubstitutions = async() => {
+    try {
+        const resp = await axios.get('/api/getSubstitutionsForUser/' + userId.value);
+        substitutions = resp.data;
+    } catch (error) {
+        alert("Failed to load data: Please try again");
+        console.log(error);
+    }
+}; 
+
+const dataReady = ref(false);
+
+onMounted(async () => {
+    await fetchSubstitutions();
+    dataReady.value = true;
+});
 </script>
 <template>
-    <div class="subpage-height w-full">
+    <div v-if="dataReady" class="subpage-height w-full">
         <div class="h-[10%]">
             <p class="font-bold text-5xl">
                 Your Substitutions
