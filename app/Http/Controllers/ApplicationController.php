@@ -184,7 +184,7 @@ class ApplicationController extends Controller
         }
 
         // Get Old Nominations
-        $oldNominations = Nomination::where('applicationNo', $data['applicationNo']);
+        $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
         $newNominations = $data['nominations'];
 
         $oldNomineeIds = array();
@@ -248,13 +248,12 @@ class ApplicationController extends Controller
         // TODO: Implement notifiying of related parties
 
 
+
         // delete old nominations
         foreach ($oldNominations as $nomination) {
-            Log::debug("DELETEING: {$application->applicationNo}-{$nomination->nomineeNo}-{$nomination->accountRoleId}");
             $obj = Nomination::where('applicationNo', $application->applicationNo, "and")
                         ->where('nomineeNo', $nomination->nomineeNo, "and")
                         ->where('accountRoleId', $nomination->accountRoleId)->delete();
-
         }
 
         // create new nominations
@@ -262,12 +261,23 @@ class ApplicationController extends Controller
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
 
-            Nomination::create([
-                'applicationNo' => $application->applicationNo,
-                'nomineeNo' => $nominee,
-                'accountRoleId' => $nomination['accountRoleId'],
-                'status' => 'U'
-            ]);
+            if ($nominee == $accountNo) {
+                // self nomination so implicity accepted
+                Nomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nominee,
+                    'accountRoleId' => $nomination['accountRoleId'],
+                    'status' => 'Y'
+                ]);
+            }
+            else {
+                Nomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nominee,
+                    'accountRoleId' => $nomination['accountRoleId'],
+                    'status' => 'U'
+                ]);
+            }
         }
        
         response()->json(['success' => 'success'], 200);
