@@ -97,6 +97,8 @@ class BookingController extends Controller
         // Get all Nominations associated with the applicationNo
         $nominations = Nomination::where('applicationNo', $applicationNo)->get();
         
+        $accountRoleIdsNominated = array();
+
         // Iterate through each Nomination, extract the AccountRoleId
         // Get RoleId from AccountRole
         // Call RoleController->getRoleFromAccountRoleId() to get the role name
@@ -119,6 +121,8 @@ class BookingController extends Controller
                 $nomination = "({$nomineeNo}) {$nominee['fName']} {$nominee['lName']}";
             }
 
+            array_push($accountRoleIdsNominated, $accountRoleId);
+
             // format and push data to result
             array_push($result, [
                 'accountRoleId' => $accountRoleId,
@@ -128,6 +132,33 @@ class BookingController extends Controller
                 'visible' => true,
             ]);
         }
+
+        // Add in any new roles that were assigned to the user after they made the application
+        // Get all AccountRoles associated with the accountNo
+        $accountRoles = AccountRole::where('accountNo', $accountNo)->get();
+        
+        // Iterate through each AccountRole, extract the roleId
+        // Call RoleController->getRoleFromAccountRoleId() to get the role name
+        foreach ($accountRoles as $accountRole) {
+            if (in_array($accountRole['accountRoleId'], $accountRoleIdsNominated)) {
+                // Skip to next if already in results array
+
+                continue;
+            }
+
+            $roleId = $accountRole['roleId'];
+            $roleName = app(RoleController::class)->getRoleFromAccountRoleId($roleId);
+
+            // format and push data to result
+            array_push($result, [
+                'accountRoleId' => $accountRole['accountRoleId'],
+                'selected' => false,
+                'role' => $roleName,
+                'nomination' => "",
+                'visible' => true,
+            ]);
+        }
+
         return response()->json($result);
     }
 
