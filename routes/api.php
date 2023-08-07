@@ -32,3 +32,4 @@ Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBooki
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
+Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);

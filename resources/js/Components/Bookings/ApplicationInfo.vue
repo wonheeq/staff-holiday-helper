@@ -4,6 +4,8 @@ import ApplicationNominationData from './ApplicationNominationData.vue';
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useUserStore } from '@/stores/UserStore';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 let userStore = useUserStore();
 const { userId } = storeToRefs(userStore);
 let props = defineProps({ source: Object });
@@ -32,8 +34,37 @@ let toggleImage = (isVisible) => {
     return '/images/triangle_down.svg';
 }
 
-function handleCancelApplication() {
-    emit('cancelApplication', props.source.applicationNo);
+function alertFailedCancelApplication() {
+    Swal.fire({
+        title: "Failed to Cancel Application",
+        text: "Please try again later.",
+    });
+}
+
+async function handleCancelApplication() {
+    Swal.fire({
+        title: "Cancel Application",
+        text: "Are you sure you want to cancel this application?",
+        showCancelButton: true,
+        confirmButtonText: "Yes, cancel it",
+        cancelButtonText: "No, do not cancel it",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.get("/api/cancelApplication/" + userId.value + "/" + props.source.applicationNo)
+            .then((response) => {
+                if (response.status == 200) {
+                    emit('cancelApplication', props.source.applicationNo);
+                }
+                else {
+                    alertFailedCancelApplication();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                alertFailedCancelApplication();
+            });
+        }
+    });
 }
 </script>
 <template>

@@ -165,4 +165,44 @@ class ApplicationController extends Controller
 
         response()->json(['success' => 'success'], 200);
     }
+
+
+    /*
+    Cancels an application by setting it's status to Cancelled
+    Deletes Nominations for application
+    */
+    public function cancelApplication(Request $request, String $accountNo, int $applicationNo) {
+        // Check if user exists for given user id
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $application = Application::where('applicationNo', $applicationNo, "and")
+        ->where('accountNo', $accountNo)->first();
+
+        // Check if application exists and belongs to the user
+        if (!$application)
+        {
+             // Application does not exist or does not belong to accountNo, return exception
+             return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
+        }
+
+        // Set application status to Cancelled
+        $application->status = 'C';
+        $application->save();
+        // TODO: Implement sending of cancelled application message
+        
+        // Delete each nomination associated with the application
+        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+        foreach ($nominations as $nomination) {
+            $nomineeNo = $nomination['nomineeNo'];
+            // TODO: Implement sending of cancelled application message
+
+            // delete nomination
+            $nomination->delete();
+        }
+
+        return response()->json(['success'], 200);
+    }
 }
