@@ -10,7 +10,8 @@ const errorMsg = ref('');
 
 
 async function handleReset() {
-    let staffEmail = staffID.value + '@curtin.edu.au';
+    staffEmail.value = staffID.value + '@curtin.edu.au';
+    console.log(staffEmail.value);
     await axios.post("forgot-password", {
         email: staffEmail.value,
     }).then( function(response) {
