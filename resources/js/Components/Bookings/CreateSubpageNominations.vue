@@ -154,13 +154,7 @@ function submitApplication() {
     }
 
     // pass data to parent to handle
-    if (!props.isEditing) {
-        emit('submitApplication', data);
-    }
-    else 
-    {
-
-    }
+    emit('submitApplication', data);
 
     allSelected.value = false;
     selfNominateAll.value = false;
@@ -244,13 +238,27 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 <div class="flex justify-between h-1/2 space-x-16">
                     <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
                         @click="cancelApplication()"
+                        v-if="!props.isEditing"
                     >
                         Cancel Application
                     </button>
+                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="cancelApplication()"
+                        v-if="props.isEditing"
+                    >
+                        Cancel Edit of Application
+                    </button>
                     <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
                         @click="submitApplication()"
+                        v-if="!props.isEditing"
                     >
                         Submit Application
+                    </button>
+                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                        @click="submitApplication()"
+                        v-if="props.isEditing"
+                    >
+                        Edit Application
                     </button>
                 </div>
             </div>
