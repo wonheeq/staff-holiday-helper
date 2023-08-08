@@ -12,10 +12,12 @@ let props = defineProps({
 
 function handleAcknowledgeMessage() {
     props.source.acknowledged = 1;
+    props.source.updated_at = new Date();
 
-    data = [];
-    data.messageId = props.source.messageId;
-    data.accountNo = userId.value;
+    let data = {
+        'messageId': props.source.messageId,
+        'accountNo': userId.value,
+    };
 
     axios.post('/api/acknowledgeMessage', data)
             .then(res => {
