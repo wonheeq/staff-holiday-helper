@@ -1,4 +1,10 @@
 <script setup>
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/UserStore';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 let props = defineProps({
     source: Object,
 });
@@ -10,7 +16,25 @@ function handleAcceptSingle() {
 }
 
 function handleReject() {
-
+    let data = {
+        'accountNo': userId.value,
+        'applicationNo': props.source.applicationNo,
+    };
+    axios.post('/api/rejectNominations', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to reject nominations, please try again.'
+                });
+            }
+            else {
+                props.source.acknowledged = 1;
+                props.source.updated_at = new Date();
+            }
+        }).catch(err => {
+        console.log(err)
+    });
 }
 </script>
 
