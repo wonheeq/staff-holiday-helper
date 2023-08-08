@@ -94,4 +94,60 @@ class NominationController extends Controller
 
         return response()->json(['success'], 200);
     }
+
+    /*
+    Sets the nomination status to acceped
+    */
+    public function acceptNominations(Request $request) {
+        $data = $request->all();
+        $accountNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+
+        $account = Account::where('accountNo', $accountNo)->first();
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Check if user exists for given user id
+        if ($account == null) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if application exists for given application No
+        if ($application == null) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if user is nominated for that application
+        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+                                    ->where('nomineeNo', $accountNo)->get();
+
+        if (count($nominations) == 0) {
+            return response()->json(['error' => 'Account not nominated for application.'], 500);
+        }
+
+        // set nomination statues to 'Y'
+        foreach ($nominations as $nomination) {
+            Nomination::where('applicationNo', $nomination->applicationNo, "and")
+                        ->where('nomineeNo', $nomination->nomineeNo, "and")
+                        ->where('accountRoleId', $nomination->accountRoleId)
+                        ->update([
+                            "status" => 'Y'
+                        ]);
+        }
+
+        
+        // Set application status to Undecided by system if all nominees agreed
+        $allNominations = Nomination::where('applicationNo', $applicationNo)->get()->toArray();
+        $acceptedNominations = Nomination::where('applicationNo', $applicationNo, 'and')
+                                            ->where('status', 'Y')->get()->toArray();
+        if (count($acceptedNominations) == count($allNominations)) {
+            $application->status = 'U';
+            $application->processedBy = null;
+            $application->save();
+
+             // TODO: create message for line manager informing them to reveiw the app
+        }
+
+        return response()->json(['success'], 200);
+    }
 }
