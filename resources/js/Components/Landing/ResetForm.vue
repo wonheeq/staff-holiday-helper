@@ -21,7 +21,7 @@ async function handleReset() {
         errorMsg.value = '';
     }).catch(error => {
         if(error.response) {
-            errorMsg.value = error.response.data.message;
+            errorMsg.value = error.response.message;
             // console.log(error.response);
         }
     })

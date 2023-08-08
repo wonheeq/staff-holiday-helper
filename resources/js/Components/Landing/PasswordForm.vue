@@ -24,10 +24,10 @@
             </div>
 
             <!-- Reset Button -->
-            <!-- :disabled="!buttonActive" -->
 
             <button
                 type="submit"
+                :disabled="!buttonActive"
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
             </button>
         </form>
@@ -37,7 +37,7 @@
 
 
         <!-- Error Message -->
-        <div class="flex justify-center mb-2 text-red-500">
+        <div class="flex justify-center mb-2 text-red-500 text-center">
             <ul>
                 <li v-for="error in errors.slice(0, 1)">
                     {{ error }}
@@ -76,12 +76,6 @@ const props = defineProps({
     },
 });
 
-const formData = ref({
-    password: '',
-    passwordConf: ''
-});
-
-const testPassword = ref('');
 
 async function handleReset() {
     await axios.post("/update-password", {
@@ -89,8 +83,14 @@ async function handleReset() {
         accountNo: props.accountNo,
         password: passOne.value,
         password_confirmation: passTwo.value,
-
-    });
+    }).then( function(response) {
+        showConf.value = true;
+        errors.length = 0;
+    }).catch(error => {
+        if(error.response) {
+            errors.push(error.response.data.message);
+        }
+    })
 }
 
 const passOne = ref("");
