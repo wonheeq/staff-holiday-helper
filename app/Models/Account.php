@@ -19,9 +19,9 @@ class Account extends Authenticatable
 {
     use HasFactory, HasApiTokens, Notifiable;
 
+    // set accountNo as primary key so eloquent doesn't have a fit about columns
     protected $primaryKey = 'accountNo';
     public $incrementing = false;
-
 
     protected $fillable = [
         'accountNo',
