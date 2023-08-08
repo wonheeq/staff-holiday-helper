@@ -40,4 +40,36 @@ class MessageController extends Controller
 
         return response()->json($messages);
     }
+
+
+    /*
+    Set the acknowledged status of a message to true
+    */
+    public function acknowledgeMessage(Request $request) {
+        $data = $request->all();
+        $accountNo = $data['accountNo'];
+        $messageId = $data['messageId'];
+
+        // Check if Account exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // Account does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if Message exists for given messageId
+        $message = Message::where('messageId', $messageId)->first();
+        if (!$message) {
+            return response()->json(['error' => 'Message does not exist.'], 500);
+        }
+
+        // Check if Message belongs to user
+        if ($message['receiverNo'] != $accountNo) {
+            return response()->json(['error' => 'Message does not belong to user.'], 500);
+        }
+
+        $message->acknowledged = true;
+        $message->save();
+
+        return response()->json(['success'], 200);
+    }
 }

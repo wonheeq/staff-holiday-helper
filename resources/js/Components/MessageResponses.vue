@@ -1,8 +1,31 @@
 <script setup>
+import axios from 'axios';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/UserStore';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
+
 let props = defineProps({
     source: Object,
 });
 
+
+function handleAcknowledgeMessage() {
+    props.source.acknowledged = 1;
+
+    data = [];
+    data.messageId = props.source.messageId;
+    data.accountNo = userId.value;
+
+    axios.post('/api/acknowledgeMessage', data)
+            .then(res => {
+                if (res.status != 200) {
+                    console.log(err);
+                }
+            }).catch(err => {
+            console.log(err);
+        });
+}
 
 const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem] border-l-4 border-white";
 </script>
@@ -44,7 +67,7 @@ const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19r
     </div>
     <div v-show="props.source.title!='Substitution Request' && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center ">
-            <button @click="props.source.acknowledged = 1"
+            <button @click="handleAcknowledgeMessage()"
                 class="flex flex-col items-center">
                 <img src="/images/acknowledge.svg"/>
                 <p class="text-sm 1440:text-lg">Acknowledge</p>
