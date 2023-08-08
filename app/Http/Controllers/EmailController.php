@@ -10,9 +10,23 @@ class EmailController extends Controller
 
     public function sendEmail()
     {
-        $this->bookingEditTest();
+        $this->bookingCreated();
+        //$this->bookingEditTest();
     }
-    public function bookingEditTest()
+    public function bookingCreated()
+    {
+        $dynamicData = [
+            'name' => 'Peter',
+            'appNo' => 123123,
+            'nName' => 'Messi',
+            'role' => 'Lecturer',
+            'uCode' => 'COMP3003',
+            'uName' => "Foundation of Computer Science and Data Engineering",
+            'period' => '00:00 23/04/2022 - 00:00 25/04/2022'
+        ];
+        Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Booking Edited", "email/bookingCreated", $dynamicData));
+    }
+    public function bookingEdit()
     {
         $nominees = new Nominees();
         $nominees->nName ="Tony Cranston";
