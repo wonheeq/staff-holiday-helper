@@ -2,10 +2,7 @@
 //import NavLink from '@/Components/NavLink.vue';
 const props = defineProps({
     options: Object,
-    activeScreen: {
-        type: String,
-        default: 'apps',
-    }
+    activeScreen: String,
 });
 const emit = defineEmits(['screen-changed']);
 </script>

@@ -9,9 +9,37 @@
     { id: 'sysSettings', title: 'System Settings'},
     ];
 
-    let activeScreen = ref("applications");
-    const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
+    let activeScreen = ref("viewData");
+    
 
+    let props = defineProps({
+        screenProp: {
+            type: String,
+            default: 'default'
+        }
+    });
+
+    if (props.screenProp !== "default") {
+        activeScreen.value = props.screenProp;
+    }
+
+
+    function changeUrl(params) {
+        var baseUrl = window.location.origin;
+
+        history.pushState(
+            null,
+            'LeaveOnTime',
+            baseUrl + "/admin/" + params
+        );
+    }
+
+    function handleActiveScreenChanged(screen) {
+        activeScreen.value = screen;
+
+        changeUrl(screen);
+    }
+    const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
 </script>
 
 <script>
@@ -31,7 +59,8 @@
            <SubpageNavbar
                class="h-[5%]"
                :options="options"
-               @screen-changed="screen => activeScreen = screen"
+               :activeScreen="activeScreen"
+               @screen-changed="screen => handleActiveScreenChanged(screen) "
           />
           <div
                v-show="activeScreen === 'viewData'"
