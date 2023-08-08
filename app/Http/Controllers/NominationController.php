@@ -175,6 +175,70 @@ class NominationController extends Controller
     }
 
     /*
+    Sets nomination status to 'Y' or 'N' depending on input
+    */
+    public function acceptSomeNominations(Request $request) {
+        $data = $request->all();
+        $messageId = $data['messageId'];
+        $accountNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+        $responseData = $data['responses'];
+
+        $account = Account::where('accountNo', $accountNo)->first();
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        $message = Message::where('messageId', $messageId)->first();
+
+        // Check if user exists for given user id
+        if ($account == null) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if messaage exists
+        if ($message == null) {
+            return response()->json(['error' => 'Message does not exist.'], 500);
+        }
+
+        // Check if application exists for given application No
+        if ($application == null) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if user is nominated for that application
+        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+                                    ->where('nomineeNo', $accountNo)->get();
+
+        if (count($nominations) == 0) {
+            return response()->json(['error' => 'Account not nominated for application.'], 500);
+        }
+
+
+        // Check if all responses are != 'U'
+        foreach ($responseData as $response) {
+            if ($response->status == 'U') {
+                return response()->json(['error' => 'Invalid response to nomination.'], 500);
+            }
+        }
+
+        // update message
+        $message->acknowledged = true;
+        $message->save();
+
+        // set nomination statues to 'Y' or 'N'
+        foreach ($responseData as $response) {
+            Nomination::where('applicationNo', $applicationNo, "and")
+                        ->where('nomineeNo', $accountNo, "and")
+                        ->where('accountRoleId', $response->accountRoleId)
+                        ->update([
+                            "status" => $response->status
+                        ]);
+        }
+
+        return response()->json(['success'], 200);
+    }
+
+
+    /*
     Gets the roles that an account has been nominated for
     */
     public function getRolesForNominee(Request $request) {
@@ -216,10 +280,6 @@ class NominationController extends Controller
                     "roleName" => app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId),
                     "accountRoleId" => $accountRoleId,
                     "status" => 'U',
-                    "classes" => [
-                        "accept" => '',
-                        "reject" => '',
-                    ]
                 ]
             );
         }

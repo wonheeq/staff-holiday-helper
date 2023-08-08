@@ -2,7 +2,12 @@
 import Modal from './Modal.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/UserStore';
+import Swal from 'sweetalert2';
 import axios from 'axios';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 import AcceptSomeNominationOptions from './AcceptSomeNominationOptions.vue';
 import { ref } from 'vue';
 
@@ -25,6 +30,57 @@ function handleStatusChangedForRole(role, status) {
         buttonActive.value = false;
     }
 }
+
+function submitResponses() {
+    let responses = [];
+
+    for (let role in props.roles.value) {
+        responses.push({
+            "accountRoleId": role.accountRoleId,
+            "status": role.status
+        });
+    }
+
+    let data = {
+        'messageId': props.data.messageId,
+        'accountNo': userId.value,
+        'applicationNo': props.data.applicationNo,
+        'responses': responses
+    };   
+
+    axios.post('/api/acceptSomeNominations', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to respond to nominations, please try again.',
+                    text: res.message
+                });
+                console.log(res);
+            }
+            else {
+                props.data.acknowledged = 1;
+                props.data.updated_at = new Date();
+                Swal.fire({
+                    icon: "success",
+                    title: 'Successfully responded to the nominations.',
+                }).then(() => {
+                    handleClose();
+                });
+            }
+        }).catch(err => {
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to respond to nominations, please try again.',
+        });
+    });
+}
+
+function handleClose() {
+    buttonActive.value = false;
+    emit('close');
+}
 </script>
 <template>
 <Modal>
@@ -34,9 +90,9 @@ function handleStatusChangedForRole(role, status) {
                 <!-- Filter for content element that contains 'Duration' and get the first element
                     Assumes that there is Duration in one of the content elements    
                 -->
-                {{ JSON.parse(props.data.content).filter(content => content.includes('Duration:'))[0] }}
+                {{ props.data.content && JSON.parse(props.data.content).filter(content => content.includes('Duration:'))[0] }}
             </p>
-            <button @click="emit('close'); buttonActive = false">
+            <button @click="handleClose()">
                     <img src="/images/close.svg"
                     class="close-button h-full"
                 />
@@ -72,7 +128,8 @@ function handleStatusChangedForRole(role, status) {
                     'bg-blue-300': buttonActive,
                     'bg-gray-300': !buttonActive
                 }"
-                :disabled="!buttonActive"    
+                :disabled="!buttonActive"
+                @click="submitResponses()"
             >
                 Submit Responses
             </button>
