@@ -36,8 +36,7 @@
             class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
         </button>
 
-        {{ token }}
-        {{ email }}
+
 
         <!-- Error Message -->
         <!-- <div class="flex justify-center mb-2 text-red-500">
