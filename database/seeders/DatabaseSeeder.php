@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => null,
         ]);
 
-        // Create 30 accounts
+        // Create 10 accounts
         Account::factory(30)->create();
 
         $accounts = Account::get();
@@ -185,19 +185,6 @@ class DatabaseSeeder extends Seeder
             'accountNo' => $test_id,
             'processedBy' => $lineManagerNo,
             'status' => 'C',
-        ]);
-
-        
-
-
-
-
-
-
-
-        // Create 30 accounts
-        Account::factory(30)->create([
-            'superiorNo' => $lineManagerNo,
         ]);
 
         $accounts = Account::get();
