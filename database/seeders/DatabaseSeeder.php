@@ -31,7 +31,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
                
-        \App\Models\Message::factory(30)->create();
         \App\Models\Unit::factory(15)->create();
         \App\Models\Course::factory(10)->create();
         \App\Models\Major::factory(10)->create();
@@ -93,7 +92,7 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => null,
         ]);
 
-        // Create 10 accounts
+        // Create 30 accounts
         Account::factory(30)->create();
 
         $accounts = Account::get();
@@ -112,8 +111,7 @@ class DatabaseSeeder extends Seeder
                 'processedBy' => $lineManagerNo,
             ]);
 
-
-        $applications = Application::where('accountNo', $account['accountNo'])->get();
+            $applications = Application::where('accountNo', $account['accountNo'])->get();
 
             // Generate 4 nominations for each application
             foreach ($applications as $application) {
@@ -196,6 +194,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+    
         // Each account gets 4 applications
         foreach ($accounts as $account) {
             Application::factory(4)->create([
@@ -245,9 +244,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-
-
-
         $testApps = Application::where('accountNo', $test_id)->get();
 
         // Generate 3 nominations for each application
@@ -268,7 +264,5 @@ class DatabaseSeeder extends Seeder
                 'accountRoleId' => $accountRoleIds[2],
             ]);
         }
-
-
     }
 }
