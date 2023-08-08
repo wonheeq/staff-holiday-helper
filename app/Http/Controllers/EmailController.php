@@ -11,12 +11,12 @@ class EmailController extends Controller
     public function sendEmail()
     {
         //$this->bookingCreated();
-        ////$this->bookingEditTest();
+        //////$this->bookingEditTest();
         $this->bookingCancelled();
         $this->passwordChanged();
         $this->passwordReset();
         $this->applicationAccept();
-
+        $this->applicationReject();
     }
     public function passwordChanged()
     {
@@ -71,6 +71,20 @@ class EmailController extends Controller
             'period' => '00:00 23/04/2022 - 00:00 25/04/2022'
         ];
         Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Application Accepted", "email/applicationAccepted", $dynamicData));
+    }
+    public function applicationReject()
+    {
+        $dynamicData = [
+            'name' => 'Yun Mei',
+            'appNo' => 123123,
+            'nName' => 'Tan Lok',
+            'role' => 'Unit Coordinator',
+            'uCode' => 'COMP3003',
+            'uName' => "Foundation of Computer Science and Data Engineering",
+            'period' => '00:00 23/04/2022 - 00:00 25/04/2022',
+            'reason' => 'No more leaves.'
+        ];
+        Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Application Rejected", "email/applicationRejected", $dynamicData));
     }
     public function bookingEdit()
     {
