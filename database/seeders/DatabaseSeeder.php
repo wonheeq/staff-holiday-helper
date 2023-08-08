@@ -150,9 +150,12 @@ class DatabaseSeeder extends Seeder
         
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
-            Message::factory(10)->create([
-                'receiverNo' => $account['accountNo'],
-            ]);
+            // ignore test id because we will generate actually working messages later
+            if ($account->accountNo != $test_id) {
+                Message::factory(10)->create([
+                    'receiverNo' => $account['accountNo'],
+                ]);
+            }
         }
 
 
@@ -179,6 +182,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+
+
+        // GENERATE ACTUALLY WORKING MESSAGES
 
 
         $otherUser = Account::factory()->create();
@@ -241,6 +247,18 @@ class DatabaseSeeder extends Seeder
             'content' => json_encode([
                 '(testing) You have been nominated for ROLENAME',
                 "{$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
+            ]),
+            'acknowledged' => false
+        ]);
+
+        // generate "acknowledgeable" messages
+        Message::factory()->create([
+            'applicationNo' => null,
+            'receiverNo' => $test_id,
+            'senderNo' => $otherUser->accountNo,
+            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
+            'content' => json_encode([
+                'asdfasdfasdf',
             ]),
             'acknowledged' => false
         ]);

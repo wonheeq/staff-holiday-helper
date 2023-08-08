@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Nomination;
 use App\Models\Application;
 use App\Models\AccountRole;
+use App\Models\Message;
 use App\Models\Account;
 use App\Models\Role;
 use Illuminate\Support\Facades\Log;
@@ -50,16 +51,23 @@ class NominationController extends Controller
     */
     public function rejectNominations(Request $request) {
         $data = $request->all();
+        $messageId = $data['messageId'];
         $accountNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
 
         $account = Account::where('accountNo', $accountNo)->first();
         $application = Application::where('applicationNo', $applicationNo)->first();
+        $message = Message::where('messageId', $messageId)->first();
 
         // Check if user exists for given user id
         if ($account == null) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if messaage exists
+        if ($message == null) {
+            return response()->json(['error' => 'Message does not exist.'], 500);
         }
 
         // Check if application exists for given application No
@@ -74,6 +82,10 @@ class NominationController extends Controller
         if (count($nominations) == 0) {
             return response()->json(['error' => 'Account not nominated for application.'], 500);
         }
+
+        // update message
+        $message->acknowledged = true;
+        $message->save();
 
         // set nomination statues to 'N'
         foreach ($nominations as $nomination) {
@@ -100,16 +112,23 @@ class NominationController extends Controller
     */
     public function acceptNominations(Request $request) {
         $data = $request->all();
+        $messageId = $data['messageId'];
         $accountNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
 
         $account = Account::where('accountNo', $accountNo)->first();
         $application = Application::where('applicationNo', $applicationNo)->first();
+        $message = Message::where('messageId', $messageId)->first();
 
         // Check if user exists for given user id
         if ($account == null) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if messaage exists
+        if ($message == null) {
+            return response()->json(['error' => 'Message does not exist.'], 500);
         }
 
         // Check if application exists for given application No
@@ -124,6 +143,10 @@ class NominationController extends Controller
         if (count($nominations) == 0) {
             return response()->json(['error' => 'Account not nominated for application.'], 500);
         }
+
+        // update message
+        $message->acknowledged = true;
+        $message->save();
 
         // set nomination statues to 'Y'
         foreach ($nominations as $nomination) {

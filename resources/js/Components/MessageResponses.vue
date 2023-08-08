@@ -11,12 +11,38 @@ let props = defineProps({
 
 const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem] border-l-4 border-white";
 
-function handleAcceptSingle() {
-
+function handleAcceptAll() {
+    let data = {
+        'messageId': props.source.messageId,
+        'accountNo': userId.value,
+        'applicationNo': props.source.applicationNo,
+    };
+    axios.post('/api/acceptNominations', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to accept nominations, please try again.',
+                    text: res.message
+                });
+                console.log(res);
+            }
+            else {
+                props.source.acknowledged = 1;
+                props.source.updated_at = new Date();
+            }
+        }).catch(err => {
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to accept nominations, please try again.',
+        });
+    });
 }
 
 function handleReject() {
     let data = {
+        'messageId': props.source.messageId,
         'accountNo': userId.value,
         'applicationNo': props.source.applicationNo,
     };
@@ -25,7 +51,8 @@ function handleReject() {
             if (res.status == 500) {
                 Swal.fire({
                     icon: "error",
-                    title: 'Failed to reject nominations, please try again.'
+                    title: 'Failed to reject nominations, please try again.',
+                    text: res.message
                 });
             }
             else {
@@ -33,7 +60,11 @@ function handleReject() {
                 props.source.updated_at = new Date();
             }
         }).catch(err => {
-        console.log(err)
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to reject nominations, please try again.',
+        });
     });
 }
 </script>
@@ -42,7 +73,7 @@ function handleReject() {
     <div v-if="props.source.subject=='Substitution Request' && !props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center">
             <button class="flex flex-col items-center"
-                @click="handleAcceptSingle()"
+                @click="handleAcceptAll()"
             >
                 <img src="/images/accept.svg"/>
                 <p class="text-sm 1440:text-lg">Accept</p>
@@ -59,7 +90,9 @@ function handleReject() {
     </div>
     <div v-if="props.source.subject=='Substitution Request' && props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center">
+            <button class="flex flex-col items-center"
+                @click="handleAcceptAll()"
+            >
                 <img src="/images/accept.svg"/>
                 <p class="text-sm 1440:text-lg">Accept All</p>
             </button>
