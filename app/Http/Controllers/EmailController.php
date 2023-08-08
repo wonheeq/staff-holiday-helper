@@ -10,10 +10,12 @@ class EmailController extends Controller
 
     public function sendEmail()
     {
-        $this->bookingCreated();
+        //$this->bookingCreated();
         //$this->bookingEditTest();
         $this->bookingCancelled();
         $this->passwordChanged();
+        $this->passwordReset();
+
     }
     public function passwordChanged()
     {
@@ -47,6 +49,14 @@ class EmailController extends Controller
             'period' => '00:00 23/04/2022 - 00:00 25/04/2022'
         ];
         Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Booking Edited", "email/bookingCreated", $dynamicData));
+    }
+    public function passwordReset()
+    {
+        $dynamicData = [
+            'name' => 'Peter',
+            'password' => '123!@ASDL##',
+        ];
+        Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Password reset", "email/passwordReset", $dynamicData));
     }
     public function bookingEdit()
     {

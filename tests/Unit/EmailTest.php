@@ -13,6 +13,23 @@ use Illuminate\Support\Testing\Concerns\InteractsWithPages;
 class EmailTest extends TestCase
 {
 
+    public function testPasswordReset(): void
+    {
+        $dynamicData = [
+            'name' => 'Peter',
+            'password' => '123!@ASDL##',
+        ];
+        $mailable = new MJML("Password Reset", "email/passwordReset", $dynamicData);
+        Mail::fake(); //a method that sends the email without actually sending it
+        Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
+        Mail::assertSent(MJML::class); //check if email has really been sent
+        $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
+        $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
+        
+        //after render, check if the rendered content contains below strings/details:
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('123!@ASDL##', $mailable->render());
+    }
     public function testPasswordChanged()
     {
         $dynamicData = [
