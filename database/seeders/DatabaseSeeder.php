@@ -180,5 +180,58 @@ class DatabaseSeeder extends Seeder
         }
 
 
+
+        $otherUser = Account::factory()->create();
+
+        $otherAccountRoles = AccountRole::factory(5)->create([
+            'accountNo' => $otherUser->accountNo,
+        ]);
+
+        // create application where the test user is nominated for multiple
+        $nomMultiApp = Application::factory()->create([
+            'accountNo' => $otherUser->accountNo,
+            'status' => 'P',
+        ]);
+        foreach ($otherAccountRoles as $accRole) {
+            Nomination::factory()->create([
+                'nomineeNo' => $test_id,
+                'applicationNo' => $nomMultiApp->applicationNo,
+                'accountRoleId' => $accRole->accountRoleId,
+                'status' => 'U',
+            ]);
+        }
+
+        // create message for this application
+        Message::factory()->create([
+            'applicationNo' => $nomMultiApp->applicationNo,
+            'receiverNo' => $test_id,
+            'senderNo' => $otherUser->accountNo,
+            'subject' => 'Substitution Request',
+            'content' => '(testing) You have been nominated for 5 roles, role role role role role',
+            'acknowledged' => false
+        ]);
+
+
+        // create application where the test user is nominated for single
+        $nomSingleApp = Application::factory()->create([
+            'accountNo' => $otherUser->accountNo,
+            'status' => 'P',
+        ]);
+        Nomination::factory()->create([
+            'nomineeNo' => $test_id,
+            'applicationNo' => $nomSingleApp->applicationNo,
+            'accountRoleId' => $accRole->accountRoleId,
+            'status' => 'U',
+        ]);
+
+        // create message for this application
+        Message::factory()->create([
+            'applicationNo' => $nomSingleApp->applicationNo,
+            'receiverNo' => $test_id,
+            'senderNo' => $otherUser->accountNo,
+            'subject' => 'Substitution Request',
+            'content' => '(testing) You have been nominated for 1 role',
+            'acknowledged' => false
+        ]);
     }
 }
