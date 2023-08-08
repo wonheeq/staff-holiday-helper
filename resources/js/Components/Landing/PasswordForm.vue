@@ -64,75 +64,23 @@
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
-const passOne = ref("");
-const passTwo = ref("");
-const showConf = ref(false);
-const MIN_LENGTH = 10;
-const MAX_LENGTH = 30;
-const hasUppercase = new RegExp("(?=.*[A-Z])");
-const hasLowercase = new RegExp("(?=.*[a-z])");
-const hasWhitespace = new RegExp("/\s/");
-const hasDigit = new RegExp("\\d");
+// const props = defineProps({
+//     email: {
+//         type: String,
+//         required: true,
+//     },
+//     token: {
+//         type: String,
+//         required: true,
+//     },
+// });
 
-let errors = reactive([]);
-let buttonActive = ref(false);
-let password = reactive({
-    password: "",
-    confirm: ""
-});
-
-// Navigate to the landing page
-function goToLanding() {
-    window.location.href = "/";
-}
-
-// Password validation
-let validatePasswords = () => {
-   errors.length = 0;
-
-   if (!hasUppercase.test(password.password)) {
-       errors.push("Password must contain at least one uppercase letter.");
-   }
-
-   if (!hasLowercase.test(password.password)) {
-       errors.push("Password must contain at least one lowercase letter.");
-   }
-
-   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
-       errors.push("Password length must be between 10 and 30.");
-   }
-
-   if (!hasDigit.test(password.password)) {
-       errors.push("Password must contain at least one number.");
-   }
-
-   if (hasWhitespace.test(password.password)) {
-       errors.push("Password must not contain spaces.");
-   }
-
-   // Check if passwords match and activate submit button if so
-   if (password.password !== password.confirm) {
-       errors.push("Passwords do not match.");
-       buttonActive.value = false;
-   }
-   else if (password.password == password.confirm && errors.length == 0) {
-       buttonActive.value = true;
-   }
-};
-
-// Watches the refs for the values emitted by the landingInputs and updates
-// the value used for password validation
-watch(passOne, () =>  {
-    password.password = passOne.value;
-});
-watch(passTwo, () =>  {
-    password.confirm = passTwo.value;
-});
-
-// Watches the value used for password validation to check if after each change
-watch(password, () => {
-    validatePasswords();
-});
+// const form = useForm({
+//     token: props.token,
+//     email: props.email,
+//     password: '',
+//     password_confirmation: '',
+// });
 
 </script>
 
