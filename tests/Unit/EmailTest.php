@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Http\Controllers\EmailController;
 use App\Mail\MJML;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
@@ -12,8 +13,9 @@ use Illuminate\Support\Testing\Concerns\InteractsWithPages;
 class EmailTest extends TestCase
 {
 
-    public function testEmailContents(): void
+    public function testBookingEdited(): void
     {
+        $emailController = new EmailController();
         $nominees = new Nominees();
         $nominees->nName ="Tony Cranston";
         $nominees->nId = 222222;
@@ -33,14 +35,13 @@ class EmailTest extends TestCase
             'period' => '00:00 12/04/2024 - 00:00 22/04/2024',
             'nomineesArray' => $nomineesArray,
         ];
-
+        $emailController->sendEmail();
         $mailable = new MJML("Booking Edited", "email/bookingEdited", $dynamicData);
         Mail::fake(); //a method that sends the email without actually sending it
         Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Booking Edited', $mailable->subject); //check if subject of the email is correct
-        
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Joe', $mailable->render());
         $this->assertStringContainsString('Ronaldo', $mailable->render());
