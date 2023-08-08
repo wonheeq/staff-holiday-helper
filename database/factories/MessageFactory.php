@@ -24,7 +24,7 @@ class MessageFactory extends Factory
             'receiverNo' => fake()->randomElement(Account::pluck("accountNo")),
             'senderNo' => fake()->randomElement(Account::pluck("accountNo")),
             'subject' => fake()->randomElement(TITLES),
-            'content' => fake()->realText(fake()->numberBetween(10,100)),
+            'content' => json_encode([fake()->realText(fake()->numberBetween(10,100)), "date - date"]),
             'acknowledged' => fake()->numberBetween(0,1) == 1,
         ];
     }

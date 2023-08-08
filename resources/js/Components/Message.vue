@@ -24,8 +24,10 @@ let copyEmail = (e) => {
                     @click="copyEmail(props.source.senderNo)"
                     />
             </div>
-            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
-                {{ props.source.content }}
+            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
+                v-for="content in JSON.parse(props.source.content)"
+            >
+                {{ content }}
             </p>
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>

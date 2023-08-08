@@ -207,7 +207,15 @@ class DatabaseSeeder extends Seeder
             'receiverNo' => $test_id,
             'senderNo' => $otherUser->accountNo,
             'subject' => 'Substitution Request',
-            'content' => '(testing) You have been nominated for 5 roles, role role role role role',
+            'content' => json_encode([
+                '(testing) You have been nominated for 5 roles:',
+                "ROLENAME 1",
+                "ROLENAME 2",
+                "ROLENAME 3",
+                "ROLENAME 4",
+                "ROLENAME 5",
+                "{$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
+            ]),
             'acknowledged' => false
         ]);
 
@@ -230,7 +238,10 @@ class DatabaseSeeder extends Seeder
             'receiverNo' => $test_id,
             'senderNo' => $otherUser->accountNo,
             'subject' => 'Substitution Request',
-            'content' => '(testing) You have been nominated for 1 role',
+            'content' => json_encode([
+                '(testing) You have been nominated for ROLENAME',
+                "{$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
+            ]),
             'acknowledged' => false
         ]);
     }
