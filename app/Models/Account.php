@@ -10,7 +10,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Support\Facades\Mail;
+// use Illuminate\Auth\Notifications\ResetPassword;
 use App\Notifications\ResetPassword;
+use Illuminate\Notifications\Notification;
 
 
 class Account extends Authenticatable
@@ -49,7 +51,20 @@ class Account extends Authenticatable
         return $email;
     }
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
+        error_log('sent notif');
+    }
 
+
+
+    public function routeNotificationFor($driver, $notification = null)
+    {
+        // $email = $this->accountNo . '@curtin.edu.au';
+        $email = $this->accountNo . '@test.com.au';
+        return $email;
+    }
     // public function sendPasswordResetNotification($token)
     // {
 
