@@ -22,10 +22,13 @@ class CalendarControllerTest extends TestCase
         // Create test data
         $this->user = Account::factory()->create();
 
+        // Do not create application with Cancelled status since it does not get returned with getCalendarData
+        $statuses = ["Y", "N", "P", "U"];
         $this->applications = array();
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             array_push($this->applications, Application::factory()->create([
-                'accountNo' => $this->user->accountNo
+                'accountNo' => $this->user->accountNo,
+                'status' => $statuses[$i]
             ]));
         }
 
@@ -96,8 +99,8 @@ class CalendarControllerTest extends TestCase
         $response = $this->getJson("/api/calendar/{$this->user->accountNo}");
         $array = json_decode($response->content());
 
-        // 3 applications created for test user + 1 from the other User
-        $this->assertTrue(count($array) == 4);
+        // 4 applications created for test user + 1 substitution from the other User
+        $this->assertTrue(count($array) == 5);
 
         // check that first element is strucutred correctly
         $response->assertJsonStructure([
