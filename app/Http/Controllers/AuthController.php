@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -59,20 +60,41 @@ class AuthController extends Controller
 
     public function reset(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
-        $status = Password::sendResetLink(
-            // $request->only('email')
-            $request->only('accountNo')
+        $request->validate([
+            'email' => 'required|email',
+        ]);
 
+
+        // $status = Password::sendResetLink(
+        //     $request->only('email')
+        // );
+
+        $status = Password::sendResetLink(
+            $request->only('accountNo')
         );
-        dd($status);
+
+
+        // if ($status == Password::RESET_LINK_SENT) {
+        //     return back()->with('status', __($status));
+        // }
+
+        if ($status == Password::RESET_LINK_SENT) {
+            return response()->json([
+                'status' => __($status),
+            ]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [trans($status)],
+        ]);
+
         // $test = $status === Password::RESET_LINK_SENT
         //     ? back()->with(['status' => __($status)])
         //     : back()->withErrors(['email' => __($status)]);
         // dd($test);
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        // return $status === Password::RESET_LINK_SENT
+        //     ? back()->with(['status' => __($status)])
+        //     : back()->withErrors(['email' => __($status)]);
     }
 
     // Route: /login/create
