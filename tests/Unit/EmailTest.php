@@ -12,6 +12,35 @@ use Illuminate\Support\Testing\Concerns\InteractsWithPages;
 class EmailTest extends TestCase
 {
 
+    public function testApplicationApproval(): void
+    {
+        $dynamicData = [
+            'name' => 'Yun Mei',
+            'appNo' => 123123,
+            'nName' => 'Tan Lok',
+            'role' => 'Unit Coordinator',
+            'uCode' => 'COMP3003',
+            'uName' => "Foundation of Computer Science and Data Engineering",
+            'period' => '00:00 23/04/2022 - 00:00 25/04/2022',
+            'reason' => 'No more leaves.'
+        ];
+        $mailable = new MJML("Application Rejected", "email/applicationRejected", $dynamicData);
+        Mail::fake(); //a method that sends the email without actually sending it
+        Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
+        Mail::assertSent(MJML::class); //check if email has really been sent
+        $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
+        $this->assertEquals('Application Rejected', $mailable->subject); //check if subject of the email is correct
+        
+        //after render, check if the rendered content contains below strings/details:
+        $this->assertStringContainsString('Yun Mei', $mailable->render());
+        $this->assertStringContainsString('123123', $mailable->render());
+        $this->assertStringContainsString('Tan Lok', $mailable->render());
+        $this->assertStringContainsString('Unit Coordinator', $mailable->render());
+        $this->assertStringContainsString('COMP3003', $mailable->render());
+        $this->assertStringContainsString('Foundation of Computer Science and Data Engineering', $mailable->render());
+        $this->assertStringContainsString('00:00 23/04/2022 - 00:00 25/04/2022', $mailable->render());
+        $this->assertStringContainsString('No more leaves.', $mailable->render());
+    }
     public function testEmailContents(): void
     {
         $nominees = new Nominees();
