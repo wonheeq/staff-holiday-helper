@@ -92,7 +92,7 @@ Route::get(
 
 Route::post(
     '/reset-password',
-    [AuthController::class, 'reset']
+    [PasswordResetController::class, 'reset']
 )->middleware('guest')->name('password.email');
 
 // Route::get('/reset-password/{token}', function (string $token) {
