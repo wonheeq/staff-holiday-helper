@@ -49,7 +49,6 @@ class MessageController extends Controller
                                             ->where('nomineeNo', $accountNo)->get();
 
                 $count = count($nominations);
-                Log::debug("NUM: {$count}");
                 if ($count > 1) {
                     // add isNominatedMultiple flag to message data
                     $message["isNominatedMultiple"] = true;
