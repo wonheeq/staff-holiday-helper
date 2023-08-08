@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\ResetPassword;
 
 
 class Account extends Authenticatable
@@ -49,15 +50,17 @@ class Account extends Authenticatable
     }
 
 
-    public function sendPasswordResetNotification($token)
-    {
+    // public function sendPasswordResetNotification($token)
+    // {
 
-        $dynamicData = [
-            'name' => 'Joe',
-            // more dynamic data can be added
-        ];
-        Mail::to("mailtrap@test.com")->send(new TestMail("Password Reset", "email/passwordChanged", $dynamicData));
-    }
+    //     // $dynamicData = [
+    //     //     'name' => 'Joe',
+    //     //     // more dynamic data can be added
+    //     // ];
+    //     // Mail::to("mailtrap@test.com")->send(new TestMail("Password Reset", "email/passwordChanged", $dynamicData));
+
+    //     $this->notify(new ResetPassword($token));
+    // }
     // protected $table = 'accounts';
     // protected $guarded = [];
 }
