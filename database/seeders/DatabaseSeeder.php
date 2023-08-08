@@ -221,7 +221,7 @@ class DatabaseSeeder extends Seeder
                     "ROLENAME 3",
                     "ROLENAME 4",
                     "ROLENAME 5",
-                    "{$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
+                    "Duration: {$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
                 ]),
                 'acknowledged' => false
             ]);    
@@ -248,7 +248,7 @@ class DatabaseSeeder extends Seeder
             'subject' => 'Substitution Request',
             'content' => json_encode([
                 '(testing) You have been nominated for ROLENAME',
-                "{$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
+                "Duration: {$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
             ]),
             'acknowledged' => false
         ]);
