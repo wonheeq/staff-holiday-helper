@@ -193,38 +193,40 @@ class DatabaseSeeder extends Seeder
             'accountNo' => $otherUser->accountNo,
         ]);
 
-        // create application where the test user is nominated for multiple
-        $nomMultiApp = Application::factory()->create([
+        // create 2 applications where the test user is nominated for multiple
+        $nomMultiApps = Application::factory(2)->create([
             'accountNo' => $otherUser->accountNo,
             'status' => 'P',
         ]);
-        foreach ($otherAccountRoles as $accRole) {
-            Nomination::factory()->create([
-                'nomineeNo' => $test_id,
+        foreach ($nomMultiApps as $nomMultiApp) {
+            foreach ($otherAccountRoles as $accRole) {
+                Nomination::factory()->create([
+                    'nomineeNo' => $test_id,
+                    'applicationNo' => $nomMultiApp->applicationNo,
+                    'accountRoleId' => $accRole->accountRoleId,
+                    'status' => 'U',
+                ]);
+            }
+    
+            // create message for this application
+            Message::factory()->create([
                 'applicationNo' => $nomMultiApp->applicationNo,
-                'accountRoleId' => $accRole->accountRoleId,
-                'status' => 'U',
-            ]);
+                'receiverNo' => $test_id,
+                'senderNo' => $otherUser->accountNo,
+                'subject' => 'Substitution Request',
+                'content' => json_encode([
+                    '(testing) You have been nominated for 5 roles:' . strval($nomMultiApp->applicationNo),
+                    "ROLENAME 1",
+                    "ROLENAME 2",
+                    "ROLENAME 3",
+                    "ROLENAME 4",
+                    "ROLENAME 5",
+                    "{$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
+                ]),
+                'acknowledged' => false
+            ]);    
         }
-
-        // create message for this application
-        Message::factory()->create([
-            'applicationNo' => $nomMultiApp->applicationNo,
-            'receiverNo' => $test_id,
-            'senderNo' => $otherUser->accountNo,
-            'subject' => 'Substitution Request',
-            'content' => json_encode([
-                '(testing) You have been nominated for 5 roles:',
-                "ROLENAME 1",
-                "ROLENAME 2",
-                "ROLENAME 3",
-                "ROLENAME 4",
-                "ROLENAME 5",
-                "{$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
-            ]),
-            'acknowledged' => false
-        ]);
-
+        
 
         // create application where the test user is nominated for single
         $nomSingleApp = Application::factory()->create([

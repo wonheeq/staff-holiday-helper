@@ -216,6 +216,10 @@ class NominationController extends Controller
                     "roleName" => app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId),
                     "accountRoleId" => $accountRoleId,
                     "status" => 'U',
+                    "classes" => [
+                        "accept" => '',
+                        "reject" => '',
+                    ]
                 ]
             );
         }

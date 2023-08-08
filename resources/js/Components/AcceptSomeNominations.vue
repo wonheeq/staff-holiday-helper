@@ -3,6 +3,7 @@ import Modal from './Modal.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import axios from 'axios';
+import { computed } from 'vue';
 
 let emit = defineEmits(['close']);
 let props = defineProps({
@@ -10,17 +11,19 @@ let props = defineProps({
     roles: Object
 });
 let deadAreaColor = "#FFFFFF";
+
+const computedRoles = computed(() => props.roles);
 </script>
 <template>
 <Modal>
     <div class="bg-white w-2/5 h-[48rem] rounded-md p-4">
         <div class="flex h-[10%] items-center justify-between">
             <p class="font-bold text-4xl">
-                You have been nominated for the following roles:
+                You have been nominated for the following roles ({{ props.data.applicationNo }}):
             </p>
             <button @click="emit('close')">
                     <img src="/images/close.svg"
-                    class="close-button"
+                    class="close-button h-full"
                 />
             </button>
         </div>
@@ -30,11 +33,22 @@ let deadAreaColor = "#FFFFFF";
                 :scrollHorizontal="false"
             >
                 <template #tbody>
-                    <div class="flex mb-2 items-center space-x-2" v-for="role in props.roles" :key="role.id">
-                        <input type="checkbox" />
+                    <div class="flex mb-2 items-center space-x-2 justify-between mr-4"
+                        v-for="role in computedRoles" :key="role.id">
                         <p>
                             {{ role.roleName }}
                         </p>
+                        <div class="flex space-x-4">
+                            <button class="rounded-md border border-black p-2">
+                                Accept
+                            </button>
+                            <button class="rounded-md border border-black p-2"
+                                :class="role.classes.reject"
+                                @click="role.status = 'N'; role.classes.reject='bg-red-400';"
+                            >
+                                Reject
+                            </button>
+                        </div>
                     </div>
                 </template>
             </VueScrollingTable>
@@ -44,31 +58,6 @@ let deadAreaColor = "#FFFFFF";
 </template>
 <style>
 .close-button {
-    height: 40px;
     width: auto;
-}
-/* 1080p */
-@media 
-(min-width: 1920px) {
-    .close-button {
-        height: 56px;
-        width: auto;
-    }
-}
-/* 1440p */
-@media 
-(min-width: 2560px) {
-    .close-button {
-        height: 60px;
-        width: auto;
-    }
-}
-/* 2160p */
-@media 
-(min-width: 3840px) {
-    .close-button {
-        height: 80px;
-        width: auto;
-    }
 }
 </style>
