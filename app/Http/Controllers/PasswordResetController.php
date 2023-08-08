@@ -36,6 +36,7 @@ class PasswordResetController extends Controller
             ]);
         }
 
+
         // exception if link is not sent
         throw ValidationException::withMessages([
             'email' => [trans($status)],
