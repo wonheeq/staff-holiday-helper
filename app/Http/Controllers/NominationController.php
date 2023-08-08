@@ -213,9 +213,16 @@ class NominationController extends Controller
         }
 
 
+        // Check if responses is not null
+        if ($responseData == null) {
+            return response()->json(['error' => 'Responses are null.'], 500);
+        }
+
         // Check if all responses are != 'U'
         foreach ($responseData as $response) {
-            if ($response->status == 'U') {
+            $status = $response['status'] || $response->status;
+
+            if ($status == 'U') {
                 return response()->json(['error' => 'Invalid response to nomination.'], 500);
             }
         }
@@ -226,13 +233,19 @@ class NominationController extends Controller
 
         // set nomination statues to 'Y' or 'N'
         foreach ($responseData as $response) {
+            $accountRoleId = $response['accountRoleId'] || $response->accountRoleId;
+            $status = $response['status'] || $response->status;
             Nomination::where('applicationNo', $applicationNo, "and")
                         ->where('nomineeNo', $accountNo, "and")
-                        ->where('accountRoleId', $response->accountRoleId)
+                        ->where('accountRoleId', $accountRoleId)
                         ->update([
-                            "status" => $response->status
+                            "status" => $status
                         ]);
         }
+
+
+        // TODO: update applicaiton status
+        // Message those involved
 
         return response()->json(['success'], 200);
     }

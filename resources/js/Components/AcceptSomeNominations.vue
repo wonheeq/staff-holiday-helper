@@ -34,7 +34,7 @@ function handleStatusChangedForRole(role, status) {
 function submitResponses() {
     let responses = [];
 
-    for (let role in props.roles.value) {
+    for (let role in props.roles) {
         responses.push({
             "accountRoleId": role.accountRoleId,
             "status": role.status
@@ -54,7 +54,7 @@ function submitResponses() {
                 Swal.fire({
                     icon: "error",
                     title: 'Failed to respond to nominations, please try again.',
-                    text: res.message
+                    text: res.data.error
                 });
                 console.log(res);
             }
