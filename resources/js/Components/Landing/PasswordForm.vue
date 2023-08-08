@@ -33,9 +33,6 @@
         </form>
 
 
-
-
-
         <!-- Error Message -->
         <div class="flex justify-center mb-2 text-red-500 text-center">
             <ul>
@@ -64,6 +61,7 @@
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
+
 
 const props = defineProps({
     accountNo: {
