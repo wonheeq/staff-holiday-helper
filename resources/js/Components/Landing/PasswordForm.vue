@@ -37,13 +37,13 @@
 
 
         <!-- Error Message -->
-        <!-- <div class="flex justify-center mb-2 text-red-500">
+        <div class="flex justify-center mb-2 text-red-500">
             <ul>
                 <li v-for="error in errors.slice(0, 1)">
                     {{ error }}
                 </li>
             </ul>
-        </div> -->
+        </div>
 
         <!-- Bottom Links -->
         <div class="flex justify-between">
@@ -127,12 +127,12 @@ let validatePasswords = () => {
        errors.push("Password must contain at least one lowercase letter.");
    }
 
-   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
-       errors.push("Password length must be between 10 and 30.");
-   }
-
    if (!hasDigit.test(password.password)) {
        errors.push("Password must contain at least one number.");
+   }
+
+   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
+       errors.push("Password length must be between 10 and 30.");
    }
 
    if (hasWhitespace.test(password.password)) {
@@ -151,11 +151,11 @@ let validatePasswords = () => {
 
 // Watches the refs for the values emitted by the landingInputs and updates
 // the value used for password validation
-watch(formData.password, () =>  {
-    password.password = formData.password.value;
+watch(passOne, () =>  {
+    password.password = passOne.value;
 });
-watch(formData.passwordConf, () =>  {
-    password.confirm = formData.passwordConf.value;
+watch(passTwo, () =>  {
+    password.confirm = passTwo.value;
 });
 
 // Watches the value used for password validation to check if after each change
