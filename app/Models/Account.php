@@ -18,6 +18,9 @@ use Illuminate\Notifications\Notification;
 class Account extends Authenticatable
 {
     use HasFactory, HasApiTokens, Notifiable;
+
+    protected $primaryKey = 'accountNo';
+
     protected $fillable = [
         'accountNo',
         'password',
@@ -54,7 +57,6 @@ class Account extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
-        error_log('sent notif');
     }
 
 
