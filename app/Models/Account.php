@@ -61,25 +61,10 @@ class Account extends Authenticatable
         $this->notify(new ResetPassword($token));
     }
 
-
-
     public function routeNotificationFor($driver, $notification = null)
     {
         // $email = $this->accountNo . '@curtin.edu.au';
         $email = $this->accountNo . '@test.com.au';
         return $email;
     }
-    // public function sendPasswordResetNotification($token)
-    // {
-
-    //     // $dynamicData = [
-    //     //     'name' => 'Joe',
-    //     //     // more dynamic data can be added
-    //     // ];
-    //     // Mail::to("mailtrap@test.com")->send(new TestMail("Password Reset", "email/passwordChanged", $dynamicData));
-
-    //     $this->notify(new ResetPassword($token));
-    // }
-    // protected $table = 'accounts';
-    // protected $guarded = [];
 }
