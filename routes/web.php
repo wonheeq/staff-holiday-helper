@@ -79,7 +79,7 @@ Route::post(
 Route::post(
     '/logout',
     [AuthController::class, 'logout']
-)->middleware('auth');
+);
 
 Route::get(
     '/login/create',
