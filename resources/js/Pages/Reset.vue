@@ -8,12 +8,26 @@
 
 <script setup>
 import PasswordForm from "@/Components/Landing/PasswordForm.vue";
+
+const props = defineProps({
+    email: {
+        type: String,
+        required: true,
+    },
+    token: {
+        type: String,
+        required: true,
+    },
+});
+
 </script>
 
 <template>
     <main>
         <div>
-            <PasswordForm></PasswordForm>
+            <div>
+            </div>
+            <PasswordForm :email="email" :token="token"></PasswordForm>
         </div>
     </main>
 </template>
