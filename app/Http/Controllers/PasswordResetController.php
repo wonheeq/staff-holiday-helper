@@ -54,7 +54,7 @@ class PasswordResetController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'token' => 'required',
@@ -75,7 +75,10 @@ class PasswordResetController extends Controller
         );
 
         if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
+            // return redirect()->route('login')->with('status', __($status));
+            return response()->json([
+                'status' => __($status),
+            ]);
         }
 
         throw ValidationException::withMessages([

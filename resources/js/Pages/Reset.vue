@@ -28,8 +28,7 @@ let accountNo = strArr[0];
 <template>
     <main>
         <div>
-            {{ props.email }}
-            {{ accountNo }}
+
             <PasswordForm :account-no="accountNo" :token="token"></PasswordForm>
         </div>
     </main>

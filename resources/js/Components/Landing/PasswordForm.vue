@@ -1,10 +1,4 @@
-<!--
-    File: PasswordForm.vue
-    Purpose: Password Reset Component for use in Landing.vue
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 1/08/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
+
 
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
@@ -18,14 +12,14 @@
             <!-- Password Input 1 -->
             <div class="mb-5">
                 <landing-input
-                v-model="testPassword" title="New Password" inType="passwordType" >
+                v-model="passOne" title="New Password" inType="passwordType" >
             </landing-input>
             </div>
 
             <!-- Password Input 2 -->
             <div class="mb-5">
                 <landing-input
-                v-model="passwordConf" title="Confirm New Password" inType="passwordType" >
+                v-model="passTwo" title="Confirm New Password" inType="passwordType" >
             </landing-input>
             </div>
 
@@ -37,8 +31,6 @@
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
             </button>
         </form>
-
-        {{ accountNo }}
 
 
 
@@ -95,11 +87,81 @@ async function handleReset() {
     await axios.post("/update-password", {
         token: props.token,
         accountNo: props.accountNo,
-        password: testPassword.value,
-        password_confirmation: testPassword.value,
+        password: passOne.value,
+        password_confirmation: passTwo.value,
 
     });
 }
+
+const passOne = ref("");
+const passTwo = ref("");
+const showConf = ref(false);
+const MIN_LENGTH = 10;
+const MAX_LENGTH = 30;
+const hasUppercase = new RegExp("(?=.*[A-Z])");
+const hasLowercase = new RegExp("(?=.*[a-z])");
+const hasWhitespace = new RegExp("/\s/");
+const hasDigit = new RegExp("\\d");
+
+let errors = reactive([]);
+let buttonActive = ref(false);
+let password = reactive({
+    password: "",
+    confirm: ""
+});
+
+// Navigate to the landing page
+function goToLanding() {
+    window.location.href = "/";
+}
+
+// Password validation
+let validatePasswords = () => {
+   errors.length = 0;
+
+   if (!hasUppercase.test(password.password)) {
+       errors.push("Password must contain at least one uppercase letter.");
+   }
+
+   if (!hasLowercase.test(password.password)) {
+       errors.push("Password must contain at least one lowercase letter.");
+   }
+
+   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
+       errors.push("Password length must be between 10 and 30.");
+   }
+
+   if (!hasDigit.test(password.password)) {
+       errors.push("Password must contain at least one number.");
+   }
+
+   if (hasWhitespace.test(password.password)) {
+       errors.push("Password must not contain spaces.");
+   }
+
+   // Check if passwords match and activate submit button if so
+   if (password.password !== password.confirm) {
+       errors.push("Passwords do not match.");
+       buttonActive.value = false;
+   }
+   else if (password.password == password.confirm && errors.length == 0) {
+       buttonActive.value = true;
+   }
+};
+
+// Watches the refs for the values emitted by the landingInputs and updates
+// the value used for password validation
+watch(formData.password, () =>  {
+    password.password = formData.password.value;
+});
+watch(formData.passwordConf, () =>  {
+    password.confirm = formData.passwordConf.value;
+});
+
+// Watches the value used for password validation to check if after each change
+watch(password, () => {
+    validatePasswords();
+});
 
 </script>
 
