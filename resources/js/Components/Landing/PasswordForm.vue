@@ -28,7 +28,9 @@
             <button
                 type="submit"
                 :disabled="!buttonActive"
-                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">
+
+                Reset Password
             </button>
         </form>
 
