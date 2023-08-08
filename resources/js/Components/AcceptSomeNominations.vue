@@ -3,6 +3,7 @@ import Modal from './Modal.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import axios from 'axios';
+import AcecptSomeNominationOptions from './AcecptSomeNominationOptions.vue';
 import { computed } from 'vue';
 
 let emit = defineEmits(['close']);
@@ -38,17 +39,7 @@ const computedRoles = computed(() => props.roles);
                         <p>
                             {{ role.roleName }}
                         </p>
-                        <div class="flex space-x-4">
-                            <button class="rounded-md border border-black p-2">
-                                Accept
-                            </button>
-                            <button class="rounded-md border border-black p-2"
-                                :class="role.classes.reject"
-                                @click="role.status = 'N'; role.classes.reject='bg-red-400';"
-                            >
-                                Reject
-                            </button>
-                        </div>
+                        <AcecptSomeNominationOptions />
                     </div>
                 </template>
             </VueScrollingTable>
