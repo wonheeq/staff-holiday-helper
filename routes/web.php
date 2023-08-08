@@ -87,21 +87,18 @@ Route::get(
     [AuthController::class, 'create']
 );
 
-// Route::get('/forgot-password', function () {
-//     return Inertia::render('Reset', []);
-// })->name('password.reqeust');
 
 Route::post(
     '/reset-password',
     [PasswordResetController::class, 'reset']
 )->middleware('guest')->name('password.email');
 
-// Route::get('/reset-password/{token}', function (string $token) {
-//     return view('auth.reset-password', ['token' => $token]);
-// })->middleware('guest')->name('password.reset');
 
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
     ->name('password.reset');
+
+Route::post('/update-password', [PasswordResetController::class, 'store'])
+    ->name('password.store');
 
 /*
 Route::middleware('auth')->group(function () {

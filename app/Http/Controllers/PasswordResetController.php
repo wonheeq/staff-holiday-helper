@@ -56,6 +56,7 @@ class PasswordResetController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // dd();
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',

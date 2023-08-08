@@ -1,5 +1,5 @@
-const passOne = ref("");
-const passTwo = ref("");
+// const passOne = ref("");
+// const passTwo = ref("");
 const showConf = ref(false);
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 30;
@@ -56,11 +56,11 @@ let validatePasswords = () => {
 
 // Watches the refs for the values emitted by the landingInputs and updates
 // the value used for password validation
-watch(passOne, () =>  {
-    password.password = passOne.value;
+watch(formData.password, () =>  {
+    password.password = formData.password.value;
 });
-watch(passTwo, () =>  {
-    password.confirm = passTwo.value;
+watch(formData.passwordConf, () =>  {
+    password.confirm = formData.passwordConf.value;
 });
 
 // Watches the value used for password validation to check if after each change

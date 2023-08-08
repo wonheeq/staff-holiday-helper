@@ -14,27 +14,34 @@
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
 
-        <!-- Password Input 1 -->
-        <div class="mb-5">
-            <landing-input
-            v-model="passOne" title="New Password" inType="passwordType" >
-        </landing-input>
-        </div>
+        <form action="#" @submit.prevent="handleReset">
+            <!-- Password Input 1 -->
+            <div class="mb-5">
+                <landing-input
+                v-model="password" title="New Password" inType="passwordType" >
+            </landing-input>
+            </div>
 
-        <!-- Password Input 2 -->
-        <div class="mb-5">
-            <landing-input
-            v-model="passTwo" title="Confirm New Password" inType="passwordType" >
-        </landing-input>
-        </div>
+            <!-- Password Input 2 -->
+            <div class="mb-5">
+                <landing-input
+                v-model="passwordConf" title="Confirm New Password" inType="passwordType" >
+            </landing-input>
+            </div>
+
+            <!-- Reset Button -->
+            <!-- :disabled="!buttonActive" -->
+
+            <button
+                type="submit"
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
+            </button>
+        </form>
 
 
-        <!-- Reset Button -->
-        <button
-            :disabled="!buttonActive"
-            @click="showConf = true"
-            class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
-        </button>
+
+
+
 
 
 
@@ -63,6 +70,7 @@
 </template>
 
 <script setup>
+import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
@@ -77,12 +85,20 @@ const props = defineProps({
     },
 });
 
-// const form = useForm({
-//     token: props.token,
-//     email: props.email,
-//     password: '',
-//     password_confirmation: '',
-// });
+const formData = ref({
+    password: '',
+    passwordConf: ''
+});
+
+const testPassword = ref({''});
+
+async function handleReset() {
+    await axios.post("/update-password", {
+        token: props.token,
+        email: props.email,
+        password: formData.value.password,
+    });
+}
 
 </script>
 
