@@ -19,7 +19,7 @@ use App\Models\School;
 
 
 
-class DatabaseTest extends TestCase
+class DatabaseSeederTest extends TestCase
 {
     /**
      * Testing database is working by searching for known entities created in seeder.
@@ -34,7 +34,7 @@ class DatabaseTest extends TestCase
         $this->assertTrue($this->migrationsComplete());     
     }
 
-    public function test_seeder_has_created_tables(): void
+    public function test_seeder_has_created_entries(): void
     {
         // Ensuring sedder has been used       
         $this->assertTrue($this->seedingsComplete());
@@ -56,18 +56,54 @@ class DatabaseTest extends TestCase
         ]);
     }
 
+    public function test_database_account_roles(): void
+    {
+        // Asserting that expected entry exists in account_roles
+        $this->assertDatabaseHas('account_roles', [
+            'accountNo' => '000000a'           
+        ]);
+    }
+
     public function test_database_applications(): void
     {
-        // Asserting that Line Manager account was successfully inserted from seeder
+        // Asserting that expected entry exists in applications
         $this->assertDatabaseHas('applications', [
-            'accountNo' => '000002L',
-            'accountType' => 'lmanager',
-            'superiorNo' => null
+            'accountNo' => '000000a',
+            'processedBy' => '000002L',
+            'status' => 'Y'
+        ]);
+    }
+
+    public function test_database_minor_tables(): void
+    {
+        // Asserting that entries are present in roles, units, majors, courses, schools
+        $this->assertDatabaseHas('roles', [
+            'roleId' => 1,
+            'name' => 'Unit Coordinator'           
         ]);
 
-        // Ensuring at least one account was given '000002L' for superiorNo
-        $this->assertDatabaseHas('accounts', [
-            'superiorNo' => '000002L'
+        // units, majors and courses are entirely made with fake() and have no expected entries.
+        // 'test_seeder_has_created_entries' checks if they are empty along with the other tables.
+
+        $this->assertDatabaseHas('schools', [
+            'schoolId' => 101,
+            'name' => 'Curtin Medical School'           
+        ]);
+    }
+
+    public function test_database_nominations(): void
+    {
+        // Asserting that expected entry exists in nominations
+        $this->assertDatabaseHas('nominations', [
+            'nomineeNo' => '000002L',
+        ]);
+    }
+
+    public function test_database_messages(): void
+    {
+        // Asserting that expected entry exists in nominations
+        $this->assertDatabaseHas('messages', [
+            'receiverNo' => '000002L',
         ]);
     }
 
