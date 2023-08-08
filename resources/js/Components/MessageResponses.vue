@@ -8,7 +8,7 @@ const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19r
 </script>
 
 <template>
-    <div v-if="props.source.title=='Substitution Request' && !props.source.is_nominated_multiple && props.source.acknowledged == 0" :class="element_class">
+    <div v-if="props.source.subject=='Substitution Request' && !props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center">
             <button class="flex flex-col items-center">
                 <img src="/images/accept.svg"/>
@@ -22,7 +22,7 @@ const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19r
             </button>
         </div>
     </div>
-    <div v-if="props.source.title=='Substitution Request' && props.source.is_nominated_multiple && props.source.acknowledged == 0" :class="element_class">
+    <div v-if="props.source.subject=='Substitution Request' && props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center">
             <button class="flex flex-col items-center">
                 <img src="/images/accept.svg"/>
@@ -42,7 +42,7 @@ const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19r
             </button>
         </div>
     </div>
-    <div v-show="props.source.title!='Substitution Request' && props.source.acknowledged == 0" :class="element_class">
+    <div v-show="props.source.subject!='Substitution Request' && props.source.acknowledged == 0" :class="element_class">
         <div class="flex flex-col justify-center ">
             <button @click="props.source.acknowledged = 1"
                 class="flex flex-col items-center">
