@@ -4,11 +4,17 @@ let props = defineProps({
     source: Object,
 });
 
+let emit = defineEmits(['acceptSomeNominations']);
+
 let copyEmail = (e) => {
     let email = e + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
     alert("Email address copied to clipboard.");
 };
+
+function handleAcceptSomeNominations() {
+    emit('acceptSomeNominations');
+}
 </script>
 
 <template>
@@ -33,6 +39,7 @@ let copyEmail = (e) => {
         </div>
         <MessageResponses
             :source="source"
+            @acceptSomeNominations="handleAcceptSomeNominations()"
         />
     </div>
 </template>

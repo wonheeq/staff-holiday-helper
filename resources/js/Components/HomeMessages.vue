@@ -12,6 +12,8 @@ const { fetchMessages } = messageStore;
 onMounted(() => {
     fetchMessages();
 });
+let emit = defineEmits(['acceptSomeNominations']);
+
 let deadAreaColor = "#FFFFFF";
 let viewing = ref("unread");
 </script>
@@ -57,7 +59,9 @@ let viewing = ref("unread");
             >
                 <template #tbody>
                     <div v-for="item in messages" :key="item.id" class="mb-2">
-                        <Message :source="item"></Message>
+                        <Message :source="item"
+                            @acceptSomeNominations="emit('acceptSomeNominations', item)"
+                        ></Message>
                     </div>
                 </template>
             </VueScrollingTable>
@@ -69,7 +73,9 @@ let viewing = ref("unread");
             >
                 <template #tbody>
                     <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
-                        <Message :source="item"></Message>
+                        <Message :source="item"
+                            @acceptSomeNominations="emit('acceptSomeNominations', item)"
+                        ></Message>
                     </div>
                 </template>
             </VueScrollingTable>

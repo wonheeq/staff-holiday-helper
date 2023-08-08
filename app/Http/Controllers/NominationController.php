@@ -173,4 +173,53 @@ class NominationController extends Controller
 
         return response()->json(['success'], 200);
     }
+
+    /*
+    Gets the roles that an account has been nominated for
+    */
+    public function getRolesForNominee(Request $request) {
+        $data = $request->all();
+        $nomineeNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+
+        $account = Account::where('accountNo', $nomineeNo)->first();
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Check if user exists for given user id
+        if ($account == null) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if application exists for given application No
+        if ($application == null) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if user is nominated for that application
+        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+                                    ->where('nomineeNo', $nomineeNo)->get();
+
+        if (count($nominations) == 0) {
+            return response()->json(['error' => 'Account not nominated for application.'], 500);
+        }
+
+
+        $result = array();
+        // Iterate through the nominations, get role name from accountRoleId
+        foreach ($nominations as $nomination) {
+            $accountRoleId = $nomination->accountRoleId;
+
+            array_push(
+                $result,
+                [
+                    "roleName" => app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId),
+                    "accountRoleId" => $accountRoleId,
+                    "status" => 'U',
+                ]
+            );
+        }
+
+        return response()->json($result);
+    }
 }

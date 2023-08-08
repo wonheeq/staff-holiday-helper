@@ -35,7 +35,9 @@ Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingC
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
 Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
+Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
 Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
+Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);

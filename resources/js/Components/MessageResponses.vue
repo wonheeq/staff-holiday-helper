@@ -9,6 +9,8 @@ let props = defineProps({
     source: Object,
 });
 
+let emit = defineEmits(['acceptSomeNominations']);
+
 const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem] border-l-4 border-white";
 
 function handleAcceptAll() {
@@ -38,6 +40,10 @@ function handleAcceptAll() {
             title: 'Failed to accept nominations, please try again.',
         });
     });
+}
+
+function handleAcceptSome() {
+    emit('acceptSomeNominations');
 }
 
 function handleReject() {
@@ -98,7 +104,9 @@ function handleReject() {
             </button>
         </div>
         <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center">
+            <button class="flex flex-col items-center"
+                @click="handleAcceptSome()"
+            >
                 <img src="/images/accept-some.svg"/>
                 <p class="text-sm 1440:text-lg">Accept Some</p>
             </button>
