@@ -20,6 +20,8 @@ class Account extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable;
 
     protected $primaryKey = 'accountNo';
+    public $incrementing = false;
+
 
     protected $fillable = [
         'accountNo',
