@@ -16,9 +16,16 @@ async function handleReset() {
         email: staffEmail.value,
         accountNo: staffID.value,
     }).then( function(response) {
-        console.log(response);
-        errorMsg.value = response.data.error;
+        // console.log(response);
+        showConf.value = true;
+        errorMsg.value = '';
+    }).catch(error => {
+        if(error.response) {
+            errorMsg.value = error.response.data.message;
+            // console.log(error.response);
+        }
     })
+    // showConf.value = true;
 }
 </script>
 
@@ -46,7 +53,11 @@ async function handleReset() {
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
             >Reset Password</button>
         </form>
-        {{ errorMsg }}
+
+        <!-- Error Message -->
+        <div class="flex justify-center text-center mb-2">
+            <h1 class="text-red-500">{{ errorMsg }}</h1>
+        </div>
 
         <!-- Back Button -->
         <div class="flex justify-between">
