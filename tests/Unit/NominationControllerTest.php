@@ -418,14 +418,17 @@ class NominationControllerTest extends TestCase
     public function test_acceptSomeNominations_changes_all_nomination_statuses_to_not_be_undecided(): void {
         $nominationResponses = [];
         $nominations = Nomination::where('applicationNo', $this->message->applicationNo)
-            ->where('nomineeNo', $this->user->accountNo)->get();
+            ->where('nomineeNo', $this->user->accountNo)->orderBy('created_at', 'DESC')->get();
 
         // choose Y or N for nomination responses
+        $statuses = array();
         foreach ($nominations as $nom) {
+            $status = fake()->randomElement(['Y', 'N']);
             array_push($nominationResponses, [
                 'accountRoleId' => $nom->accountRoleId,
-                'status' => fake()->randomElement(['Y', 'N'])
+                'status' => $status
             ]);
+            array_push($statuses, $status);
         }
 
         $response = $this->postJson('/api/acceptSomeNominations', [
@@ -435,13 +438,19 @@ class NominationControllerTest extends TestCase
             'responses' => $nominationResponses,
         ]);
 
-        $nominations = Nomination::where('applicationNo', $this->message->applicationNo, "and")
-                                ->where('nomineeNo', $this->user->accountNo)->get();
+        $updatedNominations = Nomination::where('applicationNo', $this->message->applicationNo, "and")
+                                ->where('nomineeNo', $this->user->accountNo)
+                                ->orderBy('created_at', 'DESC')->get();
                             
-        $this->assertTrue(count($nominations->toArray()) > 0);
+        $this->assertTrue(count($updatedNominations->toArray()) > 0);
 
-        foreach ($nominations as $nom) {
+        $i = 0;
+        foreach ($updatedNominations as $nom) {
             $this->assertTrue($nom['status'] !== 'U');
+            
+            // Ccheck that all statuses are the same as the randomly selected ones
+            $this->assertTrue($nom['status'] == $statuses[$i]);
+            $i++;
         }
     }
 }
