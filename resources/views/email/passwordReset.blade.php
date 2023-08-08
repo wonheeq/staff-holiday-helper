@@ -23,7 +23,7 @@
       color: #888888
       }
     </mj-style>
-    
+
     <mj-style>
       .underline div {
         text-decoration: underline !important;
@@ -49,14 +49,14 @@
  	        <mj-text color="#637381" font-size="16px" padding-top="40px">
             You are receiving email because the password of your account has been succesfully reset.
           </mj-text>
-          
+
           <mj-text color="#637381" font-size="16px" font-weight="600" padding-top="30px"padding-bottom="300px">
             Not you? Contact support
             <mj-raw>
             	<a class="text-link" href="https://www.google.com/">here</a>.
             </mj-raw>
           </mj-text>
-          
+
 
           <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold">
             <a class="text-link" href="http://localhost:8000">www.LeaveOnTime.com.au</a>

@@ -56,7 +56,7 @@ class Account extends Authenticatable
             'name' => 'Joe',
             // more dynamic data can be added
         ];
-        Mail::to("mailtrap@test.com")->send(new TestMail("Password Reset", "email/passwordReset", $dynamicData));
+        Mail::to("mailtrap@test.com")->send(new TestMail("Password Reset", "email/passwordChanged", $dynamicData));
     }
     // protected $table = 'accounts';
     // protected $guarded = [];
