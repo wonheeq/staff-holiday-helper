@@ -58,44 +58,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function reset(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
 
-
-        // $status = Password::sendResetLink(
-        //     $request->only('email')
-        // );
-
-        $status = Password::sendResetLink(
-            $request->only('accountNo')
-        );
-
-
-        // if ($status == Password::RESET_LINK_SENT) {
-        //     return back()->with('status', __($status));
-        // }
-
-        if ($status == Password::RESET_LINK_SENT) {
-            return response()->json([
-                'status' => __($status),
-            ]);
-        }
-
-        throw ValidationException::withMessages([
-            'email' => [trans($status)],
-        ]);
-
-        // $test = $status === Password::RESET_LINK_SENT
-        //     ? back()->with(['status' => __($status)])
-        //     : back()->withErrors(['email' => __($status)]);
-        // dd($test);
-        // return $status === Password::RESET_LINK_SENT
-        //     ? back()->with(['status' => __($status)])
-        //     : back()->withErrors(['email' => __($status)]);
-    }
 
     // Route: /login/create
     // Type: GET

@@ -99,9 +99,8 @@ Route::post(
 //     return view('auth.reset-password', ['token' => $token]);
 // })->middleware('guest')->name('password.reset');
 
-Route::get('/reset-password/{token}', function (string $token) {
-    return Inertia::render('Reset', []);
-})->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
+    ->name('password.reset');
 
 /*
 Route::middleware('auth')->group(function () {

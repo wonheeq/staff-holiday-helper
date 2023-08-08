@@ -36,14 +36,17 @@
             class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
         </button>
 
+        {{ token }}
+        {{ email }}
+
         <!-- Error Message -->
-        <div class="flex justify-center mb-2 text-red-500">
+        <!-- <div class="flex justify-center mb-2 text-red-500">
             <ul>
                 <li v-for="error in errors.slice(0, 1)">
                     {{ error }}
                 </li>
             </ul>
-        </div>
+        </div> -->
 
         <!-- Bottom Links -->
         <div class="flex justify-between">
@@ -64,16 +67,16 @@
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
-// const props = defineProps({
-//     email: {
-//         type: String,
-//         required: true,
-//     },
-//     token: {
-//         type: String,
-//         required: true,
-//     },
-// });
+const props = defineProps({
+    email: {
+        type: String,
+        required: true,
+    },
+    token: {
+        type: String,
+        required: true,
+    },
+});
 
 // const form = useForm({
 //     token: props.token,
