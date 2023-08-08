@@ -184,8 +184,6 @@ class NominationController extends Controller
         $applicationNo = $data['applicationNo'];
         $responseData = $data['responses'];
 
-        Log::debug(gettype($responseData));
-
         $account = Account::where('accountNo', $accountNo)->first();
         $application = Application::where('applicationNo', $applicationNo)->first();
         $message = Message::where('messageId', $messageId)->first();
@@ -222,8 +220,7 @@ class NominationController extends Controller
 
         // Check if all responses are != 'U'
         foreach ($responseData as $response) {
-            $status = $response['status'] || $response->status;
-
+            $status = $response['status'];
             if ($status == 'U') {
                 return response()->json(['error' => 'Invalid response to nomination.'], 500);
             }
@@ -235,8 +232,8 @@ class NominationController extends Controller
 
         // set nomination statues to 'Y' or 'N'
         foreach ($responseData as $response) {
-            $accountRoleId = $response['accountRoleId'] || $response->accountRoleId;
-            $status = $response['status'] || $response->status;
+            $accountRoleId = $response['accountRoleId'];
+            $status = $response['status'];
             Nomination::where('applicationNo', $applicationNo, "and")
                         ->where('nomineeNo', $accountNo, "and")
                         ->where('accountRoleId', $accountRoleId)

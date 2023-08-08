@@ -22,7 +22,6 @@ let buttonActive = ref(false);
 
 function handleStatusChangedForRole(role, status) {
     role.status = status;
-
     if (props.roles.filter(r => r.status !== 'U').length == props.roles.length) {
         buttonActive.value = true;
     }
@@ -34,7 +33,7 @@ function handleStatusChangedForRole(role, status) {
 function submitResponses() {
     let responses = [];
 
-    for (let role in props.roles) {
+    for (let role of props.roles) {
         responses.push({
             "accountRoleId": role.accountRoleId,
             "status": role.status
