@@ -20,14 +20,16 @@ const props = defineProps({
     },
 });
 
+const strArr = props.email.split("@");
+let accountNo = strArr[0];
+
 </script>
 
 <template>
     <main>
         <div>
-            <div>
-            </div>
-            <PasswordForm :email="email" :token="token"></PasswordForm>
+
+            <PasswordForm :account-no="accountNo" :token="token"></PasswordForm>
         </div>
     </main>
 </template>

@@ -18,7 +18,7 @@
             <!-- Password Input 1 -->
             <div class="mb-5">
                 <landing-input
-                v-model="password" title="New Password" inType="passwordType" >
+                v-model="testPassword" title="New Password" inType="passwordType" >
             </landing-input>
             </div>
 
@@ -37,7 +37,6 @@
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
             </button>
         </form>
-
 
 
 
@@ -75,7 +74,7 @@ import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
 const props = defineProps({
-    email: {
+    accountNo: {
         type: String,
         required: true,
     },
@@ -90,13 +89,15 @@ const formData = ref({
     passwordConf: ''
 });
 
-const testPassword = ref({''});
+const testPassword = ref('');
 
 async function handleReset() {
     await axios.post("/update-password", {
         token: props.token,
-        email: props.email,
-        password: formData.value.password,
+        accountNo: props.accountNo,
+        password: testPassword.value,
+        password_confirmation: testPassword.value,
+
     });
 }
 
