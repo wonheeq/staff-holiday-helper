@@ -57,32 +57,33 @@ class NominationController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Check if user exists for given user id
-        if (!$account) {
+        if ($account == null) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
         // Check if application exists for given application No
-        if ($application) {
+        if ($application == null) {
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
-        Log::debug('pass1');
+
         // Check if user is nominated for that application
         $nominations = Nomination::where('applicationNo', $applicationNo, "and")
                                     ->where('nomineeNo', $accountNo)->get();
-        Log::debug('pass2');
 
         if (count($nominations) == 0) {
             return response()->json(['error' => 'Account not nominated for application.'], 500);
         }
-        Log::debug('pass3');
 
         // set nomination statues to 'N'
         foreach ($nominations as $nomination) {
-            $nomination->status = 'N';
-            $nomination->save();
+            Nomination::where('applicationNo', $nomination->applicationNo, "and")
+                        ->where('nomineeNo', $nomination->nomineeNo, "and")
+                        ->where('accountRoleId', $nomination->accountRoleId)
+                        ->update([
+                            "status" => 'N'
+                        ]);
         }
-        Log::debug('pass4');
 
         // TODO: Send message to applicant informing them that a nominee declined
 
@@ -90,7 +91,6 @@ class NominationController extends Controller
         $application->status = 'N';
         $application->processedBy = null;
         $application->save();
-        Log::debug('pass5');
 
         return response()->json(['success'], 200);
     }
