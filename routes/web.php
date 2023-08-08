@@ -37,35 +37,18 @@ Route::get('/home', function () {
 });
 
 
-Route::get('/bookings', function () {
+Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
     return Inertia::render('Bookings', [
-        'activeScreen' => 'apps'
+        'screenProp' => $screenProp
     ]);
 });
 
-Route::get('/bookings/apps', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'apps'
-    ]);
-});
-
-Route::get('/bookings/create', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'create'
-    ]);
-});
-
-Route::get('/bookings/subs', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'subs'
-    ]);
-});
-
-Route::get('/admin', function () {
+Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
-        'activeScreen' => 'apps'
+        'screenProp' => $screenProp
     ]);
 });
+
 
 Route::get('/send-email', [EmailController::class, 'sendEmail']);
 
