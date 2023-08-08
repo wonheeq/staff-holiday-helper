@@ -43,51 +43,36 @@
             Approved/Pending Booking Edited
           </mj-text>
           <mj-text color="#637381" font-size="16px">
-            Hi {{ $dynamicData['name'] }},
+            Hi {{ $dynamicData['sName'] }}
           </mj-text>
  	        <mj-text color="#637381" font-size="16px">
-            Jane Lastname (a123455) has edited their booking. Please approve or reject the edited booking.
+           {{ $dynamicData['editorName']}}  ({{ $dynamicData['editorId']}}) has edited their booking. Please approve or reject the edited booking.
           </mj-text>
           <mj-text color="#637381" font-size="16px" font-weight="600">
           	Here are the new details:
           </mj-text>
           <mj-text>
-          	Period: 00:00 12/04/2024 - 00:00 22/04/2024
+          	Period: {{ $dynamicData['period'] }}
           </mj-text>
           <mj-text>
           	Nominees:
           </mj-text>
           <mj-table>
+            @foreach($dynamicData['nomineesArray'] as $nominees)
           	<tr>
-            	<th align="left">
-              	Tony Cranston (a432555)
+                <th align="left">
+              	{{ $nominees->nName}} ({{ $nominees->nId}})
               </th>
             </tr>
             <tr>
               <td>
-                COMP2001 - Unit Coordinator
+                {!! nl2br($nominees->nRoles) !!} 
               </td>
             </tr>
             <tr>
-              <td>
-                COMP2001 - Lecturer
-              </td>
+              <td style="padding: 0 0 10px 0;"></td>
             </tr>
-            <tr>
-              <td style="padding: 0 0 10px 0;">
-                ISEC2001 - Unit Coordinator
-              </td>
-            </tr>
-            <tr>
-            	<th align="left">
-              	Larry Bob (a422555)
-              </th>
-            </tr>
-            <tr>
-              <td style="padding: 0 0 10px 0;">
-                ISEC2001 - Lecturer
-              </td>
-            </tr>
+            @endforeach
           </mj-table>
           <mj-text color="#637381" font-size="16px">
             To respond, simply press the button below or use the link at the bottom of this email.
