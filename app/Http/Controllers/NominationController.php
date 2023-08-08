@@ -184,6 +184,8 @@ class NominationController extends Controller
         $applicationNo = $data['applicationNo'];
         $responseData = $data['responses'];
 
+        Log::debug();
+
         $account = Account::where('accountNo', $accountNo)->first();
         $application = Application::where('applicationNo', $applicationNo)->first();
         $message = Message::where('messageId', $messageId)->first();
