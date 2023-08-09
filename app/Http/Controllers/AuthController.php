@@ -68,11 +68,12 @@ class AuthController extends Controller
     {
         DB::table('accounts')->insert([
             'accountNo' => '123456c',
-            'aType' => 'sysadmin',
+            'accountType' => 'sysadmin',
             'lName' => 'Smith',
-            'fNames' => 'John',
+            'fName' => 'John',
             'password' => Hash::make('testPassword7'),
             'superiorNo' => '123456a',
+            'schoolId' => '101',
         ]);
     }
 }

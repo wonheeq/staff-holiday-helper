@@ -17,11 +17,12 @@ class PasswordResetControllerTest extends TestCase
         // insert  temporary account into Database for testing
         DB::table('accounts')->insert([
             'accountNo' => 'AAAAAA1',
-            'aType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']),
+            'accountType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']),
             'lName' => fake()->lastName(),
-            'fNames' => fake()->firstName(),
+            'fName' => fake()->firstName(),
             'password' => Hash::make('knownPassword7'),
-            'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p'])
+            'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p']),
+            'schoolId' => '101',
         ]);
     }
 

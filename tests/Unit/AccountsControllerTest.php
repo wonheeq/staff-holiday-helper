@@ -33,7 +33,6 @@ class AccountsControllerTest extends TestCase
                 'accountType',
                 'lName',
                 'fName',
-                'password',
                 'superiorNo',
                 'schoolId'
             ],
