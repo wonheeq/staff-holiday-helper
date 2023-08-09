@@ -91,9 +91,9 @@ function handleClose() {
 </script>
 <template>
 <Modal>
-    <div class="bg-white w-2/5 h-[48rem] rounded-md p-4" v-if="props.data">
+    <div class="bg-white w-3/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4" v-if="props.data">
         <div class="flex h-[10%] items-center justify-between">
-            <p class="text-4xl font-bold">
+            <p class="text-2xl 1080:text-3xl 4k:text-5xl font-bold">
                 <!-- Filter for content element that contains 'Duration' and get the first element
                     Assumes that there is Duration in one of the content elements    
                 -->
@@ -106,7 +106,7 @@ function handleClose() {
             </button>
         </div>
         <div class="flex h-[10%] items-center justify-between">
-            <p class="text-2xl">
+            <p class="text-xl 1080:text-2xl 4k:text-3xl">
                 You have been nominated for the following roles by {{ props.data.senderName }}:
             </p>
         </div>
@@ -118,7 +118,7 @@ function handleClose() {
                 <template #tbody>
                     <div class="flex mb-2 items-center space-x-2 justify-between mr-4"
                         v-for="role in props.roles" :key="role.id">
-                        <p class="text-lg">
+                        <p class="1080:text-lg 4k:text-2xl">
                             {{ role.roleName }}
                         </p>
                         <AcceptSomeNominationOptions
@@ -130,7 +130,7 @@ function handleClose() {
         </div>
         <div class="h-[10%]">
             <button
-                class="w-full h-full p-4 rounded-md text-4xl font-bold"
+                class="w-full h-full p-2 1080:p-4 rounded-md text-xl 1080:text-4xl font-bold"
                 :class="{
                     'bg-blue-300': buttonActive,
                     'bg-gray-300': !buttonActive
@@ -146,6 +146,31 @@ function handleClose() {
 </template>
 <style>
 .close-button {
+    height: 70px;
     width: auto;
+}
+/* 1080p */
+@media 
+(min-width: 1920px) {
+    .close-button {
+        height: 70px;
+        width: auto;
+    }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .close-button {
+        height: 80px;
+        width: auto;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .close-button {
+        height: 110px;
+        width: auto;
+    }
 }
 </style>
