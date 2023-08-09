@@ -35,6 +35,11 @@ Route::get('/accounts', AccountController::class);
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
 
+Route::get('/schools', SchoolController::class);
+Route::get('/courses', CourseController::class);
+Route::get('/majors', MajorController::class);
+Route::get('/units', UnitController::class);
+
 Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);

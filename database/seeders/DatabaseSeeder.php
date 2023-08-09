@@ -31,10 +31,65 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         
+        \App\Models\Unit::factory(15)->create();
+        \App\Models\Course::factory(10)->create();
+        \App\Models\Major::factory(10)->create();
+
+        // schools - All 14 curtin schools shown on faculty pages on Curtin Website
+        $schools = array(
+            array('schoolId' => '101', 'name' => 'Curtin Medical School'), 
+            array('schoolId' => '102', 'name' => 'Curtin School of Allied Health'),
+            array('schoolId' => '103', 'name' => 'Curtin School of Nursing'),
+            array('schoolId' => '104', 'name' => 'Curtin School of Population Health'),
+            array('schoolId' => '105', 'name' => 'Curtin Business School'), 
+            array('schoolId' => '106', 'name' => 'Curtin Law School'),
+            array('schoolId' => '107', 'name' => 'School of Design and the Built Environment'),
+            array('schoolId' => '108', 'name' => 'School of Education'),
+            array('schoolId' => '109', 'name' => 'School of Media, Creative Arts and Social Inquiry'), 
+            array('schoolId' => '110', 'name' => 'School of Civil and Mechanical Engineering'),
+            array('schoolId' => '111', 'name' => 'School of Earth and Planetary Sciences'),
+            array('schoolId' => '112', 'name' => 'School of Electrical Engineering, Computing and Mathematical Sciences'),
+            array('schoolId' => '113', 'name' => 'School of Molecular and Life Sciences'), 
+            array('schoolId' => '114', 'name' => 'WA School of Mines: Minerals, Energy and Chemical Engineering')
+         );
+        
+         foreach ($schools as $school) {
+            \App\Models\School::create([
+              'schoolId' => $school['schoolId'],
+              'name' => $school['name'],
+            ]);
+         }
+
+
         // Create one line manager
         $lineManagerNo = '000002L';
         Account::factory()->create([
             'accountNo' =>  $lineManagerNo,
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+
+        Account::factory()->create([
+            'accountNo' =>  '112237t',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '123456a',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '441817e',
+            'accountType' => 'lmanager',
+            'superiorNo' => null,
+        ]);
+
+        Account::factory()->create([
+            'accountNo' =>  '877873p',
             'accountType' => 'lmanager',
             'superiorNo' => null,
         ]);
@@ -49,7 +104,6 @@ class DatabaseSeeder extends Seeder
             'lName' => 'Test User',
             'password' => 'test',
             'superiorNo' => $lineManagerNo,
-            'remember_token' => Str::random(10),
         ]);
 
         // 10 roles for test user
@@ -94,7 +148,6 @@ class DatabaseSeeder extends Seeder
 
         // Create 30 accounts
         Account::factory(30)->create([
-            'superiorNo' => $lineManagerNo,
         ]);
 
         $accounts = Account::get();
