@@ -150,9 +150,12 @@ class DatabaseSeeder extends Seeder
         
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
-            Message::factory(10)->create([
-                'receiverNo' => $account['accountNo'],
-            ]);
+            // ignore test id because we will generate actually working messages later
+            if ($account->accountNo != $test_id) {
+                Message::factory(10)->create([
+                    'receiverNo' => $account['accountNo'],
+                ]);
+            }
         }
 
 
@@ -180,5 +183,86 @@ class DatabaseSeeder extends Seeder
         }
 
 
+
+        // GENERATE ACTUALLY WORKING MESSAGES
+
+
+        $otherUser = Account::factory()->create();
+
+        $otherAccountRoles = AccountRole::factory(5)->create([
+            'accountNo' => $otherUser->accountNo,
+        ]);
+
+        // create 2 applications where the test user is nominated for multiple
+        $nomMultiApps = Application::factory(2)->create([
+            'accountNo' => $otherUser->accountNo,
+            'status' => 'P',
+        ]);
+        foreach ($nomMultiApps as $nomMultiApp) {
+            foreach ($otherAccountRoles as $accRole) {
+                Nomination::factory()->create([
+                    'nomineeNo' => $test_id,
+                    'applicationNo' => $nomMultiApp->applicationNo,
+                    'accountRoleId' => $accRole->accountRoleId,
+                    'status' => 'U',
+                ]);
+            }
+    
+            // create message for this application
+            Message::factory()->create([
+                'applicationNo' => $nomMultiApp->applicationNo,
+                'receiverNo' => $test_id,
+                'senderNo' => $otherUser->accountNo,
+                'subject' => 'Substitution Request',
+                'content' => json_encode([
+                    '(testing) You have been nominated for 5 roles:' . strval($nomMultiApp->applicationNo),
+                    "ROLENAME 1",
+                    "ROLENAME 2",
+                    "ROLENAME 3",
+                    "ROLENAME 4",
+                    "ROLENAME 5",
+                    "Duration: {$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
+                ]),
+                'acknowledged' => false
+            ]);    
+        }
+        
+
+        // create application where the test user is nominated for single
+        $nomSingleApp = Application::factory()->create([
+            'accountNo' => $otherUser->accountNo,
+            'status' => 'P',
+        ]);
+        Nomination::factory()->create([
+            'nomineeNo' => $test_id,
+            'applicationNo' => $nomSingleApp->applicationNo,
+            'accountRoleId' => $accRole->accountRoleId,
+            'status' => 'U',
+        ]);
+
+        // create message for this application
+        Message::factory()->create([
+            'applicationNo' => $nomSingleApp->applicationNo,
+            'receiverNo' => $test_id,
+            'senderNo' => $otherUser->accountNo,
+            'subject' => 'Substitution Request',
+            'content' => json_encode([
+                '(testing) You have been nominated for ROLENAME',
+                "Duration: {$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
+            ]),
+            'acknowledged' => false
+        ]);
+
+        // generate "acknowledgeable" messages
+        Message::factory()->create([
+            'applicationNo' => null,
+            'receiverNo' => $test_id,
+            'senderNo' => $otherUser->accountNo,
+            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
+            'content' => json_encode([
+                'asdfasdfasdf',
+            ]),
+            'acknowledged' => false
+        ]);
     }
 }

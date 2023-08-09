@@ -4,7 +4,13 @@ import HomeShortcuts from "@/Components/HomeShortcuts.vue";
 import CalendarSmall from "@/Components/CalendarSmall.vue";
 import CalendarLarge from "@/Components/CalendarLarge.vue";
 import HomeMessages from "@/Components/HomeMessages.vue";
-import { ref } from "vue";
+import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
+import axios from 'axios';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from "@/stores/UserStore";
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
+import { ref, reactive } from "vue";
 
 let user = {
     firstName: "John",
@@ -15,7 +21,37 @@ let user = {
     },
 };
 
+
+let showNominationModal = ref(false);
+let nominationModalData = reactive([]);
+let roles = reactive([]);
+async function handleAcceptSomeNominations(data) {
+    nominationModalData = data;
+    await fetchRoles();
+    showNominationModal.value = true;
+}
+
 let calendarLarge = ref(false);
+
+let fetchRoles = async() => {
+    try {
+        let data = {
+            'accountNo': userId.value,
+            'applicationNo': nominationModalData.applicationNo,
+        };
+        const resp = await axios.post('/api/getRolesForNominee/', data);
+        roles = resp.data;
+    } catch (error) {
+        alert("Failed to load data: Please try again");
+        console.log(error);
+    }
+}; 
+
+function handleCloseNominations() {
+    roles = [];
+    nominationModalData = [];
+    showNominationModal.value = false;
+}
 </script>
 
 <template>
@@ -23,7 +59,10 @@ let calendarLarge = ref(false);
         <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
             <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4">
                 <HomeShortcuts :user="user" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
-                <HomeMessages class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"></HomeMessages>
+                <HomeMessages
+                    class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
+                    @acceptSomeNominations="(v) => handleAcceptSomeNominations(v)"
+                ></HomeMessages>
             </div>
             <CalendarSmall
                 class="flex w-1/5 1440:w-2/12 drop-shadow-md"
@@ -36,6 +75,14 @@ let calendarLarge = ref(false);
             @shrink-calendar="calendarLarge=false"
         />
     </AuthenticatedLayout>
+    <Teleport to="body">
+        <AcceptSomeNominations
+            v-show="showNominationModal"
+            :data="nominationModalData"
+            :roles="roles"
+            @close="handleCloseNominations()"
+        />
+    </Teleport>
 </template>
 
 <style>

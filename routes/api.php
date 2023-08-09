@@ -6,6 +6,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\NominationController;
 use App\Http\Controllers\BookingController;
 
 /*
@@ -34,6 +35,11 @@ Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBooki
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
 Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
+
+Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
+Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
+Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
+Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
