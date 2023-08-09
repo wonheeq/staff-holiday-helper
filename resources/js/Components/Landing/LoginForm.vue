@@ -1,11 +1,3 @@
-<!--
-    File: LoginForm.vue
-    Purpose: Login Window Component for use in Landing.vue
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
 <script setup>
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';

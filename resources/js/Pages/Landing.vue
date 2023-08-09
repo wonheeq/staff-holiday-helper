@@ -20,9 +20,6 @@
 
             <!-- Unit Serach Results Window -->
             <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
-
-            <!-- New Password Window -->
-            <password-form v-show="showPass" @passBack="goToLogin"></password-form>
         </div>
     </main>
 </template>

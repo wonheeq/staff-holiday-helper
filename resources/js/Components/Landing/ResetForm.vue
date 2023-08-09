@@ -1,16 +1,32 @@
-<!--
-    File: ResetForm.vue
-    Purpose: Vue Component for requesting a password reset for use in Landing.vue
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
 <script setup>
+import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref } from "vue";
 
 let showConf = ref(false);
+const staffID = ref('');
+const staffEmail = ref('');
+const errorMsg = ref('');
+
+
+async function handleReset() {
+    staffEmail.value = staffID.value + '@curtin.edu.au';
+    console.log(staffEmail.value);
+    await axios.post("reset-password", {
+        email: staffEmail.value,
+        accountNo: staffID.value,
+    }).then( function(response) {
+        // console.log(response);
+        showConf.value = true;
+        errorMsg.value = '';
+    }).catch(error => {
+        if(error.response) {
+            errorMsg.value = error.response.message;
+            // console.log(error.response);
+        }
+    })
+    // showConf.value = true;
+}
 </script>
 
 <template>
@@ -21,16 +37,27 @@ let showConf = ref(false);
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
 
-        <!-- Staff ID -->
-        <div class="mb-5">
-            <landing-input title="Staff ID" inType="textType" ></landing-input>
-        </div>
+        <form action="#" @submit.prevent="handleReset">
+            <!-- Staff ID -->
+            <div class="mb-5">
+                <landing-input
+                    title="Staff ID"
+                    v-model="staffID"
+                    inType="textType" >
+                </landing-input>
+            </div>
 
-        <!-- Reset Button -->
-        <button
-            @click="showConf = !showConf"
-            class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-        >Reset Password</button>
+            <!-- Reset Button -->
+            <button
+                type="submit"
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
+            >Reset Password</button>
+        </form>
+
+        <!-- Error Message -->
+        <div class="flex justify-center text-center mb-2">
+            <h1 class="text-red-500">{{ errorMsg }}</h1>
+        </div>
 
         <!-- Back Button -->
         <div class="flex justify-between">

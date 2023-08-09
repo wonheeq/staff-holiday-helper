@@ -6,6 +6,10 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
+use App\Http\Controllers\PasswordResetController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -82,11 +86,19 @@ Route::get(
     '/login/create',
     [AuthController::class, 'create']
 );
-/*
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-*/
+
+
+Route::post(
+    '/reset-password',
+    [PasswordResetController::class, 'reset']
+)->middleware('guest')->name('password.email');
+
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
+    ->name('password.reset');
+
+Route::post('/update-password', [PasswordResetController::class, 'store'])
+    ->name('password.store');
 
 /*
 Route::middleware('auth')->group(function () {
