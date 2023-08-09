@@ -20,6 +20,10 @@ let deadAreaColor = "#FFFFFF";
 
 let buttonActive = ref(false);
 
+/*
+Changes the status of a nomination to 'Y' or 'N'.
+Checks if all nominations have been responded to and if so, enables the submit button.
+*/
 function handleStatusChangedForRole(role, status) {
     role.status = status;
     if (props.roles.filter(r => r.status !== 'U').length == props.roles.length) {
@@ -30,9 +34,12 @@ function handleStatusChangedForRole(role, status) {
     }
 }
 
+/*
+Handles submission of data to the backend for the acceptSomeNominations functionality
+*/
 function submitResponses() {
+    // format data for api request
     let responses = [];
-
     for (let role of props.roles) {
         responses.push({
             "accountRoleId": role.accountRoleId,
@@ -76,6 +83,7 @@ function submitResponses() {
     });
 }
 
+// Disable submit button and close modal
 function handleClose() {
     buttonActive.value = false;
     emit('close');
