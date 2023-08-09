@@ -3,14 +3,42 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Models\Account;
+use App\Models\Message;
 
 class MessageControllerTest extends TestCase
 {
-    // Tests based off of data created in DatabaseSeeder.php for user id 000000a
+    private Account $user;
+
+    protected function setup(): void {
+        parent::setup();
+
+        // Create test data
+        $this->user = Account::factory()->create();
+
+        // create 10 messages for user
+        Message::factory(10)->create([
+            'receiverNo' => $this->user->accountNo,
+        ]);
+
+        // Create one message where acknowledged is false
+        Message::factory()->create([
+            'receiverNo' => $this->user->accountNo,
+            'acknowledged' => false,
+        ]);
+    }
+
+    protected function teardown(): void {       
+        Message::where('receiverNo', $this->user->accountNo)->delete();
+        $this->user->delete();
+        parent::teardown();
+    }
+
+
 
     public function test_api_request_for_messages_successful(): void
     {
-        $response = $this->getJson('/api/messages/000000a');
+        $response = $this->getJson("/api/messages/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
@@ -22,20 +50,20 @@ class MessageControllerTest extends TestCase
 
     public function test_api_request_for_messages_valid_length(): void
     {
-        $response = $this->getJson('/api/messages/000000a');
+        $response = $this->getJson("/api/messages/{$this->user->accountNo}");
         $array = $response->getData();
-        $this->assertTrue(count($array) == 10);
+        $this->assertTrue(count($array) == count(Message::where('receiverNo', $this->user->accountNo)->get()->toArray()));
     }
 
     public function test_api_request_for_messages_content_is_json(): void
     {
-        $response = $this->getJson('/api/messages/000000a');
+        $response = $this->getJson("/api/messages/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_messages_content_is_valid(): void
     {
-        $response = $this->get('/api/messages/000000a');
+        $response = $this->get("/api/messages/{$this->user->accountNo}");
         $response->assertJsonStructure([
             0 => [
                 'messageId',
@@ -50,7 +78,70 @@ class MessageControllerTest extends TestCase
 
         $array = json_decode($response->content());
         foreach ($array as $message) {
-            $this->assertTrue($message->receiverNo == '000000a');
+            $this->assertTrue($message->receiverNo == $this->user->accountNo);
         }
+    }
+
+
+
+
+
+
+
+
+    public function test_api_request_for_acknowledgeMessage_is_successful() : void {
+        $message = Message::where('receiverNo', $this->user->accountNo)->first();
+        $data = [
+            'messageId' => $message->messageId,
+            'accountNo' => $this->user->accountNo,
+        ];        
+        $response = $this->postJson("/api/acknowledgeMessage", $data);
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_acknowledgeMessage_is_unsuccessful_invalid_accountNo() : void {
+        $message = Message::where('receiverNo', $this->user->accountNo)->first();
+        $data = [
+            'messageId' => $message->messageId,
+            'accountNo' => "badaccountno",
+        ];        
+        $response = $this->postJson("/api/acknowledgeMessage", $data);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acknowledgeMessage_is_unsuccessful_invalid_messageId() : void {
+        $data = [
+            'messageId' => 14352345,
+            'accountNo' => $this->user->accountNo,
+        ];        
+        $response = $this->postJson("/api/acknowledgeMessage", $data);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acknowledgeMessage_is_unsuccessful_message_does_not_belong_to_user() : void {
+        $data = [
+            'messageId' => 1,
+            'accountNo' => $this->user->accountNo,
+        ];        
+        $response = $this->postJson("/api/acknowledgeMessage", $data);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acknowledgeMessage_is_successful_status_is_changed() : void {
+        $message = Message::where('receiverNo', $this->user->accountNo, "and")
+                    ->where('acknowledged', false)->first();
+        $this->assertTrue($message->acknowledged == 0);
+
+        $data = [
+            'messageId' => $message->messageId,
+            'accountNo' => $this->user->accountNo,
+        ];        
+        $response = $this->postJson("/api/acknowledgeMessage", $data);
+        $response->assertStatus(200);
+
+
+
+        $updatedMessage = Message::where('messageId', $message->messageId)->first();
+        $this->assertTrue($updatedMessage->acknowledged == 1);
     }
 }

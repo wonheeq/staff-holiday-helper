@@ -21,7 +21,7 @@ let copyEmail = () => {
             </div>
         </div>
         <div class="grid grid-cols-3 bg-white rounded-md p-4 1440:p-6 w-4/5 mt-2 h-full drop-shadow-md">
-            <Shortcut class="bg-green-200" href="/bookings/apps" :activeScreen="apps">
+            <Shortcut class="bg-green-200" href="/bookings/apps">
                 Your Leave Applications
                 <template #content>
                     <ul class="text-left text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
@@ -34,7 +34,7 @@ let copyEmail = () => {
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-green-400"></div>
                 </template>
             </Shortcut>
-            <Shortcut class="bg-orange-200" href="/bookings/create" :activeScreen="create">
+            <Shortcut class="bg-orange-200" href="/bookings/create">
                 <template #content>
                     <p class="laptop:mt-4 text-sm 1080:text-xl 1440:text-2xl 4k:text-4xl font-bold">Create New Leave Application</p>
                 </template>
@@ -42,7 +42,7 @@ let copyEmail = () => {
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-orange-400"></div>
                 </template>
             </Shortcut>
-            <Shortcut class="bg-purple-200" href="/bookings/subs" :activeScreen="subs">
+            <Shortcut class="bg-purple-200" href="/bookings/subs">
                 Your Substitutions
                 <template #content>
                     <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">3 upcoming substitutions.</p>

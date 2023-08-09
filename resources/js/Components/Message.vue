@@ -4,11 +4,17 @@ let props = defineProps({
     source: Object,
 });
 
+let emit = defineEmits(['acceptSomeNominations']);
+
 let copyEmail = (e) => {
     let email = e + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
     alert("Email address copied to clipboard.");
 };
+
+function handleAcceptSomeNominations() {
+    emit('acceptSomeNominations');
+}
 </script>
 
 <template>
@@ -24,13 +30,16 @@ let copyEmail = (e) => {
                     @click="copyEmail(props.source.senderNo)"
                     />
             </div>
-            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
-                {{ props.source.content }}
+            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
+                v-for="content in JSON.parse(props.source.content)"
+            >
+                {{ content }}
             </p>
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>
         <MessageResponses
             :source="source"
+            @acceptSomeNominations="handleAcceptSomeNominations()"
         />
     </div>
 </template>

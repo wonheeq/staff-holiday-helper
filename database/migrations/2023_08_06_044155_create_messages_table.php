@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id("messageId");
-            $table->unsignedBigInteger("applicationNo");
+            $table->unsignedBigInteger("applicationNo")->nullable();
             $table->char('receiverNo', 7);
             $table->char('senderNo', 7)->nullable();
             $table->string('subject', 40);
-            $table->text('content');
+            $table->json('content');
             $table->boolean('acknowledged');
             $table->timestamps();
         });

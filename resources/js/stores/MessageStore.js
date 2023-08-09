@@ -5,6 +5,7 @@ import axios from "axios";
 export let useMessageStore = defineStore('messages', {
     state: () => ({
         messages: [],
+        viewing: 'unread'
     }),
 
     actions: {
@@ -21,7 +22,15 @@ export let useMessageStore = defineStore('messages', {
     },
 
     getters: {
-        filteredMessages(viewing) {
+        filteredMessages() {
+            if (this.viewing === 'unread') {
+                return this.messages.filter(message => message.acknowledged === 0);
+            }
+            else {
+                return this.messages;
+            }
+        },
+        unreadMessages() {
             return this.messages.filter(message => message.acknowledged === 0);
         }
     }

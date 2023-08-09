@@ -20,11 +20,16 @@ const options = [
     { id: 'subs', title: 'Your Substitutions'},
 ];
 let props = defineProps({
-    activeScreen: {
+    screenProp: {
         type: String,
-        default: 'apps',
+        default: 'default'
     }
 });
+
+let activeScreen = ref("apps");
+if (props.screenProp !== "default") {
+    activeScreen.value = props.screenProp;
+}
 
 let period = reactive({
     start: null,
@@ -49,6 +54,22 @@ async function handleEditApplication(appNo) {
 
     await fetchNominationsForApplicationNo(appNo);
 }
+
+function changeUrl(params) {
+    var baseUrl = window.location.origin;
+
+    history.pushState(
+        null,
+        'LeaveOnTime',
+        baseUrl + "/bookings/" + params
+    );
+}
+
+function handleActiveScreenChanged(screen) {
+    activeScreen.value = screen;
+
+    changeUrl(screen);
+}
 </script>
 
 <template>
@@ -58,7 +79,7 @@ async function handleEditApplication(appNo) {
                 class="h-[5%]"
                 :options="options"
                 :activeScreen="activeScreen"
-                @screen-changed="screen => activeScreen = screen"
+                @screen-changed="screen => handleActiveScreenChanged(screen)"
             />
             <ApplicationsSubpage
                 v-show="activeScreen === 'apps'" 

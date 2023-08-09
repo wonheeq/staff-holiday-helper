@@ -1,21 +1,20 @@
-<script>
+<script setup>
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import AdminTabs from '@/Components/AdminTabs.vue';
 
-    export default{
-    components:{
-         'admintabs':AdminTabs,
-         'AuthenticatedLayout':AuthenticatedLayout
-    }
-}
-
+    let props = defineProps({
+        screenProp: {
+            type: String,
+            default: 'default'
+        }
+    });
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <div class="tabarea">
-                <admintabs/>  
+                <AdminTabs :screenProp="props.screenProp"/>  
             </div> 
         </div> 
     </AuthenticatedLayout>

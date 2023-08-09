@@ -6,6 +6,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\NominationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
@@ -32,17 +33,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/accounts', AccountController::class);
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
+Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
+
 Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
-
-Route::get('/schools', SchoolController::class);
-Route::get('/courses', CourseController::class);
-Route::get('/majors', MajorController::class);
-Route::get('/units', UnitController::class);
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
 Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
+
+Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
+Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
+Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
+Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
