@@ -42,7 +42,7 @@ class EmailTest extends TestCase
         $this->assertStringContainsString('00:00 23/04/2022 - 00:00 25/04/2022', $mailable->render());
         $this->assertStringContainsString('No more leaves.', $mailable->render());
     }
-    public function testApplicationApproval(): void
+    public function testApplicationRejection(): void
     {
         $dynamicData = [
             'name' => 'Benny',
