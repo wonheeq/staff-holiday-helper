@@ -40,10 +40,12 @@ class CalendarControllerTest extends TestCase
         // Create nominations for applications of test user
         foreach ($this->applications as $app) {
             $appAccountRoleIds = AccountRole::where('accountNo', $this->user->accountNo)->get();
+            $nomineeNos = Account::where('accountNo', '!=', $this->user->accountNo)->get()->toArray();
             for ($i = 0; $i < 3; $i++) {
                 array_push($this->nominations, Nomination::factory()->create([
                     'applicationNo' => $app->applicationNo,
-                    'accountRoleId' => $appAccountRoleIds[$i]
+                    'accountRoleId' => $appAccountRoleIds[$i],
+                    'nomineeNo' => $nomineeNos[$i]['accountNo']
                 ]));
             }
         }
