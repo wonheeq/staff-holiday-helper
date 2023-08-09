@@ -7,13 +7,29 @@
  -->
 
 <script setup>
-import PasswordForm from "@/Components/PasswordForm.vue";
+import PasswordForm from "@/Components/Landing/PasswordForm.vue";
+
+const props = defineProps({
+    email: {
+        type: String,
+        required: true,
+    },
+    token: {
+        type: String,
+        required: true,
+    },
+});
+
+const strArr = props.email.split("@");
+let accountNo = strArr[0];
+
 </script>
 
 <template>
     <main>
         <div>
-            <PasswordForm></PasswordForm>
+
+            <PasswordForm :account-no="accountNo" :token="token"></PasswordForm>
         </div>
     </main>
 </template>

@@ -13,9 +13,14 @@ return [
     |
     */
 
+    // 'defaults' => [
+    //     'guard' => 'web',
+    //     'passwords' => 'users',
+    // ],
+
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'accounts',
     ],
 
     /*
@@ -62,12 +67,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Account::class,
         ],
 
-        // 'users' => [
+        // 'accounts' => [
         //     'driver' => 'database',
-        //     'table' => 'users',
+        //     'table' => 'accounts',
         // ],
     ],
 
@@ -91,11 +96,17 @@ return [
     */
 
     'passwords' => [
-        'users' => [
+        // 'users' => [
+        //     'provider' => 'users',
+        //     'table' => 'password_reset_tokens',
+        //     'expire' => 60,
+        //     'throttle' => 60,
+        // ],
+        'accounts' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
-            'throttle' => 60,
+            // 'throttle' => 60,
         ],
     ],
 

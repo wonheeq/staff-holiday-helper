@@ -17,21 +17,20 @@ return new class extends Migration
             $table->string('lName', 20);
             $table->string('fName', 30)->nullable();
             // No size limit on password for now, unsure about encryption
-            $table->string('password'); 
+            $table->string('password');
             $table->char('superiorNo', 7)->nullable();
-            $table->integer('schoolId')->length(3); 
+            $table->integer('schoolId')->length(3);
             //$table->rememberToken();
             $table->timestamps();
         });
 
         // Making 'superiorNo' a foreign key of 'accountNo'
         // Making 'schoolId' a foreign key of 'schoolId' in 'schools'
-        // https://stackoverflow.com/a/65396800 
-        Schema::table('accounts',function (Blueprint $table) {
+        // https://stackoverflow.com/a/65396800
+        Schema::table('accounts', function (Blueprint $table) {
             $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
             $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnUpdate();
-            
-        });  
+        });
     }
 
     /**

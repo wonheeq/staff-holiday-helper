@@ -1,7 +1,7 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
-let emit = defineEmits(['open-settings']);
+let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
     left: [
         { source: "/images/home.svg", caption: "Home" },
@@ -13,13 +13,26 @@ let options = {
         { source: "/images/account.svg", caption: "Settings", noLink: () => {
             emit('open-settings');
         } },
-        { source: "/images/logout.svg", caption: "Logout" },
-    ]
+        { source: "/images/logout.svg", caption: "Logout", noLink: () => {
+            handleLogout();
+        } },
+    ],
 };
 
 let formatLink = (link) => {
     return "/" + link.toLowerCase();
 };
+
+// Post to logout method
+async function handleLogout() {
+    await axios.post("logout").then(
+        function(response) {
+            if( response.data.response == "success") {
+                window.location.href = response.data.url;
+            }
+        }
+    )
+}
 </script>
 
 <template>
@@ -64,7 +77,7 @@ img{
     width: auto;
 }
 /* 1080p */
-@media 
+@media
 (min-width: 1920px) {
     img {
         height: 38px;
@@ -76,7 +89,7 @@ img{
     }
 }
 /* 1440p */
-@media 
+@media
 (min-width: 2560px) {
     img {
         height: 50px;
@@ -88,7 +101,7 @@ img{
     }
 }
 /* 2160p */
-@media 
+@media
 (min-width: 3840px) {
     img {
         height: 70px;

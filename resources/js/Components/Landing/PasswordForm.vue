@@ -1,10 +1,4 @@
-<!--
-    File: PasswordForm.vue
-    Purpose: Password Reset Component for use in Landing.vue
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 1/08/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
+
 
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
@@ -14,30 +8,35 @@
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
 
-        <!-- Password Input 1 -->
-        <div class="mb-5">
-            <landing-input
-            v-model="passOne" title="New Password" inType="passwordType" >
-        </landing-input>
-        </div>
+        <form action="#" @submit.prevent="handleReset">
+            <!-- Password Input 1 -->
+            <div class="mb-5">
+                <landing-input
+                v-model="passOne" title="New Password" inType="passwordType" >
+            </landing-input>
+            </div>
 
-        <!-- Password Input 2 -->
-        <div class="mb-5">
-            <landing-input
-            v-model="passTwo" title="Confirm New Password" inType="passwordType" >
-        </landing-input>
-        </div>
+            <!-- Password Input 2 -->
+            <div class="mb-5">
+                <landing-input
+                v-model="passTwo" title="Confirm New Password" inType="passwordType" >
+            </landing-input>
+            </div>
 
+            <!-- Reset Button -->
 
-        <!-- Reset Button -->
-        <button
-            :disabled="!buttonActive"
-            @click="showConf = true"
-            class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">Reset Password
-        </button>
+            <button
+                type="submit"
+                :disabled="!buttonActive"
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">
+
+                Reset Password
+            </button>
+        </form>
+
 
         <!-- Error Message -->
-        <div class="flex justify-center mb-2 text-red-500">
+        <div class="flex justify-center mb-2 text-red-500 text-center">
             <ul>
                 <li v-for="error in errors.slice(0, 1)">
                     {{ error }}
@@ -61,8 +60,38 @@
 </template>
 
 <script setup>
+import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
+
+
+const props = defineProps({
+    accountNo: {
+        type: String,
+        required: true,
+    },
+    token: {
+        type: String,
+        required: true,
+    },
+});
+
+
+async function handleReset() {
+    await axios.post("/update-password", {
+        token: props.token,
+        accountNo: props.accountNo,
+        password: passOne.value,
+        password_confirmation: passTwo.value,
+    }).then( function(response) {
+        showConf.value = true;
+        errors.length = 0;
+    }).catch(error => {
+        if(error.response) {
+            errors.push(error.response.data.message);
+        }
+    })
+}
 
 const passOne = ref("");
 const passTwo = ref("");
@@ -98,12 +127,12 @@ let validatePasswords = () => {
        errors.push("Password must contain at least one lowercase letter.");
    }
 
-   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
-       errors.push("Password length must be between 10 and 30.");
-   }
-
    if (!hasDigit.test(password.password)) {
        errors.push("Password must contain at least one number.");
+   }
+
+   if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
+       errors.push("Password length must be between 10 and 30.");
    }
 
    if (hasWhitespace.test(password.password)) {

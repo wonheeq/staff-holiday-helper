@@ -20,19 +20,16 @@
 
             <!-- Unit Serach Results Window -->
             <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
-
-            <!-- New Password Window -->
-            <password-form v-show="showPass" @passBack="goToLogin"></password-form>
         </div>
     </main>
 </template>
 
 <script setup>
-import LoginForm from "@/Components/LoginForm.vue";
-import ResetForm from "@/Components/ResetForm.vue";
-import PasswordForm from "@/Components/PasswordForm.vue";
-import UnitLookup from "@/Components/UnitLookup.vue";
-import unitResult from "@/Components/UnitResult.vue";
+import LoginForm from "@/Components/Landing/LoginForm.vue";
+import ResetForm from "@/Components/Landing/ResetForm.vue";
+import PasswordForm from "@/Components/Landing/PasswordForm.vue";
+import UnitLookup from "@/Components/Landing/UnitLookup.vue";
+import unitResult from "@/Components/Landing/UnitResult.vue";
 import { ref } from "vue";
 
 // Variables for window visibility

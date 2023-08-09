@@ -11,6 +11,7 @@ use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Message;
+use Illuminate\Support\Facades\Hash;
 
 //use Illuminate\Support\Facades\Log;
 
@@ -25,40 +26,40 @@ class DatabaseSeeder extends Seeder
         // Generate our default test roles
         $ROLE_NAMES = ["Unit Coordinator", "Major Coordinator", "Course Coordinator", "Lecturer", "Tutor"];
 
-        foreach($ROLE_NAMES as $name) {
+        foreach ($ROLE_NAMES as $name) {
             Role::factory()->create([
                 'name' => $name
             ]);
         }
-        
+
         \App\Models\Unit::factory(15)->create();
         \App\Models\Course::factory(10)->create();
         \App\Models\Major::factory(10)->create();
 
         // schools - All 14 curtin schools shown on faculty pages on Curtin Website
         $schools = array(
-            array('schoolId' => '101', 'name' => 'Curtin Medical School'), 
+            array('schoolId' => '101', 'name' => 'Curtin Medical School'),
             array('schoolId' => '102', 'name' => 'Curtin School of Allied Health'),
             array('schoolId' => '103', 'name' => 'Curtin School of Nursing'),
             array('schoolId' => '104', 'name' => 'Curtin School of Population Health'),
-            array('schoolId' => '105', 'name' => 'Curtin Business School'), 
+            array('schoolId' => '105', 'name' => 'Curtin Business School'),
             array('schoolId' => '106', 'name' => 'Curtin Law School'),
             array('schoolId' => '107', 'name' => 'School of Design and the Built Environment'),
             array('schoolId' => '108', 'name' => 'School of Education'),
-            array('schoolId' => '109', 'name' => 'School of Media, Creative Arts and Social Inquiry'), 
+            array('schoolId' => '109', 'name' => 'School of Media, Creative Arts and Social Inquiry'),
             array('schoolId' => '110', 'name' => 'School of Civil and Mechanical Engineering'),
             array('schoolId' => '111', 'name' => 'School of Earth and Planetary Sciences'),
             array('schoolId' => '112', 'name' => 'School of Electrical Engineering, Computing and Mathematical Sciences'),
-            array('schoolId' => '113', 'name' => 'School of Molecular and Life Sciences'), 
+            array('schoolId' => '113', 'name' => 'School of Molecular and Life Sciences'),
             array('schoolId' => '114', 'name' => 'WA School of Mines: Minerals, Energy and Chemical Engineering')
-         );
-        
-         foreach ($schools as $school) {
+        );
+
+        foreach ($schools as $school) {
             \App\Models\School::create([
-              'schoolId' => $school['schoolId'],
-              'name' => $school['name'],
+                'schoolId' => $school['schoolId'],
+                'name' => $school['name'],
             ]);
-         }
+        }
 
 
         // Create one line manager
@@ -102,7 +103,7 @@ class DatabaseSeeder extends Seeder
             'accountNo' => $test_id,
             'fName' => 'Static',
             'lName' => 'Test User',
-            'password' => 'test',
+            'password' => Hash::make('testPassword1'),
             'superiorNo' => $lineManagerNo,
         ]);
 
@@ -138,7 +139,7 @@ class DatabaseSeeder extends Seeder
             'status' => 'C',
         ]);
 
-        
+
 
 
 
@@ -147,11 +148,10 @@ class DatabaseSeeder extends Seeder
 
 
         // Create 30 accounts
-        Account::factory(30)->create([
-        ]);
+        Account::factory(30)->create([]);
 
         $accounts = Account::get();
-        
+
         // Each account gets 5 random AccountRoles
         foreach ($accounts as $account) {
             AccountRole::factory(5)->create([
@@ -167,13 +167,13 @@ class DatabaseSeeder extends Seeder
             ]);
 
             $applications = Application::where('accountNo', $account['accountNo'], 'and')
-                            ->where('accountNo', "!=", $test_id)->get();
+                ->where('accountNo', "!=", $test_id)->get();
 
             // Generate 5 nominations for each application
             foreach ($applications as $application) {
                 // Get list of AccountRoleIds associated with applicant
                 $accountRoleIds = AccountRole::where('accountNo', $account['accountNo'])->get()->pluck('accountRoleId');
-                
+
                 Nomination::factory()->create([
                     'applicationNo' => $application['applicationNo'],
                     'accountRoleId' => $accountRoleIds[0],
@@ -200,7 +200,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        
+
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
@@ -220,7 +220,7 @@ class DatabaseSeeder extends Seeder
         foreach ($testApps as $application) {
             // Get list of AccountRoleIds associated with applicant
             $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
-            
+
             Nomination::factory()->create([
                 'applicationNo' => $application['applicationNo'],
                 'accountRoleId' => $accountRoleIds[0],
@@ -260,7 +260,7 @@ class DatabaseSeeder extends Seeder
                     'status' => 'U',
                 ]);
             }
-    
+
             // create message for this application
             Message::factory()->create([
                 'applicationNo' => $nomMultiApp->applicationNo,
@@ -277,9 +277,9 @@ class DatabaseSeeder extends Seeder
                     "Duration: {$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
                 ]),
                 'acknowledged' => false
-            ]);    
+            ]);
         }
-        
+
 
         // create application where the test user is nominated for single
         $nomSingleApp = Application::factory()->create([
