@@ -3,10 +3,7 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-<<<<<<< HEAD
 use App\Models\Account;
-=======
->>>>>>> feature/respond-to-nominations/6
 use App\Models\Message;
 
 class MessageControllerTest extends TestCase
@@ -55,11 +52,7 @@ class MessageControllerTest extends TestCase
     {
         $response = $this->getJson("/api/messages/{$this->user->accountNo}");
         $array = $response->getData();
-<<<<<<< HEAD
-        $this->assertTrue(count($array) == 11);
-=======
-        $this->assertTrue(count($array) == count(Message::where('receiverNo', '000000a')->get()->toArray()));
->>>>>>> feature/respond-to-nominations/6
+        $this->assertTrue(count($array) == count(Message::where('receiverNo', $this->user->accountNo)->get()->toArray()));
     }
 
     public function test_api_request_for_messages_content_is_json(): void
