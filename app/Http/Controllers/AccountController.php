@@ -48,6 +48,9 @@ class AccountController extends Controller
             $assignedLineManager = Account::where('accountNo', $superiorNo)->first();
             // Check if assigned Line manager is on leave
             if ($this->isAccountOnLeave($superiorNo)) {
+
+                // return default for now
+                // TODO: return substitute line manager
                 return $this->getDefaultAdmin();
             }
 
