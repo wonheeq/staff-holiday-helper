@@ -66,25 +66,25 @@ let onSearch = () => {
         height: calc(93vh - 3rem);
     }-->
 
-  <div class="justify-center screen mx-4 mt-4">
+  <div class="justify-center mx-4 mt-4">
             <div>
-               <VueGoodTable 
-                   :rows="accounts"
-                   :columns="columns"
-                   max-height="300px" 
-                   :fixed-header="{
-                   enabled: true,
-                   }"
-                   :search-options="{
-                   enabled: true,
-                   placeholder: 'Search Staff Accounts',
-                   }"
-                   :pagination-options="{
-                   enabled: true,
-                   }">
-                    
-
-               </VueGoodTable>
+                <VueGoodTable 
+                    :rows="accounts"
+                    :columns="columns"
+                    max-height="300px" 
+                    :fixed-header="{
+                    enabled: true,
+                    }"
+                    :search-options="{
+                        enabled: true,
+                        placeholder: 'Search Staff Accounts',
+                    }"
+                    :pagination-options="{
+                        perPage: 5,
+                        enabled: true,
+                    }">
+                        
+                </VueGoodTable>
             </div>
        </div>
 </template>

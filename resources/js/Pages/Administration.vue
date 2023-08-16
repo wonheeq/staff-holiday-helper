@@ -3,12 +3,6 @@
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import AdminTabs from '@/Components/AdminTabs.vue';
 
-    let props = defineProps({
-        screenProp: {
-            type: String,
-            default: 'default'
-        }
-    });
 </script>
 
 <template>
@@ -29,7 +23,7 @@
     margin: 0;
     width: 100%;
     min-height: 100vh;
-    }
+    }*/
 
     .screen {
         height: calc(93vh - 3rem);

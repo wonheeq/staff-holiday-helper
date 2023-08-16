@@ -54,74 +54,70 @@
 </script>
 
 <template>
+    <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+        <SubpageNavbar
+            class="h-[5%]"
+            :options="options"
+            :activeScreen="activeScreen"
+            @screen-changed="screen => handleActiveScreenChanged(screen) "
+        />
+        <div
+            v-show="activeScreen === 'viewData'"
+            :class="subpageClass"
+            class="p-4 h-[95%]"
+        >
 
-<div class="flex flex-col screen mt-2 mx-2 drop-shadow-md">
-           <SubpageNavbar
-               class="h-[5%]"
-               :options="options"
-               :activeScreen="activeScreen"
-               @screen-changed="screen => handleActiveScreenChanged(screen) "
-          />
-          <div
-               v-show="activeScreen === 'viewData'"
-               :class="subpageClass"
-           >
-
-            <div class="account-table">
-                <h1 class="text-2xl px-4">Database Data:</h1>
-
-                
-                <!-- To switch between tables -->
-                <div class="flex flex-row mt-4 mx-4">
-                    <h2 class="mt-1.5">Select Table:</h2>
-                    <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
-                        <button class="tableButton">
-                            Staff Accounts
-                        </button>
-                        <button class="tableButton">
-                            Leave<br>Applications
-                        </button>
-                        <button class="tableButton">
-                            Substitute<br>Nominations
-                        </button>
-                        <button class="tableButton">
-                            Account Roles
-                        </button>
-                        <button class="tableButton">
-                            Roles
-                        </button>
-                        <button class="tableButton">
-                            Units
-                        </button>
-                        <button class="tableButton">
-                            Majors
-                        </button>
-                        <button class="tableButton">
-                            Courses
-                        </button>
-                        <button class="tableButton">
-                            Schools
-                        </button>
-                    </div>
+            <h1 class="text-2xl px-4">Database Data:</h1>
+            
+            <!-- To switch between tables -->
+            <div class="flex flex-row mt-4 mx-4">
+                <h2 class="mt-1.5">Select Table:</h2>
+                <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
+                    <button class="tableButton">
+                        Staff Accounts
+                    </button>
+                    <button class="tableButton">
+                        Leave<br>Applications
+                    </button>
+                    <button class="tableButton">
+                        Substitute<br>Nominations
+                    </button>
+                    <button class="tableButton">
+                        Account Roles
+                    </button>
+                    <button class="tableButton">
+                        Roles
+                    </button>
+                    <button class="tableButton">
+                        Units
+                    </button>
+                    <button class="tableButton">
+                        Majors
+                    </button>
+                    <button class="tableButton">
+                        Courses
+                    </button>
+                    <button class="tableButton">
+                        Schools
+                    </button>
                 </div>
-                <table2/>  
             </div>
-          </div>  
+            <table2/> 
+        </div>
+        </div>  
 
-          <div
-               v-show="activeScreen === 'addData'"
-               :class="subpageClass"
-           >
-                add data subpage
-           </div>
-           <div
-               v-show="activeScreen === 'sysSettings'"
-               :class="subpageClass"
-           >
-               settings subpage
-           </div>
-       </div>
-
+        <div
+            v-show="activeScreen === 'addData'"
+            :class="subpageClass"
+        >
+            add data subpage
+        </div>
+        <div
+            v-show="activeScreen === 'sysSettings'"
+            :class="subpageClass"
+        >
+            settings subpage
+        </div>
 
 <!---->
 </template>
@@ -152,9 +148,7 @@
     }
 
     body {
-  font-family: "PT Sans", sans-serif;
-
+        font-family: "PT Sans", sans-serif;
     }
-
 
 </style>
