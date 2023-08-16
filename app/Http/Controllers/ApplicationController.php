@@ -261,6 +261,15 @@ class ApplicationController extends Controller
         $nonEditedNominations = [];
         $editedNominations = [];
         $toNewlyCreateNominations = [];
+        $isSubset = true;
+
+        // Check if it is possibly a subset AKA in original range at least
+        if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
+            // check that the period is not exactly the same
+            if ($application->sDate == $oldDates['start'] && $application->eDate == $oldDates['end']) {
+                $isSubset = false;
+            }
+        }
 
         // Iterate through new nomination data
         foreach($newNominations as $new) {
@@ -270,23 +279,31 @@ class ApplicationController extends Controller
                 // Check if we can find entry that matches the accountRoleId of new
                 if ($old->accountRoleId == $new['accountRoleId']) {
                     $newInOld = true;
-
                     // Keep old status if period not out of range
                     $status = $old->status;
                     
+
+                    // If it changed then it can't be solely a subset
+                    if ($old->nomineeNo != $new['nomineeNo']) 
+                    {
+                        $isSubset = false;
+                    }
+
                     // Edit status IF period has been altered to be out of range.
                     if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
-                        // is subset or original so keep old status
+                        // Empty on purpose
                     }
                     else {
                         //out of range, set status to Undecided
                         $status = 'U';
+                        $isSubset = false;
                     }
 
-                    // Update Nomination if something has changed
+                    // Update Nomination if status or nomineeNo has changed 
                     if ($status != $old->status || $old->nomineeNo != $new['nomineeNo']) {
                         // Delete old Substitution Request message for this application and receiver (nomineeNo)
                         Message::where('applicationNo', $applicationNo, "and")
+                        ->where('subject', 'Substitution Request', 'and')
                         ->where('receiverNo', $old->nomineeNo)->delete();
 
                         Nomination::where('applicationNo', $applicationNo, "and")
@@ -317,6 +334,7 @@ class ApplicationController extends Controller
             }
 
             if (!$newInOld) {
+                $isSubset = false;
                 // new not found in old data, therefore a nomination was created for an accountRoleId that previously was not assigned to the user
                 // Create new nomination
                 Nomination::create([
@@ -367,7 +385,12 @@ class ApplicationController extends Controller
             }
         }
 
-        app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $groupedNominations);
+        if ($isSubset) {
+            app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo);
+        }
+        else {
+            app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $groupedNominations);
+        }
     }
 
     /*

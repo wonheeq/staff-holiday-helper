@@ -279,6 +279,7 @@ class MessageController extends Controller
                 $content,
                 "Duration: {$application['sDate']} - {$application['eDate']}"
             );
+
             Message::create([
                 'applicationNo' => $applicationNo,
                 'receiverNo' => $nomineeNo,
@@ -287,6 +288,65 @@ class MessageController extends Controller
                 'content' => json_encode($content),
                 'acknowledged' => false,
             ]);
+        }
+    }
+
+     /*
+    Notifies nominees of edited applications that have only the period edited to become a subset
+    */
+    public function notifyNomineeApplicationEditedSubsetOnly($applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Process only nominations which have been accepted
+        $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
+        ->where('status', 'Y')->get();
+        $nomineesWhoAccepted = [];
+
+        foreach ($acceptedNominations as $nomination) {
+            if (!in_array($nomination->nomineeNo, $nomineesWhoAccepted)) {
+                // add nomineeNo to array if not added
+                array_push($nomineesWhoAccepted, $nomination->nomineeNo);
+
+                $nominations = Nomination::where('applicationNo',  $applicationNo, 'and')
+                ->where('nomineeNo', $nomination->nomineeNo, 'and')
+                ->where('status', 'Y')->get();
+
+                $content = [
+                    "The applicant has edited their application's leave period to be a subset of the original leave period.",
+                ];
+        
+                if ($application->status == "Y") {
+                    array_push($content, "You will only need to take over the following roles for the updated, shorter, duration:");
+                }
+                else {
+                    array_push($content, "Should, the application get approved, you will only need to take over the following roles for the updated, shorter, duration:");
+                }
+        
+                foreach ($nominations as $nom) {
+                    // Get role name
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+        
+                    array_push(
+                        $content,
+                        "→{$roleName}",
+                    );
+                }
+        
+                array_push(
+                    $content,
+                    "Duration: {$application['sDate']} - {$application['eDate']}"
+                );
+        
+                $message = Message::create([
+                    'applicationNo' => $applicationNo,
+                    'receiverNo' => $nom->nomineeNo,
+                    'senderNo' => $application->accountNo,
+                    'subject' => 'Substitution Period Edited (Subset)',
+                    'content' => json_encode($content),
+                    'acknowledged' => false,
+                ]);
+                Log::debug($message->content);
+            }
         }
     }
 
@@ -323,7 +383,7 @@ class MessageController extends Controller
                 'applicationNo' => $applicationNo,
                 'receiverNo' => $nomineeNo,
                 'senderNo' => $application->accountNo,
-                'subject' => 'Substitution Request',
+                'subject' => 'Edited Substitution Request',
                 'content' => json_encode($content),
                 'acknowledged' => false,
             ]);
