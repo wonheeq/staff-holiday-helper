@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
+use App\Models\Message;
 use \DateTime;
 use Illuminate\Support\Facades\Log;
 
@@ -90,8 +91,8 @@ class ApplicationController extends Controller
             if (count($filteredForNull) != count($data['nominations'])) {
                 return false;
             }
-
-            $filteredForSelfNom = array_filter($data['nominations'], function($var) {
+            
+            $filteredForSelfNom = array_filter($data['nominations'], function($var) use($data){
                 if ($var['nomineeNo'] == $data['accountNo']) {
                     return $var;
                 }
@@ -99,7 +100,6 @@ class ApplicationController extends Controller
             // all nominations are self nomination but did not select agreement
             $count1 = count($filteredForSelfNom);
             $count2 = count($data['nominations']);
-            Log::debug("{$count1} == {$count2}");
             if (count($filteredForSelfNom) == count($data['nominations'])) {
                 return false;
             }
@@ -164,7 +164,7 @@ class ApplicationController extends Controller
 
             Nomination::create([
                 'applicationNo' => $application->applicationNo,
-                'nomineeNo' => $nominee,
+                'nomineeNo' => $nomination['nomineeNo'],
                 'accountRoleId' => $nomination['accountRoleId'],
                 'status' => $status
             ]);
@@ -244,8 +244,8 @@ class ApplicationController extends Controller
                     ->where('subject', "Substitution Request")->delete();
 
                 // create new array with nomineeNo as key inside removedNominations if it doesn't exist
-                if ($removedNominations[$old->nomineeNo] != null) {
-                    $removedNominations[$old]->nomineeNo = array();
+                if (!array_key_exists($old->nomineeNo, $removedNominations)) {
+                    $removedNominations[$old->nomineeNo] = array();
                 }
 
                 // Add to list of accountRoleIds the nominee was removed as a nominee for
@@ -300,7 +300,7 @@ class ApplicationController extends Controller
                         ]);
 
                         // add to editedNominations
-                        if ($editedNominations[$new['nomineeNo']] == null) {
+                        if (!array_key_exists($new['nomineeNo'], $editedNominations)) {
                             $editedNominations[$new['nomineeNo']] = [];
                         }
 
@@ -308,7 +308,7 @@ class ApplicationController extends Controller
                     }
                     else {
                         // add to nonEditedNominations
-                        if ($nonEditedNominations[$old['nomineeNo']] == null) {
+                        if (!array_key_exists($old['nomineeNo'], $nonEditedNominations)) {
                             $nonEditedNominations[$old['nomineeNo']] = [];
                         }
 
@@ -330,7 +330,7 @@ class ApplicationController extends Controller
                 ]);
 
                 // add to toNewlyCreateNominations
-                if ($toNewlyCreateNominations[$new['nomineeNo']] == null) {
+                if (!array_key_exists($new['nomineeNo'], $toNewlyCreateNominations)) {
                     $toNewlyCreateNominations[$new['nomineeNo']] = [];
                 }
 
@@ -342,7 +342,7 @@ class ApplicationController extends Controller
         $groupedNominations = [];
 
         foreach ($editedNominations as $nomineeNo => $accountRoleIds) {
-            if ($groupedNominations[$nomineeNo] == null) {
+            if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 $groupedNominations[$nomineeNo] = $accountRoleIds;
             }
             else {
@@ -351,7 +351,7 @@ class ApplicationController extends Controller
         }
 
         foreach ($toNewlyCreateNominations as $nomineeNo => $accountRoleIds) {
-            if ($groupedNominations[$nomineeNo] == null) {
+            if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 $groupedNominations[$nomineeNo] = $accountRoleIds;
             }
             else {
@@ -360,7 +360,7 @@ class ApplicationController extends Controller
         }
 
         foreach ($nonEditedNominations as $nomineeNo => $accountRoleIds) {
-            if ($groupedNominations[$nomineeNo] == null) {
+            if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 // DO NOTHING, do not group non edited nominations if not existing already due to edited or new nominations
                 // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset 
             }
@@ -379,6 +379,8 @@ class ApplicationController extends Controller
     public function editApplication(Request $request) {
         $data = $request->all();
         $accountNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+        $application = Application::where('applicationNo', $applicationNo)->first();
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception

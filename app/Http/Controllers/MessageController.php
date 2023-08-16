@@ -297,7 +297,7 @@ class MessageController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Iterate through each key (nomineeNo), value (array of accountRoleIds)
-        foreach ($removedNominations as $nomineeNo => $accountRoleIds) {
+        foreach ($groupedNominations as $nomineeNo => $accountRoleIds) {
             $content = [
                 "This application has been edited.",
                 "Please accept or reject accordingly to the new details:",
