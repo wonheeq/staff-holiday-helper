@@ -435,6 +435,12 @@ class ApplicationController extends Controller
         $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
         // Notify manager of application cancellation if status was undecided or approved
         if ($application->status == 'Y' || $application->status == "U") {
+            // Delete old message
+            Message::where('receiverNo', $superiorNo, 'and')
+            ->where('senderNo', $accountNo, 'and')
+            ->where('applicationNo', $applicationNo, 'and')
+            ->where('subject', "Application Awaiting Review")->delete();
+
             app(MessageController::class)->notifyManagerApplicationCancelled($superiorNo, $applicationNo);
         }
 

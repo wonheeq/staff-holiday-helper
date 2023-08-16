@@ -344,7 +344,7 @@ class ApplicationControllerTest extends TestCase
         // Check for valid response
         $response = $this->postJson("/api/createApplication", [
             'accountNo' => $this->user->accountNo,
-            'selfNominateAll' => true,
+            'selfNominateAll' => false,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
             'nominations' => [
@@ -422,6 +422,82 @@ class ApplicationControllerTest extends TestCase
         $this->assertFalse(count($nominationsForApp) > 0);
     }
 
+    public function test_api_request_for_cancelApplication_is_successful_manager_is_notified_of_application_cancelleation() : void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+        
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Cancelled');
+    }
+
+    public function test_api_request_for_cancelApplication_is_successful_nominee_is_notified_of_application_cancelleation() : void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+        
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Cancelled');
+    }
 
 
 
