@@ -158,11 +158,17 @@ class ApplicationController extends Controller
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
 
+            $status = 'U';
+            // If nomineeNo == applicant accountNo then set status of nomination to 'Y', otherwise keep as 'U'
+            if (nominee == $data['accountNo']) {
+                $status = 'Y';
+            }
+
             Nomination::create([
                 'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nominee,
                 'accountRoleId' => $nomination['accountRoleId'],
-                'status' => 'U'
+                'status' => $status
             ]);
         }
 
