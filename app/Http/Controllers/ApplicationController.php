@@ -156,11 +156,9 @@ class ApplicationController extends Controller
         // Generate nominations for application
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
-            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
-
             $status = 'U';
             // If nomineeNo == applicant accountNo then set status of nomination to 'Y', otherwise keep as 'U'
-            if (nominee == $data['accountNo']) {
+            if ($nomination['nomineeNo'] == $data['accountNo']) {
                 $status = 'Y';
             }
 
@@ -188,7 +186,45 @@ class ApplicationController extends Controller
         response()->json(['success' => 'success'], 200);
     }
 
-     /*
+    /*
+    handles the logic for updating and saving the application
+    */
+    public function handleEditApplication(array $data) {
+        $application = Application::where('applicationNo', $data['applicationNo'])->first();
+
+        // If self nominated for all, application status should be Undecided
+        if ($data['selfNominateAll']) {
+            $application->status = 'U';
+        }
+        else {
+            $application->status = 'P';
+        }
+
+        // edit other attributes
+        $application->sDate = $this->formatDate($data['sDate']);
+        $application->eDate = $this->formatDate($data['eDate']);
+        $application->processedBy = null;
+        $application->rejectReason = null;
+        $application->save();
+
+        return $application;
+    }
+
+    /*
+    Handles deleting of old nominations from the database
+    Handles sending grouped messages notifying nominees of cancelled nominations
+    */
+    public function handleEditApplicationCancelledNominations($oldNominations, $newNominations) {
+        // Iterate through new nomination data
+        foreach($newNominations as $new) {
+            // Iterate through old nominations
+            foreach ($oldNominations as $old) {
+                if ($old->nomineeNo == $new['nomineeNo'])
+            }
+        }
+    }
+
+    /*
     Edits an Application in the database if the content is valid.
     Returns an Application encoded in json.
     */
@@ -207,34 +243,21 @@ class ApplicationController extends Controller
 
         // Get Old Nominations
         $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
-
-        // EDIT APPLICATION
-        $application = Application::where('applicationNo', $data['applicationNo'])->first();
-
-        // If self nominated for all, application status should be Undecided
-        if ($data['selfNominateAll']) {
-            $application->status = 'U';
-        }
-        else {
-            $application->status = 'P';
-        }
-
         // store old dates
         $oldDates = [
             'start' => $application->sDate,
             'end' => $application->eDate,
         ];
 
-        // edit other attributes
-        $application->sDate = $this->formatDate($data['sDate']);
-        $application->eDate = $this->formatDate($data['eDate']);
-        $application->processedBy = null;
-        $application->rejectReason = null;
-        $application->save();
-
+        // EDIT APPLICATION
+        $application = $this->handleEditApplication($data);
+        
+        // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
+        $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations']);
         // delete old nominations
-        Nomination::where('applicationNo', $application->applicationNo)->delete();
+        //Nomination::where('applicationNo', $application->applicationNo)->delete();
 
+        /*
         $newSubRequests = [];
         $outOfRangeSubRequests = [];
 
@@ -374,7 +397,7 @@ class ApplicationController extends Controller
 
             ]);
         }
-
+*/
         response()->json(['success' => 'success'], 200);
     }
 
