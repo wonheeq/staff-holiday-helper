@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Application;
 use App\Models\Nomination;
+use App\Models\Message;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
@@ -56,6 +57,7 @@ class ApplicationControllerTest extends TestCase
         $arr = Application::where('accountNo', $this->user->accountNo)->get();
         foreach ($arr as $a) {
             Nomination::where('applicationNo', $a->applicationNo)->delete();
+            Message::where('applicationNo', $a->applicationNo)->delete();
         }
 
         AccountRole::where('accountNo', $this->user['accountNo'])->delete();
@@ -301,6 +303,80 @@ class ApplicationControllerTest extends TestCase
         ]);
         $response->assertStatus(500);
     }
+
+    public function test_api_request_for_create_applications_successful_manager_notified_about_fully_self_nominated_app(): void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->user->superiorNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Awaiting Review');
+    }
+
+    public function test_api_request_for_create_applications_successful_nominees_notified_about_nominations(): void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Substitution Request');
+    }
+
 
 
 

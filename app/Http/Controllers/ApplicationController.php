@@ -178,10 +178,8 @@ class ApplicationController extends Controller
             // Notify line manager of new application to review
             app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $application->applicationNo);
         }
-        else {
-            // Not all nominations were self-nominations, group together roles and inform all nominees
-            app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
-        }
+        // Not all nominations were self-nominations, group together roles and inform all nominees
+        app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
 
         response()->json(['success' => 'success'], 200);
     }
