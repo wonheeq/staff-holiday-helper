@@ -189,6 +189,11 @@ class MessageController extends Controller
                     );
                 }
 
+                array_push(
+                    $content,
+                    "Duration: {$application['sDate']} - {$application['eDate']}"
+                );
+
                 // Create message for nominee
                 Message::create([
                     'applicationNo' => $applicationNo,
@@ -245,6 +250,90 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+    }
+
+    /*
+    Notifies nominee of nomination cancellation
+        e.g. a role they were nominated for was changed to a different nominee
+    */
+    public function notifyNomineeNominationCancelled(Nomination $nomination) {
+        $application = Application::where('applicationNo', $nomination->applicationNo)->first();
+        
+    }
+
+    /*
+    Calls the necessary methods to handle notifying nominees of an application being edited
+    */
+    public function handleNotifyNomineeApplicationEdited($applicationNo, $oldDates, $oldNominations) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        $newNominations = Nomination::where('applicationNo', $applicationNo)->get();
+        
+        $cancelledNominations = []; // No longer an nominee
+        $updatedNominationsSubset = []; // Still an nominee for the same role, but period changed to be subset
+        $updatedNominationsOutOfRange = []; // Still an nominee for the same role, but period changed to be out of old range
+
+        // process notifications for old nominations
+        foreach ($oldNominations as $old) {
+            // compare to new nominations
+            foreach ($newNominations as $new) {
+                // accountRoleId and nomineeNo match
+                if ($new->nomineeNo == $old->nomineeNo && $new->accountRoleId == $old->accountRoleId) {
+                    // add to updatedNominationsSubset or updatedNominationsOutOfRange if period was changed
+                    
+                    // make sure that new period is not exactly same as old period
+                    if ($application->sDate != $oldDates['start'] && $application->eDate != $oldDates['end']) {
+                        // check if new period is in same or subset of old period
+                        if ($application->sDate >= $oldDates['start'] && $application->eDate <=  $oldDates['end']) {
+                            // create new array in updatedNominationsSubset using the nomineeNo if it doesn't exist
+                            if ($updatedNominationsSubset[$old->nomineeNo] == null) {
+                                $updatedNominationsSubset[$old->nomineeNo] = array();
+                            }
+ 
+                            // Get role name
+                            $roleName = app(RoleController::class)->getRoleFromAccountRoleId($new->accountRoleId);
+
+                            array_push(
+                                $updatedNominationsSubset[$old->nomineeNo],
+                                $roleName,
+                            );
+                        }
+                        // Is not same or subset therefore is out of range
+                        else {
+                            // create new array in updatedNominationsOutOfRange using the nomineeNo if it doesn't exist
+                            if ($updatedNominationsOutOfRange[$old->nomineeNo] == null) {
+                                $updatedNominationsOutOfRange[$old->nomineeNo] = array();
+                            }
+                            
+                            // Get role name
+                            $roleName = app(RoleController::class)->getRoleFromAccountRoleId($new->accountRoleId);
+
+                            array_push(
+                                $updatedNominationsOutOfRange[$new->nomineeNo],
+                                $roleName,
+                            );
+                        }
+                    }
+                    break;
+                }
+                // accountRoleIds match, but nominee has changed
+                else if ($new->accountRoleId == $old->accountRoleId && $new->nomineeNo != $old->nomineeNo) {
+                    // create new array in cancelledNominations using the old nomineeNo if it doesn't exist
+                    if ($cancelledNominations[$old->nomineeNo] == null) {
+                        $cancelledNominations[$old->nomineeNo] = array();
+                    }
+
+                    // Get role name
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($new->accountRoleId);
+
+                    // add cancelled role name to cancelledNominations[nomineeNo]
+                    array_push(
+                        $cancelledNominations[$old->nomineeNo],
+                        $roleName
+                    );
+                    break;
+                }
+            }
+        }
     }
 }
  
