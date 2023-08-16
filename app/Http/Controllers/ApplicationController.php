@@ -211,11 +211,13 @@ class ApplicationController extends Controller
     }
 
     /*
+    Checks if each nominee from the old nominations has been removed as a nomination in any of the new nominations
     Handles deleting of old nominations from the database
     Handles sending grouped messages notifying nominees of cancelled nominations
     */
     public function handleEditApplicationCancelledNominations($oldNominations, $newNominations, $applicationNo) {
         $removedNominations = [];
+        
         
         // Iterate through old nomination data
         foreach($oldNominations as $old) {
@@ -229,6 +231,7 @@ class ApplicationController extends Controller
                 }
             }
             // If the old nomination data wasn't found in the new nomination data 
+                // AKA The nominee was removed as a nominee
             if (!$foundInNew) {
                 // Delete old nomination from database
                 Nomination::where('applicationNo', $applicationNo, "and")
@@ -249,9 +252,124 @@ class ApplicationController extends Controller
                 array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
             }
         }
-
         // call method to create new messages
         app(MessageController::class)->notifyNomineeNominationCancelled($removedNominations, $applicationNo);
+    }
+    
+    // Handle nonedited, edited nominations and creation of new nominations
+    public function handleEditApplicationNonCancelledNominations($oldNominations, $newNominations, $applicationNo, $oldDates) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        
+        $nonEditedNominations = [];
+        $editedNominations = [];
+        $toNewlyCreateNominations = [];
+
+        // Iterate through new nomination data
+        foreach($newNominations as $new) {
+            $newInOld = false;
+            // Iterate through old nominations
+            foreach ($oldNominations as $old) {
+                // Check if we can find entry that matches the accountRoleId of new
+                if ($old->accountRoleId == $new['accountRoleId']) {
+                    $newInOld = true;
+
+                    // Keep old status if period not out of range
+                    $status = $old->status;
+                    
+                    // Edit status IF period has been altered to be out of range.
+                    if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
+                        // is subset or original so keep old status
+                    }
+                    else {
+                        //out of range, set status to Undecided
+                        $status = 'U';
+                    }
+
+                    // Update Nomination if something has changed
+                    if ($status != $old->status || $old->nomineeNo != $new['nomineeNo']) {
+                        // Delete old Substitution Request message for this application and receiver (nomineeNo)
+                        Message::where('applicationNo', $applicationNo, "and")
+                        ->where('receiverNo', $old->nomineeNo)->delete();
+
+                        Nomination::where('applicationNo', $applicationNo, "and")
+                        ->where('nomineeNo', $old->nomineeNo, "and")
+                        ->where('accountRoleId', $old->accountRoleId)
+                        ->update([
+                            "status" => $status,
+                            "nomineeNo" => $new['nomineeNo']
+                        ]);
+
+                        // add to editedNominations
+                        if ($editedNominations[$new['nomineeNo']] == null) {
+                            $editedNominations[$new['nomineeNo']] = [];
+                        }
+
+                        array_push($editedNominations[$new['nomineeNo']], $old->accountRoleId);
+                    }
+                    else {
+                        // add to nonEditedNominations
+                        if ($nonEditedNominations[$old['nomineeNo']] == null) {
+                            $nonEditedNominations[$old['nomineeNo']] = [];
+                        }
+
+                        array_push($nonEditedNominations[$old['nomineeNo']], $old->accountRoleId);
+                    }
+                    break;
+                }
+            }
+
+            if (!$newInOld) {
+                // new not found in old data, therefore a nomination was created for an accountRoleId that previously was not assigned to the user
+                // Create new nomination
+                Nomination::create([
+                    'applicationNo' => $applicationNo,
+                    'nomineeNo' => $new['nomineeNo'],
+                    'accountRoleId' => $new['accountRoleId'],
+                    // status = 'Y' if self nominated, otherwise = 'U'
+                    'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                ]);
+
+                // add to toNewlyCreateNominations
+                if ($toNewlyCreateNominations[$new['nomineeNo']] == null) {
+                    $toNewlyCreateNominations[$new['nomineeNo']] = [];
+                }
+
+                array_push($toNewlyCreateNominations[$new['nomineeNo']], $new['accountRoleId']);
+            }
+        }
+
+        // group together nominations and generate messages
+        $groupedNominations = [];
+
+        foreach ($editedNominations as $nomineeNo => $accountRoleIds) {
+            if ($groupedNominations[$nomineeNo] == null) {
+                $groupedNominations[$nomineeNo] = $accountRoleIds;
+            }
+            else {
+                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+            }
+        }
+
+        foreach ($toNewlyCreateNominations as $nomineeNo => $accountRoleIds) {
+            if ($groupedNominations[$nomineeNo] == null) {
+                $groupedNominations[$nomineeNo] = $accountRoleIds;
+            }
+            else {
+                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+            }
+        }
+
+        foreach ($nonEditedNominations as $nomineeNo => $accountRoleIds) {
+            if ($groupedNominations[$nomineeNo] == null) {
+                // DO NOTHING, do not group non edited nominations if not existing already due to edited or new nominations
+                // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset 
+            }
+            else {
+                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+            }
+        }
+
+        app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $groupedNominations);
     }
 
     /*
@@ -284,150 +402,9 @@ class ApplicationController extends Controller
         
         // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
         $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations'], $applicationNo);
-        // delete old nominations
-        //Nomination::where('applicationNo', $application->applicationNo)->delete();
-
-        /*
-        $newSubRequests = [];
-        $outOfRangeSubRequests = [];
-
-        // create new nominations
-        foreach ($data['nominations'] as $nomination) {
-            // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
-            $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
-            $status = 'U';
-            $foundOldNomination = false;
-            if ($nominee == $accountNo) {
-                // self nomination so implicity accepted
-                $status = 'Y';
-            }
-            else {
-                // Use old status if it nomineeNo and period weren't changed or is subset
-                if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
-                    // find old status
-
-                    // iterate through old nominations to find old status for the 'new' nomination
-                    foreach ($oldNominations as $old) {
-                        // check that the old data == new data
-                        if ($old->nomineeNo == $nominee && $old->accountRoleId == $nomination['accountRoleId']) {
-                            $status = $old->status;
-                            $foundOldNomination = true;
-                            break;
-                        }
-                    }
-
-                    if (!$foundOldNomination) {
-                        // Did not find old nomination matching new nomination data therefore, the nomination is completely new 
-                        // Add to list of sub request messages to create for new nominations
-                        if ($newSubRequests[$nomination->nomineeNo] == null) {
-                            $newSubRequests[$nomination->nomineeNo] = array();
-                        }
-                        
-                        // Get role name
-                        $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
-
-                        array_push($newSubRequests[$nomination->nomineeNo], $roleName);
-                    }
-                }
-                // Is not same period or subset therefore is out of range
-                else {
-                    // Add to list of sub request messages to create for out of range period nominations
-                    if ($outOfRangeSubRequests[$nomination->nomineeNo] == null) {
-                        $outOfRangeSubRequests[$nomination->nomineeNo] = array();
-                    }
-                    
-                    // Get role name
-                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
-
-                    array_push($outOfRangeSubRequests[$nomination->nomineeNo], $roleName);
-                }
-            }
-
-            Nomination::create([
-                'applicationNo' => $application->applicationNo,
-                'nomineeNo' => $nominee,
-                'accountRoleId' => $nomination['accountRoleId'],
-                'status' => $status
-            ]);
-        }
-       
-        // Get current line manager account number
-        $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
-        // Notify manager of edited application - I don't think we need this?
-        //app(MessageController::class)->notifyManagerApplicationEdited($superiorNo, $applicationNo, $oldDates, $oldNominations->toArray());
-
-        // Handle notifying of nominees of edited application
-        app(MessageController::class)->handleNotifyNomineeApplicationEdited($applicationNo, $oldDates, $oldNominations);
+        // Handle nonedited, edited nominations and creation of new nominations
+        $this->handleEditApplicationNonCancelledNominations($oldNominations, $data['nominations'], $applicationNo, $oldDates);
         
-        foreach ($outOfRangeSubRequests as $receiverNo => $subRequestRoles) {
-            // Delete old substitution request messages for outOfRangeSubRequests
-            // This is required so that there isn't an outdated substitution request message that a user can interact with
-            Message::where('applicationNo', $application->applicationNo, "and")
-            ->where('subject', 'Substitution Request', "and")
-            ->where('receiverNo', $receiverNo)->delete();
-
-            $count = count($subRequestRoles);
-            $content = [
-                "This application has been edited, please accept or reject for the updated details:",
-                "You have been nominated for {$count} roles:",
-            ];
-
-            // Add each role in subRequestRoles to content
-            foreach ($subRequestRoles as $roleName) {
-                array_push(
-                    $content,
-                    "→{$roleName}"
-                );
-            }
-
-            array_push(
-                $content,
-                "Duration: {$application['sDate']} - {$application['eDate']}"
-            );
-
-            // Create new updated substitution request message
-            Message::create([
-                'applicationNo' => $application->applicationNo,
-                'senderNo' => $application->accountNo,
-                'receiverNo' => $receiverNo,
-                'subject' => 'Substitution Request',
-                'content' => json_encode($content),
-                'acknowledged' => false,
-
-            ]);
-        }
-
-        foreach ($newSubRequests as $receiverNo => $subRequestRoles) {
-            $count = count($subRequestRoles);
-            $content = [
-                "You have been nominated for {$count} roles:",
-            ];
-
-            // Add each role in subRequestRoles to content
-            foreach ($subRequestRoles as $roleName) {
-                array_push(
-                    $content,
-                    "→{$roleName}"
-                );
-            }
-
-            array_push(
-                $content,
-                "Duration: {$application['sDate']} - {$application['eDate']}"
-            );
-
-            // Create new updated substitution request message
-            Message::create([
-                'applicationNo' => $application->applicationNo,
-                'senderNo' => $application->accountNo,
-                'receiverNo' => $receiverNo,
-                'subject' => 'Substitution Request',
-                'content' => json_encode($content),
-                'acknowledged' => false,
-
-            ]);
-        }
-*/
         response()->json(['success' => 'success'], 200);
     }
 
