@@ -133,6 +133,8 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
 
+        $application = null;
+
         // If self nominated for all, application status should be Undecided
         if ($data['selfNominateAll']) {
             $application = Application::create([
@@ -151,9 +153,7 @@ class ApplicationController extends Controller
             ]);
         }
        
-
-        // TODO: Implement notifiying of related parties
-
+        // Generate nominations for application
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
@@ -170,6 +170,19 @@ class ApplicationController extends Controller
                 'accountRoleId' => $nomination['accountRoleId'],
                 'status' => $status
             ]);
+        }
+
+
+        // Inform line manager of new application to review (if self-nominated all) 
+        if ($application->status == 'U') {
+            // Get current line manager account number
+            $superiorNo = app(AccountController::class)->getCurrentLineManager($data['accountNo'])->accountNo;
+            // Notify line manager of new application to review
+            app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $application->applicationNo);
+        }
+        else {
+            // Not all nominations were self-nominations, group together roles and inform all nominees
+            
         }
 
         response()->json(['success' => 'success'], 200);

@@ -90,4 +90,63 @@ class MessageController extends Controller
 
         return response()->json(['success'], 200);
     }
+
+
+    /*
+    Notifies line manager of a new application awaiting review
+    */
+    public function notifyManagerApplicationAwaitingReview(String $superiorNo, int $applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Generate content for message
+        $rawContent = [
+            "Nomination/s:",
+        ];
+
+        // Get all nominations for application
+        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+
+        $isSelfNominatedAll = true;
+
+        // Iterate through all nominations and add data to rawContent
+        // Set isSelfNominatedAll to false if not self nominated for all
+        foreach ($nominations as $nom) {
+            // Check if nomineeNo != applicant accountNo
+            if ($nom->nomineeNo != $application->accountNo) {
+                $isSelfNominatedAll = false;
+
+                // Get nominee data
+                $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
+                
+                // Get role name
+                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+                array_push(
+                    $rawContent,
+                    "→{$nominee['fName']} {$nominee['lName']} - {$nom->nomineeNo}@curtin.wa.edu.au    {$roleName}"
+                );
+            }
+        }
+
+        // If isSelfNominatedAll is still true then add self nominated all message
+        if ($isSelfNominatedAll) {
+            array_push(
+                $rawContent,
+                "→Applicant has noted that this period of leave will not affect their ability to handle their responsibilities"
+            );
+        }
+
+        array_push(
+            $rawContent,
+            "Duration: {$application['sDate']} - {$application['eDate']}"
+        );
+        Message::create([
+            'applicationNo' => $applicationNo,
+            'receiverNo' => $superiorNo,
+            'senderNo' => $application->accountNo,
+            'subject' => 'Application Awaiting Review',
+            'content' => json_encode($rawContent),
+            'acknowledged' => false,
+        ]);
+    }
 }
+ 
