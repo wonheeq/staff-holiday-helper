@@ -60,7 +60,11 @@ let onSearch = () => {
 
 <template>
 <!--    mt = 'margin top' - How much empty space is above an element
-        mx = horizontal margin - How much empty space to either side of an elements-->
+        mx = horizontal margin - How much empty space to either side of an elements
+    
+    .screen {
+        height: calc(93vh - 3rem);
+    }-->
 
   <div class="justify-center screen mx-4 mt-4">
             <div>

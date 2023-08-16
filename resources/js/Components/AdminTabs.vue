@@ -44,7 +44,7 @@
 
 <script>
 
-    import table from './Datatable.vue';
+    import table from './Table_Accounts.vue';
 
     export default {
         components:{
@@ -55,7 +55,7 @@
 
 <template>
 
-<div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+<div class="flex flex-col screen mt-2 mx-2 drop-shadow-md">
            <SubpageNavbar
                class="h-[5%]"
                :options="options"

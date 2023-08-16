@@ -141,14 +141,6 @@ class DatabaseSeeder extends Seeder
             'status' => 'C',
         ]);
 
-
-
-
-
-
-
-
-
         // Create 30 accounts
         Account::factory(30)->create([]);
 
