@@ -328,17 +328,34 @@ class ApplicationController extends Controller
              return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
         }
 
+        // Get current line manager account number
+        $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
+        // Notify manager of application cancellation if status was undecided or approved
+        if ($application->status == 'Y' || $application->status == "U") {
+            app(MessageController::class)->notifyManagerApplicationCancelled($superiorNo, $applicationNo);
+        }
+
         // Set application status to Cancelled
         $application->status = 'C';
         $application->save();
-        // TODO: Implement sending of cancelled application message for user and line manager
 
-
-        // TODO: Implement sending of cancelled application message for nominees
+        $processedNominees = [$accountNo];
+        // Send cancelled application message for nominees
         $nominations = Nomination::where('applicationNo', $applicationNo)->get();
         foreach ($nominations as $nomination) {
             $nomineeNo = $nomination['nomineeNo'];
+
+            // Check if nomineeNo is not in processedNominees
+            if (!in_array($nomineeNo, $processedNominees)) {
+                array_push($processedNominees, $nomineeNo);
+
+                app(MessageController::class)->notifyNomineeApplicationCancelled($nomineeNo, $applicationNo);
+            }
         }
+
+        // Delete each 'Substitution Request' Message for the application
+        Message::where('applicationNo', $applicationNo, "and")
+            ->where('subject', "Substitution Request")->delete();
 
         // Delete each nomination associated with the application
         Nomination::where('applicationNo', $applicationNo)->delete();

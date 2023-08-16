@@ -201,5 +201,50 @@ class MessageController extends Controller
             }
         }
     }
+
+
+    /*
+    Notifies line manager of an application being cancelled
+    */
+    public function notifyManagerApplicationCancelled(String $superiorNo, int $applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Generate content for message
+        $content = [
+            "Application #{$applicationNo} was cancelled.",
+            "Duration: {$application['sDate']} - {$application['eDate']}"
+        ];
+
+        Message::create([
+            'applicationNo' => $applicationNo,
+            'receiverNo' => $superiorNo,
+            'senderNo' => $application->accountNo,
+            'subject' => 'Application Cancelled',
+            'content' => json_encode($content),
+            'acknowledged' => false,
+        ]);
+    }
+
+    /*
+    Notifies nominee of an application being cancelled
+    */
+    public function notifyNomineeApplicationCancelled(String $nomineeNo, int $applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Generate content for message
+        $content = [
+            "An application you have been nominated for has been cancelled.",
+            "Duration: {$application['sDate']} - {$application['eDate']}"
+        ];
+
+        Message::create([
+            'applicationNo' => $applicationNo,
+            'receiverNo' => $nomineeNo,
+            'senderNo' => $application->accountNo,
+            'subject' => 'Application Cancelled',
+            'content' => json_encode($content),
+            'acknowledged' => false,
+        ]);
+    }
 }
  
