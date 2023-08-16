@@ -207,47 +207,7 @@ class ApplicationController extends Controller
 
         // Get Old Nominations
         $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
-        $newNominations = $data['nominations'];
-
-        $oldNomineeIds = array();
-        $newNomineeIds = array();
-
-        // put nomineeNos into arrays
-        foreach ($oldNominations as $nom) {
-            array_push($oldNomineeIds, $nom->nomineeNo);
-        }
-        foreach ($newNominations as $nom) {
-            array_push($newNomineeIds, $nom['nomineeNo']);
-        }
-
-        $nominationsToDelete = array();
-        $nominationsToCreate = array();
-        $nominationsToUpdate = array();
-     
-        // compare newNominations to oldNominations, add to respective array
-        foreach ($oldNominations as $old) {
-            if (in_array($old->nomineeNo, $newNomineeIds)) {
-                // old is in new
-                // needs to get updated
-                array_push($nominationsToUpdate, $old);
-            }
-            else {
-                // old is not in new
-                // needs to get deleted
-                array_push($nominationsToDelete, $old);
-            }
-        }
-
-        foreach ($newNominations as $new) {
-            if (!in_array($new, $oldNomineeIds)) {
-                // new was NOT in old
-                // needs to get created
-                array_push($nominationsToCreate, $new);
-            }
-        }
-
-        // TODO: Implement notifiying of related parties of application edited
-
+        $newNominationData = $data['nominations'];
 
         // EDIT APPLICATION
         $application = Application::where('applicationNo', $data['applicationNo'])->first();
@@ -259,7 +219,13 @@ class ApplicationController extends Controller
         else {
             $application->status = 'P';
         }
-       
+
+        // store old dates
+        $oldDates = [
+            'start' => $application->sDate,
+            'end' => $application->eDate,
+        ];
+
         // edit other attributes
         $application->sDate = $this->formatDate($data['sDate']);
         $application->eDate = $this->formatDate($data['eDate']);
@@ -267,19 +233,11 @@ class ApplicationController extends Controller
         $application->rejectReason = null;
         $application->save();
 
-        // TODO: Implement notifiying of related parties
-
-
-
         // delete old nominations
-        foreach ($oldNominations as $nomination) {
-            $obj = Nomination::where('applicationNo', $application->applicationNo, "and")
-                        ->where('nomineeNo', $nomination->nomineeNo, "and")
-                        ->where('accountRoleId', $nomination->accountRoleId)->delete();
-        }
+        Nomination::where('applicationNo', $application->applicationNo)->delete();
 
         // create new nominations
-        foreach ($newNominations as $nomination) {
+        foreach ($newNominationData as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
             $nominee = $nomination['nomineeNo'] != "Self Nomination" ? $nomination['nomineeNo'] : $data['accountNo'];
 
@@ -302,6 +260,11 @@ class ApplicationController extends Controller
             }
         }
        
+        // Get current line manager account number
+        $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
+        // Notify manager of edited application
+        app(MessageController::class)->notifyManagerApplicationEdited($superiorNo, $applicationNo, $oldDates, $oldNominations->toArray());
+
         response()->json(['success' => 'success'], 200);
     }
 
