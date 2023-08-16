@@ -214,14 +214,44 @@ class ApplicationController extends Controller
     Handles deleting of old nominations from the database
     Handles sending grouped messages notifying nominees of cancelled nominations
     */
-    public function handleEditApplicationCancelledNominations($oldNominations, $newNominations) {
-        // Iterate through new nomination data
-        foreach($newNominations as $new) {
-            // Iterate through old nominations
-            foreach ($oldNominations as $old) {
-                if ($old->nomineeNo == $new['nomineeNo'])
+    public function handleEditApplicationCancelledNominations($oldNominations, $newNominations, $applicationNo) {
+        $removedNominations = [];
+        
+        // Iterate through old nomination data
+        foreach($oldNominations as $old) {
+            $foundInNew = false;
+            // Iterate through new nominations
+            foreach ($newNominations as $new) {
+                // Check if we can find the old data in the new
+                if ($old->nomineeNo == $new['nomineeNo'] && $old->accountRoleId == $new['accountRoleId']) {
+                    $foundInNew = true;
+                    break;
+                }
+            }
+            // If the old nomination data wasn't found in the new nomination data 
+            if (!$foundInNew) {
+                // Delete old nomination from database
+                Nomination::where('applicationNo', $applicationNo, "and")
+                    ->where('nomineeNo', $old->nomineeNo, "and")
+                    ->where('accountRoleId', $old->accountRoleId)->delete();
+
+                // delete message associated with old nomination/s
+                $message = Message::where('applicationNo', $applicationNo, "and")
+                    ->where('receiverNo', $old->nomineeNo, "and")
+                    ->where('subject', "Substitution Request")->delete();
+
+                // create new array with nomineeNo as key inside removedNominations if it doesn't exist
+                if ($removedNominations[$old->nomineeNo] != null) {
+                    $removedNominations[$old]->nomineeNo = array();
+                }
+
+                // Add to list of accountRoleIds the nominee was removed as a nominee for
+                array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
             }
         }
+
+        // call method to create new messages
+        app(MessageController::class)->notifyNomineeNominationCancelled($removedNominations, $applicationNo);
     }
 
     /*
@@ -253,7 +283,7 @@ class ApplicationController extends Controller
         $application = $this->handleEditApplication($data);
         
         // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
-        $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations']);
+        $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations'], $applicationNo);
         // delete old nominations
         //Nomination::where('applicationNo', $application->applicationNo)->delete();
 

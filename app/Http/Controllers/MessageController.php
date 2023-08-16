@@ -253,17 +253,47 @@ class MessageController extends Controller
     }
 
     /*
-    Notifies nominee of nomination cancellation
+    Notifies nominees of nomination cancellation
         e.g. a role they were nominated for was changed to a different nominee
     */
-    public function notifyNomineeNominationCancelled(Nomination $nomination) {
-        $application = Application::where('applicationNo', $nomination->applicationNo)->first();
-        
+    public function notifyNomineeNominationCancelled(array $removedNominations, String $applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Iterate through each key (nomineeNo), value (array of accountRoleIds)
+        foreach ($removedNominations as $nomineeNo => $accountRoleIds) {
+            $content = ["You have been un-nominated for the following roles:"];
+            
+            // Iterate through accountRoleIds and get roleName and add to content list
+            foreach ($accountRoleIds as $accountRoleId) {
+                // Get role name
+                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
+
+                array_push(
+                    $content,
+                    "→{$roleName}",
+                );
+            }
+
+            array_push($content, "You no longer need to takeover these roles if you have previously accepted them for this period of time:");
+            array_push(
+                $content,
+                "Duration: {$application['sDate']} - {$application['eDate']}"
+            );
+            Message::create([
+                'applicationNo' => $applicationNo,
+                'receiverNo' => $nomineeNo,
+                'senderNo' => $application->accountNo,
+                'subject' => 'Nomination/s Cancelled',
+                'content' => json_encode($content),
+                'acknowledged' => false,
+            ]);
+        }
     }
 
     /*
     Calls the necessary methods to handle notifying nominees of an application being edited
     */
+    /* this is trash
     public function handleNotifyNomineeApplicationEdited($applicationNo, $oldDates, $oldNominations) {
         $application = Application::where('applicationNo', $applicationNo)->first();
         $newNominations = Nomination::where('applicationNo', $applicationNo)->get();
@@ -335,5 +365,6 @@ class MessageController extends Controller
             }
         }
     }
+    */
 }
  
