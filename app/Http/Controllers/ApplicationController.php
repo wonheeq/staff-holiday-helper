@@ -182,7 +182,7 @@ class ApplicationController extends Controller
         }
         else {
             // Not all nominations were self-nominations, group together roles and inform all nominees
-            
+            app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
         }
 
         response()->json(['success' => 'success'], 200);

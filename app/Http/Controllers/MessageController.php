@@ -99,7 +99,7 @@ class MessageController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Generate content for message
-        $rawContent = [
+        $content = [
             "Nomination/s:",
         ];
 
@@ -108,7 +108,7 @@ class MessageController extends Controller
 
         $isSelfNominatedAll = true;
 
-        // Iterate through all nominations and add data to rawContent
+        // Iterate through all nominations and add data to content
         // Set isSelfNominatedAll to false if not self nominated for all
         foreach ($nominations as $nom) {
             // Check if nomineeNo != applicant accountNo
@@ -121,7 +121,7 @@ class MessageController extends Controller
                 // Get role name
                 $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
                 array_push(
-                    $rawContent,
+                    $content,
                     "→{$nominee['fName']} {$nominee['lName']} - {$nom->nomineeNo}@curtin.wa.edu.au    {$roleName}"
                 );
             }
@@ -130,13 +130,13 @@ class MessageController extends Controller
         // If isSelfNominatedAll is still true then add self nominated all message
         if ($isSelfNominatedAll) {
             array_push(
-                $rawContent,
+                $content,
                 "→Applicant has noted that this period of leave will not affect their ability to handle their responsibilities"
             );
         }
 
         array_push(
-            $rawContent,
+            $content,
             "Duration: {$application['sDate']} - {$application['eDate']}"
         );
         Message::create([
@@ -144,9 +144,62 @@ class MessageController extends Controller
             'receiverNo' => $superiorNo,
             'senderNo' => $application->accountNo,
             'subject' => 'Application Awaiting Review',
-            'content' => json_encode($rawContent),
+            'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+    }
+
+    /*
+    Notifies nominees that they have been nominated for a newly created application
+    */
+    public function notifyNomineesApplicationCreated($applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        
+        // List of processed nomineeNo's
+        $processed = [
+            $application->accountNo // Ignore application accountNo
+        ];
+        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+                
+        // Process each nomination
+        foreach($nominations as $nomination) {
+            $nomineeNo = $nomination->nomineeNo;
+
+            // Check if nomineeNo is not in processed nomineeNo's
+            if (!in_array($nomineeNo, $processed)) {
+                array_push($processed, $nomineeNo);
+                $content = [];
+
+                $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+                    ->where('nomineeNo', $nomineeNo)->get();
+                $count = count($nominationsForNominee->toArray());
+                
+                array_push(
+                    $content,
+                    "You have been nominated for {$count} roles:"
+                );
+
+                // Add nominated roles of all nominations for nominee to content
+                foreach ($nominationsForNominee as $nom) {
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                // Create message for nominee
+                Message::create([
+                    'applicationNo' => $applicationNo,
+                    'receiverNo' => $nomineeNo,
+                    'senderNo' => $application->accountNo,
+                    'subject' => 'Substitution Request',
+                    'content' => json_encode($content),
+                    'acknowledged' => false,
+                ]);
+            }
+        }
     }
 }
  
