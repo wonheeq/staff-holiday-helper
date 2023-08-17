@@ -7,7 +7,25 @@
  -->
 
 <script setup>
+import { ref } from "vue";
+
+import axios from 'axios';
 import LandingInput from './LandingInput.vue';
+const formData = ref({
+    code: ''
+});
+
+async function handleSearch() {
+    axios.post("api/getUnitDetails", {
+        code: formData.value.code
+    }).then( function(response) {
+        console.log(response);
+    }).catch(error => {
+        if(error.response) {
+            console.log(error);
+        }
+    });
+}
 </script>
 
 <template>
@@ -18,15 +36,27 @@ import LandingInput from './LandingInput.vue';
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
 
-        <!-- Unit name/ID input -->
-        <div class="mb-5">
-            <landing-input title="Unit Name / ID" inType="textType" ></landing-input>
-        </div>
+        <form action="#" @submit.prevent="handleSearch">
+            <!-- Unit name/ID input -->
+            <landing-input
+                title="Unit ID"
+                v-model="formData.code"
+                inType="textType" >
+            </landing-input>
 
-        <!-- Search Button -->
-        <button
-            @click="$emit('lookupSearch')" class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-        >Search</button>
+
+            <!-- Search Button -->
+            <button
+                type="submit"
+                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2"
+            >Search</button>
+            <!-- <button
+                @click="$emit('lookupSearch')" class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
+            >Search</button> -->
+
+        </form>
+
+
 
         <!-- Bottom Links -->
         <div class="flex justify-between">
