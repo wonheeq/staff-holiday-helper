@@ -19,7 +19,9 @@
             <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup>
 
             <!-- Unit Serach Results Window -->
-            <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
+            <!-- <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result> -->
+            <unit-result v-show="showResult" @gotResults="goToLookup"></unit-result>
+
         </div>
     </main>
 </template>
