@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountRole;
 use App\Models\Unit;
+use App\Models\Account;
 
 use Illuminate\Http\Request;
 
@@ -32,9 +33,21 @@ class UnitController extends Controller
             ], 500);
         }
 
+        // Get the AccountNo if the current UC for the unit.
         $responsibleId = AccountRole::where([
             ['unitId', '=', $id],
             ['roleId', '=', 1],
         ])->value('accountNo');
+
+        $fName = Account::where('accountNo', $responsibleId)->value('fName');
+        $lName = Account::where('accountNo', $responsibleId)->value('lName');
+
+        $name = $fName . " " . $lName;
+        $email = $responsibleId . "@curtin.edu.au";
+
+        return response()->json([
+            'email' => $email,
+            'name' => $name
+        ]);
     }
 }
