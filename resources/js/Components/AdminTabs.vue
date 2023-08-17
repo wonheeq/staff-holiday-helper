@@ -137,12 +137,6 @@
         /*space-x-4*/
     }
 
-    .account-table {
-        width: 100%;
-        padding-top: 1%; 
-        margin: auto;
-    }
-
     .screen {
         height: calc(93vh - 3rem);
     }

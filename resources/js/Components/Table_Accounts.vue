@@ -39,6 +39,7 @@ export default {
                 },
             ],
             accounts: [],
+            tHeight: "300px"
         };
     },
     created() {
@@ -59,31 +60,27 @@ let onSearch = () => {
 
 
 <template>
-<!--    mt = 'margin top' - How much empty space is above an element
-        mx = horizontal margin - How much empty space to either side of an elements
-    
-    .screen {
-        height: calc(93vh - 3rem);
-    }-->
 
   <div class="justify-center mx-4 mt-4">
             <div>
                 <VueGoodTable 
                     :rows="accounts"
                     :columns="columns"
-                    max-height="300px" 
+                    v-bind:max-height= tHeight
                     :fixed-header="{
-                    enabled: true,
+                        enabled: true,
                     }"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Staff Accounts',
                     }"
                     :pagination-options="{
-                        perPage: 5,
                         enabled: true,
+                        mode: 'pages',
                     }">
-                        
+                    <template #emptystate>
+                        No entries found!
+                    </template>        
                 </VueGoodTable>
             </div>
        </div>
