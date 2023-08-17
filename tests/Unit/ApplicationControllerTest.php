@@ -906,11 +906,12 @@ class ApplicationControllerTest extends TestCase
         $this->assertTrue($message->subject == "Edited Substitution Request");
     }   
 
+    // only period of application was edited, and it became a subset of the original period
     public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_soley_subset(): void
     {    
         $firstApp = $this->applications[0];
-        $sDate = '2030-08-06 20:00:00';
-        $eDate = '2030-08-07 20:00:00';
+        $sDate = '2030-08-07 20:00:00';
+        $eDate = '2030-08-08 20:00:00';
         $response = $this->postJson("/api/editApplication", [
             'applicationNo' => $firstApp->applicationNo,
             'accountNo' => $this->user->accountNo,
