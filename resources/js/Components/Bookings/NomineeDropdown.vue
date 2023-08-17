@@ -29,16 +29,16 @@ function handleSelection(label) {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full">
         <div class="flex flex-row">
             <input type="text"
                 :class="isDisabled ? disabledClass : ''"
-                class="h-8 w-full"
+                class="h-4 1080:h-6 1440:h-8 w-full"
                 v-model="dropdownSearch"
                 @focusin="displayOptions=true"
                 :disabled="isDisabled"
             />
-            <button class="w-8"
+            <button class="w-4 1080:w-6 1440:w-8"
                 :class="isDisabled ? disabledClass : ''"
                 @click="displayOptions = !displayOptions"
                 :disabled="isDisabled"

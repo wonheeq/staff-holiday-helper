@@ -43,21 +43,21 @@ let calcDuration = (dates) => {
 <template><div class="h-[90%]">
 	<div class="flex flex-col w-fit h-full">
 		<div class="mb-8">
-			<p v-if="!props.isEditing" class="text-4xl"> Enter start date and time: </p>
-            <p v-if="props.isEditing" class="text-4xl"> Edit start date and time: </p>
+			<p v-if="!props.isEditing" class="text-xl 1080:text-3xl 1440:text-4xl"> Enter start date and time: </p>
+            <p v-if="props.isEditing" class="text-xl 1080:text-3xl 1440:text-4xl"> Edit start date and time: </p>
 			<div class="flex mt-2 justify-between">
 				<input type="datetime-local" v-model="period.start" />
 			</div>
 		</div>
 		<div class="mb-8">
-			<p v-if="!props.isEditing" class="text-4xl"> Enter end date and time: </p>
-            <p v-if="props.isEditing" class="text-4xl"> Edit end date and time: </p>
+			<p v-if="!props.isEditing" class="text-xl 1080:text-3xl 1440:text-4xl"> Enter end date and time: </p>
+            <p v-if="props.isEditing" class="text-xl 1080:text-3xl 1440:text-4xl"> Edit end date and time: </p>
 			<div class="flex mt-2 justify-between">
 				<input type="datetime-local" v-model="period.end" />
 			</div>
 		</div>
 		<div class="mt-auto mb-12">
-			<p class="text-4xl"> Application Details: </p>
+			<p class="text-xl 1080:text-3xl 1440:text-4xl"> Application Details: </p>
 			<div class="mt-4">
 				<span class="flex">
 					<p class="w-32 font-bold"> Start Date: </p>
