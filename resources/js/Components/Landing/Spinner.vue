@@ -1,3 +1,4 @@
+<!-- SVG TAKEN FROM: https://tallpad.com/series/vuejs-misc/lessons/vuejs-loading-button-with-tailwindcss -->
 <template>
             <svg class="absolute left-1/2 -ml-5 -mt-1 w-10 h-10 text-white animate-spin" fill="none"
             viewBox="0 0 24 24"
