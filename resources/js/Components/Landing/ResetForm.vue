@@ -1,7 +1,6 @@
 <script setup>
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
-import LandingButton from './LandingButton.vue';
 import Spinner from './Spinner.vue';
 import { ref } from "vue";
 
@@ -13,6 +12,7 @@ const isLoading = ref(false);
 
 
 async function handleReset() {
+    errorMsg.value = '';
     isLoading.value = true;
     staffEmail.value = staffID.value + '@curtin.edu.au';
 
@@ -21,17 +21,23 @@ async function handleReset() {
         accountNo: staffID.value,
 
     }).then( function(response) {
-        // console.log(response);
         isLoading.value = false;
         showConf.value = true;
-        errorMsg.value = '';
 
     }).catch(error => {
         isLoading.value = false;
-
         if(error.response) {
-            errorMsg.value = error.response.message;
-            // console.log(error.response);
+            if( (error.response.data.message) === "The email field must be a valid email address.")
+            {
+                errorMsg.value = "Invalid Staff ID."
+            }
+            else if((error.response.data.message) === "We can't find a user with that email address."){
+                errorMsg.value = "Invalid Staff ID."
+            }
+            else {
+                errorMsg.value = error.response.data.message;
+            }
+            console.log(error.response.data.message);
         }
     })
     // showConf.value = true;
@@ -57,7 +63,6 @@ async function handleReset() {
             </div>
 
             <!-- Reset Button -->
-            <!-- <landing-button></landing-button> -->
             <button
                 :disabled="isLoading"
                 type="submit"
