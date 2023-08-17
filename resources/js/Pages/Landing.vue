@@ -10,17 +10,18 @@
     <main>
         <div>
             <!-- Login Window -->
-            <login-form v-show="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
+            <login-form v-if="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
 
             <!-- Password Reset Window -->
-            <reset-form v-show="showReset" @resetBack="goToLogin"></reset-form>
+            <reset-form v-if="showReset" @resetBack="goToLogin"></reset-form>
 
             <!-- Unit Lookup Window -->
-            <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup>
+            <unit-lookup v-if="showLookup" @got-results="goToResults" @lookupBack="goToLogin"></unit-lookup>
+            <!-- <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup> -->
 
             <!-- Unit Serach Results Window -->
-            <!-- <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result> -->
-            <unit-result v-show="showResult" @gotResults="goToLookup"></unit-result>
+            <unit-result v-if="showResult" @resultBack="goToLookup"></unit-result>
+            <!-- <unit-result v-show="showResult" @gotResults="goToLookup"></unit-result> -->
 
         </div>
     </main>
@@ -40,6 +41,8 @@ const showReset = ref(false);
 const showPass = ref(false);
 const showLookup = ref(false);
 const showResult = ref(false);
+const email = ref('');
+const name = ref('');
 
 // Show Password Reset Window
 function goToReset() {
@@ -63,7 +66,9 @@ function goToLookup() {
 }
 
 // Show Unit Results Window
-function goToResults() {
+function goToResults(inEmail, inName) {
+    email.value = inEmail;
+    name.value = inName;
     showLookup.value = false;
     showResult.value = true;
 }
