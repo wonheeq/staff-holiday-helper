@@ -55,3 +55,6 @@ Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNomi
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
+
+
+Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
