@@ -1,25 +1,34 @@
 <script setup>
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
+import LandingButton from './LandingButton.vue';
+import Spinner from './Spinner.vue';
 import { ref } from "vue";
 
 let showConf = ref(false);
 const staffID = ref('');
 const staffEmail = ref('');
 const errorMsg = ref('');
+const isLoading = ref(false);
 
 
 async function handleReset() {
+    isLoading.value = true;
     staffEmail.value = staffID.value + '@curtin.edu.au';
-    console.log(staffEmail.value);
+
     await axios.post("reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
+
     }).then( function(response) {
         // console.log(response);
+        isLoading.value = false;
         showConf.value = true;
         errorMsg.value = '';
+
     }).catch(error => {
+        isLoading.value = false;
+
         if(error.response) {
             errorMsg.value = error.response.message;
             // console.log(error.response);
@@ -48,10 +57,17 @@ async function handleReset() {
             </div>
 
             <!-- Reset Button -->
+            <!-- <landing-button></landing-button> -->
             <button
+                :disabled="isLoading"
                 type="submit"
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-            >Reset Password</button>
+            >
+            <spinner v-show="isLoading"></spinner>
+            <div :class="{'invisible': isLoading}">
+                Reset Password
+            </div>
+            </button>
         </form>
 
         <!-- Error Message -->
