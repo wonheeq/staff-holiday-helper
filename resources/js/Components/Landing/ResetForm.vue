@@ -12,23 +12,25 @@ const isLoading = ref(false);
 
 
 async function handleReset() {
-    errorMsg.value = '';
+    errorMsg.value = ''; // reset message
     isLoading.value = true;
-    staffEmail.value = staffID.value + '@curtin.edu.au';
+    staffEmail.value = staffID.value + '@curtin.edu.au'; // build email
 
+    // post to request reset email.
     await axios.post("reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
 
-    }).then( function(response) {
+    }).then( function(response) { // success response
         isLoading.value = false;
         showConf.value = true;
 
-    }).catch(error => {
+    }).catch(error => { // fail response
         isLoading.value = false;
+        // comment below out to remove error message popup.
         if(error.response) {
-            if( (error.response.data.message) === "The email field must be a valid email address.")
-            {
+            // fixing errors cause of laravel backend jank.
+            if( (error.response.data.message) === "The email field must be a valid email address."){
                 errorMsg.value = "Invalid Staff ID."
             }
             else if((error.response.data.message) === "We can't find a user with that email address."){
@@ -37,9 +39,9 @@ async function handleReset() {
             else {
                 errorMsg.value = error.response.data.message;
             }
-            console.log(error.response.data.message);
         }
     })
+    // uncomment below to show conf regardless of if id was correct.
     // showConf.value = true;
 }
 </script>
