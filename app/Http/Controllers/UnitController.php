@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountRole;
 use App\Models\Unit;
 
 use Illuminate\Http\Request;
@@ -21,8 +22,19 @@ class UnitController extends Controller
         $request->validate([
             'code' => 'required|regex:/^[A-Z]{4}[0-9]{4}$/'
         ]);
-        // check if matches unit code format
-        // check if real unit
-        // get details and send back in json
+
+        $id = $request->code;
+
+        // check if unit exists, return error if it doesn't.
+        if (!Unit::where('unitId', $id)->first()) {
+            return response()->json([
+                'error' => 'Unit not found'
+            ], 500);
+        }
+
+        $responsibleId = AccountRole::where([
+            ['unitId', '=', $id],
+            ['roleId', '=', 1],
+        ])->value('accountNo');
     }
 }
