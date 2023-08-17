@@ -8,18 +8,31 @@
 
 <script setup>
 import { ref } from "vue";
-
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
+
+defineEmits(['gotResults']);
+
 const formData = ref({
     code: ''
 });
+const email = ref('');
+const name = ref('');
 
 async function handleSearch() {
+    let self = this;
     axios.post("api/getUnitDetails", {
         code: formData.value.code
+
     }).then( function(response) {
+        email.value = response.data.email;
+        name.value = response.data.name;
         console.log(response);
+        // self.$emit("gotResults", email.value, name.value);
+        self.$emit("gotResults");
+        console.log(response);
+
+
     }).catch(error => {
         if(error.response) {
             console.log(error);
