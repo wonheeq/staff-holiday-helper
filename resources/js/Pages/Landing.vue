@@ -10,16 +10,16 @@
     <main>
         <div>
             <!-- Login Window -->
-            <login-form v-show="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
+            <login-form v-if="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
 
             <!-- Password Reset Window -->
-            <reset-form v-show="showReset" @resetBack="goToLogin"></reset-form>
+            <reset-form v-if="showReset" @resetBack="goToLogin"></reset-form>
 
             <!-- Unit Lookup Window -->
-            <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup>
+            <unit-lookup v-if="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup>
 
             <!-- Unit Serach Results Window -->
-            <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
+            <unit-result v-if="showResult" @resultBack="goToLookup"></unit-result>
         </div>
     </main>
 </template>
