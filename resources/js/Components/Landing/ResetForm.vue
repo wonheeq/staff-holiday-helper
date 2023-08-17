@@ -13,6 +13,7 @@ const isLoading = ref(false);
 
 async function handleReset() {
     errorMsg.value = ''; // reset message
+    showConf.value = false;
     isLoading.value = true;
     staffEmail.value = staffID.value + '@curtin.edu.au'; // build email
 
