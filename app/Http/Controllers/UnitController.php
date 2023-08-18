@@ -24,9 +24,8 @@ class UnitController extends Controller
             'code' => 'required|regex:/^[A-Z]{4}[0-9]{4}$/'
         ]);
 
-        $id = $request->code;
-
         // check if unit exists, return error if it doesn't.
+        $id = $request->code;
         if (!Unit::where('unitId', $id)->first()) {
             return response()->json([
                 'error' => 'Unit not found'
@@ -39,13 +38,17 @@ class UnitController extends Controller
             ['roleId', '=', 1],
         ])->value('accountNo');
 
+        // Build the name of the UC
         $fName = Account::where('accountNo', $responsibleId)->value('fName');
         $lName = Account::where('accountNo', $responsibleId)->value('lName');
-
         $name = $fName . " " . $lName;
+
+        // build email and get unit name
         $email = $responsibleId . "@curtin.edu.au";
+        $unitName = Unit::where('unitId', $id)->value('name');
 
         return response()->json([
+            'unitName' => $unitName,
             'email' => $email,
             'name' => $name
         ]);
