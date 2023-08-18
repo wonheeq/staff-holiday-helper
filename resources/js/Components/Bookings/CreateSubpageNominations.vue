@@ -181,41 +181,42 @@ const disabledClass = "bg-gray-300 border-gray-100";
 <template>
     <div class="flex flex-col w-full pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%]">
-            <p class="text-4xl">
+            <p class="text-lg 1080:text-2xl 1440:text-4xl">
                 Nominate Substitutes:
             </p>
-            <div class="flex flex-row justify-between">
-                <div class="flex flex-row space-x-4 w-3/5">
-                    <div class="flex flex-col items-center pb-2">
-                        <p class="text-xl">
+            <div class="flex flex-row w-full">
+                <div class="flex flex-row space-x-4 w-[40%]">
+                    <div class="flex flex-col items-center">
+                        <p class="text-xs 1080:text-base 1440:text-xl">
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-8 h-8"
+                            class="w-4 h-4 1080:w-6 1080:h-6 1440:w-8 1440:h-8"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
                         />
                     </div>
-                    <div class="w-full">
-                        <p class="text-xl">
+                    <div class="w-[90%] flex flex-col">
+                        <p class="text-xs 1080:text-base 1440:text-xl">
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-8 w-2/3"
+                            class="h-4 1080:h-6 1440:h-8 w-full text-xs"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
                 </div>
-                <div class="flex flex-col w-96 mr-6">
-                    <p class="text-xl">
+                <div class="w-[30%]"></div>
+                <div class="flex flex-col mr-6 w-[30%] items-end">
+                    <p class="text-xs 1080:text-base 1440:text-xl w-64 1440:w-96">
                         Select Staff Member for {{ numSelectedNominations }} Entries
                     </p>
                     <NomineeDropdown
-                        class="w-full"
+                        class="w-64 1440:w-96"
                         :options="staffMembers"
                         @optionSelected="(selection) => handleDropdownStaffSelection(selection)"
                         :isDisabled="selfNominateAll"
@@ -246,32 +247,34 @@ const disabledClass = "bg-gray-300 border-gray-100";
             <div class="h-[10%]">
                 <div class="flex items-center space-x-2 py-2 h-1/2">
                     <input type="checkbox"
-                        class="h-8 w-8"
+                        class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8"
                         v-model="selfNominateAll"
                         @click="handleSelfNominateAll()"    
                     />
-                    <p>This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.</p>
+                    <p class="text-xs 1080:text-sm 1440:text-base">
+                        This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.
+                    </p>
                 </div>
                 <div class="flex justify-between h-1/2 space-x-16">
-                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl text-center w-1/2"
                         @click="cancelApplication()"
                         v-if="!props.isEditing"
                     >
                         Cancel Application
                     </button>
-                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl text-center w-1/2"
                         @click="cancelApplication()"
                         v-if="props.isEditing"
                     >
                         Cancel Edit of Application
                     </button>
-                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl text-center w-1/2"
                         @click="submitApplication()"
                         v-if="!props.isEditing"
                     >
                         Submit Application
                     </button>
-                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl text-center w-1/2"
                         @click="submitApplication()"
                         v-if="props.isEditing"
                     >

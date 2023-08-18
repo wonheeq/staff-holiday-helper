@@ -8,7 +8,7 @@ const emit = defineEmits(['screen-changed']);
 </script>
 <template>
     <div class="flex space-x-4">
-        <button class="w-80 text-2xl text-center p-2 rounded-tl-md rounded-tr-md"
+        <button class="w-80 text-lg 1080:text-xl 1440:text-2xl text-center px-2 rounded-tl-md rounded-tr-md"
             :class="{ 'bg-white': activeScreen===option.id, 'bg-gray-300': activeScreen!==option.id }"
             v-for="option in options"
             @click="activeScreen = option.id; emit('screen-changed', option.id)"
