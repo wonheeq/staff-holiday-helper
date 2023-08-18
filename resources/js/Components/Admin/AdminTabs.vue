@@ -48,9 +48,31 @@
     import table2 from './Table_Applications.vue';
 
     export default {
+        data: function() {
+            return {
+                content: '',
+                buttons: [
+                    { message: 'Staff Accounts' },
+                    { message: 'Leave\nApplications' },
+                    { message: 'Substitute\nNominations' },
+                    { message: 'Account Roles' },
+                    { message: 'Roles' },
+                    { message: 'Units' },
+                    { message: 'Majors' },
+                    { message: 'Courses' },
+                    { message: 'Schools' },
+                    { message: 'Messages' }
+                ]
+            }
+        },
         components:{
             'accountTable':table1,
             'applicationTable':table2
+        },
+        methods: {
+            activate: function(message) {
+                this.content = message;
+            }
         }
     }
 </script>
@@ -75,36 +97,20 @@
             <div class="flex flex-row mt-4 mx-4">
                 <h2 class="mt-1.5">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
-                    <button class="tableButton" v-on:click="" >
-                        Staff Accounts
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Leave<br>Applications
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Substitute<br>Nominations
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Account Roles
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Roles
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Units
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Majors
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Courses
-                    </button>
-                    <button class="tableButton" v-on:click="" >
-                        Schools
+                    <button
+                        v-for="button in buttons"
+                        :key="button.message"
+                        class= tableButtonOff
+                        :class="{'tableButtonOn': button.message === content}"
+                        @click="activate(button.message)"
+                    >
+                        <span>{{ button.message }}</span>
                     </button>
                 </div>
             </div>
-            <applicationTable/> 
+            <accountTable>
+                
+            </accountTable>    
         </div>
         </div>  
 
@@ -126,7 +132,24 @@
 
 <style>
 
-    .tableButton {
+    .tableButtonOn {
+        min-width: 13%;
+        font-size: 1rem;
+        font-weight: bold;
+        line-height: 1.3rem;
+        text-align: center;
+        padding: 2px;
+        background-color: rgb(227 227 227);
+        border-color: black;
+        border-width: 2px;       
+        border-style: solid;
+        /*w-50 text-1xl text-center p-4 bg-gray-300 */
+
+        margin-left: 1rem;
+        /*space-x-4*/
+    }
+
+    .tableButtonOff {
         min-width: 13%;
         font-size: 1rem;
         line-height: 1.3rem;
