@@ -42,6 +42,8 @@ class ApplicationController extends Controller
         return response()->json($applications);
     }
 
+    
+
     /*
     Returns all applications
      */
