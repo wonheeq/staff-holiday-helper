@@ -57,19 +57,16 @@ class ApplicationControllerTest extends TestCase
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[0],
             'nomineeNo' => $this->otherUser->accountNo,
-            'status' => 'Y'
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[1],
             'nomineeNo' => $this->otherUser->accountNo,
-            'status' => 'Y'
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[2],
             'nomineeNo' => $this->otherUser->accountNo,
-            'status' => 'Y'
         ]));
 
     }
@@ -916,7 +913,7 @@ class ApplicationControllerTest extends TestCase
         $sDate = '2030-08-07 20:00:00';
         $eDate = '2030-08-08 20:00:00';
 
-        Log::debug("SOLEY SUBSET TEST");
+        Log::debug('');
 
         $response = $this->postJson("/api/editApplication", [
             'applicationNo' => $firstApp->applicationNo,
@@ -945,7 +942,18 @@ class ApplicationControllerTest extends TestCase
         ->where('receiverNo', $this->otherUser->accountNo, "and")
         ->where('senderNo', $this->user->accountNo)->first();
 
-        $this->assertTrue($message->subject == "Substitution Period Edited (Subset)");
+        // Check if all nominations were status 'Y'
+        if (count(Nomination::where('applicationNo', $firstApp->applicationNo)->where('status', 'Y')->get()->toArray()) == 3) {
+            // If all nominations were status Y, then we expect Subset Message
+            $this->assertTrue($message->subject == "Substitution Period Edited (Subset)");
+        }
+        else
+        {
+            // At least one nomination was status 'N'
+            // So we expect Edited message
+            $this->assertTrue($message->subject == "Edited Substitution Request");
+        }
+        
     }     
 
     public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_subset_and_extra_account_role(): void

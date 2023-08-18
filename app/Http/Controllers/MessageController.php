@@ -302,13 +302,8 @@ class MessageController extends Controller
         $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
         ->where('status', 'Y')->get();
         $nomineesWhoAccepted = [];
-        Log::debug("Accepted Nominations:");
-        Log::debug($acceptedNominations);
-        Log::debug("ALL Nominations:");
-        Log::debug(Nomination::where('applicationNo', $applicationNo)->get());
-
+      
         foreach ($acceptedNominations as $nomination) {
-            Log::debug("Processing {$nomination->accountRoleId}");
             if (!in_array($nomination->nomineeNo, $nomineesWhoAccepted)) {
                 // add nomineeNo to array if not added
                 array_push($nomineesWhoAccepted, $nomination->nomineeNo);
@@ -343,8 +338,6 @@ class MessageController extends Controller
                     "Duration: {$application['sDate']} - {$application['eDate']}"
                 );
         
-                Log::debug("Creating subset message");
-
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
                     'receiverNo' => $nom->nomineeNo,
@@ -353,7 +346,6 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
-                Log::debug($message);
             }
         }
     }

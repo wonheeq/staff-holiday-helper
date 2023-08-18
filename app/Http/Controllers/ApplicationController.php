@@ -283,6 +283,14 @@ class ApplicationController extends Controller
                     $status = $old->status;
                     
 
+                    // Set isSubset to false since at least one nomination was rejected
+                    // But the nominee was again nominated for the nomination, in the new edited application
+                    // Therefore, we will delete the old message to approve or reject the old nominations
+                    // And resend a new message for the new nominations
+                    if ($status == 'N') {
+                        $isSubset = false;
+                    }
+
                     // If it changed then it can't be solely a subset
                     if ($old->nomineeNo != $new['nomineeNo']) 
                     {
@@ -386,7 +394,6 @@ class ApplicationController extends Controller
         }
 
         if ($isSubset) {
-            Log::debug("Identified as subset");
             app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo);
         }
         else {
