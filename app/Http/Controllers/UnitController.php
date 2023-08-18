@@ -18,8 +18,12 @@ class UnitController extends Controller
         return Unit::all();
     }
 
+    // Route: /api/getUnitDetails
+    // Input: Request with valid unit ID in data
+    // Output: Response with Unit name, ID, current UC ID and email.
     public function getUnitDetails(Request $request)
     {
+        // check if correct format
         $request->validate([
             'code' => 'required|regex:/^[A-Z]{4}[0-9]{4}$/'
         ]);

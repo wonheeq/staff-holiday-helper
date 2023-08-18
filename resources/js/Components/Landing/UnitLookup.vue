@@ -21,9 +21,8 @@ const name = ref('');
 const unitName = ref('');
 const unitId = ref('');
 
-async function handleSearch() {
-    let self = this;
 
+async function handleSearch() {
     axios.post("api/getUnitDetails", {
         code: formData.value.code
 
@@ -58,26 +57,18 @@ async function handleSearch() {
                 inType="textType" >
             </landing-input>
 
-
             <!-- Search Button -->
             <button
                 type="submit"
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2"
             >Search</button>
-            <!-- <button
-                @click="$emit('lookupSearch')" class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-            >Search</button> -->
-
         </form>
-
-
 
         <!-- Bottom Links -->
         <div class="flex justify-between">
             <!-- Back button -->
             <button @click="$emit('lookupBack')" class="underline font-bold">Back</button>
         </div>
-
     </div>
 </div>
 </template>

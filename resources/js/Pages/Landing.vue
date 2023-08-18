@@ -10,7 +10,7 @@
             <!-- Unit Lookup Window -->
             <unit-lookup v-if="showLookup" @got-results="goToResults" @lookupBack="goToLogin"></unit-lookup>
 
-            <!-- Unit Serach Results Window -->
+            <!-- Unit Search Results Window -->
             <unit-result
                 :unit-id="unitId" :unit-name="unitName" :email="email" :name="name"
                 v-if="showResult" @resultBack="goToLookup">
@@ -23,15 +23,13 @@
 <script setup>
 import LoginForm from "@/Components/Landing/LoginForm.vue";
 import ResetForm from "@/Components/Landing/ResetForm.vue";
-import PasswordForm from "@/Components/Landing/PasswordForm.vue";
 import UnitLookup from "@/Components/Landing/UnitLookup.vue";
 import unitResult from "@/Components/Landing/UnitResult.vue";
 import { ref } from "vue";
 
-// Variables for window visibility
+// Variables
 const showLogin = ref(true);
 const showReset = ref(false);
-const showPass = ref(false);
 const showLookup = ref(false);
 const showResult = ref(false);
 const email = ref('');
@@ -49,7 +47,6 @@ function goToReset() {
 function goToLogin() {
     showLogin.value = true;
     showReset.value = false;
-    showPass.value = false;
     showLookup.value = false;
     showReset.value = false;
 }
@@ -67,18 +64,8 @@ function goToResults(inUnitId, inUnitName, inEmail, inName) {
     name.value = inName;
     unitId.value = inUnitId;
 
-
     showLookup.value = false;
     showResult.value = true;
-}
-
-// Show New Password Window
-function goToPass() {
-    showPass.value = true;
-    showReset.value = false;
-    showLookup.value = false;
-    showReset.value = false;
-    showLogin.value = false;
 }
 
 </script>
