@@ -9,14 +9,21 @@ use App\Models\Account;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+use Illuminate\Support\Facades\DB;
+
 
 class UnitLookupTest extends TestCase
 {
 
     protected function setup(): void
     {
+        // DB::table('units')->insert([
+        //     'unitId' => 'AAAA1001',
+        //     'name' => 'tempName',
+        // ]);
+
         Unit::create([
-            'unitId' => 'AAAA0000',
+            'unitId' => 'AAAA1001',
             'name' => 'tempName',
         ]);
 
