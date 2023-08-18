@@ -17,11 +17,12 @@
 
             <!-- Unit Lookup Window -->
             <unit-lookup v-if="showLookup" @got-results="goToResults" @lookupBack="goToLogin"></unit-lookup>
-            <!-- <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup> -->
 
             <!-- Unit Serach Results Window -->
-            <unit-result v-if="showResult" @resultBack="goToLookup"></unit-result>
-            <!-- <unit-result v-show="showResult" @gotResults="goToLookup"></unit-result> -->
+            <unit-result
+                :unit-name="unitName" :email="email" :name="name"
+                v-if="showResult" @resultBack="goToLookup">
+            </unit-result>
 
         </div>
     </main>

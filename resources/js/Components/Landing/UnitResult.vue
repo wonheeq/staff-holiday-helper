@@ -7,6 +7,11 @@
  -->
 
 <script setup>
+const props = defineProps({
+    unitName: { type: String, required: true },
+    email: { type: String, required: true },
+    name: { type: String, required: true },
+});
 </script>
 
 <template>
@@ -19,9 +24,9 @@
 
         <!-- PlaceHolder Results -->
         <h1 class="font-bold text-2xl mb-1">Showing Result For:</h1>
-        <h2 class="font-bold mb-5">Capstone Computing Project 1 (ISAD3000)</h2>
-        <p class="mb-1">Currently Responsible: StaffMember name</p>
-        <p class="mb-7">Staff Email: staff.id@emailaddress.com</p>
+        <h2 class="font-bold mb-5">{{ unitName }}</h2>
+        <p class="mb-1">Currently Responsible: {{ name }}</p>
+        <p class="mb-7">Staff Email: {{ email }}</p>
 
         <!-- Back/Search Aagain -->
         <button
