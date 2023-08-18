@@ -384,7 +384,54 @@ class ApplicationController extends Controller
         }
 
         foreach ($nonEditedNominations as $nomineeNo => $accountRoleIds) {
-            if (!array_key_exists($nomineeNo, $groupedNominations)) {
+            $shouldSendEditedMessageForNominee = false;
+
+            // Check foreach nomination if the status was not previously accepted
+            foreach ($accountRoleIds as $accountRoleId) {
+                $theNomination = Nomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo, "and")
+                ->where("accountRoleId", $accountRoleId)->first();
+
+                if ($theNomination->status != 'Y') {
+                    // One of the nominations for the nominee was previously rejected or just not responded to
+                    // So we exit this for loop
+                    // and set a flag to handle this outside of this loop
+                    $shouldSendEditedMessageForNominee = true;
+                    break;
+                }
+            }
+            
+            if ($shouldSendEditedMessageForNominee) {
+                // One of the nominations for the nominee was previously rejected, or just not responded to
+                // Now we delete all old nominations for the nominee and recreate them with status 'U'
+                    
+                Nomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->delete();
+
+                // For each accountRoleId, create new nomination
+                foreach ($accountRoleIds as $accountRoleId) {
+                    Nomination::create([
+                        'applicationNo' => $applicationNo,
+                        'nomineeNo' => $nomineeNo,
+                        'accountRoleId' => $accountRoleId,
+                        'status' => 'U' 
+                    ]);
+                }
+
+                // Check if groupedNominations contains the nomineeNo
+                if (!array_key_exists($nomineeNo, $groupedNominations)) {
+                    // set the subarray as accountRoleId if it doesn't exist already
+                    $groupedNominations[$nomineeNo] = $accountRoleIds;
+                }
+                else {
+                    // Merge the accountRoleIds in
+                    $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+                }
+
+                // just in case, set isSubset to false again
+                $isSubset = false;
+            }
+            else if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 // DO NOTHING, do not group non edited nominations if not existing already due to edited or new nominations
                 // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset 
             }

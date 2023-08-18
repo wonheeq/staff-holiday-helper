@@ -913,8 +913,6 @@ class ApplicationControllerTest extends TestCase
         $sDate = '2030-08-07 20:00:00';
         $eDate = '2030-08-08 20:00:00';
 
-        Log::debug('');
-
         $response = $this->postJson("/api/editApplication", [
             'applicationNo' => $firstApp->applicationNo,
             'accountNo' => $this->user->accountNo,
@@ -949,11 +947,10 @@ class ApplicationControllerTest extends TestCase
         }
         else
         {
-            // At least one nomination was status 'N'
+            // At least one nomination was not status 'Y'
             // So we expect Edited message
             $this->assertTrue($message->subject == "Edited Substitution Request");
         }
-        
     }     
 
     public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_subset_and_extra_account_role(): void
