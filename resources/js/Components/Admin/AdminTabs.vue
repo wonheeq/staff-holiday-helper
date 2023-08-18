@@ -44,11 +44,13 @@
 
 <script>
 
-    import table from './Table_Accounts.vue';
+    import table1 from './Table_Accounts.vue';
+    import table2 from './Table_Applications.vue';
 
     export default {
         components:{
-            'table2':table
+            'accountTable':table1,
+            'applicationTable':table2
         }
     }
 </script>
@@ -102,7 +104,7 @@
                     </button>
                 </div>
             </div>
-            <table2/> 
+            <applicationTable/> 
         </div>
         </div>  
 

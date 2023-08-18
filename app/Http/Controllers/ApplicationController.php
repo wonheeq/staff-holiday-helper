@@ -43,6 +43,16 @@ class ApplicationController extends Controller
     }
 
     /*
+    Returns all applications
+     */
+    public function getAllApplications(Request $request)
+    {   
+        $applications = Application::get();
+        return response()->json($applications);    
+        //return Applications::all(); 
+    }
+
+    /*
     Returns true if for all elements, nomineeNo == accountNo
     */
     private function isSelfNominatedAll($nominations, $accountNo) {

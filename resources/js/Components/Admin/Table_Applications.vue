@@ -13,29 +13,37 @@ export default {
         return {
             columns: [
                 {
-                label: 'Account ID',
+                label: 'Application ID',
+                field: 'applicationNo',
+                },
+                {
+                label: 'Nominee ID',
                 field: 'accountNo',
                 },
                 {
-                label: 'Account Type',
-                field: 'accountType',
-                },
-                {
-                label: 'Surname',
-                field: 'lName',
+                label: 'Start Date',
+                field: 'sDate',
  
                 },
                 {
-                label: 'Other Names',
-                field: 'fName',
+                label: 'End Date',
+                field: 'eDate',
                 },
                 {
-                label: 'School',
-                field: 'schoolId',
+                label: 'Leave Status',
+                field: 'status',
                 },
                 {
-                label: 'Line Manager',
-                field: 'superiorNo',
+                label: 'Processed By',
+                field: 'processedBy',
+                },
+                {
+                label: 'Reject Reason',
+                field: 'rejectReason',
+                },
+                {
+                label: 'Created/Last Updated',
+                field: 'updated_at',
                 },
             ],
             accounts: [],
@@ -43,7 +51,7 @@ export default {
         };
     },
     created() {
-        axios.get("/api/accounts")
+        axios.get("/api/applications")
         .then((response) => {
             this.accounts = response.data;
             console.log(response.data);
@@ -77,9 +85,9 @@ let onSearch = () => {
 
 
 <template>
-    <div class="parent1">
-        <div class="mx-4 mt-4">
-            <div remove-bullshit>
+
+  <div class="justify-center mx-4 mt-4" ref="tableh">
+            <div>
                 <VueGoodTable 
                     :rows="accounts"
                     :columns="columns"
@@ -89,24 +97,22 @@ let onSearch = () => {
                     }"
                     :search-options="{
                         enabled: true,
-                        placeholder: 'Search Staff Accounts',
+                        placeholder: 'Search Leave Applications',
                     }"
                     :pagination-options="{
                         enabled: true,
-                        //mode: 'pages',
-                        perPage: 30
+                        mode: 'pages',
                     }">
                     <template #emptystate>
                         No entries found!
                     </template>        
-                </VueGoodTable> 
-            </div>           
+                </VueGoodTable>
+            </div>
        </div>
-    </div>
 </template>
 
 <style>
-    .parent1 {
-        width: 100%;       
+    #filterSection {
+        height: 100%;       
     }
 </style>
