@@ -48,6 +48,7 @@ class UnitController extends Controller
         $unitName = Unit::where('unitId', $id)->value('name');
 
         return response()->json([
+            'unitId' => $id,
             'unitName' => $unitName,
             'email' => $email,
             'name' => $name

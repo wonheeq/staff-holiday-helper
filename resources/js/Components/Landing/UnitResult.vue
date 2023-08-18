@@ -8,6 +8,7 @@
 
 <script setup>
 const props = defineProps({
+    unitId: { type: String, required: true },
     unitName: { type: String, required: true },
     email: { type: String, required: true },
     name: { type: String, required: true },
@@ -24,7 +25,7 @@ const props = defineProps({
 
         <!-- PlaceHolder Results -->
         <h1 class="font-bold text-2xl mb-1">Showing Result For:</h1>
-        <h2 class="font-bold mb-5">{{ unitName }}</h2>
+        <h2 class="font-bold mb-5">{{ unitName }} ({{ unitId }})</h2>
         <p class="mb-1">Currently Responsible: {{ name }}</p>
         <p class="mb-7">Staff Email: {{ email }}</p>
 

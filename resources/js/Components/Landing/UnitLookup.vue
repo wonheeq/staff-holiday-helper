@@ -19,6 +19,7 @@ const formData = ref({
 const email = ref('');
 const name = ref('');
 const unitName = ref('');
+const unitId = ref('');
 
 async function handleSearch() {
     let self = this;
@@ -30,7 +31,8 @@ async function handleSearch() {
         email.value = response.data.email;
         name.value = response.data.name;
         unitName.value = response.data.unitName;
-        emit("gotResults", unitName.value, email.value, name.value);
+        unitId.value = response.data.unitId;
+        emit("gotResults", unitId.value, unitName.value, email.value, name.value);
 
     }).catch(error => {
         if(error.response) {

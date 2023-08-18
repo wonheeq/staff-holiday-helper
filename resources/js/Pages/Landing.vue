@@ -1,11 +1,3 @@
-<!--
-    File: Landing.vue
-    Purpose: Parent file for the landing/login page for LeaveOnTime.
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
 <template>
     <main>
         <div>
@@ -20,7 +12,7 @@
 
             <!-- Unit Serach Results Window -->
             <unit-result
-                :unit-name="unitName" :email="email" :name="name"
+                :unit-id="unitId" :unit-name="unitName" :email="email" :name="name"
                 v-if="showResult" @resultBack="goToLookup">
             </unit-result>
 
@@ -45,6 +37,7 @@ const showResult = ref(false);
 const email = ref('');
 const name = ref('');
 const unitName = ref('');
+const unitId = ref('');
 
 // Show Password Reset Window
 function goToReset() {
@@ -68,10 +61,12 @@ function goToLookup() {
 }
 
 // Show Unit Results Window
-function goToResults(inUnitName, inEmail, inName) {
+function goToResults(inUnitId, inUnitName, inEmail, inName) {
     unitName.value = inUnitName;
     email.value = inEmail;
     name.value = inName;
+    unitId.value = inUnitId;
+
 
     showLookup.value = false;
     showResult.value = true;
