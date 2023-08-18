@@ -18,6 +18,7 @@ const formData = ref({
 });
 const email = ref('');
 const name = ref('');
+const unitName = ref('');
 
 async function handleSearch() {
     let self = this;
@@ -28,7 +29,8 @@ async function handleSearch() {
     }).then( function(response) {
         email.value = response.data.email;
         name.value = response.data.name;
-        emit("gotResults", email.value, name.value);
+        unitName.value = response.data.unitName;
+        emit("gotResults", unitName.value, email.value, name.value);
 
     }).catch(error => {
         if(error.response) {
