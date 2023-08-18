@@ -297,12 +297,15 @@ class MessageController extends Controller
     public function notifyNomineeApplicationEditedSubsetOnly($applicationNo) {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
-        Log::debug("error after this");
 
         // Process only nominations which have been accepted
         $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
         ->where('status', 'Y')->get();
         $nomineesWhoAccepted = [];
+        Log::debug("Accepted Nominations:");
+        Log::debug($acceptedNominations);
+        Log::debug("ALL Nominations:");
+        Log::debug(Nomination::where('applicationNo', $applicationNo)->get());
 
         foreach ($acceptedNominations as $nomination) {
             Log::debug("Processing {$nomination->accountRoleId}");

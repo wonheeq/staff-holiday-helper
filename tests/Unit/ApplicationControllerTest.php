@@ -56,17 +56,20 @@ class ApplicationControllerTest extends TestCase
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[0],
-            'nomineeNo' => $this->otherUser->accountNo
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y'
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[1],
-            'nomineeNo' => $this->otherUser->accountNo
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y'
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[2],
-            'nomineeNo' => $this->otherUser->accountNo
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y'
         ]));
 
     }
