@@ -1,6 +1,6 @@
 <script setup>
     
-    import SubpageNavbar from './SubpageNavbar.vue';
+    import SubpageNavbar from '../SubpageNavbar.vue';
     import { onMounted, ref } from 'vue';
     
     const options = [
@@ -73,31 +73,31 @@
             <div class="flex flex-row mt-4 mx-4">
                 <h2 class="mt-1.5">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Staff Accounts
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Leave<br>Applications
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Substitute<br>Nominations
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Account Roles
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Roles
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Units
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Majors
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Courses
                     </button>
-                    <button class="tableButton">
+                    <button class="tableButton" v-on:click="" >
                         Schools
                     </button>
                 </div>

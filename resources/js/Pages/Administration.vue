@@ -1,7 +1,7 @@
 <script setup>
     import PageLayout from "@/Layouts/PageLayout.vue";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-    import AdminTabs from '@/Components/AdminTabs.vue';
+    import AdminTabs from '@/Components/Admin/AdminTabs.vue';
 
 </script>
 
