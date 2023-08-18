@@ -31,7 +31,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Application Rejected', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Yun Mei', $mailable->render());
         $this->assertStringContainsString('123123', $mailable->render());
@@ -59,7 +59,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Application Accepted', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Benny', $mailable->render());
         $this->assertStringContainsString('123123', $mailable->render());
@@ -81,7 +81,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Peter', $mailable->render());
         $this->assertStringContainsString('123!@ASDL##', $mailable->render());
@@ -118,7 +118,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Booking Cancelled', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Peter', $mailable->render());
         $this->assertStringContainsString('123123', $mailable->render());
@@ -146,7 +146,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Booking Created', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Peter', $mailable->render());
         $this->assertStringContainsString('123123', $mailable->render());
@@ -160,17 +160,17 @@ class EmailTest extends TestCase
     {
         $emailController = new EmailController();
         $nominees = new Nominees();
-        $nominees->nName ="Tony Cranston";
+        $nominees->nName = "Tony Cranston";
         $nominees->nId = 222222;
-        $nominees->nRoles ="COMP2001 - Unit Coordinator \n COMP2001 - Lecturer \n ISEC2001 - Unit Coordinator";
+        $nominees->nRoles = "COMP2001 - Unit Coordinator \n COMP2001 - Lecturer \n ISEC2001 - Unit Coordinator";
 
         $nominees2 = new Nominees();
-        $nominees2->nName ="Tony asdasd";
+        $nominees2->nName = "Tony asdasd";
         $nominees2->nId = 123123123;
-        $nominees2->nRoles ="COMP2001 - Unit Coordinator \n COMP2001 - Lecturer \n ISEC2001 - Unit Coordinator";
+        $nominees2->nRoles = "COMP2001 - Unit Coordinator \n COMP2001 - Lecturer \n ISEC2001 - Unit Coordinator";
 
         $nomineesArray = array($nominees, $nominees2);
-        
+
         $dynamicData = [
             'sName' => 'Joe', //supervisor
             'editorName' => 'Ronaldo',

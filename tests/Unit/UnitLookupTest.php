@@ -17,13 +17,16 @@ class UnitLookupTest extends TestCase
 
     protected function setup(): void
     {
+        parent::setup();
+
         // DB::table('units')->insert([
         //     'unitId' => 'AAAA1001',
         //     'name' => 'tempName',
         // ]);
+        Unit::where('unitId', 'AAAA0000')->delete();
 
         Unit::create([
-            'unitId' => 'AAAA1001',
+            'unitId' => 'AAAA0000',
             'name' => 'tempName',
         ]);
 
@@ -35,7 +38,6 @@ class UnitLookupTest extends TestCase
             'courseId' => fake()->randomElement(Course::pluck('courseId')),
             'schoolId' => fake()->randomElement(School::pluck('schoolId')),
         ]);
-        parent::setup();
     }
 
     protected function tearDown(): void
