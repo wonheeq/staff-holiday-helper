@@ -43,6 +43,7 @@ const showLookup = ref(false);
 const showResult = ref(false);
 const email = ref('');
 const name = ref('');
+const unitName = ref('');
 
 // Show Password Reset Window
 function goToReset() {
@@ -66,9 +67,11 @@ function goToLookup() {
 }
 
 // Show Unit Results Window
-function goToResults(inEmail, inName) {
+function goToResults(inUnitName, inEmail, inName) {
+    unitName.value = inUnitName;
     email.value = inEmail;
     name.value = inName;
+
     showLookup.value = false;
     showResult.value = true;
 }
