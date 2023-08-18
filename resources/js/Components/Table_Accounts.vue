@@ -39,8 +39,7 @@ export default {
                 },
             ],
             accounts: [],
-            parentHeight: 0,
-            tHeight: "300px"
+            tHeight: ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
         };
     },
     created() {
@@ -53,12 +52,22 @@ export default {
             console.log(error);
         });
     },
+    // Using height of window to determine max table height
     mounted() {
-        const parent = this.$refs.tableh
-        this.parentHeight = parent.offsetHeight
-        this.tHeight = this.parentHeight + "px"
-        console.warn("parentHeight: ", this.parentHeight)
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+            console.warn("tHeight: ", this.tHeight)
+        })
+    },
+    beforeDestroy() { 
+        window.removeEventListener('resize', this.onResize); 
+    },
+    methods: {  
+        onResize() {
+        this.tHeight = ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
+        //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         console.warn("tHeight: ", this.tHeight)
+        },
     }
 };
 
