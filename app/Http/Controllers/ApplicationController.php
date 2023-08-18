@@ -386,6 +386,7 @@ class ApplicationController extends Controller
         }
 
         if ($isSubset) {
+            Log::debug("Identified as subset");
             app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo);
         }
         else {

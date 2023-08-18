@@ -297,12 +297,15 @@ class MessageController extends Controller
     public function notifyNomineeApplicationEditedSubsetOnly($applicationNo) {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
+        Log::debug("error after this");
+
         // Process only nominations which have been accepted
         $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
         ->where('status', 'Y')->get();
         $nomineesWhoAccepted = [];
 
         foreach ($acceptedNominations as $nomination) {
+            Log::debug("Processing {$nomination->accountRoleId}");
             if (!in_array($nomination->nomineeNo, $nomineesWhoAccepted)) {
                 // add nomineeNo to array if not added
                 array_push($nomineesWhoAccepted, $nomination->nomineeNo);
@@ -337,6 +340,8 @@ class MessageController extends Controller
                     "Duration: {$application['sDate']} - {$application['eDate']}"
                 );
         
+                Log::debug("Creating subset message");
+
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
                     'receiverNo' => $nom->nomineeNo,
@@ -345,7 +350,7 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
-                Log::debug($message->content);
+                Log::debug($message);
             }
         }
     }

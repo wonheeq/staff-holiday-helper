@@ -912,6 +912,9 @@ class ApplicationControllerTest extends TestCase
         $firstApp = $this->applications[0];
         $sDate = '2030-08-07 20:00:00';
         $eDate = '2030-08-08 20:00:00';
+
+        Log::debug("SOLEY SUBSET TEST");
+
         $response = $this->postJson("/api/editApplication", [
             'applicationNo' => $firstApp->applicationNo,
             'accountNo' => $this->user->accountNo,
