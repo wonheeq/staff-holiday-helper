@@ -11,21 +11,20 @@ const errorMsg = ref('');
 
 async function handleReset() {
     staffEmail.value = staffID.value + '@curtin.edu.au';
-    console.log(staffEmail.value);
+
     await axios.post("reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
+
     }).then( function(response) {
-        // console.log(response);
         showConf.value = true;
         errorMsg.value = '';
+
     }).catch(error => {
         if(error.response) {
             errorMsg.value = error.response.message;
-            // console.log(error.response);
         }
     })
-    // showConf.value = true;
 }
 </script>
 

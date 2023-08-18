@@ -20,7 +20,7 @@ const email = ref('');
 const name = ref('');
 const unitName = ref('');
 const unitId = ref('');
-
+const errorMsg = ref('');
 
 async function handleSearch() {
     axios.post("api/getUnitDetails", {
@@ -35,6 +35,7 @@ async function handleSearch() {
 
     }).catch(error => {
         if(error.response) {
+            errorMsg.value = "Please enter a valid unit ID";
             console.log(error);
         }
     });
@@ -63,6 +64,11 @@ async function handleSearch() {
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2"
             >Search</button>
         </form>
+
+        <!-- Error Message -->
+        <div class="flex justify-center text-center mb-2">
+            <h1 class="text-red-500">{{ errorMsg }}</h1>
+        </div>
 
         <!-- Bottom Links -->
         <div class="flex justify-between">

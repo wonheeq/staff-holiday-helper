@@ -83,9 +83,11 @@ async function handleReset() {
         accountNo: props.accountNo,
         password: passOne.value,
         password_confirmation: passTwo.value,
+
     }).then( function(response) {
         showConf.value = true;
         errors.length = 0;
+
     }).catch(error => {
         if(error.response) {
             errors.push(error.response.data.message);
