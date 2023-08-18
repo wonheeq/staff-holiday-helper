@@ -19,12 +19,7 @@ class UnitLookupTest extends TestCase
     {
         parent::setup();
 
-        // DB::table('units')->insert([
-        //     'unitId' => 'AAAA1001',
-        //     'name' => 'tempName',
-        // ]);
         Unit::where('unitId', 'AAAA0000')->delete();
-
         Unit::create([
             'unitId' => 'AAAA0000',
             'name' => 'tempName',
@@ -54,8 +49,51 @@ class UnitLookupTest extends TestCase
 
     public function test_lookup_valid_unit(): void
     {
+        // assert good response
         $response = $this->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
+
+        // assert has json
+        $this->assertJson($response->content());
+
+        // assert has correct fields
+        $response->assertJson([
+            'unitId' => 'AAAA0000',
+            'unitName' => 'tempName',
+            'email' => '000000a@curtin.edu.au',
+            'name' => 'Static Test User',
+        ]);
+    }
+
+    public function test_lookup_invalid_unit(): void
+    {
+        // assert fails validation
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'thisIsNotAValidCode'
+        ])->assertStatus(302);
+    }
+
+    public function test_lookup_no_unit(): void
+    {
+        // assert fails validation
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => ''
+        ])->assertStatus(302);
+    }
+
+    public function test_lookup_valid_but_fake_unit(): void
+    {
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'BBBB0000'
+        ])->assertStatus(500);
+
+        // assert has json
+        $this->assertJson($response->content());
+
+        // assert has error
+        $response->assertJson([
+            'error' => 'Unit not found',
+        ]);
     }
 }
