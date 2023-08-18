@@ -39,6 +39,7 @@ export default {
                 },
             ],
             accounts: [],
+            parentHeight: 0,
             tHeight: "300px"
         };
     },
@@ -52,6 +53,13 @@ export default {
             console.log(error);
         });
     },
+    mounted() {
+        const parent = this.$refs.tableh
+        this.parentHeight = parent.offsetHeight
+        this.tHeight = this.parentHeight + "px"
+        console.warn("parentHeight: ", this.parentHeight)
+        console.warn("tHeight: ", this.tHeight)
+    }
 };
 
 let onSearch = () => {
@@ -61,7 +69,7 @@ let onSearch = () => {
 
 <template>
 
-  <div class="justify-center mx-4 mt-4">
+  <div class="justify-center mx-4 mt-4" ref="tableh">
             <div>
                 <VueGoodTable 
                     :rows="accounts"
@@ -87,5 +95,7 @@ let onSearch = () => {
 </template>
 
 <style>
-    
+    #filterSection {
+        height: 100%;       
+    }
 </style>
