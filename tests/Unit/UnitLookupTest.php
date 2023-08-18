@@ -84,6 +84,7 @@ class UnitLookupTest extends TestCase
 
     public function test_lookup_valid_but_fake_unit(): void
     {
+        // unit matches regex but doesn't exist
         $response = $this->post('/api/getUnitDetails', [
             'code' => 'BBBB0000'
         ])->assertStatus(500);
