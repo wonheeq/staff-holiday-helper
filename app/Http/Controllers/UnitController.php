@@ -52,10 +52,6 @@ class UnitController extends Controller
             ], 500);
         }
 
-        $ucArr = $this->getActiveUC($id, 1);
-        $mcArr = $this->getActiveUC($id, 2);
-        $ccArr = $this->getActiveUC($id, 3);
-
 
         //call each helper function
         //get result from each
@@ -64,18 +60,10 @@ class UnitController extends Controller
 
     }
 
-    // helper function for getUnitDetails()
-    // gets the name and email of the active unit coordinator for a given unit.
-    private function getActiveRoleForUnit($unitId, $roleId): array
-    {
-        // for the given unit, get the role ID and account number of responsible staff
-        $colVals = AccountRole::where([
-            ['unitId', '=', $unitId],
-            ['roleId', '=', $roleId]
-        ])->first(['accountRoleId', 'accountNo']);
-        $accountRoleId = $colVals->accountRoleId;
-        $accountNo = $colVals->accountNo;
 
+
+    private function getActiveStaffForRole($accountRoleId, $accountNo): array
+    {
         // if there is one, get the ID of an active, accepted leave application
         // for this staff member
         date_default_timezone_set('Australia/Perth');
@@ -109,5 +97,25 @@ class UnitController extends Controller
         $email = $accountNo . "@curtin.edu.au";
 
         return array($email, $name);
+    }
+
+    private function getActiveLecturersForUnit($id)
+    {
+        // get the roleId for each lecturer of the unit
+        // for/each: call getActiveCoord, store arr in arr
+        // return 2d arr
+
+
+    }
+
+    private function getAccountForUnitRole($unitId, $roleId)
+    {
+        // for the given unit, get the role ID and account number of responsible staff
+        $colVals = AccountRole::where([
+            ['unitId', '=', $unitId],
+            ['roleId', '=', $roleId]
+        ])->first(['accountRoleId', 'accountNo']);
+
+        return $colVals;
     }
 }
