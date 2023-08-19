@@ -63,17 +63,18 @@ class UnitController extends Controller
     // gets the name and email of the active unit coordinator for a given unit.
     private function getActiveUC(String $unitId)
     {
-        // get the ID of the account role associated with UC for the unit
-        // $accountRoleId = AccountRole::where([
-        //     ['unitId', '=', $unitId],
-        //     ['roleId', '=', 1]
-        // ])->value('accountRoleId');
 
-        $account = AccountRole::where([
+        $colVals = AccountRole::where([
             ['unitId', '=', $unitId],
             ['roleId', '=', 1]
-        ])->value('accountRoleId', 'accountNo');
-        dd($account);
+        ])->first(['accountRoleId', 'accountNo']);
+
+        $accountRoleId = $colVals->accountRoleId;
+        $accountNo = $colVals->accountNo;
+
+
+
+
 
         // get accountNo and accountRoleId for UC of unitID
         // does that account have any accepted, active leave?
