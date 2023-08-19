@@ -1,30 +1,48 @@
 <script setup>
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
+import Spinner from './Spinner.vue';
 import { ref } from "vue";
 
 let showConf = ref(false);
 const staffID = ref('');
 const staffEmail = ref('');
 const errorMsg = ref('');
+const isLoading = ref(false);
 
 
 async function handleReset() {
-    staffEmail.value = staffID.value + '@curtin.edu.au';
-    console.log(staffEmail.value);
+    errorMsg.value = ''; // reset message
+    showConf.value = false;
+    isLoading.value = true;
+    staffEmail.value = staffID.value + '@curtin.edu.au'; // build email
+
+    // post to request reset email.
     await axios.post("reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
-    }).then( function(response) {
-        // console.log(response);
+
+    }).then( function(response) { // success response
+        isLoading.value = false;
         showConf.value = true;
-        errorMsg.value = '';
-    }).catch(error => {
+
+    }).catch(error => { // fail response
+        isLoading.value = false;
+        // comment below out to remove error message popup.
         if(error.response) {
-            errorMsg.value = error.response.message;
-            // console.log(error.response);
+            // fixing errors cause of laravel backend jank.
+            if( (error.response.data.message) === "The email field must be a valid email address."){
+                errorMsg.value = "Invalid Staff ID."
+            }
+            else if((error.response.data.message) === "We can't find a user with that email address."){
+                errorMsg.value = "Invalid Staff ID."
+            }
+            else {
+                errorMsg.value = error.response.data.message;
+            }
         }
     })
+    // uncomment below to show conf regardless of if id was correct.
     // showConf.value = true;
 }
 </script>
@@ -49,9 +67,15 @@ async function handleReset() {
 
             <!-- Reset Button -->
             <button
+                :disabled="isLoading"
                 type="submit"
                 class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
-            >Reset Password</button>
+            >
+            <spinner v-show="isLoading"></spinner>
+            <div :class="{'invisible': isLoading}">
+                Reset Password
+            </div>
+            </button>
         </form>
 
         <!-- Error Message -->
