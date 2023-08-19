@@ -54,14 +54,18 @@ class UnitController extends Controller
         // $name = $nameVals->fName . $nameVals->lName;
         // $email = $accountNo . "@curtin.edu.au";
 
-        $ucDetails = $this->getAccountForUnitRole($id, 1);
-        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
 
-        $mcDetails = $this->getAccountForUnitRole($id, 2);
-        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
+        $this->getActiveLecturersForUnit($id);
 
-        $ccDetails = $this->getAccountForUnitRole($id, 3);
-        $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
+
+        // $ucDetails = $this->getAccountForUnitRole($id, 1);
+        // $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
+
+        // $mcDetails = $this->getAccountForUnitRole($id, 2);
+        // $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
+
+        // $ccDetails = $this->getAccountForUnitRole($id, 3);
+        // $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
 
 
         //call each helper function
@@ -115,7 +119,12 @@ class UnitController extends Controller
         // store return in arr
         // return 2d arr
 
-
+        $acccountDetails = AccountRole::where([
+            ['unitId', '=', $unitId],
+            ['roleId', '=', 4],
+        ])->get(['accountRoleId', 'accountNo'])->toArray();
+        $lecturerCount = count($acccountDetails);
+        dd($acccountDetails);
     }
 
     private function getAccountForUnitRole($unitId, $roleId)
