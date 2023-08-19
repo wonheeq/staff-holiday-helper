@@ -56,24 +56,20 @@ class UnitController extends Controller
         // $email = $accountNo . "@curtin.edu.au";
 
 
-        $this->getActiveLecturersForUnit($id);
 
 
-        // $ucDetails = $this->getAccountForUnitRole($id, 1);
-        // $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
+        $ucDetails = $this->getAccountForUnitRole($id, 1);
+        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
 
-        // $mcDetails = $this->getAccountForUnitRole($id, 2);
-        // $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
+        $mcDetails = $this->getAccountForUnitRole($id, 2);
+        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
 
-        // $ccDetails = $this->getAccountForUnitRole($id, 3);
-        // $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
+        $ccDetails = $this->getAccountForUnitRole($id, 3);
+        $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
 
+        $currentLecturers = $this->getActiveLecturersForUnit($id);
 
-        //call each helper function
-        //get result from each
-        //format json
-        //return response
-
+        dd($currentUc, $currentCc, $currentMc, $currentLecturers);
     }
 
     private function checkForSub($accountRoleId, $accountNo): array
@@ -108,7 +104,7 @@ class UnitController extends Controller
         // get and build name and email
         $nameVals = Account::where('accountNo', $accountNo)
             ->first(['fName', 'lName']);
-        $name = $nameVals->fName . $nameVals->lName;
+        $name = $nameVals->fName . " " . $nameVals->lName;
         $email = $accountNo . "@curtin.edu.au";
 
         return array($email, $name);
