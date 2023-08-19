@@ -77,9 +77,9 @@ let onSearch = () => {
 
 
 <template>
-
-  <div class="justify-center mx-4 mt-4" ref="tableh">
-            <div>
+    <div class="parent1">
+        <div class="mx-4 mt-4">
+            <div remove-bullshit>
                 <VueGoodTable 
                     :rows="accounts"
                     :columns="columns"
@@ -93,18 +93,20 @@ let onSearch = () => {
                     }"
                     :pagination-options="{
                         enabled: true,
-                        mode: 'pages',
+                        //mode: 'pages',
+                        perPage: 30
                     }">
                     <template #emptystate>
                         No entries found!
                     </template>        
-                </VueGoodTable>
-            </div>
+                </VueGoodTable> 
+            </div>           
        </div>
+    </div>
 </template>
 
 <style>
-    #filterSection {
-        height: 100%;       
+    .parent1 {
+        width: 100%;       
     }
 </style>

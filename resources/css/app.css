@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[remove-bullshit] * {
+    background-image: unset;
+  }
