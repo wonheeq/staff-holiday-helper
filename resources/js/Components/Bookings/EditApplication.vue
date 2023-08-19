@@ -78,9 +78,9 @@ function validateApplication(data) {
     return errors.length == 0;
 }
 
-function formatNomineeNo(nominee) {
+function formatNomineeNo(nominee, accountNo) {
     if (nominee == "Self Nomination") {
-        return nominee;
+        return accountNo;
     }
 
     // Should be formatted as "(XXXXXXX) - ZZZZZZZZZZZZ"
@@ -88,13 +88,13 @@ function formatNomineeNo(nominee) {
     return nominee.substr(1, 7);
 }
 
-function formatNominations() {
+function formatNominations(accountNo) {
     let result = [];
 
     for (let nomination of nominations.value) {
         result.push({
             accountRoleId: nomination.accountRoleId,
-            nomineeNo: formatNomineeNo(nomination.nomination),
+            nomineeNo: formatNomineeNo(nomination.nomination, accountNo),
         });
     }
 
@@ -104,7 +104,7 @@ function formatNominations() {
 function handleEditApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
-        data.nominations = formatNominations();
+        data.nominations = formatNominations(data.accountNo);
         data.sDate = props.period.start;
         data.eDate = props.period.end;
         data.applicationNo = props.applicationNo;

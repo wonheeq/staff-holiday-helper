@@ -8,6 +8,8 @@ use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Application;
 use App\Models\Nomination;
+use App\Models\Role;
+use App\Models\Message;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
@@ -25,12 +27,26 @@ class ApplicationControllerTest extends TestCase
 
         $this->otherUser = Account::factory()->create();
 
-        $this->accountRoles = AccountRole::factory(3)->create([
+
+        $roles = Role::pluck('roleId');
+        $this->accountRoles = array();
+        array_push($this->accountRoles, AccountRole::factory()->create([
             'accountNo' => $this->user->accountNo,
-        ]);
+            'roleId' => $roles[0]
+        ]));
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[1]
+        ]));
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[2]
+        ]));
 
         $this->applications = Application::factory(5)->create([
-            'accountNo' => $this->user['accountNo']
+            'accountNo' => $this->user['accountNo'],
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
         ]);
 
         $firstApp = $this->applications[0];
@@ -40,14 +56,17 @@ class ApplicationControllerTest extends TestCase
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
-            'accountRoleId' => $this->accountRoles[1]
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
         ]));
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
-            'accountRoleId' => $this->accountRoles[2]
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
         ]));
 
     }
@@ -56,6 +75,7 @@ class ApplicationControllerTest extends TestCase
         $arr = Application::where('accountNo', $this->user->accountNo)->get();
         foreach ($arr as $a) {
             Nomination::where('applicationNo', $a->applicationNo)->delete();
+            Message::where('applicationNo', $a->applicationNo)->delete();
         }
 
         AccountRole::where('accountNo', $this->user['accountNo'])->delete();
@@ -302,6 +322,80 @@ class ApplicationControllerTest extends TestCase
         $response->assertStatus(500);
     }
 
+    public function test_api_request_for_create_applications_successful_manager_notified_about_fully_self_nominated_app(): void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-07 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-07 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->user->superiorNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Awaiting Review');
+    }
+
+    public function test_api_request_for_create_applications_successful_nominees_notified_about_nominations(): void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-07 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-07 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Substitution Request');
+    }
+
+
 
 
 
@@ -346,6 +440,82 @@ class ApplicationControllerTest extends TestCase
         $this->assertFalse(count($nominationsForApp) > 0);
     }
 
+    public function test_api_request_for_cancelApplication_is_successful_manager_is_notified_of_application_cancelleation() : void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+        
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Cancelled');
+    }
+
+    public function test_api_request_for_cancelApplication_is_successful_nominee_is_notified_of_application_cancelleation() : void {
+        // Check for valid response
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => false,
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        // get application from db
+        $application = Application::where('sDate', '2030-08-06 20:00:00', 'and')
+        ->where('eDate', '2030-08-08 20:00:00', 'and')
+        ->where('accountNo', $this->user->accountNo)->first();
+        $this->assertTrue($application != null);
+        
+        $response = $this->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $application->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, 'and')
+        ->where('senderNo', $this->user->accountNo)->first();
+        $this->assertTrue($message->subject == 'Application Cancelled');
+    }
 
 
 
@@ -665,4 +835,166 @@ class ApplicationControllerTest extends TestCase
         }
 
     }
+
+    public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_cancellation(): void
+    {
+        $firstApp = $this->applications[0];
+        $sDate = '2030-08-06 20:00:00';
+        $eDate = '2030-08-08 20:00:00';
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => $sDate,
+            'eDate' => $eDate,
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $firstApp->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+
+        $this->assertTrue($message->subject == "Nomination/s Cancelled");
+    }   
+
+    public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_out_of_range(): void
+    {
+        $firstApp = $this->applications[0];
+        $sDate = '2030-08-06 20:00:00';
+        $eDate = '2030-12-07 20:00:00';
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => $sDate,
+            'eDate' => $eDate,
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $firstApp->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+
+        $this->assertTrue($message->subject == "Edited Substitution Request");
+    }   
+
+    // only period of application was edited, and it became a subset of the original period
+    public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_soley_subset(): void
+    {    
+        $firstApp = $this->applications[0];
+        $sDate = '2030-08-07 20:00:00';
+        $eDate = '2030-08-08 20:00:00';
+
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => $sDate,
+            'eDate' => $eDate,
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $firstApp->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+
+        // Check if all nominations were status 'Y'
+        if (count(Nomination::where('applicationNo', $firstApp->applicationNo)->where('status', 'Y')->get()->toArray()) == 3) {
+            // If all nominations were status Y, then we expect Subset Message
+            $this->assertTrue($message->subject == "Substitution Period Edited (Subset)");
+        }
+        else
+        {
+            // At least one nomination was not status 'Y'
+            // So we expect Edited message
+            $this->assertTrue($message->subject == "Edited Substitution Request");
+        }
+    }     
+
+    public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_subset_and_extra_account_role(): void
+    {
+        $roles = Role::pluck('roleId');
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[3]
+        ]));
+
+        $firstApp = $this->applications[0];
+        $sDate = '2030-08-07 20:00:00';
+        $eDate = '2030-08-08 20:00:00';
+        $response = $this->postJson("/api/editApplication", [
+            'applicationNo' => $firstApp->applicationNo,
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => $sDate,
+            'eDate' => $eDate,
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ], 
+                [
+                    'accountRoleId' => $this->accountRoles[3]->accountRoleId,
+                    'nomineeNo' => $this->otherUser->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $message = Message::where('applicationNo', $firstApp->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo)->first();
+        
+        $this->assertTrue($message->subject == "Edited Substitution Request");
+    }   
 }

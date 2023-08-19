@@ -24,6 +24,7 @@ function handleAcceptSomeNominations() {
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.subject }}</p>
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.senderName }}</p>
                 <img
+                    v-if="props.source.senderNo != null"
                     class="ml-1.5 email"
                     src="/images/mail.svg"
                     v-b-tooltip.hover title="Copy Email Address to Clipboard"
