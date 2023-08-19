@@ -59,23 +59,30 @@ class UnitController extends Controller
         ]);
     }
 
+
+    // Helper function for getUnitDetails()
+    // Imports: accountRoleId and accountNo to check if there is a substiute for
+    // Exports: array containing the accountRoleId and accountNo of
+    //          currently responsible staff member.
     private function checkForSub($accountRoleId, $accountNo): array
     {
-        // if there is one, get the ID of an active, accepted leave application
-        // for this staff member
+        // set date time for timestamp comparisons
         date_default_timezone_set('Australia/Perth');
         $timezone = date_default_timezone_get();
+
+        // attempt to get an approved, active leave period for the given
+        // staff member
         $applicationNo = Application::where([
             ['accountNo', '=', $accountNo], ['status', '=', 'Y'],
             ['sDate', '<=', $timezone], ['eDate', '>=', $timezone]
         ])->value('applicationNo');
 
+        // if there is not one, applicationNo is null and block not entered
         $nomineeAccountNo = null;
-        // if there was an application
         if ($applicationNo != null) {
 
-            // if there is an accepted nomination for that application,
-            // for the UC accountRoleId, get the nominee account number.
+            // attempt to get the account number of the nominee that has accepted
+            // responsiblity of this role, if there is one
             $nomineeAccountNo = Nomination::where([
                 ['applicationNo', '=', $applicationNo],
                 ['status', '=', 'Y'],
@@ -83,12 +90,12 @@ class UnitController extends Controller
             ])->value('nomineeNo');
         }
 
-        // update accountNo if there was an active substitute for the role
+        // if there wasn't, nomineeAccountNo is null and accountNo is not updated
         if ($nomineeAccountNo != null) {
             $accountNo = $nomineeAccountNo;
         }
 
-        // get and build name and email
+        // get and build name and email for currently responsible staff member.
         $nameVals = Account::where('accountNo', $accountNo)
             ->first(['fName', 'lName']);
         $name = $nameVals->fName . " " . $nameVals->lName;
@@ -97,16 +104,24 @@ class UnitController extends Controller
         return array($email, $name);
     }
 
+
+    // Helper function for getUnitDetails()
+    // Imports: unit ID
+    // Exports: array of accountNo and accountRoleId for all staff currently
+    //          responsible for lectures in the given unit
     private function getActiveLecturersForUnit($unitId): SplFixedArray
     {
+        // get all of the accountRoleIds and accountNos as an array
         $acccountDetailsArr = AccountRole::where([
             ['unitId', '=', $unitId],
             ['roleId', '=', 4],
         ])->get(['accountRoleId', 'accountNo'])->toArray();
 
+        // count the elements and create an output array
         $count = count($acccountDetailsArr);
         $results = new SplFixedArray($count);
-        // dd($acccountDetailsArr);
+
+        // loop through each lecturer and check if they have an active substitute
         for ($i = 0; $i <= $count - 1; $i++) {
             $lecturer = $acccountDetailsArr[$i];
             $currDetails = $this->checkForSub($lecturer["accountRoleId"], $lecturer["accountNo"]);
@@ -116,6 +131,9 @@ class UnitController extends Controller
         return $results;
     }
 
+    // Helper function for getUnitDetails()
+    // Imports: Unit ID, Role ID (UC, MC, CC, lecturer)
+    // Returns: accountNo and accountRoleId for the given unit and role
     private function getAccountForUnitRole($unitId, $roleId)
     {
         // for the given unit, get the role ID and account number of responsible staff
