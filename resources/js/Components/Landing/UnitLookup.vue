@@ -27,11 +27,13 @@ async function handleSearch() {
         code: formData.value.code
 
     }).then( function(response) {
-        email.value = response.data.email;
-        name.value = response.data.name;
-        unitName.value = response.data.unitName;
-        unitId.value = response.data.unitId;
-        emit("gotResults", unitId.value, unitName.value, email.value, name.value);
+        emit("gotResults", response);
+
+        // email.value = response.data.email;
+        // name.value = response.data.name;
+        // unitName.value = response.data.unitName;
+        // unitId.value = response.data.unitId;
+        // emit("gotResults", unitId.value, unitName.value, email.value, name.value);
 
     }).catch(error => {
         if(error.response) {

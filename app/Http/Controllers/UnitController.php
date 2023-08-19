@@ -51,7 +51,12 @@ class UnitController extends Controller
         // get the current lecturers for the unit
         $currentLecturers = $this->getActiveLecturersForUnit($id);
 
+        $unitName = Unit::where('unitId', $id)->value('name');
+
+
         return response()->json([
+            'unitId' => $id,
+            'unitName' => $unitName,
             'courseCoord' => $currentCc,
             'majorCoord' => $currentMc,
             'unitCoord' => $currentUc,

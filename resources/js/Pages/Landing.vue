@@ -11,10 +11,7 @@
             <unit-lookup v-if="showLookup" @got-results="goToResults" @lookupBack="goToLogin"></unit-lookup>
 
             <!-- Unit Search Results Window -->
-            <unit-result
-                :unit-id="unitId" :unit-name="unitName" :email="email" :name="name"
-                v-if="showResult" @resultBack="goToLookup">
-            </unit-result>
+            <unit-result v-if="showResult" @resultBack="goToLookup" :results="searchResults"></unit-result>
 
         </div>
     </main>
@@ -32,10 +29,8 @@ const showLogin = ref(true);
 const showReset = ref(false);
 const showLookup = ref(false);
 const showResult = ref(false);
-const email = ref('');
-const name = ref('');
-const unitName = ref('');
-const unitId = ref('');
+
+const searchResults = ref(null);
 
 // Show Password Reset Window
 function goToReset() {
@@ -58,11 +53,8 @@ function goToLookup() {
 }
 
 // Show Unit Results Window
-function goToResults(inUnitId, inUnitName, inEmail, inName) {
-    unitName.value = inUnitName;
-    email.value = inEmail;
-    name.value = inName;
-    unitId.value = inUnitId;
+function goToResults(response) {
+    searchResults.value = response;
 
     showLookup.value = false;
     showResult.value = true;
