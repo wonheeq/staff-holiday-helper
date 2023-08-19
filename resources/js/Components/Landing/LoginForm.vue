@@ -41,7 +41,7 @@ async function handleLogin() {
 <div class="w-screen h-screen flex justify-center items-center ">
 
     <!-- Box/Background -->
-    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[17%] h-fit bg-white p-5 drop-shadow-md">
+    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" class="mx-auto mb-5" >

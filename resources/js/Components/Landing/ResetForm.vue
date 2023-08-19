@@ -31,7 +31,7 @@ async function handleReset() {
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
     <!-- Box/White Area -->
-    <div class="w-1/4 1080:w-1/5 1440:w-1/6 4k:w-1/6 h-fit bg-white p-5 drop-shadow-md">
+    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
@@ -49,24 +49,24 @@ async function handleReset() {
             <!-- Reset Button -->
             <button
                 type="submit"
-                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-5"
+                class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
             >Reset Password</button>
         </form>
 
         <!-- Error Message -->
         <div class="flex justify-center text-center mb-2">
-            <h1 class="text-red-500">{{ errorMsg }}</h1>
+            <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
         </div>
 
         <!-- Back Button -->
         <div class="flex justify-between">
-            <button @click="$emit('resetBack')" class="underline font-bold">Back to Login</button>
+            <button @click="$emit('resetBack')" class="underline font-bold 4k:text-xl">Back to Login</button>
         </div>
     </div>
 
     <!-- Confirmation Popup -->
     <div v-show="showConf === true"
-        class ="1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+        class ="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
         <p class="text-center">A confirmation email has been sent to the email address linked to
                                this account if it exists!</p>
         <p class="text-center">Please follow the steps in the email to proceed with the password
