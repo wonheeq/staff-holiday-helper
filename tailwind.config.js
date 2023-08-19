@@ -11,7 +11,7 @@ export default {
     ],
 
     theme: {
-        screens: {        
+        screens: {
             'laptop': '1360px',
             '1080': '1920px',
             '1440': '2560px',
