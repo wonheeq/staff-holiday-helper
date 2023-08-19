@@ -6,6 +6,7 @@ use App\Models\AccountRole;
 use App\Models\Unit;
 use App\Models\Account;
 use App\Models\Nomination;
+use App\Models\Application;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
@@ -62,9 +63,8 @@ class UnitController extends Controller
 
     // helper function for getUnitDetails()
     // gets the name and email of the active unit coordinator for a given unit.
-    private function getActiveUC(String $unitId)
+    private function getActiveUC(String $unitId): array
     {
-
         // for the given unit, get the role ID and account number of responsible staff
         $colVals = AccountRole::where([
             ['unitId', '=', $unitId],
@@ -73,20 +73,39 @@ class UnitController extends Controller
         $accountRoleId = $colVals->accountRoleId;
         $accountNo = $colVals->accountNo;
 
+        // if there is one, get the ID of an active, accepted leave application
+        // for this staff member
         $timezone = date_default_timezone_get();
-        if( Application::where([
-            ['accountNo', '=', $accountNo],
-            ['status', '=', 'Y'],
-            ['sDate', ]
-        ]))
+        $applicationNo = Application::where([
+            ['accountNo', '=', $accountNo], ['status', '=', 'Y'],
+            ['sDate', '<=', $timezone], ['eDate', '>=', $timezone]
+        ])->value('applicationNo');
 
+        // if there was an application
+        if ($applicationNo != null) {
 
+            // if there is an accepted nomination for that application,
+            // for the UC accountRoleId, get the nominee account number.
+            $nomineeAccountNo = Nomination::where([
+                ['applicationNo', '=', $applicationNo],
+                ['status', '=', 'Y'],
+                ['accountRoleId', '=', $accountRoleId],
+            ])->value('nomineeNo');
+        }
 
+        // update accountNo if there was an active substitute for the role
+        if ($nomineeAccountNo != null) {
+            $accountNo = $nomineeAccountNo;
+        }
 
+        // get and build name
+        $nameVals = Account::where('accountNo', $accountNo)
+            ->first(['fName', 'lName']);
+        $name = $nameVals->fName . $nameVals->lName;
 
+        $email = $accountNo . "@curtin.edu.au";
 
-
-
+        return array($email, $name);
     }
 
     // private function getActiveCC(): array
