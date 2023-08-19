@@ -51,6 +51,17 @@ class UnitController extends Controller
                 'error' => 'Unit not found'
             ], 500);
         }
+        // $name = $nameVals->fName . $nameVals->lName;
+        // $email = $accountNo . "@curtin.edu.au";
+
+        $ucDetails = $this->getAccountForUnitRole($id, 1);
+        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
+
+        $mcDetails = $this->getAccountForUnitRole($id, 2);
+        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
+
+        $ccDetails = $this->getAccountForUnitRole($id, 3);
+        $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
 
 
         //call each helper function
@@ -60,9 +71,7 @@ class UnitController extends Controller
 
     }
 
-
-
-    private function getActiveStaffForRole($accountRoleId, $accountNo): array
+    private function checkForSub($accountRoleId, $accountNo): array
     {
         // if there is one, get the ID of an active, accepted leave application
         // for this staff member
@@ -99,10 +108,11 @@ class UnitController extends Controller
         return array($email, $name);
     }
 
-    private function getActiveLecturersForUnit($id)
+    private function getActiveLecturersForUnit($unitId)
     {
-        // get the roleId for each lecturer of the unit
-        // for/each: call getActiveCoord, store arr in arr
+        // get all the lecturer accountRoles/No for the unit ID
+        // for each accountRole/No call checkForSub
+        // store return in arr
         // return 2d arr
 
 
