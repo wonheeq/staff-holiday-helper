@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Nomination;
 use App\Models\Application;
 use Illuminate\Http\Request;
+use SplFixedArray;
 
 class UnitController extends Controller
 {
@@ -112,19 +113,22 @@ class UnitController extends Controller
         return array($email, $name);
     }
 
-    private function getActiveLecturersForUnit($unitId)
+    private function getActiveLecturersForUnit($unitId): SplFixedArray
     {
-        // get all the lecturer accountRoles/No for the unit ID
-        // for each accountRole/No call checkForSub
-        // store return in arr
-        // return 2d arr
-
-        $acccountDetails = AccountRole::where([
+        $acccountDetailsArr = AccountRole::where([
             ['unitId', '=', $unitId],
             ['roleId', '=', 4],
         ])->get(['accountRoleId', 'accountNo'])->toArray();
-        $lecturerCount = count($acccountDetails);
-        dd($acccountDetails);
+
+        $count = count($acccountDetailsArr);
+        $results = new SplFixedArray($count);
+        for ($i = 0; $i <= $count; $i++) {
+            $lecturer = $acccountDetailsArr[0];
+            $currDetails = $this->checkForSub($lecturer->accountRoleId, $lecturer->accountNo);
+            $results[$i] = $currDetails;
+        }
+
+        return $results;
     }
 
     private function getAccountForUnitRole($unitId, $roleId)
