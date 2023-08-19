@@ -63,12 +63,12 @@ class UnitController extends Controller
 
     // helper function for getUnitDetails()
     // gets the name and email of the active unit coordinator for a given unit.
-    private function getActiveUC(String $unitId): array
+    private function getActiveRoleForUnit($unitId, $roleId): array
     {
         // for the given unit, get the role ID and account number of responsible staff
         $colVals = AccountRole::where([
             ['unitId', '=', $unitId],
-            ['roleId', '=', 1]
+            ['roleId', '=', $roleId]
         ])->first(['accountRoleId', 'accountNo']);
         $accountRoleId = $colVals->accountRoleId;
         $accountNo = $colVals->accountNo;
@@ -107,16 +107,4 @@ class UnitController extends Controller
 
         return array($email, $name);
     }
-
-    // private function getActiveCC(): array
-    // {
-    // }
-
-    // private function getActiveMC(): array
-    // {
-    // }
-
-    // private function getActiveLecturers(): array
-    // {
-    // }
 }
