@@ -87,6 +87,7 @@ class UnitController extends Controller
             ['sDate', '<=', $timezone], ['eDate', '>=', $timezone]
         ])->value('applicationNo');
 
+        $nomineeAccountNo = null;
         // if there was an application
         if ($applicationNo != null) {
 
@@ -122,9 +123,10 @@ class UnitController extends Controller
 
         $count = count($acccountDetailsArr);
         $results = new SplFixedArray($count);
-        for ($i = 0; $i <= $count; $i++) {
-            $lecturer = $acccountDetailsArr[0];
-            $currDetails = $this->checkForSub($lecturer->accountRoleId, $lecturer->accountNo);
+        // dd($acccountDetailsArr);
+        for ($i = 0; $i <= $count - 1; $i++) {
+            $lecturer = $acccountDetailsArr[$i];
+            $currDetails = $this->checkForSub($lecturer["accountRoleId"], $lecturer["accountNo"]);
             $results[$i] = $currDetails;
         }
 
