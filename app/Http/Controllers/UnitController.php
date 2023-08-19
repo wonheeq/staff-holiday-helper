@@ -52,8 +52,11 @@ class UnitController extends Controller
             ], 500);
         }
 
-        date_default_timezone_set('Australia/Perth');
-        $this->getActiveUC($id);
+        $ucArr = $this->getActiveUC($id, 1);
+        $mcArr = $this->getActiveUC($id, 2);
+        $ccArr = $this->getActiveUC($id, 3);
+
+
         //call each helper function
         //get result from each
         //format json
@@ -75,6 +78,7 @@ class UnitController extends Controller
 
         // if there is one, get the ID of an active, accepted leave application
         // for this staff member
+        date_default_timezone_set('Australia/Perth');
         $timezone = date_default_timezone_get();
         $applicationNo = Application::where([
             ['accountNo', '=', $accountNo], ['status', '=', 'Y'],
@@ -98,11 +102,10 @@ class UnitController extends Controller
             $accountNo = $nomineeAccountNo;
         }
 
-        // get and build name
+        // get and build name and email
         $nameVals = Account::where('accountNo', $accountNo)
             ->first(['fName', 'lName']);
         $name = $nameVals->fName . $nameVals->lName;
-
         $email = $accountNo . "@curtin.edu.au";
 
         return array($email, $name);
