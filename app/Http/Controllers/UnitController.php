@@ -23,6 +23,21 @@ class UnitController extends Controller
     // Output: Response with Unit name, ID, current UC ID and email.
     public function getUnitDetails(Request $request)
     {
+        // TODO:
+        // check if there exists a nomination with matching account role id first
+        // else get the normal staff member.
+        // get all staff connected to that role?
+
+        /*
+        Things to get:
+        - unit name/id
+        - Active UC name/email
+        - Active CC name/email
+        - Active MC name/email
+        - Active Lecturers names/emails
+
+        */
+
         // check if correct format
         $request->validate([
             'code' => 'required|regex:/^[A-Z]{4}[0-9]{4}$/'
@@ -36,26 +51,26 @@ class UnitController extends Controller
             ], 500);
         }
 
-        // Get the AccountNo if the current UC for the unit.
-        $responsibleId = AccountRole::where([
-            ['unitId', '=', $id],
-            ['roleId', '=', 1],
-        ])->value('accountNo');
+        //call each helper function
+        //get result from each
+        //format json
+        //return response
 
-        // Build the name of the UC
-        $fName = Account::where('accountNo', $responsibleId)->value('fName');
-        $lName = Account::where('accountNo', $responsibleId)->value('lName');
-        $name = $fName . " " . $lName;
+    }
 
-        // build email and get unit name
-        $email = $responsibleId . "@curtin.edu.au";
-        $unitName = Unit::where('unitId', $id)->value('name');
+    private function getActiveUC(): array
+    {
+    }
 
-        return response()->json([
-            'unitId' => $id,
-            'unitName' => $unitName,
-            'email' => $email,
-            'name' => $name
-        ]);
+    private function getActiveCC(): array
+    {
+    }
+
+    private function getActiveMC(): array
+    {
+    }
+
+    private function getActiveLecturers(): array
+    {
     }
 }
