@@ -3,7 +3,7 @@
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
     <!-- Box/White Backgorund -->
-    <div class="w-1/4 1080:w-1/5 1440:w-1/6 4k:w-1/6 h-fit bg-white p-5 drop-shadow-md">
+        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[17%] h-fit bg-white p-5 drop-shadow-md">
 
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
@@ -28,7 +28,7 @@
             <button
                 type="submit"
                 :disabled="!buttonActive"
-                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">
+                class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2">
 
                 Reset Password
             </button>

@@ -69,16 +69,16 @@ async function handleLogin() {
 
         <!-- Error Message -->
         <div class="flex justify-center mb-2">
-            <h1 class="text-red-500">{{ errorMsg }}</h1>
+            <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
         </div>
 
         <!-- Bottom Links -->
         <div class="flex justify-between">
             <!-- Forgot Password -->
-            <button @click="$emit('forgotPass')" class="underline font-bold 4k:text-lg">Forgot Password?</button>
+            <button @click="$emit('forgotPass')" class="underline font-bold 4k:text-xl">Forgot Password?</button>
 
             <!-- Unit Lookup -->
-            <button @click="$emit('unitLookup')" class="underline font-bold 4k:text-lg">Unit Lookup</button>
+            <button @click="$emit('unitLookup')" class="underline font-bold 4k:text-xl">Unit Lookup</button>
         </div>
     </div>
 </div>
