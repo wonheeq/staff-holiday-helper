@@ -51,6 +51,7 @@ class UnitController extends Controller
             ], 500);
         }
 
+        date_default_timezone_set('Australia/Perth');
         $this->getActiveUC($id);
         //call each helper function
         //get result from each
@@ -64,25 +65,26 @@ class UnitController extends Controller
     private function getActiveUC(String $unitId)
     {
 
+        // for the given unit, get the role ID and account number of responsible staff
         $colVals = AccountRole::where([
             ['unitId', '=', $unitId],
             ['roleId', '=', 1]
         ])->first(['accountRoleId', 'accountNo']);
-
         $accountRoleId = $colVals->accountRoleId;
         $accountNo = $colVals->accountNo;
 
+        $timezone = date_default_timezone_get();
+        if( Application::where([
+            ['accountNo', '=', $accountNo],
+            ['status', '=', 'Y'],
+            ['sDate', ]
+        ]))
 
 
 
 
-        // get accountNo and accountRoleId for UC of unitID
-        // does that account have any accepted, active leave?
-        //then check if there is an accepted nomination for that application and role
-        //then get the nominee account number
 
-        // get the name for the id after this
-        // build the email
+
 
 
     }
