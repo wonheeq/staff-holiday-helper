@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountRole;
 use App\Models\Unit;
 use App\Models\Account;
-
+use App\Models\Nomination;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
@@ -51,6 +51,7 @@ class UnitController extends Controller
             ], 500);
         }
 
+        $this->getActiveUC($id);
         //call each helper function
         //get result from each
         //format json
@@ -58,19 +59,42 @@ class UnitController extends Controller
 
     }
 
-    private function getActiveUC(): array
+    // helper function for getUnitDetails()
+    // gets the name and email of the active unit coordinator for a given unit.
+    private function getActiveUC(String $unitId)
     {
+        // get the ID of the account role associated with UC for the unit
+        // $accountRoleId = AccountRole::where([
+        //     ['unitId', '=', $unitId],
+        //     ['roleId', '=', 1]
+        // ])->value('accountRoleId');
+
+        $account = AccountRole::where([
+            ['unitId', '=', $unitId],
+            ['roleId', '=', 1]
+        ])->value('accountRoleId', 'accountNo');
+        dd($account);
+
+        // get accountNo and accountRoleId for UC of unitID
+        // does that account have any accepted, active leave?
+        //then check if there is an accepted nomination for that application and role
+        //then get the nominee account number
+
+        // get the name for the id after this
+        // build the email
+
+
     }
 
-    private function getActiveCC(): array
-    {
-    }
+    // private function getActiveCC(): array
+    // {
+    // }
 
-    private function getActiveMC(): array
-    {
-    }
+    // private function getActiveMC(): array
+    // {
+    // }
 
-    private function getActiveLecturers(): array
-    {
-    }
+    // private function getActiveLecturers(): array
+    // {
+    // }
 }
