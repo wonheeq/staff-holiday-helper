@@ -25,21 +25,6 @@ class UnitController extends Controller
     // Output: Response with Unit name, ID, current UC ID and email.
     public function getUnitDetails(Request $request)
     {
-        // TODO:
-        // check if there exists a nomination with matching account role id first
-        // else get the normal staff member.
-        // get all staff connected to that role?
-
-        /*
-        Things to get:
-        - unit name/id
-        - Active UC name/email
-        - Active CC name/email
-        - Active MC name/email
-        - Active Lecturers names/emails
-
-        */
-
         // check if correct format
         $request->validate([
             'code' => 'required|regex:/^[A-Z]{4}[0-9]{4}$/'
@@ -52,24 +37,26 @@ class UnitController extends Controller
                 'error' => 'Unit not found'
             ], 500);
         }
-        // $name = $nameVals->fName . $nameVals->lName;
-        // $email = $accountNo . "@curtin.edu.au";
 
-
-
-
+        // get details of Unit Coordinator, Major Coordinator, Course Coordinator for the unit
         $ucDetails = $this->getAccountForUnitRole($id, 1);
-        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
-
         $mcDetails = $this->getAccountForUnitRole($id, 2);
-        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
-
         $ccDetails = $this->getAccountForUnitRole($id, 3);
+
+        // check if there is a substitue / get the current details for each of them
+        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
+        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
         $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
 
+        // get the current lecturers for the unit
         $currentLecturers = $this->getActiveLecturersForUnit($id);
 
-        dd($currentUc, $currentCc, $currentMc, $currentLecturers);
+        return response()->json([
+            'courseCoord' => $currentCc,
+            'majorCoord' => $currentMc,
+            'unitCoord' => $currentUc,
+            'lecturers' => $currentLecturers
+        ]);
     }
 
     private function checkForSub($accountRoleId, $accountNo): array
