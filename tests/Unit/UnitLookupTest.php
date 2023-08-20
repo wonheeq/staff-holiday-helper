@@ -208,15 +208,77 @@ class UnitLookupTest extends TestCase
         ));
 
         $this->deleteNominations('000000g');
-        $this->deleteApplications('000000d');
+        $this->deleteApplications('000000b');
     }
 
     public function test_lookup_valid_unit_Lecturer_sub(): void
     {
+        $this->createCoordSub('000000e', 4);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
+
+        // check data
+        $response->assertJsonPath('unitId', 'AAAA0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('lecturers', array(
+            // NOTE: Checks for 00000g <--- , not e, (sub id)
+            array('000000g@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000d');
     }
 
     public function test_lookup_valid_unit_all_sub(): void
     {
+        $this->createCoordSub('000000e', 4);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
+
+        // check data
+        $response->assertJsonPath('unitId', 'AAAA0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('lecturers', array(
+            // NOTE: Checks for 00000g <--- , not e, (sub id)
+            array('000000g@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000d');
     }
 
     public function test_lookup_invalid_unit(): void
