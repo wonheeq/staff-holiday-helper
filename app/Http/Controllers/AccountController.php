@@ -27,17 +27,13 @@ class AccountController extends Controller
     Returns the data for the welcome message
     */
     public function getWelcomeMessageData(Request $request, String $accountNo) {
-        Log::debug($accountNo);
         $account = Account::where('accountNo', $accountNo)->first();
         // Check if user exists for given user id
-        Log::debug($account);
-
         if (!$account) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-            Log::debug("aergaserg");
         $lineManager = $this->getCurrentLineManager($accountNo);
 
         $data = [
