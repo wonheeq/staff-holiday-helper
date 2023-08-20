@@ -41,20 +41,15 @@ class AuthControllerTest extends TestCase
     // Test for login that has credentials, but are invalid
     public function test_login_invalid_credentials(): void
     {
-        // create request with credentials, test for correct 200 response
+        // create request with credentials, test for correct 302 response
+        // should be redirect back to the same page
         $response = $this->post('/login', [
             'accountNo' => 'invalidNo',
             'password' => 'invalidPass'
-        ])->assertStatus(200);
+        ])->assertStatus(302);
 
-        // test that json is being returned
-        $this->assertJson($response->content());
-
-        // test that Json contains the fail with the correct message
-        $response->assertJson([
-            'response' => 'fail',
-            'error' => 'Invalid Credentials',
-        ]);
+        // Test that content returned contains 'Redirecting'
+        $this->assertTrue(str_contains($response->content(), "Redirecting"));
     }
 
 
@@ -71,19 +66,17 @@ class AuthControllerTest extends TestCase
 
     public function test_login_valid_credentials(): void
     {
+        // test for correct 302 response
         $response = $this->post('/login', [
             'accountNo' => 'AAAAAA1',
             'password' => 'knownPassword7'
-        ])->assertStatus(200);
+        ])->assertStatus(302);
 
-        // test that json is being returned
-        $this->assertJson($response->content());
+        // Test that content returned contains 'Redirecting'
+        $this->assertTrue(str_contains($response->content(), "Redirecting"));
 
-        // test that Json contains the fail with the correct message
-        $response->assertJson([
-            'response' => 'success',
-            'url' => 'http://localhost/home',
-        ]);
+        // Test that content returned contains '/home'
+        $this->assertTrue(str_contains($response->content(), "/home"));
     }
 
     public function test_logout(): void
