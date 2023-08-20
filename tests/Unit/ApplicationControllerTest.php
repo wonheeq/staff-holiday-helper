@@ -23,9 +23,10 @@ class ApplicationControllerTest extends TestCase
     protected function setup(): void {
         parent::setup();
 
-        $this->user = Account::factory()->create();
-
         $this->otherUser = Account::factory()->create();
+        $this->user = Account::factory()->create([
+            'superiorNo' => $this->otherUser->accountNo,
+        ]);
 
 
         $roles = Role::pluck('roleId');
@@ -68,7 +69,6 @@ class ApplicationControllerTest extends TestCase
             'accountRoleId' => $this->accountRoles[2],
             'nomineeNo' => $this->otherUser->accountNo,
         ]));
-
     }
 
     protected function teardown(): void {
@@ -996,5 +996,216 @@ class ApplicationControllerTest extends TestCase
         ->where('senderNo', $this->user->accountNo)->first();
         
         $this->assertTrue($message->subject == "Edited Substitution Request");
-    }   
+    }
+
+
+
+
+
+    public function test_api_request_for_getApplicationForReview_is_successful(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->superiorNo}/{$secondApp->applicationNo}");
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_successful_is_json(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->superiorNo}/{$secondApp->applicationNo}");
+        $this->assertJson($response->content());
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_successful_structure_is_correct(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->superiorNo}/{$secondApp->applicationNo}");
+        $this->assertJson($response->content());
+
+        $response->assertJsonStructure([
+            'applicationNo',
+            'applicantNo',
+            'applicantName',
+            'duration',
+            'nominations'
+        ]);
+
+        $array = json_decode($response->content(), true);
+        foreach ($array['nominations'] as $nom) {
+            // nominations are arrays of numbers
+            $this->assertTrue(gettype($array['nominations']) == 'array');
+
+            foreach ($nom as $role) {
+                // can convert and compare to a number therefore is a number
+                $this->assertTrue(intval($role) >= 0);
+            }
+        }
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_unsuccessful_account_does_not_exist(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/wackydoodle/{$secondApp->applicationNo}");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_unsuccessful_application_does_not_exist(): void {
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->superiorNo}/bad");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_unsuccessful_application_has_outstanding_nominations(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'N',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        $secondApp->status = 'P';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->superiorNo}/{$secondApp->applicationNo}");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_getApplicationForReview_is_unsuccessful_invalid_superior(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+
+        $response = $this->getJson("/api/getApplicationForReview/{$this->user->accountNo}/{$secondApp->applicationNo}");
+        $response->assertStatus(500);
+    }
+
+
+
+
+
+
+    // ACCEPT APPLICATION TESTS
+    public function test_api_request_for_acceptApplication_is_successful(): void {
+
+    }
 }
