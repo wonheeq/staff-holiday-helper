@@ -3,16 +3,22 @@ const props = defineProps({
     results: { type: Object, required: true },
 });
 
+
+
 function getList()
 {
     console.log("called function");
     var lecturers = props.results.data.lecturers;
+    var str = '';
     lecturers.forEach(function(lecturer){
         var name = lecturer[1];
         var email = lecturer[0];
-        console.log(name);
-        // console.log(email);
+        str += 'Name: ' + name + '\n';
+        str += 'Email: ' + email + '\n\n';
+
     });
+    console.log(str);
+    return str;
 }
 
 </script>
@@ -43,7 +49,9 @@ function getList()
         <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.unitCoord[0] }}</h1>
 
         <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Lecturers:</h2>
-        <h1 class="mb-1 4k:text-xl indent-10" >{{ getList() }}</h1>
+        <h1 class="mb-1 4k:text-xl indent-10 whitespace-pre-line">{{  getList() }}</h1>
+        <!-- <pre class="mt-3 mb-1 font-bold 4k:text-xl ">{{ getList() }}</pre> -->
+
 
 
 
