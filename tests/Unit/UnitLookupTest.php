@@ -13,6 +13,7 @@ use DateTime;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\Application;
+use App\Models\Nomination;
 
 
 class UnitLookupTest extends TestCase
@@ -28,6 +29,7 @@ class UnitLookupTest extends TestCase
         $this->createAccount("000000d"); // CourseCoord
         $this->createAccount("000000e"); // Lecturer1
         $this->createAccount("000000f"); // Lecturer2
+        $this->createAccount("000000g"); // NOMINATION
 
         // create test unit
         Unit::where('unitId', 'AAAA0000')->delete();
@@ -46,6 +48,8 @@ class UnitLookupTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->deleteAllNominations();
+        $this->deleteAllApplications();
         // delete created roles
         $this->deleteAccountRole('000000b', 1);
         $this->deleteAccountRole('000000c', 2);
@@ -59,10 +63,37 @@ class UnitLookupTest extends TestCase
         Account::where('accountNo', '000000d')->delete();
         Account::where('accountNo', '000000e')->delete();
         Account::where('accountNo', '000000f')->delete();
+        Account::where('accountNo', '000000g')->delete();
 
         Unit::where('unitId', 'AAAA0000')->delete();
         parent::tearDown();
     }
+
+    private function deleteAllNominations(): void
+    {
+        $this->deleteNominations('000000b');
+        $this->deleteNominations('000000c');
+        $this->deleteNominations('000000d');
+        $this->deleteNominations('000000e');
+        $this->deleteNominations('000000f');
+        $this->deleteNominations('000000g');
+    }
+
+    private function deleteNominations($accountNo): void
+    {
+        Nomination::where('nomineeNo', $accountNo)->delete();
+    }
+
+    private function deleteAllApplications(): void
+    {
+        $this->deleteApplications('000000b');
+        $this->deleteApplications('000000c');
+        $this->deleteApplications('000000d');
+        $this->deleteApplications('000000e');
+        $this->deleteApplications('000000f');
+        $this->deleteApplications('000000g');
+    }
+
 
     // Test using a valid unit with no substitutions
     public function test_lookup_valid_unit_no_subs(): void
@@ -94,10 +125,31 @@ class UnitLookupTest extends TestCase
         ));
     }
 
+    private function createCoordSub($accountNo, $roleId): void
+    {
+        $application = $this->createActiveApplication('000000c');
+        $accountRoleId = AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->value('accountRoleId');
 
+        $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
 
+        // $this->deleteApplications('000000c');
+    }
 
-    private function createActiveApplication(): void
+    private function createAcceptedNomination($applicationNo, $accountRoleId)
+    {
+        Nomination::create([
+            'applicationNo' => $applicationNo,
+            'accountRoleId' => $accountRoleId,
+            'nomineeNo' => '000000g',
+            'status' => 'Y'
+        ]);
+    }
+
+    private function createActiveApplication($accountNo): Application
     {
         $start = new DateTime('NOW');
         $start->modify("-1 day");
@@ -105,31 +157,32 @@ class UnitLookupTest extends TestCase
         $end = new DateTime('NOW');
         $end->modify('+2 days');
 
-        Application::create([
-            'accountNo' => '000000a',
+        $application = Application::create([
+            'accountNo' => $accountNo,
             'status' => 'Y',
             'sDate' => $start,
             'eDate' => $end,
-            'processedBy' => '000000a',
+            'processedBy' => $accountNo,
             'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
         ]);
+        return $application;
     }
 
-    private function deleteApplications(): void
+    private function deleteApplications($accountNo): void
     {
         Application::where([
-            ['accountNo', '=', '000000a'],
-            ['processedBy', '=', '000000a']
+            ['accountNo', '=', $accountNo],
+            ['processedBy', '=', $accountNo]
         ])->delete();
     }
 
 
     // Test using a valid unit and a coordinator substitute
     // (all coordinators types use the same logic for substitution checks)
-    public function test_lookup_valid_unit_coord_sub(): void
+    public function test_lookup_valid_unit_majorCoord_sub(): void
     {
-        $this->createActiveApplication();
-        $this->deleteApplications();
+        $this->createCoordSub('000000c', 2);
+
         // // check response code
         // $response = $this->post('/api/getUnitDetails', [
         //     'code' => 'AAAA0000'
@@ -189,7 +242,7 @@ class UnitLookupTest extends TestCase
         ])->assertStatus(302);
     }
 
-    public function test_lookup_valid_but_fake_unit(): void
+    public function test_lookup_valid_but_nonexistent_unit(): void
     {
         // unit matches regex but doesn't exist
         $response = $this->post('/api/getUnitDetails', [
@@ -218,7 +271,7 @@ class UnitLookupTest extends TestCase
 
     private function createAccount($accountNo): void
     {
-        Account::where('accountNo', $accountNo)->delete();
+        // Account::where('accountNo', $accountNo)->delete();
         Account::factory()->create([
             'accountNo' => $accountNo,
             'fName' => 'Static',
