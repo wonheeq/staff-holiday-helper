@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/accounts', AccountController::class);
+Route::get('getWelcomeMessageData/{$accountNo}', [AccountController::class, 'getWelcomeMessageData']);
+
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
 

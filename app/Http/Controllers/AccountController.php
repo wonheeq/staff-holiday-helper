@@ -23,6 +23,30 @@ class AccountController extends Controller
     }
 
     /*
+    Returns the data for the welcome message
+    */
+    public function getWelcomeMessageData($accountNo) {
+        $account = Account::where('accountNo', $accountNo)->first();
+        // Check if user exists for given user id
+        if (!$account) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $lineManager = $this->getCurrentLineManager($accountNo);
+
+        $data = [
+            'name' => "{$account->fName}",
+            'lineManager' => [
+                'name' => "{$lineManager->fName} {$lineManager->lName}",
+                'id' => "{$lineManager->accountNo}"
+            ]
+        ];
+
+        return response()->json($data);
+    }
+
+    /*
     Returns the account data for the default admin account
     */
     public function getDefaultAdmin() {
