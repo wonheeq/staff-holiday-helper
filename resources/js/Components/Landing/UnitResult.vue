@@ -5,6 +5,7 @@ const props = defineProps({
 
 function getList()
 {
+    console.log("called function");
     var lecturers = props.results.data.lecturers;
     lecturers.forEach(function(lecturer){
         var name = lecturer[1];
