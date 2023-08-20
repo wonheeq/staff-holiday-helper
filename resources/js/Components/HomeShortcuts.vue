@@ -14,7 +14,7 @@ let copyEmail = () => {
     <div class="flex flex-col items-center">
         <div class="flex flex-row">
             <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl 4k:text-4xl">
-                <p>Welcome {{ props.user.firstName }},</p>
+                <p>Welcome {{ props.user.firstName }} {{ props.user.lastName }},</p>
                 <p>Your line manager is currently {{ props.user.lineManager.name }}
                     <input @click="copyEmail" type="image" class="1440:h-8 4k:h-14 align-middle" src="/images/mail.svg" v-b-tooltip.hover title="Copy Email Address to Clipboard"/>
                 </p>

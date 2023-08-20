@@ -23,8 +23,8 @@ async function handleLogin() {
 
     formData.post(route('login'), {
         onFinish: () => formData.reset('password'),
-        onError: () => {
-            errorMsg.value = "Invalid Credentials";
+        onError: (error) => {
+            errorMsg.value = error;
         }
     });
 };
@@ -76,5 +76,3 @@ async function handleLogin() {
     </div>
 </div>
 </template>
-
-

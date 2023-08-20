@@ -9,9 +9,9 @@ let props = defineProps({
     source: Object,
 });
 
-let emit = defineEmits(['acceptSomeNominations']);
+let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
-const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem] border-l-4 border-white";
+const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem]";
 
 /*
 processes the data and sends it to the acceptNominations method in the backend
@@ -51,6 +51,11 @@ function handleAcceptSome() {
     emit('acceptSomeNominations');
 }
 
+// Remits reviewApplication event to be handled by parent
+function handleReviewApplication() {
+    emit('reviewApplication');
+}
+
 /*
 processes the data and sends it to the rejectNominations method in the backend
 */
@@ -85,54 +90,73 @@ function handleReject() {
 </script>
 
 <template>
-    <!--Substitution Request for a single nomination, message is not acknowledged-->
-    <div v-if="props.source.subject=='Substitution Request' && !props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
-        <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center"
-                @click="handleAcceptAll()"
-            >
-                <img src="/images/accept.svg"/>
-                <p class="text-sm 1440:text-lg">Accept</p>
-            </button>
+<div class="flex flex-col justify-evenly border-l-4 border-white">
+    <!--Substitution Request - Not Acknowledged Options-->
+    <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0">
+        <!--Substitution Request for a single nomination-->
+        <div v-if="!props.source.isNominatedMultiple" :class="element_class">
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleAcceptAll()"
+                >
+                    <img src="/images/accept.svg"/>
+                    <p class="text-sm 1440:text-lg">Accept</p>
+                </button>
+            </div>
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleReject()"
+                >
+                    <img src="/images/reject.svg"/>
+                    <p class="text-sm 1440:text-lg">Reject</p>
+                </button>
+            </div>
         </div>
-        <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center"
-                @click="handleReject()"
-            >
-                <img src="/images/reject.svg"/>
-                <p class="text-sm 1440:text-lg">Reject</p>
-            </button>
+        <!--Substitution Request for a multi nomination-->
+        <div v-if="props.source.isNominatedMultiple" :class="element_class">
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleAcceptAll()"
+                >
+                    <img src="/images/accept.svg"/>
+                    <p class="text-sm 1440:text-lg">Accept All</p>
+                </button>
+            </div>
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleAcceptSome()"
+                >
+                    <img src="/images/accept-some.svg"/>
+                    <p class="text-sm 1440:text-lg">Accept Some</p>
+                </button>
+            </div>
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleReject()"
+                >
+                    <img src="/images/reject.svg"/>
+                    <p class="text-sm 1440:text-lg">Reject All</p>
+                </button>
+            </div>
         </div>
     </div>
-    <!--Substitution Request for a multi nomination, message is not acknowledged-->
-    <div v-if="props.source.subject=='Substitution Request' && props.source.isNominatedMultiple && props.source.acknowledged == 0" :class="element_class">
+    <!--Application Awaiting Review - Not Acknowledged Options-->
+    <div v-if="props.source.subject=='Application Awaiting Review' && props.source.acknowledged == 0"
+    :class="element_class">
         <div class="flex flex-col justify-center">
             <button class="flex flex-col items-center"
-                @click="handleAcceptAll()"
+                @click="handleReviewApplication()"
             >
-                <img src="/images/accept.svg"/>
-                <p class="text-sm 1440:text-lg">Accept All</p>
-            </button>
-        </div>
-        <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center"
-                @click="handleAcceptSome()"
-            >
-                <img src="/images/accept-some.svg"/>
-                <p class="text-sm 1440:text-lg">Accept Some</p>
-            </button>
-        </div>
-        <div class="flex flex-col justify-center">
-            <button class="flex flex-col items-center"
-                @click="handleReject()"
-            >
-                <img src="/images/reject.svg"/>
-                <p class="text-sm 1440:text-lg">Reject All</p>
+                <img src="/images/review-app.svg"/>
+                <p class="text-sm 1440:text-lg">Review</p>
             </button>
         </div>
     </div>
     <!--Regular message, message is not acknowledged-->
-    <div v-show="props.source.subject!='Substitution Request' && props.source.acknowledged == 0" :class="element_class">
+    <div v-show="props.source.subject!='Substitution Request'
+        && props.source.subject!='Application Awaiting Review'
+        && props.source.acknowledged == 0"
+        :class="element_class">
         <div class="flex flex-col justify-center ">
             <button @click="handleAcknowledgeMessage()"
                 class="flex flex-col items-center">
@@ -141,10 +165,11 @@ function handleReject() {
             </button>
         </div>
     </div>
-    <!--Regular message, message is acknowledged-->
+    <!--Any message, message is acknowledged-->
     <div v-show="props.source.acknowledged == 1" :class="element_class">
         <div class="flex flex-col justify-center ">
             Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
         </div>
     </div>
+</div>
 </template>
