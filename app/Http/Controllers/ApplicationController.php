@@ -483,7 +483,7 @@ class ApplicationController extends Controller
         // Handle nonedited, edited nominations and creation of new nominations
         $this->handleEditApplicationNonCancelledNominations($oldNominations, $data['nominations'], $applicationNo, $oldDates);
         
-        response()->json(['success' => 'success'], 200);
+        return response()->json(['success' => 'success'], 200);
     }
 
 
@@ -624,5 +624,126 @@ class ApplicationController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+
+    /*
+    Sets the application's status to approved if valid
+    */
+    public function approveApplication(Request $request) {
+        $data = $request->all();
+        $superiorNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+
+        // Check if user exists for given user id
+        if (!Account::where('accountNo', $superiorNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if application exists for hte given applicationNo
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        if (!$application) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if the superior is the superior of the applicant
+        $applicant = Account::where('accountNo', $application->accountNo)->first();
+        if (!$applicant) {
+            return response()->json(['error' => 'Applicant does not exist.'], 500);
+        }
+
+        // Check if the applicant's superior or expected substitute is the given superiorNo
+        $expectedSubstitute = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
+        if ($superiorNo != $applicant->superiorNo && $superiorNo != $expectedSubstitute->accountNo) {
+            return response()->json(['error' => 'Account is not the superior of applicant.'], 500);
+        }
+
+        // Confirm that all nominees agreed
+        $nominations = Nomination::where("applicationNo", $applicationNo)->get();
+        foreach ($nominations as $n) {
+            if ($n->status != "Y") {
+                return response()->json(['error' => 'A nomination was not accepted.'], 500);
+            }
+        }
+
+        // set application status to 'Y'
+        // set processedBy indicator to superiorNo
+        $application->status = 'Y';
+        $application->processedBy = $superiorNo;
+        $application->save();
+
+        // Mark Application Awaiting Review message as acknowledged
+        $message = Message::where('applicationNo', $applicationNo, "and")
+        ->where('receiverNo', $superiorNo, "and")
+        ->where('senderNo', $applicant->accountNo)
+        ->where('subject', "Application Awaiting Review")->first();
+
+        $message->acknowledged = true;
+        $message->save();
+
+        // Message applicant that their application was approved.
+        app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, true, null);
+        
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    /*
+    Sets the application's status to rejected if valid
+    */
+    public function rejectApplication(Request $request) {
+        $data = $request->all();
+        $superiorNo = $data['accountNo'];
+        $applicationNo = $data['applicationNo'];
+        $rejectReason = $data['rejectReason'];
+
+        // Check if user exists for given user id
+        if (!Account::where('accountNo', $superiorNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        // Check if application exists for hte given applicationNo
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        if (!$application) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if the superior is the superior of the applicant
+        $applicant = Account::where('accountNo', $application->accountNo)->first();
+        if (!$applicant) {
+            return response()->json(['error' => 'Applicant does not exist.'], 500);
+        }
+
+        // Check if the applicant's superior or expected substitute is the given superiorNo
+        $expectedSubstitute = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
+        if ($superiorNo != $applicant->superiorNo && $superiorNo != $expectedSubstitute->accountNo) {
+            return response()->json(['error' => 'Account is not the superior of applicant.'], 500);
+        }
+
+        // Confirm that reject reason is not null or empty
+        if ($rejectReason == null || $rejectReason == "") {
+            return response()->json(['error' => 'Reject message cannot be empty.'], 500);
+        }
+
+        // set application status to 'N'
+        $application->status = 'N';
+        $application->processedBy = $superiorNo;
+        $application->rejectReason = $rejectReason;
+        $application->save();
+
+        // Mark Application Awaiting Review message as acknowledged
+        $message = Message::where('applicationNo', $applicationNo, "and")
+        ->where('receiverNo', $superiorNo, "and")
+        ->where('senderNo', $applicant->accountNo)
+        ->where('subject', "Application Awaiting Review")->first();
+
+        $message->acknowledged = true;
+        $message->save();
+
+        // Message applicant that their application was approved.
+        app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, false, $rejectReason);
+        
+        return response()->json(['success' => 'success'], 200);
     }
 }

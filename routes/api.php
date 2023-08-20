@@ -56,3 +56,6 @@ Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationCo
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
+Route::post('approveApplication', [ApplicationController::class, 'approveApplication']);
+Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
+
