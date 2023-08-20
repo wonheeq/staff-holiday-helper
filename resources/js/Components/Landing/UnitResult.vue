@@ -46,7 +46,7 @@ function getList()
         <h2 class="font-bold mb-1 4k:text-2xl">Currently Responsible Staff:</h2>
 
         <!-- <div class="mb-7 overflow-y-auto laptop:h-[65%] 1080:h-[77%] 1440:h-[78%] 4k:h-fit 4k:max-h-[20%]"> -->
-        <div class="mb-7 overflow-auto h-fit 1440:max-h-[37rem] 1080:max-h-[39rem]">
+        <div class="mb-7 overflow-auto h-fit 1440:max-h-[37rem] 1080:max-h-[39rem] laptop:max-h-[23rem]">
 
             <h2 class="mt-5 mb-1 font-bold 4k:text-xl">Course Coordinator:</h2>
             <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.courseCoord[1] }}</h1>
