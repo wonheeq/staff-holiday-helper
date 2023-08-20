@@ -9,6 +9,7 @@ use App\Models\Nomination;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use SplFixedArray;
+use DateTime;
 
 class UnitController extends Controller
 {
@@ -72,20 +73,19 @@ class UnitController extends Controller
     private function checkForSub($accountRoleId, $accountNo): array
     {
         // set date time for timestamp comparisons
-        date_default_timezone_set('Australia/Perth');
-        $timezone = date_default_timezone_get();
-
+        // date_default_timezone_set('Australia/Perth');
+        // $timezone = date_default_timezone_get();
+        $time = new DateTime('NOW');
         // attempt to get an approved, active leave period for the given
         // staff member
         $applicationNo = Application::where([
             ['accountNo', '=', $accountNo], ['status', '=', 'Y'],
-            ['sDate', '<=', $timezone], ['eDate', '>=', $timezone]
+            ['sDate', '<=', $time], ['eDate', '>=', $time]
         ])->value('applicationNo');
 
         // if there is not one, applicationNo is null and block not entered
         $nomineeAccountNo = null;
         if ($applicationNo != null) {
-
             // attempt to get the account number of the nominee that has accepted
             // responsiblity of this role, if there is one
             $nomineeAccountNo = Nomination::where([

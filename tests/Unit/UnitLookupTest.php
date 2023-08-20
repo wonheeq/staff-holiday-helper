@@ -69,30 +69,7 @@ class UnitLookupTest extends TestCase
         parent::tearDown();
     }
 
-    private function deleteAllNominations(): void
-    {
-        $this->deleteNominations('000000b');
-        $this->deleteNominations('000000c');
-        $this->deleteNominations('000000d');
-        $this->deleteNominations('000000e');
-        $this->deleteNominations('000000f');
-        $this->deleteNominations('000000g');
-    }
 
-    private function deleteNominations($accountNo): void
-    {
-        Nomination::where('nomineeNo', $accountNo)->delete();
-    }
-
-    private function deleteAllApplications(): void
-    {
-        $this->deleteApplications('000000b');
-        $this->deleteApplications('000000c');
-        $this->deleteApplications('000000d');
-        $this->deleteApplications('000000e');
-        $this->deleteApplications('000000f');
-        $this->deleteApplications('000000g');
-    }
 
 
     // Test using a valid unit with no substitutions
@@ -125,93 +102,78 @@ class UnitLookupTest extends TestCase
         ));
     }
 
-    private function createCoordSub($accountNo, $roleId): void
-    {
-        $application = $this->createActiveApplication('000000c');
-        $accountRoleId = AccountRole::where([
-            ['accountNo', '=', $accountNo],
-            ['roleId', '=', $roleId],
-            ['unitId', '=', 'AAAA0000']
-        ])->value('accountRoleId');
-
-        $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
-
-        // $this->deleteApplications('000000c');
-    }
-
-    private function createAcceptedNomination($applicationNo, $accountRoleId)
-    {
-        Nomination::create([
-            'applicationNo' => $applicationNo,
-            'accountRoleId' => $accountRoleId,
-            'nomineeNo' => '000000g',
-            'status' => 'Y'
-        ]);
-    }
-
-    private function createActiveApplication($accountNo): Application
-    {
-        $start = new DateTime('NOW');
-        $start->modify("-1 day");
-
-        $end = new DateTime('NOW');
-        $end->modify('+2 days');
-
-        $application = Application::create([
-            'accountNo' => $accountNo,
-            'status' => 'Y',
-            'sDate' => $start,
-            'eDate' => $end,
-            'processedBy' => $accountNo,
-            'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
-        ]);
-        return $application;
-    }
-
-    private function deleteApplications($accountNo): void
-    {
-        Application::where([
-            ['accountNo', '=', $accountNo],
-            ['processedBy', '=', $accountNo]
-        ])->delete();
-    }
 
 
-    // Test using a valid unit and a coordinator substitute
-    // (all coordinators types use the same logic for substitution checks)
-    public function test_lookup_valid_unit_majorCoord_sub(): void
+
+    // Test using a valid unit ID, with a valid substitution for the role
+    public function test_lookup_valid_unit_valid_majorCoord_sub(): void
     {
         $this->createCoordSub('000000c', 2);
 
-        // // check response code
-        // $response = $this->post('/api/getUnitDetails', [
-        //     'code' => 'AAAA0000'
-        // ])->assertStatus(200);
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
 
-        // // check structure
-        // $response->assertJsonStructure([
-        //     'unitId',
-        //     'unitName',
-        //     'courseCoord',
-        //     'majorCoord',
-        //     'unitCoord',
-        //     'lecturers'
-        // ]);
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
 
-        // // check data
-        // $response->assertJsonPath('unitId', 'AAAA0000');
-        // $response->assertJsonPath('unitName', 'tempName');
-        // $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        // $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
-        // $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
-        // $response->assertJsonPath('lecturers', array(
-        //     array('000000e@curtin.edu.au', 'Static Test User'),
-        //     array('000000f@curtin.edu.au', 'Static Test User')
-        // ));
+        // check data
+        $response->assertJsonPath('unitId', 'AAAA0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        // NOTE: Checks for 00000g <--- , not c, (sub id)
+        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('lecturers', array(
+            array('000000e@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000c');
     }
 
-    public function test_lookup_valid_unit_CourseCoord_sub(): void
+    public function test_lookup_valid_unit_valid_courseCoord_sub(): void
     {
+        $this->createCoordSub('000000c', 2);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
+
+        // check data
+        $response->assertJsonPath('unitId', 'AAAA0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        // NOTE: Checks for 00000g <--- , not c, (sub id)
+        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('lecturers', array(
+            array('000000e@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000c');
     }
 
     public function test_lookup_valid_unit_UnitCoord_sub(): void
@@ -291,5 +253,81 @@ class UnitLookupTest extends TestCase
             'courseId' => fake()->randomElement(Course::pluck('courseId')),
             'schoolId' => fake()->randomElement(School::pluck('schoolId')),
         ]);
+    }
+
+    private function createAcceptedNomination($applicationNo, $accountRoleId)
+    {
+        Nomination::create([
+            'applicationNo' => $applicationNo,
+            'accountRoleId' => $accountRoleId,
+            'nomineeNo' => '000000g',
+            'status' => 'Y'
+        ]);
+    }
+
+    private function createActiveApplication($accountNo): Application
+    {
+        $start = new DateTime('NOW');
+        $start->modify("-1 day");
+
+        $end = new DateTime('NOW');
+        $end->modify('+2 days');
+
+        $application = Application::create([
+            'accountNo' => $accountNo,
+            'status' => 'Y',
+            'sDate' => $start,
+            'eDate' => $end,
+            'processedBy' => $accountNo,
+            'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
+        ]);
+        return $application;
+    }
+
+    private function deleteApplications($accountNo): void
+    {
+        Application::where([
+            ['accountNo', '=', $accountNo],
+            ['processedBy', '=', $accountNo]
+        ])->delete();
+    }
+
+    private function deleteAllNominations(): void
+    {
+        $this->deleteNominations('000000b');
+        $this->deleteNominations('000000c');
+        $this->deleteNominations('000000d');
+        $this->deleteNominations('000000e');
+        $this->deleteNominations('000000f');
+        $this->deleteNominations('000000g');
+    }
+
+    private function deleteNominations($accountNo): void
+    {
+        Nomination::where('nomineeNo', $accountNo)->delete();
+    }
+
+    private function deleteAllApplications(): void
+    {
+        $this->deleteApplications('000000b');
+        $this->deleteApplications('000000c');
+        $this->deleteApplications('000000d');
+        $this->deleteApplications('000000e');
+        $this->deleteApplications('000000f');
+        $this->deleteApplications('000000g');
+    }
+
+    private function createCoordSub($accountNo, $roleId): void
+    {
+        $application = $this->createActiveApplication('000000c');
+        $accountRoleId = AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->value('accountRoleId');
+
+        $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
+
+        // $this->deleteApplications('000000c');
     }
 }
