@@ -568,8 +568,7 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-        $application = Application::where('applicationNo', $applicationNo, "and")
-        ->where('accountNo', $accountNo)->first();
+        $application = Application::where('applicationNo', $applicationNo, "and")->first();
         
         // Check that the application exists for the given applicationNo
         if (!$application) {
@@ -595,10 +594,10 @@ class ApplicationController extends Controller
         foreach ($nominations as $nom) {
             // Group by nomineeNo
             // If the nominee's accountNo does not exist as a key, create the default data
-            if (!array_key_exists($nom->nomineeNo)) {
+            if (!array_key_exists($nom->nomineeNo, $nominationsFormatted)) {
                 $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
                 $nominationsFormatted[$nom->nomineeNo] = [
-                    "nomineeName" => "{$nominee->firstName} {$nominee->lastName} ({$nominee->accountNo})",
+                    "nomineeName" => "{$nominee->fName} {$nominee->lName} ({$nominee->accountNo})",
                     "roles" => []
                 ];
             }
@@ -611,7 +610,7 @@ class ApplicationController extends Controller
         }
 
         $data = [
-            "applicantName" => "{$applicant->firstName} {$applicant->lastName} ({$applicant->accountNo})",
+            "applicantName" => "{$applicant->fName} {$applicant->lName} ({$applicant->accountNo})",
             "period" => [
                 "start" => $application->sDate,
                 "end" => $application->eDate,
