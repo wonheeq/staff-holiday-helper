@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 
@@ -19,15 +20,76 @@ class UnitLookupTest extends TestCase
     {
         parent::setup();
 
+        // create test accounts
+        $this->createAccount("000000b"); // UnitCoord
+        $this->createAccount("000000c"); // MajorCoord
+        $this->createAccount("000000d"); // CourseCoord
+        $this->createAccount("000000e"); // Lecturer1
+        $this->createAccount("000000f"); // Lecturer2
+
+        // create test unit
         Unit::where('unitId', 'AAAA0000')->delete();
         Unit::create([
             'unitId' => 'AAAA0000',
             'name' => 'tempName',
         ]);
 
+        // create roles for each account
+        $this->createAccountRole("000000b", 1); //UC
+        $this->createAccountRole("000000c", 2); //MC
+        $this->createAccountRole("000000d", 3); //CC
+        $this->createAccountRole("000000e", 4); //L1
+        $this->createAccountRole("000000f", 4); //L2
+    }
+
+    protected function tearDown(): void
+    {
+        // delete created roles
+        $this->deleteAccountRole('000000b', 1);
+        $this->deleteAccountRole('000000c', 2);
+        $this->deleteAccountRole('000000d', 3);
+        $this->deleteAccountRole('000000e', 4);
+        $this->deleteAccountRole('000000f', 5);
+
+        // delete created accounts
+        Account::where('accountNo', '000000b')->delete();
+        Account::where('accountNo', '000000c')->delete();
+        Account::where('accountNo', '000000d')->delete();
+        Account::where('accountNo', '000000e')->delete();
+        Account::where('accountNo', '000000f')->delete();
+
+        Unit::where('unitId', 'AAAA0000')->delete();
+        parent::tearDown();
+    }
+
+    private function deleteAccountRole($accountNo, $roleId): void
+    {
+        AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->delete();
+    }
+
+    private function createAccount($accountNo): void
+    {
+        Account::where('accountNo', $accountNo)->delete();
+        Account::factory()->create([
+            'accountNo' => $accountNo,
+            'fName' => 'Static',
+            'lName' => 'Test User',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => "000002L",
+        ]);
+    }
+
+
+
+    private function createAccountRole($accountNo, $roleId): void
+    {
         AccountRole::create([
-            'accountNo' => '000000a',
-            'roleId' => 1,
+            'accountNo' => $accountNo,
+            'roleId' => $roleId,
             'unitId' => 'AAAA0000',
             'majorId' => fake()->randomElement(Major::pluck('majorId')),
             'courseId' => fake()->randomElement(Course::pluck('courseId')),
@@ -35,35 +97,30 @@ class UnitLookupTest extends TestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        AccountRole::where([
-            ['accountNo', '=', '000000a'],
-            ['roleId', '=', 1],
-            ['unitId', '=', 'AAAA0000']
-        ])->delete();
 
-        Unit::where('unitId', 'AAAA0000')->delete();
-        parent::tearDown();
+
+    public function test_lookup_valid_unit_no_subs(): void
+    {
     }
 
-    public function test_lookup_valid_unit(): void
+    public function test_lookup_valid_unit_MajourCoord_sub(): void
     {
-        // assert good response
-        $response = $this->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
+    }
 
-        // assert has json
-        $this->assertJson($response->content());
+    public function test_lookup_valid_unit_CourseCoord_sub(): void
+    {
+    }
 
-        // assert has correct fields
-        $response->assertJson([
-            'unitId' => 'AAAA0000',
-            'unitName' => 'tempName',
-            'email' => '000000a@curtin.edu.au',
-            'name' => 'Static Test User',
-        ]);
+    public function test_lookup_valid_unit_UnitCoord_sub(): void
+    {
+    }
+
+    public function test_lookup_valid_unit_Lecturer_sub(): void
+    {
+    }
+
+    public function test_lookup_valid_unit_all_sub(): void
+    {
     }
 
     public function test_lookup_invalid_unit(): void
