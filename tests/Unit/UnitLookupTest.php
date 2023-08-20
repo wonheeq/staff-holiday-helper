@@ -18,7 +18,6 @@ use App\Models\Nomination;
 
 class UnitLookupTest extends TestCase
 {
-
     protected function setup(): void
     {
         parent::setup();
@@ -29,7 +28,7 @@ class UnitLookupTest extends TestCase
         $this->createAccount("000000d"); // CourseCoord
         $this->createAccount("000000e"); // Lecturer1
         $this->createAccount("000000f"); // Lecturer2
-        $this->createAccount("000000g"); // NOMINATION
+        $this->createAccount("000000g"); // NOMINATION ACCOUNT
 
         // create test unit
         Unit::where('unitId', 'AAAA0000')->delete();
@@ -46,10 +45,14 @@ class UnitLookupTest extends TestCase
         $this->createAccountRole("000000f", 4); //L2
     }
 
+
+
     protected function tearDown(): void
     {
-        $this->deleteAllNominations();
+        // delete any leftover applications
+        $this->deleteNominations('000000g');
         $this->deleteAllApplications();
+
         // delete created roles
         $this->deleteAccountRole('000000b', 1);
         $this->deleteAccountRole('000000c', 2);
@@ -65,12 +68,15 @@ class UnitLookupTest extends TestCase
         Account::where('accountNo', '000000f')->delete();
         Account::where('accountNo', '000000g')->delete();
 
+        // delete test unit
         Unit::where('unitId', 'AAAA0000')->delete();
+
         parent::tearDown();
     }
 
 
-    // Test using a valid unit with no substitutions
+
+    // Test for correct behavior with a valid unit, and no substitions
     public function test_lookup_valid_unit_no_subs(): void
     {
         // check response code
@@ -101,149 +107,11 @@ class UnitLookupTest extends TestCase
     }
 
 
-    // Test using a valid unit ID, with a valid substitution for the role
-    public function test_lookup_valid_unit_valid_majorCoord_sub(): void
-    {
-        $this->createSub('000000c', 2);
 
-        // check response code
-        $response = $this->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check structure
-        $response->assertJsonStructure([
-            'unitId',
-            'unitName',
-            'courseCoord',
-            'majorCoord',
-            'unitCoord',
-            'lecturers'
-        ]);
-
-        // check data
-        $response->assertJsonPath('unitId', 'AAAA0000');
-        $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        // NOTE: Checks for 00000g <--- , not c, (sub id)
-        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('lecturers', array(
-            array('000000e@curtin.edu.au', 'Static Test User'),
-            array('000000f@curtin.edu.au', 'Static Test User')
-        ));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000c');
-    }
-
-    public function test_lookup_valid_unit_valid_courseCoord_sub(): void
-    {
-        $this->createSub('000000d', 3);
-
-        // check response code
-        $response = $this->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check structure
-        $response->assertJsonStructure([
-            'unitId',
-            'unitName',
-            'courseCoord',
-            'majorCoord',
-            'unitCoord',
-            'lecturers'
-        ]);
-
-        // check data
-        $response->assertJsonPath('unitId', 'AAAA0000');
-        $response->assertJsonPath('unitName', 'tempName');
-        // NOTE: Checks for 00000g <--- , not d, (sub id)
-        $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('lecturers', array(
-            array('000000e@curtin.edu.au', 'Static Test User'),
-            array('000000f@curtin.edu.au', 'Static Test User')
-        ));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000d');
-    }
-
-    public function test_lookup_valid_unit_valid_unitCoord_sub(): void
-    {
-        $this->createSub('000000b', 1);
-
-        // check response code
-        $response = $this->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check structure
-        $response->assertJsonStructure([
-            'unitId',
-            'unitName',
-            'courseCoord',
-            'majorCoord',
-            'unitCoord',
-            'lecturers'
-        ]);
-
-        // check data
-        $response->assertJsonPath('unitId', 'AAAA0000');
-        $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
-        // NOTE: Checks for 00000g <--- , not b, (sub id)
-        $response->assertJsonPath('unitCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('lecturers', array(
-            array('000000e@curtin.edu.au', 'Static Test User'),
-            array('000000f@curtin.edu.au', 'Static Test User')
-        ));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000b');
-    }
-
-    public function test_lookup_valid_unit_Lecturer_sub(): void
-    {
-        $this->createSub('000000e', 4);
-
-        // check response code
-        $response = $this->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check structure
-        $response->assertJsonStructure([
-            'unitId',
-            'unitName',
-            'courseCoord',
-            'majorCoord',
-            'unitCoord',
-            'lecturers'
-        ]);
-
-        // check data
-        $response->assertJsonPath('unitId', 'AAAA0000');
-        $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('lecturers', array(
-            // NOTE: Checks for 00000g <--- , not e, (sub id)
-            array('000000g@curtin.edu.au', 'Static Test User'),
-            array('000000f@curtin.edu.au', 'Static Test User')
-        ));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000e');
-    }
-
+    // Test for correct behaviour with a valid unit, and substitutes for all roles
     public function test_lookup_valid_unit_all_sub(): void
     {
+        // create subs for eahc role
         $this->createSub('000000b', 1);
         $this->createSub('000000c', 2);
         $this->createSub('000000d', 3);
@@ -265,8 +133,7 @@ class UnitLookupTest extends TestCase
             'lecturers'
         ]);
 
-        // check data
-        // NOTE: Checks for 00000g <--- , not b/c/d/e/f, (sub id)
+        // check that the email for the substitute was returned (000000g), not the orignals (b/c/d/e/f)
         $response->assertJsonPath('unitId', 'AAAA0000');
         $response->assertJsonPath('unitName', 'tempName');
         $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
@@ -276,10 +143,101 @@ class UnitLookupTest extends TestCase
             array('000000g@curtin.edu.au', 'Static Test User'),
             array('000000g@curtin.edu.au', 'Static Test User')
         ));
-        $this->deleteAllNominations();
+
+        $this->deleteNominations('000000g');
         $this->deleteAllApplications();
     }
 
+
+
+    // Test for correct behaviour with a valid unit,
+    // and a valid substitute for only the unit coordinator
+    public function test_lookup_valid_unit_valid_unitCoord_sub(): void
+    {
+        // create a valid substution
+        $this->createSub('000000b', 1);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that the email for the substitute is returned (000000g, not the original b).
+        $response->assertJsonPath('unitCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000b');
+    }
+
+
+
+    // Test for correct behaviour with a valid unit,
+    // and a valid substute only for the major coordinator
+    public function test_lookup_valid_unit_valid_majorCoord_sub(): void
+    {
+        // create a valid substution
+        $this->createSub('000000c', 2);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that the email for the substitute is returned (000000g, not the original c).
+        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000c');
+    }
+
+
+
+    // Test for correct behaviour with a valid unit,
+    // and a valid substute only for the course coordinator
+    public function test_lookup_valid_unit_valid_courseCoord_sub(): void
+    {
+        // create a valid substution
+        $this->createSub('000000d', 3);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that the email for the substitute is returned (000000g, not the original d).
+        $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000d');
+    }
+
+
+
+    // Test for correct behaviour with a valid unit,
+    // and a valid substute only for a lecturer
+    public function test_lookup_valid_unit_Lecturer_sub(): void
+    {
+        // create valid sub
+        $this->createSub('000000e', 4);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        $response->assertJsonPath('lecturers', array(
+            // check that the email for the substitute is returned (000000g, not the original e).
+            array('000000g@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000e');
+    }
+
+
+
+    // Test for correct behaviour with an invalid unit code
     public function test_lookup_invalid_unit(): void
     {
         // assert fails validation
@@ -288,6 +246,9 @@ class UnitLookupTest extends TestCase
         ])->assertStatus(302);
     }
 
+
+
+    // Test for correct behaviour with no unit code
     public function test_lookup_no_unit(): void
     {
         // assert fails validation
@@ -296,6 +257,10 @@ class UnitLookupTest extends TestCase
         ])->assertStatus(302);
     }
 
+
+
+    // Test for correct behaviour with a "valid" unit code,
+    // where the unit does not actually exist.
     public function test_lookup_valid_but_nonexistent_unit(): void
     {
         // unit matches regex but doesn't exist
@@ -313,13 +278,15 @@ class UnitLookupTest extends TestCase
     }
 
 
-    // Test that there are no major coordinator substitutions when the application is invalid
+
+    // Test for correct behaviour when there exist valid substitutes for the major coordinator
+    // role, but the relevant applications are invalid
     public function test_lookup_valid_unit_invalid_majorCoord_sub(): void
     {
         // create two invalid applications.
         // One where the leave isn't active, one where the application isn't accepted
         $this->createSubAppBadTime('000000c', 2);
-        $this->createStatusInactiveApplication('000000c', 2);
+        $this->createSubAppNotAcc('000000c', 2);
 
         // check response code
         $response = $this->post('/api/getUnitDetails', [
@@ -334,13 +301,15 @@ class UnitLookupTest extends TestCase
     }
 
 
-    // Test that there are no course coordinator substitutions when the application is invalid
+
+    // Test for correct behaviour when there exist valid substitutes for the course coordinator
+    // role, but the relevant applications are invalid
     public function test_lookup_valid_unit_invalid_courseCoord_sub(): void
     {
         // create two invalid applications.
         // One where the leave isn't active, one where the application isn't accepted
         $this->createSubAppBadTime('000000d', 3);
-        $this->createStatusInactiveApplication('000000d', 3);
+        $this->createSubAppNotAcc('000000d', 3);
 
         // check response code
         $response = $this->post('/api/getUnitDetails', [
@@ -354,12 +323,16 @@ class UnitLookupTest extends TestCase
         $this->deleteApplications('000000d');
     }
 
+
+
+    // Test for correct behaviour when there exist valid substitutes for the unit coordinator
+    // role, but the relevant applications are invalid
     public function test_lookup_valid_unit_invalid_unitCoord_sub(): void
     {
         // create two invalid applications.
         // One where the leave isn't active, one where the application isn't accepted
         $this->createSubAppBadTime('000000b', 1);
-        $this->createStatusInactiveApplication('000000b', 1);
+        $this->createSubAppNotAcc('000000b', 1);
 
         // check response code
         $response = $this->post('/api/getUnitDetails', [
@@ -374,12 +347,15 @@ class UnitLookupTest extends TestCase
     }
 
 
+
+    // Test for correct behaviour when there exist valid substitutes for a lecturer role
+    // role, but the relevant applications are invalid
     public function test_lookup_valid_unit_invalid_lecturer_sub(): void
     {
         // create two invalid applications.
         // One where the leave isn't active, one where the application isn't accepted
         $this->createSubAppBadTime('000000e', 4);
-        $this->createStatusInactiveApplication('000000e', 4);
+        $this->createSubAppNotAcc('000000e', 4);
 
         // check response code
         $response = $this->post('/api/getUnitDetails', [
@@ -398,6 +374,9 @@ class UnitLookupTest extends TestCase
 
 
 
+    // ------------------------ HELPER FUNCTIONS, NO TESTS FROM HERE ------------------------------ //
+
+    // delete the account role for the given details
     private function deleteAccountRole($accountNo, $roleId): void
     {
         AccountRole::where([
@@ -407,6 +386,9 @@ class UnitLookupTest extends TestCase
         ])->delete();
     }
 
+
+
+    // create an account for the given number
     private function createAccount($accountNo): void
     {
         // Account::where('accountNo', $accountNo)->delete();
@@ -419,6 +401,9 @@ class UnitLookupTest extends TestCase
         ]);
     }
 
+
+
+    // create an account role for the given details
     private function createAccountRole($accountNo, $roleId): void
     {
         AccountRole::create([
@@ -431,6 +416,9 @@ class UnitLookupTest extends TestCase
         ]);
     }
 
+
+
+    // create a valid and accepted nomination for the given details
     private function createAcceptedNomination($applicationNo, $accountRoleId)
     {
         Nomination::create([
@@ -441,6 +429,9 @@ class UnitLookupTest extends TestCase
         ]);
     }
 
+
+
+    // create a valid and accepted leave application for the given account
     private function createActiveApplication($accountNo): Application
     {
         $start = new DateTime('NOW');
@@ -460,6 +451,9 @@ class UnitLookupTest extends TestCase
         return $application;
     }
 
+
+
+    // delete all applications for a given account
     private function deleteApplications($accountNo): void
     {
         Application::where([
@@ -468,21 +462,16 @@ class UnitLookupTest extends TestCase
         ])->delete();
     }
 
-    private function deleteAllNominations(): void
-    {
-        $this->deleteNominations('000000b');
-        $this->deleteNominations('000000c');
-        $this->deleteNominations('000000d');
-        $this->deleteNominations('000000e');
-        $this->deleteNominations('000000f');
-        $this->deleteNominations('000000g');
-    }
 
+
+    // delete all nominations for a given account
     private function deleteNominations($accountNo): void
     {
         Nomination::where('nomineeNo', $accountNo)->delete();
     }
 
+
+    // delete all applications for all accounts
     private function deleteAllApplications(): void
     {
         $this->deleteApplications('000000b');
@@ -490,9 +479,10 @@ class UnitLookupTest extends TestCase
         $this->deleteApplications('000000d');
         $this->deleteApplications('000000e');
         $this->deleteApplications('000000f');
-        $this->deleteApplications('000000g');
     }
 
+
+    // create a valid substute for the given details
     private function createSub($accountNo, $roleId): void
     {
         $application = $this->createActiveApplication($accountNo);
@@ -503,9 +493,9 @@ class UnitLookupTest extends TestCase
         ])->value('accountRoleId');
 
         $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
-
-        // $this->deleteApplications('000000c');
     }
+
+
 
     // create an a substitute in an application where the leave period is not currently underway
     private function createSubAppBadTime($accountNo, $roleId)
@@ -535,6 +525,7 @@ class UnitLookupTest extends TestCase
     }
 
 
+
     // create an application where the leave period has not started
     private function createTimeInactiveApplication($accountNo): Application
     {
@@ -554,6 +545,8 @@ class UnitLookupTest extends TestCase
         ]);
         return $application;
     }
+
+
 
     // create an application where the leave period is active, but application not accepted
     private function createStatusInactiveApplication($accountNo): Application
