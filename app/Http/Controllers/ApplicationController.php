@@ -548,4 +548,77 @@ class ApplicationController extends Controller
         Nomination::where('applicationNo', $applicationNo)->delete();
         return response()->json(['success'], 200);
     }
+
+
+
+    /*
+    Gets all the details for the specified application
+        Period
+        Account Roles and Nominees
+        Applicant Name
+    Route: getApplicationForReview/{accountNo}/{applicationNo}
+    */
+    public function getApplicationForReview($accountNo, $applicationNo) {
+        $applicationNo = intval($applicationNo);
+
+        // Check if user exists for given user id
+        $account = Account::where('accountNo', $accountNo)->first();
+        if (!$account) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $application = Application::where('applicationNo', $applicationNo, "and")
+        ->where('accountNo', $accountNo)->first();
+        
+        // Check that the application exists for the given applicationNo
+        if (!$application) {
+            return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check if applicant exists for given application
+        $applicant = Account::where('accountNo', $application->accountNo)->first();
+        if (!$applicant) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Applicant does not exist.'], 500);
+        }
+
+        // Check if the user is the superior or substitute superior of the account
+        $substituteManager = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
+        if ($accountNo != $substituteManager->accountNo && $accountNo != $applicant->superiorNo) {
+            return response()->json(['error' => 'Invalid permissions to review application'], 500);
+        }
+
+        $nominationsFormatted = [];
+        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+        // Iterate through nominations and format
+        foreach ($nominations as $nom) {
+            // Group by nomineeNo
+            // If the nominee's accountNo does not exist as a key, create the default data
+            if (!array_key_exists($nom->nomineeNo)) {
+                $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
+                $nominationsFormatted[$nom->nomineeNo] = [
+                    "nomineeName" => "{$nominee->firstName} {$nominee->lastName} ({$nominee->accountNo})",
+                    "roles" => []
+                ];
+            }
+
+            // Add to roles
+            array_push(
+                $nominationsFormatted[$nom->nomineeNo]["roles"],
+                app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId)
+            );
+        }
+
+        $data = [
+            "applicantName" => "{$applicant->firstName} {$applicant->lastName} ({$applicant->accountNo})",
+            "period" => [
+                "start" => $application->sDate,
+                "end" => $application->eDate,
+            ],
+            "nominations" => $nominationsFormatted
+        ];
+
+        return response()->json($data);
+    }
 }
