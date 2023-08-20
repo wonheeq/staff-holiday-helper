@@ -575,6 +575,11 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
 
+        // Check that the application status is Undecided
+        if ($application->status != 'U') {
+            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
+        }
+
         // Check if applicant exists for given application
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
@@ -647,6 +652,11 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
 
+        // Check that the application status is Undecided
+        if ($application->status != 'U') {
+            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
+        }
+
         // Check if the superior is the superior of the applicant
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
@@ -707,6 +717,11 @@ class ApplicationController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
         if (!$application) {
             return response()->json(['error' => 'Application does not exist.'], 500);
+        }
+
+        // Check that the application status is Undecided
+        if ($application->status != 'U') {
+            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
         }
 
         // Check if the superior is the superior of the applicant
