@@ -36,7 +36,6 @@ function getList()
         <h2 class="font-bold mb-1 4k:text-2xl">Currently Responsible Staff:</h2>
 
         <!-- Results Display -->
-        <!-- <div class="mb-7 overflow-auto h-fit 1440:max-h-[37rem] 1080:max-h-[36rem] laptop:max-h-[23rem] 4k:max-h-[50rem]"> -->
         <div class="mb-7 overflow-auto  1440:max-h-[37rem] 1080:max-h-[32rem] laptop:max-h-[23rem] 4k:max-h-[50rem]">
 
 
