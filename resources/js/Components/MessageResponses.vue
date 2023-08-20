@@ -14,6 +14,28 @@ let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 const element_class = "flex flex-row justify-evenly pl-2 w-[11.5rem] 1080:w-[19rem] 1440:w-[22rem] 4k:w-[34.5rem]";
 
 /*
+Acknowledges the message
+*/
+function handleAcknowledgeMessage() {
+    props.source.acknowledged = 1;
+    props.source.updated_at = new Date();
+
+    let data = {
+        'messageId': props.source.messageId,
+        'accountNo': userId.value,
+    };
+
+    axios.post('/api/acknowledgeMessage', data)
+        .then(res => {
+            if (res.status != 200) {
+                console.log(err);
+            }
+        }).catch(err => {
+        console.log(err);
+    });
+}
+
+/*
 processes the data and sends it to the acceptNominations method in the backend
 */
 function handleAcceptAll() {
