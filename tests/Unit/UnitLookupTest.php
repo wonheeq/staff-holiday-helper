@@ -49,7 +49,7 @@ class UnitLookupTest extends TestCase
         $this->deleteAccountRole('000000c', 2);
         $this->deleteAccountRole('000000d', 3);
         $this->deleteAccountRole('000000e', 4);
-        $this->deleteAccountRole('000000f', 5);
+        $this->deleteAccountRole('000000f', 4);
 
         // delete created accounts
         Account::where('accountNo', '000000b')->delete();
@@ -61,42 +61,6 @@ class UnitLookupTest extends TestCase
         Unit::where('unitId', 'AAAA0000')->delete();
         parent::tearDown();
     }
-
-    private function deleteAccountRole($accountNo, $roleId): void
-    {
-        AccountRole::where([
-            ['accountNo', '=', $accountNo],
-            ['roleId', '=', $roleId],
-            ['unitId', '=', 'AAAA0000']
-        ])->delete();
-    }
-
-    private function createAccount($accountNo): void
-    {
-        Account::where('accountNo', $accountNo)->delete();
-        Account::factory()->create([
-            'accountNo' => $accountNo,
-            'fName' => 'Static',
-            'lName' => 'Test User',
-            'password' => Hash::make('testPassword1'),
-            'superiorNo' => "000002L",
-        ]);
-    }
-
-
-
-    private function createAccountRole($accountNo, $roleId): void
-    {
-        AccountRole::create([
-            'accountNo' => $accountNo,
-            'roleId' => $roleId,
-            'unitId' => 'AAAA0000',
-            'majorId' => fake()->randomElement(Major::pluck('majorId')),
-            'courseId' => fake()->randomElement(Course::pluck('courseId')),
-            'schoolId' => fake()->randomElement(School::pluck('schoolId')),
-        ]);
-    }
-
 
 
     public function test_lookup_valid_unit_no_subs(): void
@@ -152,6 +116,41 @@ class UnitLookupTest extends TestCase
         // assert has error
         $response->assertJson([
             'error' => 'Unit not found',
+        ]);
+    }
+
+
+
+    private function deleteAccountRole($accountNo, $roleId): void
+    {
+        AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->delete();
+    }
+
+    private function createAccount($accountNo): void
+    {
+        Account::where('accountNo', $accountNo)->delete();
+        Account::factory()->create([
+            'accountNo' => $accountNo,
+            'fName' => 'Static',
+            'lName' => 'Test User',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => "000002L",
+        ]);
+    }
+
+    private function createAccountRole($accountNo, $roleId): void
+    {
+        AccountRole::create([
+            'accountNo' => $accountNo,
+            'roleId' => $roleId,
+            'unitId' => 'AAAA0000',
+            'majorId' => fake()->randomElement(Major::pluck('majorId')),
+            'courseId' => fake()->randomElement(Course::pluck('courseId')),
+            'schoolId' => fake()->randomElement(School::pluck('schoolId')),
         ]);
     }
 }
