@@ -1206,6 +1206,262 @@ class ApplicationControllerTest extends TestCase
 
     // ACCEPT APPLICATION TESTS
     public function test_api_request_for_acceptApplication_is_successful(): void {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2024-09-06 20:00:00',
+            'eDate' => '2024-09-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
 
+        $app = Application::where('sDate', '2024-09-06 20:00:00', 'and')
+        ->where('eDate', '2024-09-08 20:00:00', "and")
+        ->where('accountNo', $this->user->accountNo)->first();
+
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $app->applicationNo,
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_api_request_for_acceptApplication_is_successful_application_is_updated(): void {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2024-09-06 20:00:00',
+            'eDate' => '2024-09-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $app = Application::where('sDate', '2024-09-06 20:00:00', 'and')
+        ->where('eDate', '2024-09-08 20:00:00', "and")
+        ->where('accountNo', $this->user->accountNo)->first();
+
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $app->applicationNo,
+        ]);
+
+        $updatedApp = Application::where('applicationNo', $app->applicationNo)->first();
+        $this->assertTrue($updatedApp->status == 'Y');
+        $this->assertTrue($updatedApp->processedBy == $this->otherUser->accountNo);
+    }
+
+    public function test_api_request_for_acceptApplication_is_successful_message_of_superivisor_is_set_to_acknowledged(): void {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2024-09-06 20:00:00',
+            'eDate' => '2024-09-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $app = Application::where('sDate', '2024-09-06 20:00:00', 'and')
+        ->where('eDate', '2024-09-08 20:00:00', "and")
+        ->where('accountNo', $this->user->accountNo)->first();
+
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $app->applicationNo,
+        ]);
+
+        $message = Message::where('applicationNo', $app->applicationNo, "and")
+        ->where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo, "and")
+        ->where('subject', "Application Awaiting Review")->first();
+        $this->assertTrue($message != null);
+        $this->assertTrue($message->acknowledged == true);
+    }
+
+    public function test_api_request_for_acceptApplication_is_successful_applicant_is_messaged(): void {
+        $response = $this->postJson("/api/createApplication", [
+            'accountNo' => $this->user->accountNo,
+            'selfNominateAll' => true,
+            'sDate' => '2024-09-06 20:00:00',
+            'eDate' => '2024-09-08 20:00:00',
+            'nominations' => [
+                [
+                    'accountRoleId' => $this->accountRoles[0]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[1]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+                [
+                    'accountRoleId' => $this->accountRoles[2]->accountRoleId,
+                    'nomineeNo' => $this->user->accountNo,
+                ],
+            ]
+        ]);
+        $response->assertStatus(200);
+
+        $app = Application::where('sDate', '2024-09-06 20:00:00', 'and')
+        ->where('eDate', '2024-09-08 20:00:00', "and")
+        ->where('accountNo', $this->user->accountNo)->first();
+
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $app->applicationNo,
+        ]);
+
+        $message = Message::where('applicationNo', $app->applicationNo, "and")
+        ->where('receiverNo', $this->user->accountNo, "and")
+        ->where('senderNo', $this->otherUser->accountNo, "and")
+        ->where('subject', "Application Approved")->first();
+        $this->assertTrue($message != null);
+    }
+
+    public function test_api_request_for_acceptApplication_is_unsuccessful_supervisor_does_not_exist(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'superiorNo' => "aoueirhgoiarg",
+            'applicationNo' => $secondApp->applicationNo,
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acceptApplication_is_unsuccessful_application_does_not_exist(): void {
+        $response = $this->postJson("/api/acceptApplication", [
+            'superiorNo' => $this->user->accountNo,
+            'applicationNo' => '03q495u0fd',
+        ]);
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acceptApplication_is_unsuccessful_application_status_is_not_undecided(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        $secondApp->status = 'N';
+        $secondApp->save();
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $secondApp->applicationNo,
+        ]);
+
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_acceptApplication_is_unsuccessful_account_is_not_superior_of_applicant(): void {
+        $secondApp = $this->applications[1];
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[1],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $secondApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[2],
+            'nomineeNo' => $this->otherUser->accountNo,
+            'status' => 'Y',
+        ]));
+
+        // setup - make sure that application is status 'U'
+        $secondApp->status = 'U';
+        $secondApp->save();
+        
+        $response = $this->postJson("/api/acceptApplication", [
+            'accountNo' => $this->otherUser->accountNo,
+            'applicationNo' => $secondApp->applicationNo,
+        ]);
+
+        $response->assertStatus(500);
     }
 }

@@ -685,8 +685,8 @@ class ApplicationController extends Controller
 
         // Mark Application Awaiting Review message as acknowledged
         $message = Message::where('applicationNo', $applicationNo, "and")
-        ->where('receiverNo', $superiorNo, "and")
-        ->where('senderNo', $applicant->accountNo)
+
+        ->where('senderNo', $applicant->accountNo, "and")
         ->where('subject', "Application Awaiting Review")->first();
 
         $message->acknowledged = true;
@@ -749,8 +749,7 @@ class ApplicationController extends Controller
 
         // Mark Application Awaiting Review message as acknowledged
         $message = Message::where('applicationNo', $applicationNo, "and")
-        ->where('receiverNo', $superiorNo, "and")
-        ->where('senderNo', $applicant->accountNo)
+        ->where('senderNo', $applicant->accountNo, "and")
         ->where('subject', "Application Awaiting Review")->first();
 
         $message->acknowledged = true;
