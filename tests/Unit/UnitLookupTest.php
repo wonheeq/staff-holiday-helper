@@ -70,8 +70,6 @@ class UnitLookupTest extends TestCase
     }
 
 
-
-
     // Test using a valid unit with no substitutions
     public function test_lookup_valid_unit_no_subs(): void
     {
@@ -101,8 +99,6 @@ class UnitLookupTest extends TestCase
             array('000000f@curtin.edu.au', 'Static Test User')
         ));
     }
-
-
 
 
     // Test using a valid unit ID, with a valid substitution for the role
@@ -270,13 +266,13 @@ class UnitLookupTest extends TestCase
         ]);
 
         // check data
+        // NOTE: Checks for 00000g <--- , not b/c/d/e/f, (sub id)
         $response->assertJsonPath('unitId', 'AAAA0000');
         $response->assertJsonPath('unitName', 'tempName');
         $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('unitCoord', array('000000g@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('lecturers', array(
-            // NOTE: Checks for 00000g <--- , not e, (sub id)
             array('000000g@curtin.edu.au', 'Static Test User'),
             array('000000g@curtin.edu.au', 'Static Test User')
         ));
@@ -314,6 +310,90 @@ class UnitLookupTest extends TestCase
         $response->assertJson([
             'error' => 'Unit not found',
         ]);
+    }
+
+
+    // Test that there are no major coordinator substitutions when the application is invalid
+    public function test_lookup_valid_unit_invalid_majorCoord_sub(): void
+    {
+        // create two invalid applications.
+        // One where the leave isn't active, one where the application isn't accepted
+        $this->createSubAppBadTime('000000c', 2);
+        $this->createStatusInactiveApplication('000000c', 2);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that there was no sub ( email is still 000000c, not g)
+        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000c');
+    }
+
+
+    // Test that there are no course coordinator substitutions when the application is invalid
+    public function test_lookup_valid_unit_invalid_courseCoord_sub(): void
+    {
+        // create two invalid applications.
+        // One where the leave isn't active, one where the application isn't accepted
+        $this->createSubAppBadTime('000000d', 3);
+        $this->createStatusInactiveApplication('000000d', 3);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that there was no sub ( email is still 000000d, not g)
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000d');
+    }
+
+    public function test_lookup_valid_unit_invalid_unitCoord_sub(): void
+    {
+        // create two invalid applications.
+        // One where the leave isn't active, one where the application isn't accepted
+        $this->createSubAppBadTime('000000b', 1);
+        $this->createStatusInactiveApplication('000000b', 1);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that there was no sub ( email is still 000000b, not g)
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000b');
+    }
+
+
+    public function test_lookup_valid_unit_invalid_lecturer_sub(): void
+    {
+        // create two invalid applications.
+        // One where the leave isn't active, one where the application isn't accepted
+        $this->createSubAppBadTime('000000e', 4);
+        $this->createStatusInactiveApplication('000000e', 4);
+
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check that there was no sub ( email is still 000000e, not g)
+        $response->assertJsonPath('lecturers', array(
+            array('000000e@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
+
+        $this->deleteNominations('000000g');
+        $this->deleteApplications('000000e');
     }
 
 
@@ -425,5 +505,73 @@ class UnitLookupTest extends TestCase
         $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
 
         // $this->deleteApplications('000000c');
+    }
+
+    // create an a substitute in an application where the leave period is not currently underway
+    private function createSubAppBadTime($accountNo, $roleId)
+    {
+        $application = $this->createTimeInactiveApplication($accountNo);
+        $accountRoleId = AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->value('accountRoleId');
+
+        $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
+    }
+
+
+    // create a substitute in an application that has not been accepted yet
+    private function createSubAppNotAcc($accountNo, $roleId)
+    {
+        $application = $this->createStatusInactiveApplication($accountNo);
+        $accountRoleId = AccountRole::where([
+            ['accountNo', '=', $accountNo],
+            ['roleId', '=', $roleId],
+            ['unitId', '=', 'AAAA0000']
+        ])->value('accountRoleId');
+
+        $this->createAcceptedNomination($application->applicationNo, $accountRoleId);
+    }
+
+
+    // create an application where the leave period has not started
+    private function createTimeInactiveApplication($accountNo): Application
+    {
+        $start = new DateTime('NOW');
+        $start->modify("+2 day");
+
+        $end = new DateTime('NOW');
+        $end->modify('+5 days');
+
+        $application = Application::create([
+            'accountNo' => $accountNo,
+            'status' => 'Y',
+            'sDate' => $start,
+            'eDate' => $end,
+            'processedBy' => $accountNo,
+            'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
+        ]);
+        return $application;
+    }
+
+    // create an application where the leave period is active, but application not accepted
+    private function createStatusInactiveApplication($accountNo): Application
+    {
+        $start = new DateTime('NOW');
+        $start->modify("-1 day");
+
+        $end = new DateTime('NOW');
+        $end->modify('+2 days');
+
+        $application = Application::create([
+            'accountNo' => $accountNo,
+            'status' => 'N',
+            'sDate' => $start,
+            'eDate' => $end,
+            'processedBy' => $accountNo,
+            'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
+        ]);
+        return $application;
     }
 }
