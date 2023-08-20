@@ -9,8 +9,10 @@ use App\Models\Account;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+use DateTime;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\Application;
 
 
 class UnitLookupTest extends TestCase
@@ -62,7 +64,7 @@ class UnitLookupTest extends TestCase
         parent::tearDown();
     }
 
-
+    // Test using a valid unit with no substitutions
     public function test_lookup_valid_unit_no_subs(): void
     {
         // check response code
@@ -92,8 +94,67 @@ class UnitLookupTest extends TestCase
         ));
     }
 
-    public function test_lookup_valid_unit_MajourCoord_sub(): void
+
+
+
+    private function createActiveApplication(): void
     {
+        $start = new DateTime('NOW');
+        $start->modify("-1 day");
+
+        $end = new DateTime('NOW');
+        $end->modify('+2 days');
+
+        Application::create([
+            'accountNo' => '000000a',
+            'status' => 'Y',
+            'sDate' => $start,
+            'eDate' => $end,
+            'processedBy' => '000000a',
+            'rejectReason' => fake()->randomElement(['Not enough leave remaining', 'A nominee declined to takeover a responsibility', 'Invalid nomination details']),
+        ]);
+    }
+
+    private function deleteApplications(): void
+    {
+        Application::where([
+            ['accountNo', '=', '000000a'],
+            ['processedBy', '=', '000000a']
+        ])->delete();
+    }
+
+
+    // Test using a valid unit and a coordinator substitute
+    // (all coordinators types use the same logic for substitution checks)
+    public function test_lookup_valid_unit_coord_sub(): void
+    {
+        $this->createActiveApplication();
+        $this->deleteApplications();
+        // // check response code
+        // $response = $this->post('/api/getUnitDetails', [
+        //     'code' => 'AAAA0000'
+        // ])->assertStatus(200);
+
+        // // check structure
+        // $response->assertJsonStructure([
+        //     'unitId',
+        //     'unitName',
+        //     'courseCoord',
+        //     'majorCoord',
+        //     'unitCoord',
+        //     'lecturers'
+        // ]);
+
+        // // check data
+        // $response->assertJsonPath('unitId', 'AAAA0000');
+        // $response->assertJsonPath('unitName', 'tempName');
+        // $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        // $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
+        // $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        // $response->assertJsonPath('lecturers', array(
+        //     array('000000e@curtin.edu.au', 'Static Test User'),
+        //     array('000000f@curtin.edu.au', 'Static Test User')
+        // ));
     }
 
     public function test_lookup_valid_unit_CourseCoord_sub(): void
