@@ -65,6 +65,31 @@ class UnitLookupTest extends TestCase
 
     public function test_lookup_valid_unit_no_subs(): void
     {
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'AAAA0000'
+        ])->assertStatus(200);
+
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
+
+        // check data
+        $response->assertJsonPath('unitId', 'AAAA0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('lecturers', array(
+            array('000000e@curtin.edu.au', 'Static Test User'),
+            array('000000f@curtin.edu.au', 'Static Test User')
+        ));
     }
 
     public function test_lookup_valid_unit_MajourCoord_sub(): void
