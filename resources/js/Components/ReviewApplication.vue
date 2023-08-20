@@ -46,7 +46,7 @@ function handleApproveApp() {
         'accountNo': userId.value,
         'applicationNo': props.data.applicationNo,
     };   
-    axios.post('/api/approveApplication', data)
+    axios.post('/api/acceptApplication', data)
         .then(res => {
             if (res.status == 500) {
                 Swal.fire({

@@ -635,7 +635,7 @@ class ApplicationController extends Controller
     /*
     Sets the application's status to approved if valid
     */
-    public function approveApplication(Request $request) {
+    public function acceptApplication(Request $request) {
         $data = $request->all();
         $superiorNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
