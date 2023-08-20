@@ -143,7 +143,7 @@ class UnitLookupTest extends TestCase
 
     public function test_lookup_valid_unit_valid_courseCoord_sub(): void
     {
-        $this->createCoordSub('000000c', 2);
+        $this->createCoordSub('000000d', 3);
 
         // check response code
         $response = $this->post('/api/getUnitDetails', [
@@ -163,9 +163,9 @@ class UnitLookupTest extends TestCase
         // check data
         $response->assertJsonPath('unitId', 'AAAA0000');
         $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        // NOTE: Checks for 00000g <--- , not c, (sub id)
-        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+
+        $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
+        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('lecturers', array(
             array('000000e@curtin.edu.au', 'Static Test User'),
@@ -319,7 +319,7 @@ class UnitLookupTest extends TestCase
 
     private function createCoordSub($accountNo, $roleId): void
     {
-        $application = $this->createActiveApplication('000000c');
+        $application = $this->createActiveApplication($accountNo);
         $accountRoleId = AccountRole::where([
             ['accountNo', '=', $accountNo],
             ['roleId', '=', $roleId],
