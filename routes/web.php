@@ -26,7 +26,7 @@ use App\Http\Controllers\PasswordResetController;
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-})->name('login');
+});
 
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
@@ -75,7 +75,7 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 Route::post(
     '/login',
     [AuthController::class, 'authenticate']
-);
+)->name('login');
 
 Route::post(
     '/logout',
