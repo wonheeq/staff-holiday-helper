@@ -26,8 +26,8 @@ let user = reactive({
 let showNominationModal = ref(false);
 let nominationModalData = reactive([]);
 let roles = reactive([]);
-async function handleAcceptSomeNominations(data) {
-    nominationModalData = data;
+async function handleAcceptSomeNominations(message) {
+    nominationModalData = message;
     await fetchRoles();
     showNominationModal.value = true;
 }
@@ -53,16 +53,18 @@ function handleCloseNominations() {
 }
 
 let showReviewAppModal = ref(false);
-let reviewAppModalData = reactive([]);
-async function handleReviewApplication(applicationNo) {
-    await fetchApplicationForReview(applicationNo);
+let reviewAppModalData = reactive([
+]);
+async function handleReviewApplication(message) {
+    await fetchApplicationForReview(message);
     showReviewAppModal.value = true;
 }
 
-let fetchApplicationForReview = async(applicationNo) => {
+let fetchApplicationForReview = async(message) => {
     try {
-        const resp = await axios.get('/api/getApplicationForReview/' + userId.value + "/" + applicationNo);
+        const resp = await axios.get('/api/getApplicationForReview/' + userId.value + "/" + message.applicationNo);
         reviewAppModalData = resp.data;
+        reviewAppModalData.message = message;
     } catch (error) {
         alert("Failed to load data: Please try again");
         console.log(error);
@@ -84,8 +86,8 @@ let calendarLarge = ref(false);
                 <HomeShortcuts :user="user" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                 <HomeMessages
                     class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
-                    @acceptSomeNominations="(v) => handleAcceptSomeNominations(v)"
-                    @reviewApplication="(applicationNo) => handleReviewApplication(applicationNo)"
+                    @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"
+                    @reviewApplication="(message) => handleReviewApplication(message)"
                 ></HomeMessages>
             </div>
             <CalendarSmall

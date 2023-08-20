@@ -60,7 +60,7 @@ let deadAreaColor = "#FFFFFF";
                     <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
                         <Message :source="item"
                             @acceptSomeNominations="emit('acceptSomeNominations', item)"
-                            @reviewApplication="emit('reviewApplication', item.applicationNo)"
+                            @reviewApplication="emit('reviewApplication', item)"
                         ></Message>
                     </div>
                 </template>

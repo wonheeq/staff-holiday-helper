@@ -588,15 +588,16 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Invalid permissions to review application'], 500);
         }
 
-        $nominationsFormatted = [];
+        $nominationsRaw = [];
         $nominations = Nomination::where('applicationNo', $applicationNo)->get();
         // Iterate through nominations and format
         foreach ($nominations as $nom) {
             // Group by nomineeNo
             // If the nominee's accountNo does not exist as a key, create the default data
-            if (!array_key_exists($nom->nomineeNo, $nominationsFormatted)) {
+            if (!array_key_exists($nom->nomineeNo, $nominationsRaw)) {
                 $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
-                $nominationsFormatted[$nom->nomineeNo] = [
+                $nominationsRaw[$nom->nomineeNo] = [
+                    "nomineeNo" => $nom->nomineeNo,
                     "nomineeName" => "{$nominee->fName} {$nominee->lName} ({$nominee->accountNo})",
                     "roles" => []
                 ];
@@ -604,17 +605,21 @@ class ApplicationController extends Controller
 
             // Add to roles
             array_push(
-                $nominationsFormatted[$nom->nomineeNo]["roles"],
+                $nominationsRaw[$nom->nomineeNo]["roles"],
                 app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId)
             );
         }
 
+        $nominationsFormatted = [];
+        foreach ($nominationsRaw as $n) {
+            array_push($nominationsFormatted, $n);
+        }
+
         $data = [
+            "applicationNo" => $applicationNo,
+            "applicantNo" => $applicant->accountNo,
             "applicantName" => "{$applicant->fName} {$applicant->lName} ({$applicant->accountNo})",
-            "period" => [
-                "start" => $application->sDate,
-                "end" => $application->eDate,
-            ],
+            "duration" => "{$application->sDate} - {$application->eDate}",
             "nominations" => $nominationsFormatted
         ];
 
