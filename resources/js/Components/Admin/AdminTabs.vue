@@ -50,18 +50,19 @@
     export default {
         data: function() {
             return {
+                currentTable: 'accountTable',
                 content: '',
                 buttons: [
-                    { message: 'Staff Accounts' },
-                    { message: 'Leave\nApplications' },
-                    { message: 'Substitute\nNominations' },
-                    { message: 'Account Roles' },
-                    { message: 'Roles' },
-                    { message: 'Units' },
-                    { message: 'Majors' },
-                    { message: 'Courses' },
-                    { message: 'Schools' },
-                    { message: 'Messages' }
+                    { message: 'Staff Accounts', table: 'accountTable' },
+                    { message: 'Leave\nApplications', table: 'applicationTable' },
+                    { message: 'Substitute\nNominations', table: 'nominationTable' },
+                    { message: 'Account Roles', table: 'accountRolesTable' },
+                    { message: 'Roles', table: 'rolesTable' },
+                    { message: 'Units', table: 'unitsTable' },
+                    { message: 'Majors', table: 'majorsTable' },
+                    { message: 'Courses', table: 'coursesTable' },
+                    { message: 'Schools', table: 'schoolsTable' },
+                    { message: 'Messages', table: 'messagesTable' }
                 ]
             }
         },
@@ -70,8 +71,9 @@
             'applicationTable':table2
         },
         methods: {
-            activate: function(message) {
+            activate: function(message, table) {
                 this.content = message;
+                this.currentTable = table;
             }
         }
     }
@@ -102,15 +104,13 @@
                         :key="button.message"
                         class= tableButtonOff
                         :class="{'tableButtonOn': button.message === content}"
-                        @click="activate(button.message)"
+                        @click="activate(button.message, button.table)"
                     >
                         <span>{{ button.message }}</span>
                     </button>
                 </div>
             </div>
-            <accountTable>
-                
-            </accountTable>    
+            <component :is="currentTable"></component>   
         </div>
         </div>  
 
