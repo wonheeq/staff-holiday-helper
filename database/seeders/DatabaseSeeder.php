@@ -109,6 +109,16 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => $lineManagerNo,
         ]);
 
+        // TEST USER - sysadmin
+        Account::factory()->create([
+            'accountNo' => '000000s',
+            'accountType' => 'sysadmin',
+            'fName' => 'Bhos',
+            'lName' => 'Mann',
+            'password' => Hash::make('testPassword2'),
+            'superiorNo' => $lineManagerNo,
+        ]);
+
         // 10 roles for test user
         AccountRole::factory(10)->create([
             'accountNo' => $test_id

@@ -31,9 +31,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/accounts', AccountController::class);
-
+Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
 Route::get('/applications', [ApplicationController::class, 'getAllApplications']);
+//Route::get('/nominations', [ApplicationController::class, 'getAllNominations']);
 
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);

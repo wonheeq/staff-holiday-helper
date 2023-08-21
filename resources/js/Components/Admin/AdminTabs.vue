@@ -2,6 +2,13 @@
     
     import SubpageNavbar from '../SubpageNavbar.vue';
     import { onMounted, ref } from 'vue';
+
+    import { storeToRefs } from 'pinia';
+    import { useUserStore } from '@/stores/AdminUserStore';
+
+    let userStore = useUserStore();
+    const { userId } = storeToRefs(userStore);
+    //console.warn("userId: " + userId.value)
     
     const options = [
     { id: 'viewData', title: 'View/Edit Data'},
@@ -46,6 +53,7 @@
 
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
+    import table3 from './Table_Nominations.vue';
 
     export default {
         data: function() {
@@ -68,7 +76,8 @@
         },
         components:{
             'accountTable':table1,
-            'applicationTable':table2
+            'applicationTable':table2,
+            'nominationTable':table3,
         },
         methods: {
             activate: function(message, table) {
@@ -110,7 +119,7 @@
                     </button>
                 </div>
             </div>
-            <component :is="currentTable"></component>   
+            <component :is="currentTable" :user="userId"></component>   
         </div>
         </div>  
 

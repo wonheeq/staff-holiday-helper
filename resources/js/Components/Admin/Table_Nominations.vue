@@ -17,43 +17,31 @@ export default {
                 field: 'applicationNo',
                 },
                 {
-                label: 'Nominee ID',
-                field: 'accountNo',
+                label: 'Nominee Account ID',
+                field: 'nomineeNo',
                 },
                 {
-                label: 'Start Date',
-                field: 'sDate',
+                label: 'ID of role being substituted',
+                field: 'accountRoleId',
  
                 },
                 {
-                label: 'End Date',
-                field: 'eDate',
-                },
-                {
-                label: 'Leave Status',
+                label: 'Status',
                 field: 'status',
-                },
-                {
-                label: 'Processed By',
-                field: 'processedBy',
-                },
-                {
-                label: 'Reject Reason',
-                field: 'rejectReason',
                 },
                 {
                 label: 'Created/Last Updated',
                 field: 'updated_at',
                 },
             ],
-            applications: [],
+            nominations: [],
             tHeight: ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
         };
     },
     created() {
-        axios.get("/api/applications")
+        axios.get("/api/nominations")
         .then((response) => {
-            this.applications = response.data;
+            this.nominations = response.data;
             console.log(response.data);
         })
         .catch((error) => {
@@ -83,12 +71,13 @@ let onSearch = () => {
 };
 </script>
 
+
 <template>
     <div class="parent1">
         <div class="mx-4 mt-4">
             <div remove-bullshit>
                 <VueGoodTable 
-                    :rows="applications"
+                    :rows="nominations"
                     :columns="columns"
                     v-bind:max-height= tHeight
                     :fixed-header="{
@@ -96,7 +85,7 @@ let onSearch = () => {
                     }"
                     :search-options="{
                         enabled: true,
-                        placeholder: 'Search Leave Applications',
+                        placeholder: 'Search Substitute Nominations',
                     }"
                     :pagination-options="{
                         enabled: true,
