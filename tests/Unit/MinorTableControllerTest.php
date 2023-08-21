@@ -14,11 +14,11 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson('/api/units');
         $response->assertStatus(200);
 
-         // Check if response is json
-         $response = $this->getJson("/api/units/");
-         $this->assertJson($response->content());
+        // Check if response is json
+        $response = $this->getJson("/api/units/");
+        $this->assertJson($response->content());
 
-         // Check if correct structure
+        // Check if correct structure
         $response = $this->get("/api/units/");
         $response->assertJsonStructure([
             0 => [
@@ -33,11 +33,11 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson('/api/majors');
         $response->assertStatus(200);
 
-         // Check if response is json
-         $response = $this->getJson("/api/majors/");
-         $this->assertJson($response->content());
+        // Check if response is json
+        $response = $this->getJson("/api/majors/");
+        $this->assertJson($response->content());
 
-         // Check if correct structure
+        // Check if correct structure
         $response = $this->get("/api/majors/");
         $response->assertJsonStructure([
             0 => [
@@ -52,11 +52,11 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson('/api/courses');
         $response->assertStatus(200);
 
-         // Check if response is json
-         $response = $this->getJson("/api/courses/");
-         $this->assertJson($response->content());
+        // Check if response is json
+        $response = $this->getJson("/api/courses/");
+        $this->assertJson($response->content());
 
-         // Check if correct structure
+        // Check if correct structure
         $response = $this->get("/api/courses/");
         $response->assertJsonStructure([
             0 => [
@@ -71,11 +71,11 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson('/api/schools');
         $response->assertStatus(200);
 
-         // Check if response is json
-         $response = $this->getJson("/api/schools/");
-         $this->assertJson($response->content());
+        // Check if response is json
+        $response = $this->getJson("/api/schools/");
+        $this->assertJson($response->content());
 
-         // Check if correct structure
+        // Check if correct structure
         $response = $this->get("/api/schools/");
         $response->assertJsonStructure([
             0 => [

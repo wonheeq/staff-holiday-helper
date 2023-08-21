@@ -3,7 +3,7 @@
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
     <!-- Box/White Backgorund -->
-    <div class="w-1/4 1080:w-1/5 1440:w-1/6 4k:w-1/6 h-fit bg-white p-5 drop-shadow-md">
+    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
         <!-- Logo -->
         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
@@ -28,7 +28,7 @@
             <button
                 type="submit"
                 :disabled="!buttonActive"
-                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2">
+                class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2">
 
                 Reset Password
             </button>
@@ -36,7 +36,7 @@
 
 
         <!-- Error Message -->
-        <div class="flex justify-center mb-2 text-red-500 text-center">
+        <div class="flex justify-center mb-2 text-red-500 4k:text-xl text-center">
             <ul>
                 <li v-for="error in errors.slice(0, 1)">
                     {{ error }}
@@ -45,14 +45,14 @@
         </div>
 
         <!-- Bottom Links -->
-        <div class="flex justify-between">
+        <div class="flex justify-between mt-5">
             <!-- Back Button -->
-            <button @click="goToLanding" class="underline font-bold">Back to Login</button>
+            <button @click="goToLanding" class="underline font-bold 4k:text-xl">Back to Login</button>
         </div>
     </div>
 
     <!-- Confirmation Message -->
-    <div v-show="showConf" class ="1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+    <div v-show="showConf" class =" 4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
         <p class="text-center">Your password has been successfully changed!</p>
     </div>
 
@@ -83,9 +83,11 @@ async function handleReset() {
         accountNo: props.accountNo,
         password: passOne.value,
         password_confirmation: passTwo.value,
+
     }).then( function(response) {
         showConf.value = true;
         errors.length = 0;
+
     }).catch(error => {
         if(error.response) {
             errors.push(error.response.data.message);
