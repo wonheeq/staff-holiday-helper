@@ -29,7 +29,7 @@ let formatLink = (link) => {
 
 // Post to logout method
 async function handleLogout() {
-    await axios.post("logout").then(
+    await axios.post("/logout").then(
         function(response) {
             if( response.data.response == "success") {
                 setUserId(null);
