@@ -28,6 +28,11 @@ Route::get('/', function () {
     return Inertia::render('Landing', []);
 });
 
+Route::get('/login', function () {
+    return Inertia::render('Landing', []);
+});
+
+
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
@@ -37,7 +42,7 @@ Route::middleware('auth:sanctum')->get('/home', function () {
 });
 
 
-Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
+Route::middleware('auth:sanctum')->get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
     return Inertia::render('Bookings', [
         'screenProp' => $screenProp
     ]);
@@ -61,7 +66,7 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     ]);
 });
 
-Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
+Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
     ]);
