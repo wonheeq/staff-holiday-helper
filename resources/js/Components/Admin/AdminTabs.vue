@@ -59,7 +59,7 @@
         data: function() {
             return {
                 currentTable: 'accountTable',
-                content: '',
+                content: 'Staff Accounts',
                 buttons: [
                     { message: 'Staff Accounts', table: 'accountTable' },
                     { message: 'Leave\nApplications', table: 'applicationTable' },
@@ -126,12 +126,14 @@
         <div
             v-show="activeScreen === 'addData'"
             :class="subpageClass"
+            class="p-4 h-[95%]"
         >
             add data subpage
         </div>
         <div
             v-show="activeScreen === 'sysSettings'"
             :class="subpageClass"
+            class="p-4 h-[95%]"
         >
             settings subpage
         </div>

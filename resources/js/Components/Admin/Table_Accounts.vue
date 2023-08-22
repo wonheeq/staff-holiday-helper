@@ -49,7 +49,7 @@ export default {
         };
     },
     created() {
-        console.warn("/api/allAccounts/" + this.user)
+        //console.warn("/api/allAccounts/" + this.user)
         axios.get("/api/allAccounts/" + this.user)
         .then((response) => {
             this.accounts = response.data;

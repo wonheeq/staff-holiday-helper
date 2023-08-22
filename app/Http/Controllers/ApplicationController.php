@@ -45,13 +45,32 @@ class ApplicationController extends Controller
     /*
     Returns all applications
      */
+    public function getAllApplications(Request $request, String $accountNo)
+    {  
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            $applications = Application::get();
+            return response()->json($applications);  
+        }  
+    }
+/*
     public function getAllApplications(Request $request)
     {   
         $applications = Application::get();
         return response()->json($applications);    
         //return Applications::all(); 
     }
-
+*/
     /*
     Returns true if for all elements, nomineeNo == accountNo
     */

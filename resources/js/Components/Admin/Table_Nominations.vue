@@ -9,6 +9,12 @@ import { VueGoodTable } from 'vue-good-table-next';
 import axios from "axios";
 
 export default {
+    props: {
+        user: {
+            type: String,
+            required: true
+        }
+    },
     data: function() {
         return {
             columns: [
@@ -39,7 +45,7 @@ export default {
         };
     },
     created() {
-        axios.get("/api/nominations")
+        axios.get("/api/allNominations/" + this.user)
         .then((response) => {
             this.nominations = response.data;
             console.log(response.data);
