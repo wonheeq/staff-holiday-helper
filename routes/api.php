@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountRoleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CalendarController;
@@ -35,7 +36,7 @@ Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccount
 Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
 Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
 //Route::get('/allMessages/{accountNo}', [MessageController::class, 'getAllMessages']);
-//Route::get('/allAccountRoles/{accountNo}', [AccountRoleController::class, 'getAllAccountRoles']);
+Route::get('/allAccountRoles/{accountNo}', [AccountRoleController::class, 'getAllAccountRoles']);
 //Route::get('/allRoles/{accountNo}', [RoleController::class, 'getAllRoles']);
 //Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
 //Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);

@@ -54,6 +54,13 @@
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
     import table3 from './Table_Nominations.vue';
+    import table4 from './Table_AccountRoles.vue';
+    //import table5 from './Table_Roles.vue';
+    //import table6 from './Table_Units.vue';
+    //import table7 from './Table_Majors.vue';
+    //import table8 from './Table_Courses.vue';
+    //import table9 from './Table_Schools.vue';
+    //import table10 from './Table_Messages.vue';
 
     export default {
         data: function() {
@@ -78,6 +85,13 @@
             'accountTable':table1,
             'applicationTable':table2,
             'nominationTable':table3,
+            'accountRolesTable':table4,
+            //'rolesTable':table5,
+            //'unitsTable':table6,
+            //'majorsTable':table7,
+            //'coursesTable':table8,
+            //'schoolsTable':table9,
+            //'messagesTable':table10
         },
         methods: {
             activate: function(message, table) {
