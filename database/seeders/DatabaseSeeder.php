@@ -67,6 +67,7 @@ class DatabaseSeeder extends Seeder
         Account::factory()->create([
             'accountNo' =>  $lineManagerNo,
             'accountType' => 'lmanager',
+            'password' => Hash::make('testPassword1'),
             'superiorNo' => null,
         ]);
 

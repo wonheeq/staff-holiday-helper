@@ -60,31 +60,24 @@ class AccountController extends Controller
         If the line manager does not exist, returns the default admin
     */
     public function getCurrentLineManager(String $accountNo) {
-        try {
-            // Attempt to get user
-            $user = Account::where('accountNo', $accountNo)->first();
-            $superiorNo = $user->superiorNo;
+        $user = Account::where('accountNo', $accountNo)->first();
+        $superiorNo = $user->superiorNo;
 
-            if ($superiorNo == null) {
-                throw new ErrorException();
-            }
-            
-            // Get assigned line manager
-            $assignedLineManager = Account::where('accountNo', $superiorNo)->first();
-            // Check if assigned Line manager is on leave
-            if ($this->isAccountOnLeave($superiorNo)) {
-
-                // return default for now
-                // TODO: return substitute line manager
-                return $this->getDefaultAdmin();
-            }
-
-            return $assignedLineManager;
-        }
-        catch (Exception $e) {
-            // Error occurred - return default admin user
+        if ($superiorNo == null) {
             return $this->getDefaultAdmin();
         }
+        
+        // Get assigned line manager
+        $assignedLineManager = Account::where('accountNo', $superiorNo)->first();
+        // Check if assigned Line manager is on leave
+        if ($this->isAccountOnLeave($superiorNo)) {
+
+            // return default for now
+            // TODO: return substitute line manager
+            return $this->getDefaultAdmin();
+        }
+
+        return $assignedLineManager;
     }
 
     /*
