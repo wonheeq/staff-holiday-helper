@@ -7,23 +7,22 @@ import HomeMessages from "@/Components/HomeMessages.vue";
 import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from "@/stores/UserStore";
-let userStore = useUserStore();
-let { userId } = storeToRefs(userStore);
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, useAttrs } from "vue";
+const attrs = useAttrs();
 
 let user = reactive([]);
 let dataReady = ref(false);
 
-onMounted(async () => {
-    await fetchWelcomeMessageData();
-    dataReady.value = true;
+onMounted(() => {
+    attrs.$observe('auth', async function(val) {
+        await fetchWelcomeMessageData();
+        dataReady.value = true;
+    });
 })
 
 let fetchWelcomeMessageData = async() => {
     try {
-        const resp = await axios.get("/api/getWelcomeMessageData/" + userId.value);
+        const resp = await axios.get("/api/getWelcomeMessageData/" + attrs.auth.user.accountNo);
         user = resp.data;
     } catch (error) {
         alert("Failed to load data: Please try again");
@@ -44,7 +43,7 @@ async function handleAcceptSomeNominations(message) {
 let fetchRoles = async() => {
     try {
         let data = {
-            'accountNo': userId.value,
+            'accountNo': $(attrs).auth.user.accountNo,
             'applicationNo': nominationModalData.applicationNo,
         };
         const resp = await axios.post('/api/getRolesForNominee', data);
@@ -71,7 +70,7 @@ async function handleReviewApplication(message) {
 
 let fetchApplicationForReview = async(message) => {
     try {
-        const resp = await axios.get('/api/getApplicationForReview/' + userId.value + "/" + message.applicationNo);
+        const resp = await axios.get('/api/getApplicationForReview/' + attrs.auth.user.accountNo + "/" + message.applicationNo);
         reviewAppModalData = resp.data;
         reviewAppModalData.message = message;
     } catch (error) {

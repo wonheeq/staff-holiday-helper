@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { useUserStore } from './UserStore';
 import axios from "axios";
 
 export let useMessageStore = defineStore('messages', {
@@ -9,9 +8,9 @@ export let useMessageStore = defineStore('messages', {
     }),
 
     actions: {
-        async fetchMessages() {
+        async fetchMessages(accountNo) {
             try {
-                const resp = await axios.get('/api/messages/' + useUserStore().userId);
+                const resp = await axios.get('/api/messages/' + accountNo);
                 this.messages = resp.data;
               }
               catch (error) {

@@ -2,10 +2,7 @@
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { useForm } from '@inertiajs/vue3';
-import { useUserStore } from "@/stores/UserStore";
 import { ref } from 'vue';
-let userStore = useUserStore();
-const { setUserId } = userStore
 
 axios.defaults.withCredentials = true;
 
@@ -18,8 +15,6 @@ const errorMsg = ref('');
 async function handleLogin() {
     // get csrf cookie
     await axios.get("/sanctum/csrf-cookie");
-
-    setUserId(formData.accountNo);
 
     formData.post(route('login'), {
         onFinish: () => formData.reset('password'),

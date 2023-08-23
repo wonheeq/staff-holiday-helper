@@ -3,14 +3,17 @@ import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted } from 'vue';
+import { onMounted, useAttrs } from 'vue';
+const attrs = useAttrs();
 import { storeToRefs } from 'pinia';
 let messageStore = useMessageStore();
 const { filteredMessages, viewing, unreadMessages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
 onMounted(() => {
-    fetchMessages();
+    attrs.$observe('auth', async function(val) {
+        fetchMessages(attrs.auth.user.accountNo);
+    });
 });
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 

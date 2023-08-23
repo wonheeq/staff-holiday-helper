@@ -1,16 +1,19 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, useAttrs } from "vue";
 import { useScreens, useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
+const attrs = useAttrs();
 
 onMounted(() => {
-    fetchCalendarData();
+    attrs.$observe('auth', async function(val) {
+        await fetchCalendarData(attrs.auth.user.accountNo);
+    });
 });
 
 
