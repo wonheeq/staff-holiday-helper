@@ -16,6 +16,10 @@ class RoleController extends Controller
     */
     public function getRoleFromAccountRoleId($accountRoleId) {
         $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
+        if ($accountRole == null) {
+            return "INVALID";
+        }
+
         $role = Role::where('roleId', $accountRole['roleId'])->first();
         $roleName = $role['name'];
 
