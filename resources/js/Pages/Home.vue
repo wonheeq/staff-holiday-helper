@@ -7,29 +7,22 @@ import HomeMessages from "@/Components/HomeMessages.vue";
 import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
-import { ref, reactive, onMounted, useAttrs } from "vue";
+import { ref, reactive, useAttrs } from "vue";
 const attrs = useAttrs();
 
 let user = reactive([]);
 let dataReady = ref(false);
 
-onMounted(() => {
-    attrs.$observe('auth', async function(val) {
-        await fetchWelcomeMessageData();
-        dataReady.value = true;
-    });
-})
-
 let fetchWelcomeMessageData = async() => {
     try {
         const resp = await axios.get("/api/getWelcomeMessageData/" + attrs.auth.user.accountNo);
         user = resp.data;
+        dataReady.value = true;
     } catch (error) {
         alert("Failed to load data: Please try again");
         console.log(error);
     }
 }
-
 
 let showNominationModal = ref(false);
 let nominationModalData = reactive([]);
@@ -85,6 +78,9 @@ function handleCloseReviewApp() {
 }
 
 let calendarLarge = ref(false);
+
+
+fetchWelcomeMessageData();
 </script>
 
 <template>
