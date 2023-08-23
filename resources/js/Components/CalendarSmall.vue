@@ -1,8 +1,8 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted } from 'vue';
-import { useScreens } from 'vue-screen-utils';
+import { ref, onMounted, computed } from 'vue';
+import { useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 let calendarStore = useCalendarStore();
@@ -16,17 +16,15 @@ onMounted(() => {
 let emit = defineEmits(['enlarge-calendar']);
 
 let props = defineProps({ disableEnlarge: Boolean });
-const { mapCurrent } = useScreens({
-    'laptop': '760px',
-    '1080p': '1920px',
-    '1440p': '2560px',
-    '4k': '3840px',
+const divRef = ref(null);
+const { rect } = useResizeObserver(divRef);
+const rows = computed(() => {
+    return Math.max(Math.floor((rect.value?.height - 250)/ 290), 1) || 1;
 });
-const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 </script>
 
 <template>
-<div class="bg-white rounded-md flex flex-col">
+<div ref="divRef" class="bg-white rounded-md flex flex-col">
     <div class="flex mx-4 mt-4 items-center">
         <button class="absolute" v-show="!disableEnlarge">
             <img src="/images/fullscreen.svg"
