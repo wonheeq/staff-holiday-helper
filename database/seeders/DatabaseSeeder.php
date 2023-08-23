@@ -205,7 +205,8 @@ class DatabaseSeeder extends Seeder
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
-            if ($account->accountNo != $test_id) {
+            // Ignore test line manager id too
+            if ($account->accountNo != $test_id && $account->accountNo != '000002L') {
                 Message::factory(10)->create([
                     'receiverNo' => $account['accountNo'],
                 ]);
