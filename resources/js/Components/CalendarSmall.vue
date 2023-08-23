@@ -1,19 +1,13 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted, computed, useAttrs } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
-const attrs = useAttrs();
-onMounted(() => {
-    attrs.$observe('auth', async function(val) {
-        fetchCalendarData(attrs.auth.user.accountNo);
-    });
-});
 
 let emit = defineEmits(['enlarge-calendar']);
 
@@ -23,6 +17,18 @@ const { rect } = useResizeObserver(divRef);
 const rows = computed(() => {
     return Math.max(Math.floor((rect.value?.height - 250)/ 290), 1) || 1;
 });
+onMounted(() => {
+});
+
+console.log("WTF");
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage();
+
+const user = computed(() => page.props.auth.user);
+console.log(user.value.accountNo);
+
+//fetchCalendarData(attrs.auth.user.accountNo);
 </script>
 
 <template>
