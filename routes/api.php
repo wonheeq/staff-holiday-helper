@@ -35,21 +35,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
 Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
 Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
-//Route::get('/allMessages/{accountNo}', [MessageController::class, 'getAllMessages']);
+Route::get('/allMessages/{accountNo}', [MessageController::class, 'getAllMessages']);
 Route::get('/allAccountRoles/{accountNo}', [AccountRoleController::class, 'getAllAccountRoles']);
-//Route::get('/allRoles/{accountNo}', [RoleController::class, 'getAllRoles']);
-//Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
-//Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
-//Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
-//Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
+Route::get('/allRoles/{accountNo}', [RoleController::class, 'getAllRoles']);
+Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
+Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
+Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
+Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
 
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
-
-Route::get('/schools', SchoolController::class);
-Route::get('/courses', CourseController::class);
-Route::get('/majors', MajorController::class);
-Route::get('/units', UnitController::class);
 
 Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
