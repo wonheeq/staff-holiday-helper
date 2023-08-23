@@ -389,5 +389,47 @@ class MessageController extends Controller
             ]);
         }
     }
+
+    /*
+    Creates a message for the applicant of an application, indicating the
+    decision on the application
+    */
+    public function notifyApplicantApplicationDecision($superiorNo, $applicationNo, $accepted, $rejectReason) {
+        $application = Application::where("applicationNo", $applicationNo)->first();
+        
+        $subject = "Application Approved";
+        $content = [];
+        if (!$accepted) {
+            $subject = "Application Denied";
+            array_push(
+                $content,
+                "Your leave request was rejected:",
+            );
+            array_push(
+                $content,
+                "→{$rejectReason}"
+            );
+        }
+        else {
+            array_push(
+                $content,
+                "Your leave request was accepted.",
+            );
+        }
+
+        array_push(
+            $content, 
+            "Duration: {$application->sDate} - {$application->eDate}"
+        );
+
+        Message::create([
+            'applicationNo' => $applicationNo,
+            'receiverNo' => $application->accountNo,
+            'senderNo' => $superiorNo,
+            'subject' => $subject,
+            'content' => json_encode($content),
+            'acknowledged' => false,
+        ]);
+    }
 }
  

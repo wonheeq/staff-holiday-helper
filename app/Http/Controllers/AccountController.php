@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use \DateTime;
+use Illuminate\Support\Facades\Log;
 
 define("DEFAULT_ADMIN_ACCOUNT_NO", "000002L");
 
@@ -20,6 +21,30 @@ class AccountController extends Controller
         //return response()->json($accounts);
 
         return Account::all(); 
+    }
+
+    /*
+    Returns the data for the welcome message
+    */
+    public function getWelcomeMessageData(Request $request, String $accountNo) {
+        $account = Account::where('accountNo', $accountNo)->first();
+        // Check if user exists for given user id
+        if (!$account) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $lineManager = $this->getCurrentLineManager($accountNo);
+
+        $data = [
+            'name' => "{$account->fName}",
+            'lineManager' => [
+                'name' => "{$lineManager->fName} {$lineManager->lName}",
+                'id' => "{$lineManager->accountNo}"
+            ]
+        ];
+
+        return response()->json($data);
     }
 
     /*

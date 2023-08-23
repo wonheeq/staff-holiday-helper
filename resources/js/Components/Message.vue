@@ -4,7 +4,7 @@ let props = defineProps({
     source: Object,
 });
 
-let emit = defineEmits(['acceptSomeNominations']);
+let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
 let copyEmail = (e) => {
     let email = e + "@curtin.edu.au";
@@ -14,6 +14,10 @@ let copyEmail = (e) => {
 
 function handleAcceptSomeNominations() {
     emit('acceptSomeNominations');
+}
+
+function handleReviewApplication() {
+    emit('reviewApplication');
 }
 </script>
 
@@ -41,6 +45,7 @@ function handleAcceptSomeNominations() {
         <MessageResponses
             :source="source"
             @acceptSomeNominations="handleAcceptSomeNominations()"
+            @reviewApplication="handleReviewApplication()"
         />
     </div>
 </template>
