@@ -8,7 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { setupCalendar } from 'v-calendar';
 import { createPinia } from 'pinia';
 import dayjs from 'dayjs';
-
+import vTitle from 'vuejs-title'
 const appName = "LeaveOnTime";
 
 createInertiaApp({
@@ -20,6 +20,10 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .use(setupCalendar, {})
             .use(createPinia())
+            .use(vTitle, {
+                transitionDelay: 0,
+                transitionDuration: 100,
+            })
             .provide('dayJS', dayjs)
             .mount(el);
     },
