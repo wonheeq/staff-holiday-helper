@@ -10,7 +10,6 @@ use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
 
-
 class RoleController extends Controller
 {
      /*

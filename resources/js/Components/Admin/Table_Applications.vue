@@ -60,7 +60,7 @@ export default {
         axios.get("/api/allApplications/" + this.user)
         .then((response) => {
             this.applications = response.data;
-            console.log(response.data);
+            //console.log(response.data);
         })
         .catch((error) => {
             console.log(error);
@@ -80,7 +80,7 @@ export default {
         onResize() {
         this.tHeight = ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
-        console.warn("tHeight: ", this.tHeight)
+        //console.warn("tHeight: ", this.tHeight)
         },
     }
 };

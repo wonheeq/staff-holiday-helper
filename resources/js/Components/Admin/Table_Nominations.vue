@@ -58,7 +58,7 @@ export default {
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
-            console.warn("tHeight: ", this.tHeight)
+            //console.warn("tHeight: ", this.tHeight)
         })
     },
     beforeDestroy() { 
@@ -68,7 +68,7 @@ export default {
         onResize() {
         this.tHeight = ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
-        console.warn("tHeight: ", this.tHeight)
+        //console.warn("tHeight: ", this.tHeight)
         },
     }
 };
