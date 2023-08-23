@@ -5,10 +5,13 @@ import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
 import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
 import EditApplication from "@/Components/Bookings/EditApplication.vue";
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from "@/stores/ApplicationStore";
 import { storeToRefs } from 'pinia';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
 const { fetchNominationsForApplicationNo } = nominationStore;
 let applicationStore = useApplicationStore();
@@ -52,7 +55,7 @@ async function handleEditApplication(appNo) {
         }
     }
 
-    await fetchNominationsForApplicationNo(appNo);
+    await fetchNominationsForApplicationNo(appNo, user.value.accountNo);
 }
 
 function changeUrl(params) {
@@ -103,7 +106,7 @@ function handleActiveScreenChanged(screen) {
                     :applicationNo="applicationNo"
                     :subpageClass="subpageClass"
                     :period="period"
-                    @close="isEditing = false; applicationNo = false;"
+                    @close="isEditing = false; applicationNo = null;"
                 />
             </Teleport>
         </div>

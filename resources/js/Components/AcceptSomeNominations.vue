@@ -5,8 +5,10 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import AcceptSomeNominationOptions from './AcceptSomeNominationOptions.vue';
-import { ref, useAttrs } from 'vue';
-const attrs = useAttrs();
+import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let emit = defineEmits(['close']);
 let props = defineProps({
     data: Object,
@@ -45,7 +47,7 @@ function submitResponses() {
 
     let data = {
         'messageId': props.data.messageId,
-        'accountNo': attrs.auth.user.accountNo,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
         'responses': responses
     };   

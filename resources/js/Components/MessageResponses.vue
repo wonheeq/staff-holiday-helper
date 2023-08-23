@@ -1,6 +1,10 @@
 <script setup>
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let props = defineProps({
     source: Object,
 });
@@ -18,7 +22,7 @@ function handleAcknowledgeMessage() {
 
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': attrs.auth.user.accountNo,
+        'accountNo': user.value.accountNo,
     };
 
     axios.post('/api/acknowledgeMessage', data)
@@ -37,7 +41,7 @@ processes the data and sends it to the acceptNominations method in the backend
 function handleAcceptAll() {
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': attrs.auth.user.accountNo,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.source.applicationNo,
     };
     axios.post('/api/acceptNominations', data)
@@ -80,7 +84,7 @@ processes the data and sends it to the rejectNominations method in the backend
 function handleReject() {
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': attrs.auth.user.accountNo,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.source.applicationNo,
     };
     axios.post('/api/rejectNominations', data)

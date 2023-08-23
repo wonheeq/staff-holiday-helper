@@ -7,16 +7,18 @@ import HomeMessages from "@/Components/HomeMessages.vue";
 import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
-import { ref, reactive, useAttrs } from "vue";
-const attrs = useAttrs();
+import { ref, reactive, computed } from "vue";
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 
-let user = reactive([]);
+let welcomeData = reactive([]);
 let dataReady = ref(false);
 
 let fetchWelcomeMessageData = async() => {
     try {
-        const resp = await axios.get("/api/getWelcomeMessageData/" + attrs.auth.user.accountNo);
-        user = resp.data;
+        const resp = await axios.get("/api/getWelcomeMessageData/" + user.value.accountNo);
+        welcomeData = resp.data;
         dataReady.value = true;
     } catch (error) {
         alert("Failed to load data: Please try again");
@@ -36,7 +38,7 @@ async function handleAcceptSomeNominations(message) {
 let fetchRoles = async() => {
     try {
         let data = {
-            'accountNo': $(attrs).auth.user.accountNo,
+            'accountNo': user.value.accountNo,
             'applicationNo': nominationModalData.applicationNo,
         };
         const resp = await axios.post('/api/getRolesForNominee', data);
@@ -63,7 +65,7 @@ async function handleReviewApplication(message) {
 
 let fetchApplicationForReview = async(message) => {
     try {
-        const resp = await axios.get('/api/getApplicationForReview/' + attrs.auth.user.accountNo + "/" + message.applicationNo);
+        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + message.applicationNo);
         reviewAppModalData = resp.data;
         reviewAppModalData.message = message;
     } catch (error) {
@@ -87,7 +89,7 @@ fetchWelcomeMessageData();
     <AuthenticatedLayout>
         <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
             <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4" v-if="dataReady">
-                <HomeShortcuts :user="user" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
+                <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                 <HomeMessages
                     class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
                     @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"

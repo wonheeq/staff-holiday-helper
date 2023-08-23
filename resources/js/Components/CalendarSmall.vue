@@ -1,38 +1,35 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, computed, onMounted } from 'vue';
-import { useResizeObserver } from 'vue-screen-utils';
+import { onMounted, computed } from 'vue';
+import { useScreens } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
+import { usePage } from '@inertiajs/vue3';
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
 
+onMounted(() => {
+    fetchCalendarData(user.value.accountNo);
+});
+
 let emit = defineEmits(['enlarge-calendar']);
 
 let props = defineProps({ disableEnlarge: Boolean });
-const divRef = ref(null);
-const { rect } = useResizeObserver(divRef);
-const rows = computed(() => {
-    return Math.max(Math.floor((rect.value?.height - 250)/ 290), 1) || 1;
+const { mapCurrent } = useScreens({
+    'laptop': '760px',
+    '1080p': '1920px',
+    '1440p': '2560px',
+    '4k': '3840px',
 });
-onMounted(() => {
-});
-
-console.log("WTF");
-import { usePage } from '@inertiajs/vue3'
-
-const page = usePage();
-
-const user = computed(() => page.props.auth.user);
-console.log(user.value.accountNo);
-
-//fetchCalendarData(attrs.auth.user.accountNo);
+const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 </script>
 
 <template>
-<div ref="divRef" class="bg-white rounded-md flex flex-col">
+<div class="bg-white rounded-md flex flex-col">
     <div class="flex mx-4 mt-4 items-center">
         <button class="absolute" v-show="!disableEnlarge">
             <img src="/images/fullscreen.svg"

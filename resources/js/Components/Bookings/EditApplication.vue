@@ -8,7 +8,8 @@ import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import { useCalendarStore } from '@/stores/CalendarStore';
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
@@ -16,6 +17,9 @@ let applicationStore = useApplicationStore();
 const { fetchApplications } = applicationStore;
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
 let emit = defineEmits(['close']);
 let props = defineProps({
     applicationNo: Number,
@@ -118,8 +122,8 @@ function handleEditApplication(data) {
                         icon: "success",
                         title: 'Successfully edited application.'
                     }).then(() => {
-                        fetchApplications();
-                        fetchCalendarData();
+                        fetchApplications(user.value.accountNo);
+                        fetchCalendarData(user.value.accountNo);
                         resetFields();
                         emit('close');
                     });

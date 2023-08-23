@@ -1,7 +1,6 @@
 <script setup>
 import axios from "axios"; 
-import { reactive, ref, computed, onMounted, useAttrs } from 'vue';
-const attrs = useAttrs();
+import { reactive, ref, computed, onMounted } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2'
@@ -9,6 +8,9 @@ import Nomination from "./Nomination.vue";
 import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
@@ -32,7 +34,7 @@ let staffMembers = reactive([]);
 
 let fetchStaffMembers = async() => {
     try {
-        const resp = await axios.get('/api/getBookingOptions/' + attrs.auth.user.accountNo);
+        const resp = await axios.get('/api/getBookingOptions/' + user.value.accountNo);
         staffMembers = resp.data;
     } catch (error) {
         alert("Failed to load data: Please try again");
@@ -42,14 +44,12 @@ let fetchStaffMembers = async() => {
 
 const dataReady = ref(false);
 
-onMounted(() => {
-    attrs.$observe('auth', async function(val) {
-        if (!props.isEditing) {
-            await fetchNominations(attrs.auth.user.accountNo);
-        }
-        await fetchStaffMembers();
-        dataReady.value = true;
-    });
+onMounted(async () => {
+    if (!props.isEditing) {
+        await fetchNominations(user.value.accountNo);
+    }
+    await fetchStaffMembers();
+    dataReady.value = true;
 });
 
 function handleDropdownStaffSelection(selection) {
@@ -164,7 +164,7 @@ function cancelApplication() {
 
 function submitApplication() {
     let data = {
-        'accountNo': attrs.auth.user.accountNo,
+        'accountNo': user.value.accountNo,
         'selfNominateAll': selfNominateAll.value,
     }
 
