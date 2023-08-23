@@ -10,13 +10,6 @@ const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
 const attrs = useAttrs();
 
-onMounted(() => {
-    attrs.$observe('auth', async function(val) {
-        await fetchCalendarData(attrs.auth.user.accountNo);
-    });
-});
-
-
 let emit = defineEmits(['shrink-calendar']);
 
 const { mapCurrent } = useScreens({
@@ -31,6 +24,8 @@ const rows = computed(() => {
     return Math.max(Math.floor(rect.value?.height / 290), 1) || 1;
 });
 const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
+
+await fetchCalendarData(attrs.auth.user.accountNo);
 </script>
 <template>
     <div ref="divRef" class="bg-white rounded-md flex flex-col">

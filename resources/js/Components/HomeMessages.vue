@@ -10,14 +10,12 @@ let messageStore = useMessageStore();
 const { filteredMessages, viewing, unreadMessages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
-onMounted(() => {
-    attrs.$observe('auth', async function(val) {
-        fetchMessages(attrs.auth.user.accountNo);
-    });
-});
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
 let deadAreaColor = "#FFFFFF";
+
+await fetchMessages(attrs.auth.user.accountNo);
+
 </script>
 
 <template>
