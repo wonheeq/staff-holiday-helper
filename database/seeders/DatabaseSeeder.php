@@ -206,10 +206,13 @@ class DatabaseSeeder extends Seeder
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
-            // Ignore test line manager id too
-            if ($account->accountNo != $test_id && $account->accountNo != '000002L') {
+            // Generate simple messages that only have the option of acknowledge
+                // Messages of subject type Substitution Request, Application Awaiting Review and etc...
+                // will not work if they do not have the corresponding Nominations, Applications, and etc created
+            if ($account->accountNo != $test_id) {
                 Message::factory(10)->create([
                     'receiverNo' => $account['accountNo'],
+                    'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
                 ]);
             }
         }
