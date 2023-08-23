@@ -1,8 +1,8 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted } from 'vue';
-import { useScreens } from 'vue-screen-utils';
+import { ref, onMounted, computed } from 'vue';
+import { useScreens, useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 let calendarStore = useCalendarStore();
@@ -22,10 +22,15 @@ const { mapCurrent } = useScreens({
     '1440p': '2560px',
     '4k': '3840px',
 });
-const rows = mapCurrent({ '4k': 6, '1440p': 4, '1080p': 3 }, 2);
+const divRef = ref(null);
+const { rect } = useResizeObserver(divRef);
+const rows = computed(() => {
+    return Math.max(Math.floor(rect.value?.height / 290), 1) || 1;
+});
+const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
 </script>
 <template>
-    <div class="bg-white rounded-md flex flex-col">
+    <div ref="divRef" class="bg-white rounded-md flex flex-col">
         <div class="flex mx-4 mt-2 1440:mt-4 items-center">
             <button class="absolute">
                 <img src="/images/fullscreen-exit.svg"
@@ -39,7 +44,7 @@ const rows = mapCurrent({ '4k': 6, '1440p': 4, '1080p': 3 }, 2);
         </div>
         <Calendar
             :rows="rows"
-            :columns="4"
+            :columns="columns"
             borderless
             expanded
             transparent
