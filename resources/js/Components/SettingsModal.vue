@@ -12,6 +12,7 @@ let errors = reactive([]);
 let displaySuccess = ref(false);
 let buttonActive = ref(false);
 let password = reactive({
+    current: "",
     password: "",
     confirm: ""
 });
@@ -21,6 +22,10 @@ let fieldType = reactive({
         image: "/images/Eye_light.svg"
     },
     confirm: {
+        type: "password",
+        image: "/images/Eye_light.svg"
+    },
+    current: {
         type: "password",
         image: "/images/Eye_light.svg"
     },
@@ -45,6 +50,9 @@ const hasDigit = new RegExp("\\d");
 // Validate and push any error messages to the error array
 let validatePasswords = () => {
     errors.length = 0;
+    if (password.current == "") {
+        errors.push("Please enter your current password.");
+    }
 
     if (!hasUppercase.test(password.password)) {
         errors.push("Password must contain at least one uppercase letter.");
@@ -71,6 +79,8 @@ let validatePasswords = () => {
        errors.push("Passwords do not match.");
        buttonActive.value = false;
     }
+
+
     else if (password.password == password.confirm && errors.length == 0) {
        buttonActive.value = true;
     }
@@ -101,8 +111,10 @@ let resetView = () => {
 };
 
 async function handleReset() {
+    displaySuccess.value = false;
     await axios.post("/change-password", {
         accountNo: user.value.accountNo,
+        currentPassword: password.current,
         password: password.password,
         password_confirmation: password.confirm,
 
@@ -134,6 +146,19 @@ async function handleReset() {
             <form action="#" @submit.prevent="handleReset">
                 <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
                     <div class="w-full">
+                        <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Current Password:</p>
+                        <div class="flex items-center h-full w-full">
+                            <input v-model="password.current"
+                                class="w-full 4k:h-16 4k:text-2xl"
+                                :type="fieldType.password.type"
+                            >
+                            <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
+                                <img :src="fieldType.password.image"
+                                    class="h-full w-full">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pt-2 1440:pt-4 w-full">
                         <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
                         <div class="flex items-center h-full w-full">
                             <input v-model="password.password"
@@ -159,13 +184,20 @@ async function handleReset() {
                             </button>
                         </div>
                     </div>
-                    <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
+                    <div class="flex justify-center mb-2 mt-2 text-red-500 4k:text-xl text-center">
+                        <ul>
+                            <li v-for="error in errors.slice(0, 1)">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
                         <p class="text-xs 1440:text-base 4k:text-xl text-red-500 w-full text-center"
                             v-for="msg in errors"
                         >
                             {{ msg }}
                         </p>
-                    </div>
+                    </div> -->
                     <button class="w-full rounded py-2 1440:py-4 4k:py-6 mt-2 1440:mt-4 font-bold text-lg 1440:text-2xl 4k:text-4xl"
                         :class="{
                             'bg-blue-300': buttonActive,

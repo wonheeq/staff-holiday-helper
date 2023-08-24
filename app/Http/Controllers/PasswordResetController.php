@@ -104,21 +104,30 @@ class PasswordResetController extends Controller
      */
     public function homeStore(Request $request)
     {
+        // validate the request
         $request->validate([
             'accountNo' => 'required',
+            'currentPassword' => 'required',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // check if the current password is correct
+        $currentPassword = $request->only('currentPassword')['currentPassword'];
+        $user = Auth::user();
+        if (!(Hash::check($currentPassword, $user->password))) {
+            throw ValidationException::withMessages([
+                'email' => 'Current Password Incorrect.',
+            ]);
+        }
+
         $accountNo = $request->only('accountNo')['accountNo'];
         $password = $request->only('password')['password'];
-        $email = $accountNo . '@curtin.edu.au';
-        // $newToken = Str::random(255);
-        // $new_reset_token = DB::table('password_reset_tokens')->insert(
-        //     ['email' => $email, 'token' => $newToken]
-        // );
 
-        $user = Auth::user();
+        // Manually generate a new token (normally done by the method that sends the
+        // password reset email)
         $newToken = app('auth.password.broker')->createToken($user);
+
+        // Make a mock request to send to the normal reset controller
         $request = new Request([
             'token' => $newToken,
             'accountNo' => $accountNo,
