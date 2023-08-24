@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\AuthenticationController;
 
 
 /*
@@ -79,17 +80,17 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 
 Route::post(
     '/login',
-    [AuthController::class, 'authenticate']
+    [AuthenticationController::class, 'authenticate']
 )->name('login');
 
 Route::post(
     '/logout',
-    [AuthController::class, 'logout']
+    [AuthenticationController::class, 'logout']
 );
 
 Route::get(
     '/login/create',
-    [AuthController::class, 'create']
+    [AuthenticationController::class, 'create']
 );
 
 
@@ -105,6 +106,9 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'create']
 Route::post('/update-password', [PasswordResetController::class, 'store'])
     ->name('password.store');
 
+Route::post('/change-password', [PasswordResetController::class, 'homeStore'])
+
+    ->name('password.homeStore');
 /*
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

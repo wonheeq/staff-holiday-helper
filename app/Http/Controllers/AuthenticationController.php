@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
+class AuthenticationController extends Controller
 {
     // Route: /login
     // Type: POST
     // Handles a login request
-    public function authenticate(Request $request)
+    public function login(Request $request)
     {
         // checks if credentials in the request meet the rules
         // If it fails, returns 302 response
@@ -29,7 +29,6 @@ class AuthController extends Controller
         //with redirect to the home page.
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
             return redirect()->intended("/home");
         }
 
@@ -38,6 +37,7 @@ class AuthController extends Controller
             'customError' => 'Invalid Credentials'
         ]);
     }
+
 
 
     // Route: /logout
@@ -53,25 +53,6 @@ class AuthController extends Controller
         return response()->json([
             'response' => 'success',
             'url' => url('/'),
-        ]);
-    }
-
-
-
-    // Route: /login/create
-    // Type: GET
-    // temporary function to create a single user with known credentials,
-    // for testing purposes
-    public function create(Request $request)
-    {
-        DB::table('accounts')->insert([
-            'accountNo' => '123456c',
-            'accountType' => 'sysadmin',
-            'lName' => 'Smith',
-            'fName' => 'John',
-            'password' => Hash::make('testPassword7'),
-            'superiorNo' => '123456a',
-            'schoolId' => '101',
         ]);
     }
 }
