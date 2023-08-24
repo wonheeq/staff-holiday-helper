@@ -89,6 +89,7 @@ let validatePasswords = () => {
 // Watch password object for changes
 watch(password, () => {
     if( !(password.password == "" && password.confirm == "" && password.current == "")) {
+        displaySuccess.value = false;
         validatePasswords();
     }
 });
