@@ -1,7 +1,12 @@
 <script setup>
-import { ref, watch, reactive } from 'vue';
+import { ref, watch, reactive, computed } from 'vue';
 import Modal from './Modal.vue';
+import { usePage } from '@inertiajs/vue3'
+
 let emit = defineEmits(['close-settings']);
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 
 let errors = reactive([]);
 let displaySuccess = ref(false);
@@ -46,28 +51,28 @@ let validatePasswords = () => {
     }
 
     if (!hasLowercase.test(password.password)) {
-        errors.push("Password must contain at least one lowercase letter.");
-    }
-
-    if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
-        errors.push("Password length must be between 10 and 30.");
+       errors.push("Password must contain at least one lowercase letter.");
     }
 
     if (!hasDigit.test(password.password)) {
-        errors.push("Password must contain at least one number.");
+       errors.push("Password must contain at least one number.");
+    }
+
+    if (password.password.length < MIN_LENGTH || password.password.length > MAX_LENGTH) {
+       errors.push("Password length must be between 10 and 30.");
     }
 
     if (hasWhitespace.test(password.password)) {
-        errors.push("Password must not contain spaces.");
+       errors.push("Password must not contain spaces.");
     }
 
     // Check if passwords match and activate submit button if so
     if (password.password !== password.confirm) {
-        errors.push("Passwords do not match.");
-        buttonActive = false;
+       errors.push("Passwords do not match.");
+       buttonActive.value = false;
     }
     else if (password.password == password.confirm && errors.length == 0) {
-        buttonActive = true;
+       buttonActive.value = true;
     }
 };
 
@@ -94,6 +99,24 @@ let resetView = () => {
     fieldType.password.image = "/images/Eye_light.svg";
     fieldType.confirm.image = "/images/Eye_light.svg";
 };
+
+async function handleReset() {
+    await axios.post("/change-password", {
+        accountNo: user.value.accountNo,
+        password: password.password,
+        password_confirmation: password.confirm,
+
+    }).then( function(response) {
+        displaySuccess.value = true;
+        errors.length = 0;
+
+    }).catch(error => {
+        if(error.response) {
+            errors.push(error.response.data.message);
+        }
+    })
+}
+
 </script>
 <template>
     <Modal>
@@ -108,7 +131,7 @@ let resetView = () => {
                 />
                 </button>
             </div>
-            <form>
+            <form action="#" @submit.prevent="handleReset">
                 <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
                     <div class="w-full">
                         <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
@@ -149,7 +172,7 @@ let resetView = () => {
                             'bg-gray-300': !buttonActive
                         }"
                         :disabled="!buttonActive"
-                        @click.prevent="handleChangePassword()"
+                        type="submit"
                     >
                         Change Password
                     </button>

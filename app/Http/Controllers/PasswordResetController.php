@@ -13,6 +13,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PasswordResetController extends Controller
 {
@@ -102,6 +104,27 @@ class PasswordResetController extends Controller
      */
     public function homeStore(Request $request)
     {
-        dd($request);
+        $request->validate([
+            'accountNo' => 'required',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $accountNo = $request->only('accountNo')['accountNo'];
+        $password = $request->only('password')['password'];
+        $email = $accountNo . '@curtin.edu.au';
+        // $newToken = Str::random(255);
+        // $new_reset_token = DB::table('password_reset_tokens')->insert(
+        //     ['email' => $email, 'token' => $newToken]
+        // );
+
+        $user = Auth::user();
+        $newToken = app('auth.password.broker')->createToken($user);
+        $request = new Request([
+            'token' => $newToken,
+            'accountNo' => $accountNo,
+            'password' => $password,
+            'password_confirmation' => $password
+        ]);
+        $this->store($request);
     }
 }
