@@ -93,4 +93,15 @@ class PasswordResetController extends Controller
             'email' => [trans($status)],
         ]);
     }
+
+
+    /**
+     * Handle an incoming new password request from the HOME page
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function homeStore(Request $request)
+    {
+        dd($request);
+    }
 }
