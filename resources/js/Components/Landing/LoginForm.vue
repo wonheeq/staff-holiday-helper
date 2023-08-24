@@ -19,7 +19,6 @@ async function handleLogin() {
     // get csrf cookie
     await axios.get("/sanctum/csrf-cookie");
 
-    setUserId(formData.accountNo);
 
     formData.post(route('login'), {
         onFinish: () => formData.reset('password'),
