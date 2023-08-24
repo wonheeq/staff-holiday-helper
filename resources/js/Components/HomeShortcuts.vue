@@ -1,12 +1,12 @@
 <script setup>
 import Shortcut from './Shortcut.vue';
-
+import Swal from 'sweetalert2';
 let props = defineProps({ user: Object });
 
 let copyEmail = () => {
     let email = props.user.lineManager.id + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
-    alert("Email address copied to clipboard.");
+    Swal.fire("Email address copied to clipboard.");
 };
 </script>
 
@@ -16,7 +16,13 @@ let copyEmail = () => {
             <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl 4k:text-4xl">
                 <p>Welcome {{ props.user.name }},</p>
                 <p>Your line manager is currently {{ props.user['lineManager']['name'] }}
-                    <input @click="copyEmail" type="image" class="1440:h-8 4k:h-14 align-middle" src="/images/mail.svg" v-b-tooltip.hover title="Copy Email Address to Clipboard"/>
+                    <input @click="copyEmail"
+                        type="image"
+                        class="1440:h-8 4k:h-14 align-middle"
+                        src="/images/mail.svg"
+                        title="Copy Email Address to Clipboard"
+                        v-title
+                    />
                 </p>
             </div>
         </div>
