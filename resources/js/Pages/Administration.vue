@@ -28,9 +28,4 @@
     .screen {
         height: calc(93vh - 3rem);
     }
-    /*body {
-        background-image: url('/images/background.svg');
-        background-size: cover;
-        background-repeat: no-repeat;
-    }*/
 </style>
