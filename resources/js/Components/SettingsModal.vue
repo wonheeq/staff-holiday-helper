@@ -50,9 +50,7 @@ const hasDigit = new RegExp("\\d");
 // Validate and push any error messages to the error array
 let validatePasswords = () => {
     errors.length = 0;
-    if (password.current == "") {
-        errors.push("Please enter your current password.");
-    }
+
 
     if (!hasUppercase.test(password.password)) {
         errors.push("Password must contain at least one uppercase letter.");
@@ -77,9 +75,11 @@ let validatePasswords = () => {
     // Check if passwords match and activate submit button if so
     if (password.password !== password.confirm) {
        errors.push("Passwords do not match.");
-       buttonActive.value = false;
     }
 
+    else if (password.current == "") {
+        errors.push("Please enter your current password.");
+    }
 
     else if (password.password == password.confirm && errors.length == 0) {
        buttonActive.value = true;
@@ -88,26 +88,25 @@ let validatePasswords = () => {
 
 // Watch password object for changes
 watch(password, () => {
-    validatePasswords();
+    if( !(password.password == "" && password.confirm == "" && password.current == "")) {
+        validatePasswords();
+    }
 });
 
-let handleChangePassword = () => {
-    let pass = password.password;
-    alert(pass);
-    resetView();
-    displaySuccess = true;
-};
 
 let resetView = () => {
-    errors.length = 0;
     displaySuccess = false;
     buttonActive = false;
     password.password = "";
     password.confirm = "";
+    password.current = "";
+    errors.length = 0;
     fieldType.password.type = "password";
     fieldType.confirm.type = "password";
+    fieldType.current.type = "password";
     fieldType.password.image = "/images/Eye_light.svg";
     fieldType.confirm.image = "/images/Eye_light.svg";
+    fieldType.current.image = "/images/Eye_light.svg";
 };
 
 async function handleReset() {
@@ -120,13 +119,19 @@ async function handleReset() {
 
     }).then( function(response) {
         displaySuccess.value = true;
+        buttonActive = false;
+        password.password = "";
+        password.confirm = "";
+        password.current = "";
         errors.length = 0;
+
 
     }).catch(error => {
         if(error.response) {
             errors.push(error.response.data.message);
         }
     })
+
 }
 
 </script>
