@@ -26,7 +26,12 @@ use App\Http\Controllers\PasswordResetController;
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-})->name('login');
+});
+
+Route::get('/login', function () {
+    return Inertia::render('Landing', []);
+});
+
 
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
@@ -37,7 +42,7 @@ Route::middleware('auth:sanctum')->get('/home', function () {
 });
 
 
-Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
+Route::middleware('auth:sanctum')->get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
     return Inertia::render('Bookings', [
         'screenProp' => $screenProp
     ]);
@@ -61,7 +66,7 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     ]);
 });
 
-Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
+Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
     ]);
@@ -75,7 +80,7 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 Route::post(
     '/login',
     [AuthController::class, 'authenticate']
-);
+)->name('login');
 
 Route::post(
     '/logout',
@@ -99,9 +104,6 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'create']
 
 Route::post('/update-password', [PasswordResetController::class, 'store'])
     ->name('password.store');
-
-Route::post('/change-password', [PasswordResetController::class, 'homeStore'])
-    ->name('password.homeStore');
 
 /*
 Route::middleware('auth')->group(function () {
