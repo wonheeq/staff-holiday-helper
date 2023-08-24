@@ -80,7 +80,7 @@ Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, '
 
 Route::post(
     '/login',
-    [AuthenticationController::class, 'authenticate']
+    [AuthenticationController::class, 'login']
 )->name('login');
 
 Route::post(
