@@ -104,6 +104,7 @@ class PasswordResetController extends Controller
      */
     public function homeStore(Request $request)
     {
+        //dd($request);
         // validate the request
         $request->validate([
             'accountNo' => 'required',
