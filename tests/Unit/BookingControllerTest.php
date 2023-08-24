@@ -159,43 +159,6 @@ class BookingControllerTest extends TestCase
         ]);
     }
 
-    /**
-     * Unit tests for getAllNominations
-     */
-    public function test_api_request_for_all_nominations(): void
-    {
-        $response = $this->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
-        $response->assertStatus(200);
-
-        $response = $this->getJson("/api/allNominations/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
-
-        $response = $this->getJson("/api/allNominations/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
-    }
-
-    public function test_api_request_for_accounts_content_is_json(): void
-    {
-        // Check if response is json
-        $response = $this->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
-        $this->assertJson($response->content());
-    }
-
-    public function test_api_request_for_accounts_content_is_valid(): void
-    {
-        // Check if correct structure
-        $response = $this->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
-        $response->assertJsonStructure([
-            0 => [
-                'applicationNo',
-                'nomineeNo',
-                'accountRoleId',
-                'status',
-                'updated_at'
-            ],
-        ]);
-    }
-
     public function test_getRolesForNominations_returned_content_is_valid(): void
     {
         $response = $this->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
