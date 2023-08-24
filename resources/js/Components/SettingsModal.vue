@@ -119,13 +119,8 @@ async function handleReset() {
         password_confirmation: password.confirm,
 
     }).then( function(response) {
-        displaySuccess.value = true;
-        buttonActive = false;
-        password.password = "";
-        password.confirm = "";
-        password.current = "";
-        errors.length = 0;
-
+        resetView();
+        displaySuccess = true;
 
     }).catch(error => {
         if(error.response) {
