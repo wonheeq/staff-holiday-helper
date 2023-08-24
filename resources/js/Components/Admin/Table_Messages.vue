@@ -23,12 +23,12 @@ export default {
                 field: 'messageId',
                 },
                 {
-                label: 'Applination ID',
+                label: 'Application ID',
                 field: 'applicationNo',
                 },
                 {
                 label: 'Reciever ID',
-                field: 'recieverNo',
+                field: 'receiverNo',
  
                 },
                 {

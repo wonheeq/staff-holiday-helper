@@ -32,7 +32,7 @@ export default {
  
                 },
                 {
-                label: 'Other Names',
+                label: 'First/Other Names',
                 field: 'fName',
                 },
                 {
@@ -43,6 +43,10 @@ export default {
                 label: 'Line Manager',
                 field: 'superiorNo',
                 },
+                {
+                label: 'Created/Last Updated',
+                field: 'updated_at',
+                }
             ],
             accounts: [],
             tHeight: ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
