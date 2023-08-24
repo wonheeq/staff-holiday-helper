@@ -150,10 +150,10 @@ async function handleReset() {
                         <div class="flex items-center h-full w-full">
                             <input v-model="password.current"
                                 class="w-full 4k:h-16 4k:text-2xl"
-                                :type="fieldType.password.type"
+                                :type="fieldType.current.type"
                             >
-                            <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
-                                <img :src="fieldType.password.image"
+                            <button @click.prevent="switchVis(fieldType.current)" tabindex="-1" class="fixed right-5">
+                                <img :src="fieldType.current.image"
                                     class="h-full w-full">
                             </button>
                         </div>
