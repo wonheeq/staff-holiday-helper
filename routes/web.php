@@ -100,6 +100,9 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'create']
 Route::post('/update-password', [PasswordResetController::class, 'store'])
     ->name('password.store');
 
+Route::post('/change-password', [PasswordResetController::class, 'homeStore'])
+    ->name('password.homeStore');
+
 /*
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
