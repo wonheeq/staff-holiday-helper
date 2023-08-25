@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PasswordResetController extends Controller
 {
-
     // Request a password reset
     public function reset(Request $request)
     {
@@ -37,7 +36,6 @@ class PasswordResetController extends Controller
                 'status' => __($status),
             ]);
         }
-
 
         // exception if link is not sent
         throw ValidationException::withMessages([

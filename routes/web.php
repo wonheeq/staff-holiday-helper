@@ -76,7 +76,7 @@ Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string 
 Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, 'sendEmail']);
 
 
-// ----------------------AUTHENTICATION RELATED ROUTES-------------------------
+// ----------------------AUTHENTICATION RELATED ROUTES------------------------- //
 
 Route::post(
     '/login',
