@@ -64,7 +64,6 @@ class AuthenticationController extends Controller
     public function reset(Request $request)
     {
         $request->validate([
-            // 'email' => 'required|email',
             'accountNo' => 'required'
         ]);
 
