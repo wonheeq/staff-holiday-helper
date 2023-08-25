@@ -64,7 +64,8 @@ class AuthenticationController extends Controller
     public function reset(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            // 'email' => 'required|email',
+            'accountNo' => 'required'
         ]);
 
         // Attempt to generate a token and send a link to the user
@@ -79,7 +80,7 @@ class AuthenticationController extends Controller
 
         // Throw exception if something fails
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            'accountNo' => [trans($status)],
         ]);
     }
 
