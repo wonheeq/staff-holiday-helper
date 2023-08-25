@@ -12,9 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // delete password reset tokens every hour
-        // $schedule->command('auth:clear-resets')->hourly();
-        $schedule->command('auth:clear-resets')->everyFifteenSeconds();
+        // delete expired password reset tokens every hour
+        $schedule->command('auth:clear-resets')->hourly();
     }
 
     /**
