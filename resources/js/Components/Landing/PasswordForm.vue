@@ -12,15 +12,15 @@
             <!-- Password Input 1 -->
             <div class="mb-5">
                 <landing-input
-                v-model="passOne" title="New Password" inType="passwordType" >
-            </landing-input>
+                    v-model="passOne" title="New Password" inType="passwordType" >
+                </landing-input>
             </div>
 
             <!-- Password Input 2 -->
             <div class="mb-5">
                 <landing-input
-                v-model="passTwo" title="Confirm New Password" inType="passwordType" >
-            </landing-input>
+                    v-model="passTwo" title="Confirm New Password" inType="passwordType" >
+                </landing-input>
             </div>
 
             <!-- Reset Button -->
@@ -78,6 +78,7 @@ const props = defineProps({
 
 
 async function handleReset() {
+
     await axios.post("/update-password", {
         token: props.token,
         accountNo: props.accountNo,
