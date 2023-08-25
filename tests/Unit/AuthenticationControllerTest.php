@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-// use PHPUnit\Framework\TestCase;
 use Tests\TestCase;
 use App\Models\Account;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticationControllerTest extends TestCase
 {
