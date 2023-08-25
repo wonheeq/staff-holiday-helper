@@ -64,7 +64,6 @@ import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
-
 const props = defineProps({
     accountNo: {
         type: String,
@@ -88,6 +87,8 @@ async function handleReset() {
     }).then( function(response) {
         showConf.value = true;
         errors.length = 0;
+        buttonActive.value = false;
+
 
     }).catch(error => {
         if(error.response) {
