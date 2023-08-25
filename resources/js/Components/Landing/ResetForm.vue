@@ -14,7 +14,7 @@ const isLoading = ref(false);
 async function handleReset() {
     staffEmail.value = staffID.value + '@curtin.edu.au';
 
-    await axios.post("reset-password", {
+    await axios.post("/reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
 

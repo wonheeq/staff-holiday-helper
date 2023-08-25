@@ -22,6 +22,7 @@ class PasswordResetController extends Controller
     // Request a password reset
     public function reset(Request $request)
     {
+        // dd('here');
         $request->validate([
             'email' => 'required|email',
         ]);

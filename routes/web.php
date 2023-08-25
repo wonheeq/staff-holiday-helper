@@ -88,10 +88,14 @@ Route::get(
 );
 
 
+// Route::post(
+//     '/reset-password',
+//     [PasswordResetController::class, 'reset']
+// )->middleware('guest')->name('password.email');
 Route::post(
     '/reset-password',
     [PasswordResetController::class, 'reset']
-)->middleware('guest')->name('password.email');
+)->name('password.email');
 
 
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
