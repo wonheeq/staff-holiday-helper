@@ -1,11 +1,3 @@
-<!--
-    File: LandingInput.vue
-    Purpose: Custom Input component for use in Landing.Vue and its children
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
  <template>
     <!-- Text Input -->
     <div v-if="inType === 'textType'" class="mb-5">
