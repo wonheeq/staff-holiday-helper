@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, reactive, computed } from 'vue';
+import { ref, watch, reactive, computed, onUpdated } from 'vue';
 import Modal from './Modal.vue';
 import { usePage } from '@inertiajs/vue3'
 
@@ -82,14 +82,14 @@ let validatePasswords = () => {
     }
 
     else if (password.password == password.confirm && errors.length == 0) {
-       buttonActive.value = true;
+       buttonActive = true;
     }
 };
 
 // Watch password object for changes
 watch(password, () => {
     if( !(password.password == "" && password.confirm == "" && password.current == "")) {
-        displaySuccess.value = false;
+        displaySuccess = false;
         validatePasswords();
     }
 });
@@ -111,7 +111,7 @@ let resetView = () => {
 };
 
 async function handleReset() {
-    displaySuccess.value = false;
+    displaySuccess = false;
     await axios.post("/change-password", {
         accountNo: user.value.accountNo,
         currentPassword: password.current,
@@ -127,8 +127,11 @@ async function handleReset() {
             errors.push(error.response.data.message);
         }
     })
-
 }
+
+onUpdated(() => {
+    resetView();
+})
 
 </script>
 <template>
