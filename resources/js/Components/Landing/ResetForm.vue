@@ -18,7 +18,7 @@ async function handleReset() {
     staffEmail.value = staffID.value + '@curtin.edu.au'; // build email
 
     // post to request reset email.
-    await axios.post("reset-password", {
+    await axios.post("/reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
 
@@ -31,10 +31,8 @@ async function handleReset() {
         // comment below out to remove error message popup.
         if(error.response) {
             // fixing errors cause of laravel backend jank.
-            if( (error.response.data.message) === "The email field must be a valid email address."){
-                errorMsg.value = "Invalid Staff ID."
-            }
-            else if((error.response.data.message) === "We can't find a user with that email address."){
+            if( ((error.response.data.message) === "The email field must be a valid email address.") ||
+                ((error.response.data.message) === "We can't find a user with that email address.")) {
                 errorMsg.value = "Invalid Staff ID."
             }
             else {
