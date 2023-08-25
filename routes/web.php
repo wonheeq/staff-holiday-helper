@@ -93,22 +93,38 @@ Route::get(
     [AuthenticationController::class, 'create']
 );
 
-
 Route::post(
     '/reset-password',
-    [PasswordResetController::class, 'reset']
+    [AuthenticationController::class, 'reset']
 )->middleware('guest')->name('password.email');
 
 
-Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
+Route::get('/reset-password/{token}', [AuthenticationController::class, 'create'])
     ->name('password.reset');
 
-Route::post('/update-password', [PasswordResetController::class, 'store'])
+Route::post('/update-password', [AuthenticationController::class, 'store'])
     ->name('password.store');
 
-Route::post('/change-password', [PasswordResetController::class, 'homeStore'])
+Route::post('/change-password', [AuthenticationController::class, 'homeStore'])
 
     ->name('password.homeStore');
+
+
+// Route::post(
+//     '/reset-password',
+//     [PasswordResetController::class, 'reset']
+// )->middleware('guest')->name('password.email');
+
+
+// Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
+//     ->name('password.reset');
+
+// Route::post('/update-password', [PasswordResetController::class, 'store'])
+//     ->name('password.store');
+
+// Route::post('/change-password', [PasswordResetController::class, 'homeStore'])
+
+//     ->name('password.homeStore');
 /*
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
