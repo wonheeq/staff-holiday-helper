@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, reactive, computed, onUpdated } from 'vue';
+import { ref, watch, reactive, computed, } from 'vue';
 import Modal from './Modal.vue';
 import { usePage } from '@inertiajs/vue3'
 
@@ -128,10 +128,6 @@ async function handleReset() {
         }
     })
 }
-
-onUpdated(() => {
-    resetView();
-})
 
 </script>
 <template>
