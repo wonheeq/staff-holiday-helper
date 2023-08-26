@@ -40,7 +40,7 @@ onMounted(() => {
                 @click="viewing = 'all'"
                 :class="{
                 'border-black font-bold border-2': viewing === 'all',
-                'border-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
+                'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
                 }"
                 class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
                     All ({{ messages.length }})
@@ -49,7 +49,7 @@ onMounted(() => {
                 @click="viewing = 'unread'"
                 :class="{
                 'border-black font-bold border-2': viewing === 'unread',
-                'border-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
+                'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
                 }"
                 class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
                     Unacknowleged ({{ unreadMessages.length }})
