@@ -84,7 +84,7 @@ function handleEditApplication() {
                     <p class="font-medium">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
                         <p v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} - [{{ nomination.accountNo }}@curtin.edu.au]    {{ nomination.task }}
+                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]    {{ nomination.task }}
                         </p>
                         <p v-if="nomination.nomineeNo == user.accountNo">
                             → Self Nominated    {{ nomination.task }}
