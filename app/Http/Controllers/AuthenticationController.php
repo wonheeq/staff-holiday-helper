@@ -63,6 +63,7 @@ class AuthenticationController extends Controller
     // Function: Request a password reset token + email
     public function reset(Request $request)
     {
+        // dd('here');
         $request->validate([
             'accountNo' => 'required'
         ]);

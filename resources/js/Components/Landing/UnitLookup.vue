@@ -31,7 +31,6 @@ async function handleSearch() {
     }).catch(error => {
         if(error.response) {
             errorMsg.value = "Please enter a valid unit ID";
-            console.log(error);
         }
     });
 }

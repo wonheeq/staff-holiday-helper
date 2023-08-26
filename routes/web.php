@@ -96,6 +96,10 @@ Route::get(
 );
 
 
+// Route::post(
+//     '/reset-password',
+//     [PasswordResetController::class, 'reset']
+// )->middleware('guest')->name('password.email');
 Route::post(
     '/reset-password',
     [AuthenticationController::class, 'reset']
