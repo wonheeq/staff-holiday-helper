@@ -2,53 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Validation\Rules;
+use Inertia\Inertia;
 
-class PasswordResetController extends Controller
+
+class AuthenticationController extends Controller
 {
+    // Route: /login
+    // Type: POST
+    // Function: Processes a login request
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'accountNo' => ['required'],
+            'password' => ['required'],
+        ]);
 
-    // Request a password reset
+        // Validate credentials, create a session and redirect the user to the home page
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended("/home");
+        }
+
+        // If credentials could not be validated, redirect them back with an error
+        return redirect()->back()->with([
+            'customError' => 'Invalid Credentials'
+        ]);
+    }
+
+
+
+    // Route: /logout
+    // Type: POST
+    // Function: Logs out the currently authenticated user
+    public function logout(Request $request)
+    {
+        // Logs out the user, and invalidates their CSRF token.
+        // then redirects them back to the landing page
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return response()->json([
+            'response' => 'success',
+            'url' => url('/'),
+        ]);
+    }
+
+
+
+    // Route: /reset-password
+    // Type: POST
+    // Function: Request a password reset token + email
     public function reset(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'accountNo' => 'required'
         ]);
 
-        // send link
+        // Attempt to generate a token and send a link to the user
         $status = Password::sendResetLink(
             $request->only('accountNo')
         );
-
-        // check if link sent
         if ($status == Password::RESET_LINK_SENT) {
             return response()->json([
                 'status' => __($status),
             ]);
         }
 
-
-        // exception if link is not sent
+        // Throw exception if something fails
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            'accountNo' => [trans($status)],
         ]);
     }
 
 
-    /**
-     * Display the password reset view.
-     */
+
+    // Route: /login/create
+    // Type: GET
+    // Function: render the password reset page, passing it the necessary paramters
     public function create(Request $request): Response
     {
         return Inertia::render('Reset', [
@@ -57,11 +96,11 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming new password request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+
+
+    // Route: /update-password
+    // Type: POST
+    // Purpose: Attempt to reset a users password
     public function store(Request $request)
     {
         $request->validate([
@@ -70,15 +109,13 @@ class PasswordResetController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        //attempt password reset
+        // Attempt password reset
         $status = Password::reset(
             $request->only('accountNo', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
                 $user->forceFill([
                     'password' => Hash::make($request->password),
-                    // 'remember_token' => Str::random(60),
                 ])->save();
-
                 event(new PasswordReset($user));
             }
         );
@@ -97,15 +134,13 @@ class PasswordResetController extends Controller
     }
 
 
-    /**
-     * Handle an incoming new password request from the HOME page
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+
+    // Route: /change-password
+    // Type: POST
+    // Purpose: Handle a password reset from the home page, where the user has not come
+    //          from an email, and therefore does not already have a token generated.
     public function homeStore(Request $request)
     {
-        //dd($request);
-        // validate the request
         $request->validate([
             'accountNo' => 'required',
             'currentPassword' => 'required',
