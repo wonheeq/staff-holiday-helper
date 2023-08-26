@@ -1,11 +1,3 @@
-<!--
-    File: LandingInput.vue
-    Purpose: Custom Input component for use in Landing.Vue and its children
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
  <template>
     <!-- Text Input -->
     <div v-if="inType === 'textType'" class="mb-5">
@@ -21,20 +13,16 @@
     <!-- Password Input -->
     <div v-if="inType === 'passwordType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
-        <div class="flex justify-between border border-solid border-black ">
+        <div class="flex border border-solid items-center border-black ">
             <input
                 class="border-none w-full 4k:text-xl"
-                :type="fieldType"
+                :type="fieldType.type"
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button v-if="fieldType === 'password'" @click="switchVis">
-                <img src="/images/Eye_light.svg" class="mr-5 ml-5">
-            </button>
-
-            <button v-if="fieldType === 'text'" @click="switchVis">
-                <img src="/images/Eye_fill.svg" class="mr-5 ml-5">
+            <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
+                <img :src="fieldType.image" class="">
             </button>
         </div>
 
@@ -52,15 +40,19 @@ modelValue: { type: String, default: "" }
 
 
 // Function to toggle masking for the password input
-let fieldType = ref("password");
-function switchVis() {
-if ( fieldType.value == "password" ) {
-    fieldType.value = "text";
-} else {
-    fieldType.value = "password";
-}
-}
-
+let fieldType = reactive({
+    type: "password",
+    image: "/images/Eye_light.svg"
+});
+let switchVis = () => {
+    if (fieldType.type === "password" ) {
+        fieldType.type = "text";
+        fieldType.image = "/images/Eye_fill.svg";
+    } else {
+        fieldType.type = "password";
+        fieldType.image = "/images/Eye_light.svg";
+    }
+};
 </script>
 
 

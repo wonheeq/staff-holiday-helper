@@ -28,17 +28,9 @@ async function handleSearch() {
 
     }).then( function(response) {
         emit("gotResults", response);
-
-        // email.value = response.data.email;
-        // name.value = response.data.name;
-        // unitName.value = response.data.unitName;
-        // unitId.value = response.data.unitId;
-        // emit("gotResults", unitId.value, unitName.value, email.value, name.value);
-
     }).catch(error => {
         if(error.response) {
             errorMsg.value = "Please enter a valid unit ID";
-            console.log(error);
         }
     });
 }

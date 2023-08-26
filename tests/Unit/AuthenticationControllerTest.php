@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-class PasswordResetControllerTest extends TestCase
+class AuthenticationControllerTest extends TestCase
 {
     protected function setup(): void
     {
         parent::setup();
 
-        // insert  temporary accounts into Database for testing
+        // insert  temporary account into Database for testing
         DB::table('accounts')->insert([
             'accountNo' => 'AAAAAA1',
             'accountType' => fake()->randomElement(['staff', 'lmanager', 'sysadmin']),
@@ -35,6 +35,70 @@ class PasswordResetControllerTest extends TestCase
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
 
         parent::teardown();
+    }
+
+
+
+    // Test for correct behaviour when loggin in with no credentials
+    public function test_login_invalid_credentials(): void
+    {
+        // create request with credentials, test for correct 302 response
+        // should be redirect back to the same page
+        $response = $this->post('/login', [
+            'accountNo' => 'invalidNo',
+            'password' => 'invalidPass'
+        ])->assertStatus(302);
+
+        // Test that content returned contains 'Redirecting'
+        $this->assertTrue(str_contains($response->content(), "Redirecting"));
+    }
+
+
+
+    // Test for correct behaviour when logging in with no credentials
+    public function test_login_no_credentials(): void
+    {
+        // create empty request, test for correct 302 response
+        // (Credential validation failed)
+        $response = $this->post('/login', [
+            'accountNo' => null,
+            'password' => null,
+        ])->assertStatus(302);
+    }
+
+
+
+    // Test for correct behaviour when logging in with valid credentials
+    public function test_login_valid_credentials(): void
+    {
+        // test for correct 302 response
+        $response = $this->post('/login', [
+            'accountNo' => 'AAAAAA1',
+            'password' => 'knownPassword1'
+        ])->assertStatus(302);
+
+        // Test that content returned contains 'Redirecting'
+        $this->assertTrue(str_contains($response->content(), "Redirecting"));
+
+        // Test that content returned contains '/home'
+        $this->assertTrue(str_contains($response->content(), "/home"));
+    }
+
+
+
+    // Test for correct behaviour when logging out
+    public function test_logout(): void
+    {
+        $response = $this->post('/logout')->assertStatus(200);
+
+        // test that json is being returned
+        $this->assertJson($response->content());
+
+        // test that Json contains the fail with the correct message
+        $response->assertJson([
+            'response' => 'success',
+            'url' => 'http://localhost',
+        ]);
     }
 
 
@@ -109,6 +173,8 @@ class PasswordResetControllerTest extends TestCase
         ])->assertStatus(200);
     }
 
+
+
     // Test for correct behaviour when requesting a password reset from the HOME page
     // with no credentials
     public function test_home_reset_no_credentials(): void
@@ -127,6 +193,8 @@ class PasswordResetControllerTest extends TestCase
             'password_confirmation' => ''
         ])->assertStatus(302);
     }
+
+
 
     // Test for correct behaviour when requesting a password reset from the HOME page
     // with no credentials
@@ -147,6 +215,10 @@ class PasswordResetControllerTest extends TestCase
         ])->assertStatus(302);
     }
 
+
+
+    // Test for correct behaviour when resetting your password from the home page,
+    // where the current password is incorrect
     public function test_home_reset_current_password_wrong(): void
     {
         // create fake user

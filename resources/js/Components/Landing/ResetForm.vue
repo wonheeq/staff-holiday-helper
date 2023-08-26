@@ -12,79 +12,80 @@ const isLoading = ref(false);
 
 
 async function handleReset() {
+    errorMsg.value = ''; // reset message
     showConf.value = false;
-    staffEmail.value = staffID.value + '@curtin.edu.au';
+    isLoading.value = true;
 
+    // post to request reset email.
     await axios.post("/reset-password", {
-        email: staffEmail.value,
         accountNo: staffID.value,
 
-    }).then( function(response) {
+    }).then(function (response) { // success response
+        isLoading.value = false;
         showConf.value = true;
 
-    }).catch(error => {
-        if(error.response) {
-            let msg = error.response.data.message;
-            if( msg == "The email field must be a valid email address.") {
-                errorMsg.value = 'Please enter your staff ID.'
-            }
-            else if( msg == "We can't find a user with that email address.") {
-                errorMsg.value = 'Invalid staff ID'
+    }).catch(error => { // fail response
+        isLoading.value = false;
+        // comment below out to remove error message popup.
+        if (error.response) {
+            // fixing errors cause of laravel backend jank.
+            if (((error.response.data.message) === "The email field must be a valid email address.") ||
+                ((error.response.data.message) === "We can't find a user with that email address.")) {
+                errorMsg.value = "Invalid Staff ID."
             }
             else {
                 errorMsg.value = error.response.data.message;
             }
         }
     })
+    // uncomment below to show conf regardless of if id was correct.
+    // showConf.value = true;
 }
 </script>
 
 <template>
-<div class="w-screen h-screen flex flex-col justify-center items-center ">
-    <!-- Box/White Area -->
-    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+    <div class="w-screen h-screen flex flex-col justify-center items-center ">
+        <!-- Box/White Area -->
+        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
-        <!-- Logo -->
-        <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
+            <!-- Logo -->
+            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5">
 
-        <form action="#" @submit.prevent="handleReset">
-            <!-- Staff ID -->
-            <div class="mb-5">
-                <landing-input
-                    title="Staff ID"
-                    v-model="staffID"
-                    inType="textType" >
-                </landing-input>
+            <form action="#" @submit.prevent="handleReset">
+                <!-- Staff ID -->
+                <div class="mb-5">
+                    <landing-input title="Staff ID" v-model="staffID" inType="textType">
+                    </landing-input>
+                </div>
+
+                <!-- Reset Button -->
+                <button :disabled="isLoading" type="submit" class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2">
+                    <spinner v-show="isLoading"></spinner>
+                    <div :class="{ 'invisible': isLoading }">
+                        Reset Password
+                    </div>
+                </button>
+            </form>
+
+            <!-- Error Message -->
+            <div class="flex justify-center text-center mb-2">
+                <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
             </div>
 
-            <!-- Reset Button -->
-            <button
-                :disabled="isLoading"
-                type="submit"
-                class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
-            >Reset Password</button>
-        </form>
-
-        <!-- Error Message -->
-        <div class="flex justify-center text-center mb-2">
-            <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
+            <!-- Back Button -->
+            <div class="flex justify-between">
+                <button @click="$emit('resetBack')" class="underline font-bold 4k:text-xl">Back to Login</button>
+            </div>
         </div>
 
-        <!-- Back Button -->
-        <div class="flex justify-between">
-            <button @click="$emit('resetBack')" class="underline font-bold 4k:text-xl">Back to Login</button>
+        <!-- Confirmation Popup -->
+        <div v-show="showConf === true" class="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+            <p class="text-center">A confirmation email has been sent to the email address linked to
+                this account if it exists!</p>
+            <p class="text-center">Please follow the steps in the email to proceed with the password
+                reset</p>
         </div>
     </div>
-
-    <!-- Confirmation Popup -->
-    <div v-show="showConf === true"
-        class ="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
-        <p class="text-center">A confirmation email has been sent to the email address linked to
-                               this account if it exists!</p>
-        <p class="text-center">Please follow the steps in the email to proceed with the password
-                               reset</p>
-    </div>
-</div>
 </template>
 
 

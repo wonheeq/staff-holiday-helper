@@ -12,15 +12,15 @@
             <!-- Password Input 1 -->
             <div class="mb-5">
                 <landing-input
-                v-model="passOne" title="New Password" inType="passwordType" >
-            </landing-input>
+                    v-model="passOne" title="New Password" inType="passwordType" >
+                </landing-input>
             </div>
 
             <!-- Password Input 2 -->
             <div class="mb-5">
                 <landing-input
-                v-model="passTwo" title="Confirm New Password" inType="passwordType" >
-            </landing-input>
+                    v-model="passTwo" title="Confirm New Password" inType="passwordType" >
+                </landing-input>
             </div>
 
             <!-- Reset Button -->
@@ -64,7 +64,6 @@ import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import { ref, watch, reactive } from "vue";
 
-
 const props = defineProps({
     accountNo: {
         type: String,
@@ -78,6 +77,7 @@ const props = defineProps({
 
 
 async function handleReset() {
+
     await axios.post("/update-password", {
         token: props.token,
         accountNo: props.accountNo,
@@ -87,6 +87,8 @@ async function handleReset() {
     }).then( function(response) {
         showConf.value = true;
         errors.length = 0;
+        buttonActive.value = false;
+
 
     }).catch(error => {
         if(error.response) {
