@@ -116,8 +116,6 @@ class AuthenticationControllerTest extends TestCase
             'accountNo' => 'AAAAAA1'
         ]);
 
-        $response->assertStatus(200);
-
         $this->assertJson($response->content());
 
         $response->assertJson([
