@@ -87,19 +87,19 @@ return [
 
     'passwords' => [
 
-        // 'accounts' => [
-        //     'provider' => 'users',
-        //     'table' => 'password_reset_tokens',
-        //     'expire' => 60,
-        //     'throttle' => 300,
-        // ],
-
         'accounts' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 1,
+            'expire' => 60,
             'throttle' => 300,
         ],
+
+        // 'accounts' => [
+        //     'provider' => 'users',
+        //     'table' => 'password_reset_tokens',
+        //     'expire' => 1,
+        //     'throttle' => 300,
+        // ],
     ],
 
     /*
