@@ -12,19 +12,28 @@ const isLoading = ref(false);
 
 
 async function handleReset() {
+    showConf.value = false;
     staffEmail.value = staffID.value + '@curtin.edu.au';
 
-    await axios.post("reset-password", {
+    await axios.post("/reset-password", {
         email: staffEmail.value,
         accountNo: staffID.value,
 
     }).then( function(response) {
         showConf.value = true;
-        errorMsg.value = '';
 
     }).catch(error => {
         if(error.response) {
-            errorMsg.value = error.response.message;
+            let msg = error.response.data.message;
+            if( msg == "The email field must be a valid email address.") {
+                errorMsg.value = 'Please enter your staff ID.'
+            }
+            else if( msg == "We can't find a user with that email address.") {
+                errorMsg.value = 'Invalid staff ID'
+            }
+            else {
+                errorMsg.value = error.response.data.message;
+            }
         }
     })
 }
