@@ -1,21 +1,21 @@
 <script setup>
 import Shortcut from './Shortcut.vue';
 import Swal from 'sweetalert2';
-let props = defineProps({ user: Object });
+let props = defineProps({ welcomeData: Object });
 
 let copyEmail = () => {
-    let email = props.user.lineManager.id + "@curtin.edu.au";
+    let email = props.welcomeData.lineManager.id + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
     Swal.fire("Email address copied to clipboard.");
 };
 </script>
 
 <template>
-    <div class="flex flex-col items-center" v-if="props.user">
+    <div class="flex flex-col items-center" v-if="props.welcomeData">
         <div class="flex flex-row">
             <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl 4k:text-4xl">
-                <p>Welcome {{ props.user.name }},</p>
-                <p>Your line manager is currently {{ props.user['lineManager']['name'] }}
+                <p>Welcome {{ props.welcomeData.name }},</p>
+                <p>Your line manager is currently {{ props.welcomeData['lineManager']['name'] }}
                     <input @click="copyEmail"
                         type="image"
                         class="1440:h-8 4k:h-14 align-middle"

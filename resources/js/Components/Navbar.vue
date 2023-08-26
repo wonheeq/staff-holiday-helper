@@ -1,9 +1,6 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
-import { useUserStore } from '@/stores/UserStore';
-const userStore = useUserStore();
-const { setUserId } = userStore;
 
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
@@ -32,7 +29,6 @@ async function handleLogout() {
     await axios.post("/logout").then(
         function(response) {
             if( response.data.response == "success") {
-                setUserId(null);
                 window.location.href = response.data.url;
             }
         }

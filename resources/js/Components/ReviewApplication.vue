@@ -1,17 +1,15 @@
 <script setup>
 import Modal from '@/Components/Modal.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import NomineeDropdown from '@/Components/Bookings/NomineeDropdown.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/stores/UserStore';
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let deadAreaColor = "#FFFFFF";
-
 let props = defineProps({
     data: Object,
 });
@@ -43,7 +41,7 @@ function handleSelection(selection) {
 
 function handleApproveApp() {
     let data = {
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
     };   
     axios.post('/api/acceptApplication', data)
@@ -77,7 +75,7 @@ function handleApproveApp() {
 
 function handleRejectApp() {
     let data = {
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
         'rejectReason': rejectReason.value
     };   

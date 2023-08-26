@@ -1,18 +1,16 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from "vue";
 import { useScreens, useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
-
-onMounted(() => {
-    fetchCalendarData();
-});
-
 
 let emit = defineEmits(['shrink-calendar']);
 
@@ -28,6 +26,10 @@ const rows = computed(() => {
     return Math.max(Math.floor(rect.value?.height / 290), 1) || 1;
 });
 const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
+
+onMounted(() => {
+    fetchCalendarData(user.value.accountNo);
+})
 </script>
 <template>
     <div ref="divRef" class="bg-white rounded-md flex flex-col">

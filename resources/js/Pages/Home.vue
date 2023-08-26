@@ -7,30 +7,24 @@ import HomeMessages from "@/Components/HomeMessages.vue";
 import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from "@/stores/UserStore";
-let userStore = useUserStore();
-let { userId } = storeToRefs(userStore);
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, computed } from "vue";
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 
-let user = reactive([]);
+let welcomeData = reactive([]);
 let dataReady = ref(false);
-
-onMounted(async () => {
-    await fetchWelcomeMessageData();
-    dataReady.value = true;
-})
 
 let fetchWelcomeMessageData = async() => {
     try {
-        const resp = await axios.get("/api/getWelcomeMessageData/" + userId.value);
-        user = resp.data;
+        const resp = await axios.get("/api/getWelcomeMessageData/" + user.value.accountNo);
+        welcomeData = resp.data;
+        dataReady.value = true;
     } catch (error) {
         alert("Failed to load data: Please try again");
         console.log(error);
     }
 }
-
 
 let showNominationModal = ref(false);
 let nominationModalData = reactive([]);
@@ -44,7 +38,7 @@ async function handleAcceptSomeNominations(message) {
 let fetchRoles = async() => {
     try {
         let data = {
-            'accountNo': userId.value,
+            'accountNo': user.value.accountNo,
             'applicationNo': nominationModalData.applicationNo,
         };
         const resp = await axios.post('/api/getRolesForNominee', data);
@@ -71,7 +65,7 @@ async function handleReviewApplication(message) {
 
 let fetchApplicationForReview = async(message) => {
     try {
-        const resp = await axios.get('/api/getApplicationForReview/' + userId.value + "/" + message.applicationNo);
+        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + message.applicationNo);
         reviewAppModalData = resp.data;
         reviewAppModalData.message = message;
     } catch (error) {
@@ -86,13 +80,16 @@ function handleCloseReviewApp() {
 }
 
 let calendarLarge = ref(false);
+
+
+fetchWelcomeMessageData();
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
             <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4" v-if="dataReady">
-                <HomeShortcuts :user="user" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
+                <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                 <HomeMessages
                     class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
                     @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"

@@ -1,13 +1,12 @@
 <script setup>
 import ApplicationInfoOptions from './ApplicationInfoOptions.vue';
 import ApplicationNominationData from './ApplicationNominationData.vue';
-import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/stores/UserStore';
+import { ref, computed } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let props = defineProps({ source: Object });
 let emit = defineEmits(['cancelApplication', 'editApplication']);
 const statusText = {
@@ -50,7 +49,7 @@ async function handleCancelApplication() {
         cancelButtonText: "No, do not cancel it",
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.get("/api/cancelApplication/" + userId.value + "/" + props.source.applicationNo)
+            axios.get("/api/cancelApplication/" + user.value.accountNo + "/" + props.source.applicationNo)
             .then((response) => {
                 if (response.status == 200) {
                     emit('cancelApplication');
@@ -84,10 +83,10 @@ function handleEditApplication() {
                 <div>
                     <p class="font-medium">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p v-if="nomination.nomineeNo != userId">
-                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]    {{ nomination.task }}
+                        <p v-if="nomination.nomineeNo != user.accountNo">
+                            → {{ nomination.name }} - [{{ nomination.accountNo }}@curtin.edu.au]    {{ nomination.task }}
                         </p>
-                        <p v-if="nomination.nomineeNo == userId">
+                        <p v-if="nomination.nomineeNo == user.accountNo">
                             → Self Nominated    {{ nomination.task }}
                         </p>
                     </div>

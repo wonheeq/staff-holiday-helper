@@ -1,10 +1,10 @@
 <script setup>
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/stores/UserStore';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let props = defineProps({
     source: Object,
 });
@@ -22,7 +22,7 @@ function handleAcknowledgeMessage() {
 
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
     };
 
     axios.post('/api/acknowledgeMessage', data)
@@ -41,7 +41,7 @@ processes the data and sends it to the acceptNominations method in the backend
 function handleAcceptAll() {
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.source.applicationNo,
     };
     axios.post('/api/acceptNominations', data)
@@ -84,7 +84,7 @@ processes the data and sends it to the rejectNominations method in the backend
 function handleReject() {
     let data = {
         'messageId': props.source.messageId,
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
         'applicationNo': props.source.applicationNo,
     };
     axios.post('/api/rejectNominations', data)

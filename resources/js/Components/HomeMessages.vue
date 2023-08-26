@@ -3,18 +3,23 @@ import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let messageStore = useMessageStore();
 const { filteredMessages, viewing, unreadMessages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
-onMounted(() => {
-    fetchMessages();
-});
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
 let deadAreaColor = "#FFFFFF";
+
+onMounted(() => {
+    fetchMessages(user.value.accountNo);
+});
+
 </script>
 
 <template>

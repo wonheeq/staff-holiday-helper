@@ -1,18 +1,17 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
-import { storeToRefs } from 'pinia';
-import { useUserStore } from "@/stores/UserStore";
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let deadAreaColor = "#FFFFFF";
 
 let substitutions = [];
 
 let fetchSubstitutions = async() => {
     try {
-        const resp = await axios.get('/api/getSubstitutionsForUser/' + userId.value);
+        const resp = await axios.get('/api/getSubstitutionsForUser/' + user.value.accountNo);
         substitutions = resp.data;
     } catch (error) {
         alert("Failed to load data: Please try again");
