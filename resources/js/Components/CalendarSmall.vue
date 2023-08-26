@@ -45,7 +45,6 @@ const rows = computed(() => {
         expanded
         transparent
         :attributes="calendarData"
-        trim-weeks
     >
     </Calendar>
     <div class="px-6 mt-auto mb-4">
