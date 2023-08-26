@@ -168,7 +168,6 @@ class AuthenticationController extends Controller
         if ((DB::table('password_reset_tokens')
             ->where('email', '=',  $email)->first() == null)) {
 
-
             // Manually generate a new token (normally done by the method that sends the
             // password reset email)
             $newToken = app('auth.password.broker')->createToken($user);
@@ -189,6 +188,7 @@ class AuthenticationController extends Controller
             // Send request
             $this->store($request);
 
+            // Delete token afterwards
             DB::table('password_reset_tokens')->where('email', '=', $email)->delete();
         } else {
 
