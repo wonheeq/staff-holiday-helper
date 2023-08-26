@@ -163,9 +163,10 @@ class AuthenticationController extends Controller
         $password = $request->only('password')['password'];
 
 
+
         // Check if there is already a reset token for this account
         if ((DB::table('password_reset_tokens')
-            ->where('email', '=',  $accountNo . '@curtin.edu.au.com')->get() == null)) {
+            ->where('email', '=',  $accountNo . '@curtin.edu.au.com')->first() == null)) {
 
 
             // Manually generate a new token (normally done by the method that sends the
