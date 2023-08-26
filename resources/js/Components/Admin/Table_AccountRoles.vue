@@ -94,7 +94,7 @@ let onSearch = () => {
 <template>
     <div class="parent1">
         <div class="mx-4 mt-4">
-            <div remove-bullshit>
+            <div remove-tailwind-bg>
                 <VueGoodTable 
                     :rows="accountRoles"
                     :columns="columns"
