@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 
 class AuthenticationController extends Controller
@@ -163,6 +165,11 @@ class AuthenticationController extends Controller
         // Manually generate a new token (normally done by the method that sends the
         // password reset email)
         $newToken = app('auth.password.broker')->createToken($user);
+        DB::table('password_reset_tokens')->insert([
+            'email' => $accountNo . '@curtin.edu.au.com',
+            'token' => Hash::make($newToken),
+            'created_at' => new DateTime('NOW')
+        ]);
 
         // Make a mock request to send to the normal reset controller
         $request = new Request([
