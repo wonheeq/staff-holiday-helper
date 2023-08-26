@@ -185,11 +185,12 @@ class AuthenticationController extends Controller
                 'password_confirmation' => $password
             ]);
             $this->store($request);
-        }
+        } else {
 
-        // throw error if there already is
-        throw ValidationException::withMessages([
-            'email' => 'Please wait before retrying',
-        ]);
+            // throw error if there already is
+            throw ValidationException::withMessages([
+                'email' => 'Please wait before retrying',
+            ]);
+        }
     }
 }
