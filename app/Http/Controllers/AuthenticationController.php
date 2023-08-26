@@ -162,22 +162,34 @@ class AuthenticationController extends Controller
         $accountNo = $request->only('accountNo')['accountNo'];
         $password = $request->only('password')['password'];
 
-        // Manually generate a new token (normally done by the method that sends the
-        // password reset email)
-        $newToken = app('auth.password.broker')->createToken($user);
-        DB::table('password_reset_tokens')->insert([
-            'email' => $accountNo . '@curtin.edu.au.com',
-            'token' => Hash::make($newToken),
-            'created_at' => new DateTime('NOW')
-        ]);
 
-        // Make a mock request to send to the normal reset controller
-        $request = new Request([
-            'token' => $newToken,
-            'accountNo' => $accountNo,
-            'password' => $password,
-            'password_confirmation' => $password
+        // Check if there is already a reset token for this account
+        if ((DB::table('password_reset_tokens')
+            ->where('email', '=',  $accountNo . '@curtin.edu.au.com')->get() == null)) {
+
+
+            // Manually generate a new token (normally done by the method that sends the
+            // password reset email)
+            $newToken = app('auth.password.broker')->createToken($user);
+            DB::table('password_reset_tokens')->insert([
+                'email' => $accountNo . '@curtin.edu.au.com',
+                'token' => Hash::make($newToken),
+                'created_at' => new DateTime('NOW')
+            ]);
+
+            // Make a mock request to send to the normal reset controller
+            $request = new Request([
+                'token' => $newToken,
+                'accountNo' => $accountNo,
+                'password' => $password,
+                'password_confirmation' => $password
+            ]);
+            $this->store($request);
+        }
+
+        // throw error if there already is
+        throw ValidationException::withMessages([
+            'email' => 'Please wait before retrying',
         ]);
-        $this->store($request);
     }
 }
