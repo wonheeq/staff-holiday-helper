@@ -15,8 +15,7 @@ class AuthenticationControllerTest extends TestCase
     protected function setup(): void
     {
         parent::setup();
-        DB::table('accounts')->where('accountNo', '=', 'AAAAAA1')->delete();
-        DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
+
         // insert  temporary account into Database for testing
         DB::table('accounts')->insert([
             'accountNo' => 'AAAAAA1',
@@ -27,8 +26,6 @@ class AuthenticationControllerTest extends TestCase
             'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p']),
             'schoolId' => '101',
         ]);
-
-        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
     }
 
 
@@ -38,6 +35,9 @@ class AuthenticationControllerTest extends TestCase
         // Delete temporary account from database
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA1')->delete();
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
+
+        // Delete any password reset tokens leftover
+        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
 
         parent::teardown();
     }
@@ -111,11 +111,10 @@ class AuthenticationControllerTest extends TestCase
     // Test the sending of a password reset email using valid credentials
     public function test_sending_reset_email_valid_credentials(): void
     {
-        $response = $this->withoutMiddleware()->post('/reset-password', [
+        $response = $this->post('/reset-password', [
             'email' => 'AAAAAA1@curtin.edu.au',
             'accountNo' => 'AAAAAA1'
         ]);
-        // dd($response);
 
         $response->assertStatus(200);
 
@@ -130,16 +129,23 @@ class AuthenticationControllerTest extends TestCase
     // Immediately try again, should fail due to throttling
     public function test_sending_reset_email_valid_credentials_while_throttled(): void
     {
+        // Send first request, and test for 200 'ok' response
+        $response = $this->post('/reset-password', [
+            'email' => 'AAAAAA1@curtin.edu.au',
+            'accountNo' => 'AAAAAA1'
+        ])->assertStatus(200);
+
+        // Send second request, and test for 302 fail due to throttling
         $this->expectException(ValidationException::class);
         $response = $this->post('/reset-password', [
             'email' => 'AAAAAA1@curtin.edu.au',
             'accountNo' => 'AAAAAA1'
         ])->assertStatus(302);
 
-
-        // $response->assertJson([
-        //     'message' => 'The email field must be a valid email address.',
-        // ]);
+        // Test that correct message passed
+        $response->assertJson([
+            'message' => 'Please wait before retrying.',
+        ]);
     }
 
 
