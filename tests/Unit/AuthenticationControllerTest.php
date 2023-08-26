@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Account;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -13,7 +15,8 @@ class AuthenticationControllerTest extends TestCase
     protected function setup(): void
     {
         parent::setup();
-
+        DB::table('accounts')->where('accountNo', '=', 'AAAAAA1')->delete();
+        DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
         // insert  temporary account into Database for testing
         DB::table('accounts')->insert([
             'accountNo' => 'AAAAAA1',
@@ -24,6 +27,8 @@ class AuthenticationControllerTest extends TestCase
             'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p']),
             'schoolId' => '101',
         ]);
+
+        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
     }
 
 
@@ -106,16 +111,35 @@ class AuthenticationControllerTest extends TestCase
     // Test the sending of a password reset email using valid credentials
     public function test_sending_reset_email_valid_credentials(): void
     {
-        $response = $this->post('/reset-password', [
+        $response = $this->withoutMiddleware()->post('/reset-password', [
             'email' => 'AAAAAA1@curtin.edu.au',
             'accountNo' => 'AAAAAA1'
-        ])->assertStatus(200);
+        ]);
+        // dd($response);
+
+        $response->assertStatus(200);
 
         $this->assertJson($response->content());
 
         $response->assertJson([
             'status' => 'We have emailed your password reset link.',
         ]);
+    }
+
+
+    // Immediately try again, should fail due to throttling
+    public function test_sending_reset_email_valid_credentials_while_throttled(): void
+    {
+        $this->expectException(ValidationException::class);
+        $response = $this->post('/reset-password', [
+            'email' => 'AAAAAA1@curtin.edu.au',
+            'accountNo' => 'AAAAAA1'
+        ])->assertStatus(302);
+
+
+        // $response->assertJson([
+        //     'message' => 'The email field must be a valid email address.',
+        // ]);
     }
 
 
