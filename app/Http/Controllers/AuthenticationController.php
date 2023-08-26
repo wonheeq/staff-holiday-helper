@@ -161,19 +161,19 @@ class AuthenticationController extends Controller
 
         $accountNo = $request->only('accountNo')['accountNo'];
         $password = $request->only('password')['password'];
-
+        $email = $accountNo . '@curtin.edu.au.com';
 
 
         // Check if there is already a reset token for this account
         if ((DB::table('password_reset_tokens')
-            ->where('email', '=',  $accountNo . '@curtin.edu.au.com')->first() == null)) {
+            ->where('email', '=',  $email)->first() == null)) {
 
 
             // Manually generate a new token (normally done by the method that sends the
             // password reset email)
             $newToken = app('auth.password.broker')->createToken($user);
             DB::table('password_reset_tokens')->insert([
-                'email' => $accountNo . '@curtin.edu.au.com',
+                'email' => $email,
                 'token' => Hash::make($newToken),
                 'created_at' => new DateTime('NOW')
             ]);
@@ -185,7 +185,11 @@ class AuthenticationController extends Controller
                 'password' => $password,
                 'password_confirmation' => $password
             ]);
+
+            // Send request
             $this->store($request);
+
+            DB::table('password_reset_tokens')->where('email', '=', $email)->delete();
         } else {
 
             // throw error if there already is
