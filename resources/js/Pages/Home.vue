@@ -109,6 +109,10 @@ function isMobile() {
                 <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge">
                     <div class="flex flex-col" v-if="dataReady">
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
+                        <CalendarSmall
+                            class="flex drop-shadow-md mt-2"
+                            @enlarge-calendar="calendarLarge=true"    
+                        />
                         <HomeMessages
                             class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
                             @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"
