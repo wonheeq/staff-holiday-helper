@@ -2,10 +2,11 @@
 
 namespace App\Notifications;
 
-
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
+use App\Mail\MJML;
 
 class ResetPassword extends Notification
 {
@@ -52,21 +53,35 @@ class ResetPassword extends Notification
         return ['mail'];
     }
 
+    // /**
+    //  * Build the mail representation of the notification.
+    //  *
+    //  * @param  mixed  $notifiable
+    //  * @return \Illuminate\Notifications\Messages\MailMessage
+    //  */
+    // public function toMail($notifiable)
+    // {
+    //     if (static::$toMailCallback) {
+    //         return call_user_func(static::$toMailCallback, $notifiable, $this->token);
+    //     }
+
+    //     return $this->buildMailMessage($this->resetUrl($notifiable));
+    // }
+
     /**
      * Build the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return \Illuminate\Mail\Mailable
      */
-    public function toMail($notifiable)
+    public function toMail($notifiable): Mailable
     {
-        if (static::$toMailCallback) {
-            return call_user_func(static::$toMailCallback, $notifiable, $this->token);
-        }
-        // $temp = $this->buildMailMessage($this->resetUrl($notifiable));
-        // dd($temp);
-        // return $temp;
-        return $this->buildMailMessage($this->resetUrl($notifiable));
+        $dynamicData = [
+            'name' => 'TEST PlACEHOLDER NAME',
+            'token' => $this->token
+        ];
+        $mailable = new MJML("Password Reset Request", "email\passwordResetLink", $dynamicData);
+        return $mailable->to($notifiable->getEmailForPasswordReset());
     }
 
     /**
