@@ -26,18 +26,24 @@ function handleReviewApplication() {
 <template>
     <div class="flex flex-row justify-between bg-gray-200 p-2">
         <div class="flex flex-col w-[75%] laptop:w-full">
-            <div class="flex flex-row items-center">
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.subject }}</p>
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.senderName }}</p>
-                <input
-                    type="image"
-                    v-if="props.source.senderNo != null"
-                    class="ml-1.5 email"
-                    src="/images/mail.svg"
-                    title="Copy Email Address to Clipboard"
-                    @click="copyEmail(props.source.senderNo)"
-                    v-title
-                    />
+            <div class="flex flex-col laptop:flex-row items-center">
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
+                    {{ props.source.subject }}
+                </p>
+                <div class="flex">
+                    <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">
+                        by {{ props.source.senderName }}
+                    </p>
+                    <input
+                        type="image"
+                        v-if="props.source.senderNo != null"
+                        class="ml-1.5 email"
+                        src="/images/mail.svg"
+                        title="Copy Email Address to Clipboard"
+                        @click="copyEmail(props.source.senderNo)"
+                        v-title
+                        />
+                </div>
             </div>
             <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
                 v-for="content in JSON.parse(props.source.content)"
