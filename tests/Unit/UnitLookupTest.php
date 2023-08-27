@@ -21,7 +21,6 @@ class UnitLookupTest extends TestCase
     protected function setup(): void
     {
         parent::setup();
-
         // delete any leftover applications
         $this->deleteNominations('000000g');
         $this->deleteAllApplications();
@@ -43,6 +42,7 @@ class UnitLookupTest extends TestCase
 
         // delete test unit
         Unit::where('unitId', 'AAAA0000')->delete();
+        Unit::where('unitId', 'BBBB0000')->delete();
 
         // create test accounts
         $this->createAccount("000000b"); // UnitCoord
@@ -52,15 +52,21 @@ class UnitLookupTest extends TestCase
         $this->createAccount("000000f"); // Lecturer2
         $this->createAccount("000000g"); // NOMINATION ACCOUNT
 
-        // create test unit
+        // create test units
         Unit::where('unitId', 'AAAA0000')->delete();
         Unit::create([
             'unitId' => 'AAAA0000',
             'name' => 'tempName',
         ]);
 
+        // has no roles, for testing results without roles
+        Unit::create([
+            'unitId' => 'BBBB0000',
+            'name' => 'tempName',
+        ]);
+
         // create roles for each account
-        // $this->createAccountRole("000000b", 1); //UC
+        $this->createAccountRole("000000b", 1); //UC
         $this->createAccountRole("000000c", 2); //MC
         $this->createAccountRole("000000d", 3); //CC
         $this->createAccountRole("000000e", 4); //L1
@@ -92,6 +98,7 @@ class UnitLookupTest extends TestCase
 
         // delete test unit
         Unit::where('unitId', 'AAAA0000')->delete();
+        Unit::where('unitId', 'BBBB0000')->delete();
 
         parent::tearDown();
     }
@@ -287,7 +294,7 @@ class UnitLookupTest extends TestCase
     {
         // unit matches regex but doesn't exist
         $response = $this->post('/api/getUnitDetails', [
-            'code' => 'BBBB0000'
+            'code' => 'CCCC0000'
         ])->assertStatus(500);
 
         // assert has json
@@ -392,6 +399,33 @@ class UnitLookupTest extends TestCase
 
         $this->deleteNominations('000000g');
         $this->deleteApplications('000000e');
+    }
+
+
+    public function test_lookup_valid_unit_no_staff_for_role(): void
+    {
+        // check response code
+        $response = $this->post('/api/getUnitDetails', [
+            'code' => 'BBBB0000'
+        ])->assertStatus(200);
+
+        // check structure
+        $response->assertJsonStructure([
+            'unitId',
+            'unitName',
+            'courseCoord',
+            'majorCoord',
+            'unitCoord',
+            'lecturers'
+        ]);
+
+        // check that nothing is being returned
+        $response->assertJsonPath('unitId', 'BBBB0000');
+        $response->assertJsonPath('unitName', 'tempName');
+        $response->assertJsonPath('courseCoord', '');
+        $response->assertJsonPath('majorCoord', '');
+        $response->assertJsonPath('unitCoord', '');
+        $response->assertJsonPath('lecturers', array());
     }
 
 
