@@ -12,8 +12,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // ON THE ACTUAL SERVER, ADD THIS CRON COMMAND:
+        /*
+
+        * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+
+        */
+
         // delete expired password reset tokens every hour
         $schedule->command('auth:clear-resets')->hourly();
+        // $schedule->command('auth:clear-resets')->everyFifteenSeconds();
     }
 
     /**

@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Account;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -33,6 +35,9 @@ class AuthenticationControllerTest extends TestCase
         // Delete temporary account from database
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA1')->delete();
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
+
+        // Delete any password reset tokens leftover
+        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
 
         parent::teardown();
     }
@@ -115,6 +120,29 @@ class AuthenticationControllerTest extends TestCase
 
         $response->assertJson([
             'status' => 'We have emailed your password reset link.',
+        ]);
+    }
+
+
+    // Immediately try again, should fail due to throttling
+    public function test_sending_reset_email_valid_credentials_while_throttled(): void
+    {
+        // Send first request, and test for 200 'ok' response
+        $response = $this->post('/reset-password', [
+            'email' => 'AAAAAA1@curtin.edu.au',
+            'accountNo' => 'AAAAAA1'
+        ])->assertStatus(200);
+
+        // Send second request, and test for 302 fail due to throttling
+        $this->expectException(ValidationException::class);
+        $response = $this->post('/reset-password', [
+            'email' => 'AAAAAA1@curtin.edu.au',
+            'accountNo' => 'AAAAAA1'
+        ])->assertStatus(302);
+
+        // Test that correct message passed
+        $response->assertJson([
+            'message' => 'Please wait before retrying.',
         ]);
     }
 

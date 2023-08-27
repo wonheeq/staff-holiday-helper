@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
+use DateTime;
 
 
 class AuthenticationController extends Controller
@@ -159,18 +161,41 @@ class AuthenticationController extends Controller
 
         $accountNo = $request->only('accountNo')['accountNo'];
         $password = $request->only('password')['password'];
+        $email = $accountNo . '@curtin.edu.au';
 
-        // Manually generate a new token (normally done by the method that sends the
-        // password reset email)
-        $newToken = app('auth.password.broker')->createToken($user);
 
-        // Make a mock request to send to the normal reset controller
-        $request = new Request([
-            'token' => $newToken,
-            'accountNo' => $accountNo,
-            'password' => $password,
-            'password_confirmation' => $password
-        ]);
-        $this->store($request);
+        // Check if there is already a reset token for this account
+        if ((DB::table('password_reset_tokens')
+            ->where('email', '=',  $email)->first() == null)) {
+
+            // Manually generate a new token (normally done by the method that sends the
+            // password reset email)
+            $newToken = app('auth.password.broker')->createToken($user);
+            DB::table('password_reset_tokens')->insert([
+                'email' => $email,
+                'token' => Hash::make($newToken),
+                'created_at' => new DateTime('NOW')
+            ]);
+
+            // Make a mock request to send to the normal reset controller
+            $request = new Request([
+                'token' => $newToken,
+                'accountNo' => $accountNo,
+                'password' => $password,
+                'password_confirmation' => $password
+            ]);
+
+            // Send request
+            $this->store($request);
+
+            // Delete token afterwards
+            DB::table('password_reset_tokens')->where('email', '=', $email)->delete();
+        } else {
+
+            // throw error if there already is
+            throw ValidationException::withMessages([
+                'email' => 'Please wait before retrying',
+            ]);
+        }
     }
 }

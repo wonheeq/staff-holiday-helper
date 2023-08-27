@@ -103,7 +103,7 @@ Route::get(
 Route::post(
     '/reset-password',
     [AuthenticationController::class, 'reset']
-)->middleware('guest')->name('password.email');
+)->name('password.email');
 
 
 Route::get(
