@@ -59,13 +59,6 @@ class Account extends Authenticatable
 
     public function sendPasswordResetNotification($token)
     {
-        // $dynamicData = [
-        //     'name' => 'TEST PlACEHOLDER NAME',
-        //     'token' => $this->token
-        // ];
-        // $mailable = new MJML("Password Reset Request", "email/passwordResetLink", $dynamicData);
-        // // return $mailable->to($notifiable->getEmailForPasswordReset());
-        // Mail::to("20562768@student.curtin.edu.au")->send($mailable);
         $this->notify(new ResetPassword($token));
     }
 
@@ -74,5 +67,11 @@ class Account extends Authenticatable
         // $email = $this->accountNo . '@curtin.edu.au';
         $email = $this->accountNo . '@test.com.au';
         return $email;
+    }
+
+    public function getName()
+    {
+        $name = $this->fName . $this->lName;
+        return $name;
     }
 }

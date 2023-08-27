@@ -77,13 +77,11 @@ class ResetPassword extends Notification
     public function toMail($notifiable): Mailable
     {
         $dynamicData = [
-            'name' => 'TEST PlACEHOLDER NAME',
+            'name' => $notifiable->getName(),
             'url' => $this->resetUrl($notifiable),
-            'token' => $this->token
         ];
         $mailable = new MJML("Password Reset Request", "email/passwordResetLink", $dynamicData);
-        // return $mailable->to($notifiable->getEmailForPasswordReset());
-        return $mailable->to('20562768@student.curtin.edu.au');
+        return $mailable->to($notifiable->getEmailForPasswordReset());
     }
 
     /**

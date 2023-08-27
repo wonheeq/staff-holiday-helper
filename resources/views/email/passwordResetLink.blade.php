@@ -57,7 +57,7 @@
               This password reset link will expire in 60 minutes. If the above link does not work, kindly copy and paste the url below into your web browser:
             </mj-text>
             <mj-text color="#637381" font-size="12px" padding-top="0px">
-              <a class="text-link" href="{{ $dynamicData['token'] }}">{{ $dynamicData['token'] }}</a>
+              <a class="text-link" href="{{ $dynamicData['url'] }}">{{ $dynamicData['url'] }}</a>
             </mj-text>
             <mj-text color="#637381" font-size="16px" padding-top="0px">
               If you did not request a password reset, no further action is required.
