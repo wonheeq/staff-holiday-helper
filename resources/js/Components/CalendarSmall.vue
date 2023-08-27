@@ -50,28 +50,32 @@ const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
         trim-weeks
     >
     </Calendar>
-    <div class="px-3 laptop:px-6 mt-auto laptop:mb-4">
+    <div class="px-2 mt-auto laptop:mb-4">
         <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
-        <div class=" grid grid-cols-2">
-            <div class="flex flex-row my-2 items-center">
-                <div class="bg-green-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
+        <div class="grid grid-cols-2">
+            <div>
+                <div class="flex flex-row my-2 items-center">
+                    <div class="bg-green-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-red-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-blue-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
+                </div>
             </div>
-            <div class="flex flex-row mb-2 items-center">
-                <div class="bg-red-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
-            </div>
-            <div class="flex flex-row mb-2 items-center">
-                <div class="bg-blue-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
-            </div>
-            <div class="flex flex-row items-center">
-                <div class="bg-purple-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
-            </div>
-            <div class="flex flex-row mb-2 items-center">
-                <div class="bg-orange-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
+            <div>
+                <div class="flex flex-row my-2 items-center">
+                    <div class="bg-purple-400 dot mx-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-orange-400 dot mx-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
+                </div>
             </div>
         </div>
     </div>
