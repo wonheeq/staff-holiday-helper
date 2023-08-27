@@ -44,16 +44,25 @@ class UnitController extends Controller
         $mcDetails = $this->getAccountForUnitRole($id, 2);
         $ccDetails = $this->getAccountForUnitRole($id, 3);
 
+
         // check if there is a substitue / get the current details for each of them
-        $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
-        $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
-        $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
+        $currentCc = '';
+        $currentMc = '';
+        $currentUc = '';
+        if ($ucDetails != null) {
+            $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
+        }
+        if ($mcDetails != null) {
+            $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
+        }
+        if ($ccDetails != null) {
+            $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
+        }
 
         // get the current lecturers for the unit
         $currentLecturers = $this->getActiveLecturersForUnit($id);
 
         $unitName = Unit::where('unitId', $id)->value('name');
-
 
         return response()->json([
             'unitId' => $id,

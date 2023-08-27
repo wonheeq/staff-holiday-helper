@@ -22,6 +22,28 @@ class UnitLookupTest extends TestCase
     {
         parent::setup();
 
+        // delete any leftover applications
+        $this->deleteNominations('000000g');
+        $this->deleteAllApplications();
+
+        // delete created roles
+        $this->deleteAccountRole('000000b', 1);
+        $this->deleteAccountRole('000000c', 2);
+        $this->deleteAccountRole('000000d', 3);
+        $this->deleteAccountRole('000000e', 4);
+        $this->deleteAccountRole('000000f', 4);
+
+        // delete created accounts
+        Account::where('accountNo', '000000b')->delete();
+        Account::where('accountNo', '000000c')->delete();
+        Account::where('accountNo', '000000d')->delete();
+        Account::where('accountNo', '000000e')->delete();
+        Account::where('accountNo', '000000f')->delete();
+        Account::where('accountNo', '000000g')->delete();
+
+        // delete test unit
+        Unit::where('unitId', 'AAAA0000')->delete();
+
         // create test accounts
         $this->createAccount("000000b"); // UnitCoord
         $this->createAccount("000000c"); // MajorCoord
@@ -38,7 +60,7 @@ class UnitLookupTest extends TestCase
         ]);
 
         // create roles for each account
-        $this->createAccountRole("000000b", 1); //UC
+        // $this->createAccountRole("000000b", 1); //UC
         $this->createAccountRole("000000c", 2); //MC
         $this->createAccountRole("000000d", 3); //CC
         $this->createAccountRole("000000e", 4); //L1
