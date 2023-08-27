@@ -9,7 +9,7 @@ import { usePage } from '@inertiajs/vue3'
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let messageStore = useMessageStore();
-const { filteredMessages, viewing, unreadMessages } = storeToRefs(messageStore);
+const { filteredMessages, viewing, unreadMessages, messages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
@@ -39,20 +39,20 @@ onMounted(() => {
                 <button
                 @click="viewing = 'all'"
                 :class="{
-                'border-black font-bold': viewing === 'all',
-                'border-gray-500': viewing === 'unread',
+                'border-black font-bold border-2': viewing === 'all',
+                'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
                 }"
-                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
-                    All
+                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
+                    All ({{ messages.length }})
                 </button>
                 <button
                 @click="viewing = 'unread'"
                 :class="{
-                'border-black font-bold': viewing === 'unread',
-                'border-gray-500': viewing === 'all',
+                'border-black font-bold border-2': viewing === 'unread',
+                'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
                 }"
-                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
-                    Unacknowleged
+                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
+                    Unacknowleged ({{ unreadMessages.length }})
                 </button>
             </div>
         </div>
