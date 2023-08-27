@@ -53,21 +53,6 @@ class ResetPassword extends Notification
         return ['mail'];
     }
 
-    // /**
-    //  * Build the mail representation of the notification.
-    //  *
-    //  * @param  mixed  $notifiable
-    //  * @return \Illuminate\Notifications\Messages\MailMessage
-    //  */
-    // public function toMail($notifiable)
-    // {
-    //     if (static::$toMailCallback) {
-    //         return call_user_func(static::$toMailCallback, $notifiable, $this->token);
-    //     }
-
-    //     return $this->buildMailMessage($this->resetUrl($notifiable));
-    // }
-
     /**
      * Build the mail representation of the notification.
      *
@@ -76,10 +61,12 @@ class ResetPassword extends Notification
      */
     public function toMail($notifiable): Mailable
     {
+        // get the name and build the URL
         $dynamicData = [
             'name' => $notifiable->getName(),
             'url' => $this->resetUrl($notifiable),
         ];
+        // create and return mailable object
         $mailable = new MJML("Password Reset Request", "email/passwordResetLink", $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());
     }
