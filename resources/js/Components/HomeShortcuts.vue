@@ -1,6 +1,10 @@
 <script setup>
 import Shortcut from './Shortcut.vue';
 import Swal from 'sweetalert2';
+import { storeToRefs } from 'pinia';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+let applicationStore = useApplicationStore();
+const { applications } = storeToRefs(applicationStore);
 let props = defineProps({ welcomeData: Object });
 
 let copyEmail = () => {
@@ -13,12 +17,15 @@ let copyEmail = () => {
 <template>
     <div class="flex flex-col items-center" v-if="props.welcomeData">
         <div class="flex flex-row">
-            <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl 4k:text-4xl">
-                <p>Welcome {{ props.welcomeData.name }},</p>
-                <p>Your line manager is currently {{ props.welcomeData['lineManager']['name'] }}
+            <div class="flex flex-col items-center">
+                <p class="text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                    Welcome {{ props.welcomeData.name }},
+                </p>
+                <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                    Your line manager is currently {{ props.welcomeData['lineManager']['name'] }}
                     <input @click="copyEmail"
                         type="image"
-                        class="1440:h-8 4k:h-14 align-middle"
+                        class="h-5 1440:h-8 4k:h-14 align-middle"
                         src="/images/mail.svg"
                         title="Copy Email Address to Clipboard"
                         v-title
@@ -26,14 +33,15 @@ let copyEmail = () => {
                 </p>
             </div>
         </div>
-        <div class="grid grid-cols-3 bg-white rounded-md p-4 1440:p-6 w-4/5 mt-2 h-full drop-shadow-md">
+        <div class="grid grid-cols-3 bg-white rounded-md p-2 laptop:p-4 1440:p-6 laptop:w-4/5 mt-1 laptop:mt-2 h-full drop-shadow-md">
             <Shortcut class="bg-green-200" href="/bookings/apps">
                 Your Leave Applications
                 <template #content>
                     <ul class="text-left text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
-                        <li>1 Approved</li>
-                        <li>1 Pending</li>
-                        <li>1 Denied</li>
+                        <li>{{ applications.filter(app => app.status == 'Y').length }} Approved</li>
+                        <li>{{ applications.filter(app => app.status == 'U').length }} Undecided</li>
+                        <li>{{ applications.filter(app => app.status == 'P').length }} Pending</li>
+                        <li>{{ applications.filter(app => app.status == 'N').length }} Denied</li>
                     </ul>
                 </template>
                 <template #strip>
