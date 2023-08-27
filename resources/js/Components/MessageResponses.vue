@@ -112,7 +112,7 @@ function handleReject() {
 
 const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
 function isMobile() {
-    if( screen.width <= 760 ) {
+    if( screen.availWidth <= 760 ) {
         return true;
     }
     else {

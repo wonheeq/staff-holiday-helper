@@ -93,7 +93,7 @@ fetchApplications(user.value.accountNo);
 fetchSubstitutions(user.value.accountNo);
 
 function isMobile() {
-    if( screen.width <= 760 ) {
+    if( screen.availWidth <= 760 ) {
         return true;
     }
     else {

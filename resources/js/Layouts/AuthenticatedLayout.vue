@@ -8,7 +8,7 @@ let settingsVisible = ref(false);
 
 
 function isMobile() {
-    if( screen.width <= 760 ) {
+    if( screen.availWidth <= 760 ) {
         return true;
     }
     else {
