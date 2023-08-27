@@ -30,7 +30,7 @@ function isMobile() {
 </script>
 
 <template>
-    <div class="bg-transparent w-full">
+    <div class="bg-transparent laptop:bg-white laptop:rounded-md w-full">
         <div v-if="isMobile()" class="w-full bg-white mb-2 rounded-md">
             <div class="h-[0.25rem]"></div>
             <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
@@ -85,7 +85,7 @@ function isMobile() {
             </div>
             <div class="h-[0.125rem]"></div>
         </div>
-        <div v-else class="h-full">
+        <div v-else class="flex flex-col h-full">
             <div class="grid grid-cols-4 1440:p-4 p-2">
                 <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
                 <div class="flex col-span-2 ">
@@ -104,7 +104,7 @@ function isMobile() {
                         'border-black font-bold border-2': viewing === 'all',
                         'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
                     }"
-                    class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
+                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
                         All ({{ messages.length }})
                     </button>
                     <button
@@ -113,12 +113,12 @@ function isMobile() {
                         'border-black font-bold border-2': viewing === 'unread',
                         'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
                     }"
-                    class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border">
+                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
                         Unacknowleged ({{ unreadMessages.length }})
                     </button>
                 </div>
             </div>
-            <div class="bg-white border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
+            <div class="bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
@@ -140,7 +140,7 @@ function isMobile() {
 <style>
 .scroller {
   overflow-y: auto;
-  height: 90%;
+  height: calc(90% - 0.5rem);
 }
 .warning{
     width: 2.5vw;
