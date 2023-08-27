@@ -33,12 +33,12 @@ const disabledClass = "bg-gray-300 border-gray-100";
         <div class="flex flex-row">
             <input type="text"
                 :class="isDisabled ? disabledClass : ''"
-                class="h-4 1080:h-6 1440:h-8 w-full"
+                class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                 v-model="dropdownSearch"
                 @focusin="displayOptions=true"
                 :disabled="isDisabled"
             />
-            <button class="w-4 1080:w-6 1440:w-8"
+            <button class="w-4 1080:w-6 1440:w-8 4k:w-12"
                 :class="isDisabled ? disabledClass : ''"
                 @click="displayOptions = !displayOptions"
                 :disabled="isDisabled"

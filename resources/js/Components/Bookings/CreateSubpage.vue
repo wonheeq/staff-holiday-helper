@@ -125,7 +125,7 @@ function createApplication(data) {
 <template>
     <div class="flex bg-transparent subpage-height">
         <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
-            <p class="text-3xl 1080:text-4xl 1440:text-5xl h-[8%] font-bold">
+            <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
                 Create New Leave Application:
             </p>
             <div class="grid grid-cols-3 h-[92%]">
