@@ -50,7 +50,7 @@
               You are receiving this email because we received a password reset request for your account. Please click the button bellow to reset your password.
             </mj-text>
 
-            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "{{ $dynamicData['token'] }}" width="210px" padding-bottom="20px" padding-top="20px">
+            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "{{ $dynamicData['url'] }}" width="210px" padding-bottom="20px" padding-top="20px">
               Reset Password
             </mj-button>
             <mj-text color="#637381" font-size="16px">

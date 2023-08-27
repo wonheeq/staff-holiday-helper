@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 // use Illuminate\Auth\Notifications\ResetPassword;
 use App\Notifications\ResetPassword;
 use Illuminate\Notifications\Notification;
+use App\Mail\MJML;
 
 
 class Account extends Authenticatable
@@ -58,6 +59,13 @@ class Account extends Authenticatable
 
     public function sendPasswordResetNotification($token)
     {
+        // $dynamicData = [
+        //     'name' => 'TEST PlACEHOLDER NAME',
+        //     'token' => $this->token
+        // ];
+        // $mailable = new MJML("Password Reset Request", "email/passwordResetLink", $dynamicData);
+        // // return $mailable->to($notifiable->getEmailForPasswordReset());
+        // Mail::to("20562768@student.curtin.edu.au")->send($mailable);
         $this->notify(new ResetPassword($token));
     }
 
