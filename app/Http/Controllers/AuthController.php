@@ -30,7 +30,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended("/home");
+            return redirect("/home");
         }
 
         // if auth fails, returns a fail response with error message
