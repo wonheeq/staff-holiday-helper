@@ -17,7 +17,7 @@ const { fetchApplications } = applicationStore;
 
 let emit = defineEmits(["editApplication"]);
 onMounted(() => {
-    fetchApplications(user.value.accountNo);
+    //fetchApplications(user.value.accountNo);
 });
 
 let deadAreaColor = "#FFFFFF";

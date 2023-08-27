@@ -9,7 +9,10 @@ import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
 import { ref, reactive, computed } from "vue";
-import { usePage } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+let applicationStore = useApplicationStore();
+const { fetchApplications } = applicationStore;
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
@@ -82,9 +85,8 @@ function handleCloseReviewApp() {
 
 let calendarLarge = ref(false);
 
-
 fetchWelcomeMessageData();
-
+fetchApplications(user.value.accountNo);
 
 function isMobile() {
     if( screen.width <= 760 ) {
