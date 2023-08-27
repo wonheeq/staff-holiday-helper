@@ -1,10 +1,15 @@
 <script setup>
 import Shortcut from './Shortcut.vue';
 import Swal from 'sweetalert2';
+import { inject } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
+const dayJS = inject("dayJS");
 let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
+import { useSubstitutionStore } from '@/stores/SubstitutionStore';
+const substitutionStore = useSubstitutionStore();
+const { substitutions } = storeToRefs(substitutionStore);
 let props = defineProps({ welcomeData: Object });
 
 let copyEmail = () => {
@@ -12,6 +17,13 @@ let copyEmail = () => {
     navigator.clipboard.writeText(email); 
     Swal.fire("Email address copied to clipboard.");
 };
+
+function formatDate(date) {
+    if (date !== null) {
+        return dayJS(date).format('ddd MMM, YYYY');
+    }
+    return "";
+}
 </script>
 
 <template>
@@ -59,8 +71,13 @@ let copyEmail = () => {
             <Shortcut class="bg-purple-200" href="/bookings/subs">
                 Your Substitutions
                 <template #content>
-                    <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">3 upcoming substitutions.</p>
-                    <p class="1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">Next: 12 Aug</p>
+                    <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                        {{ substitutions.length }} upcoming substitutions.
+                    </p>
+                    <p v-if="substitutions.length" class="1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                        <!--Assume that the first element is the earliest date-->
+                        Next: {{ formatDate(new Date(substitutions[0]['sDate'])) }}
+                    </p>
                 </template>
                 <template #strip>
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-purple-400"></div>
