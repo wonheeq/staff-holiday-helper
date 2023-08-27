@@ -99,7 +99,9 @@ function isMobile() {
 <template>
     <PageLayout>
         <AuthenticatedLayout>
-            <div v-if="!isMobile()">
+            <div v-if="isMobile()">
+            </div>
+            <div v-else>
                 <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
                     <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4" v-if="dataReady">
                         <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
@@ -119,22 +121,22 @@ function isMobile() {
                     v-show="calendarLarge"
                     @shrink-calendar="calendarLarge=false"
                 />
+                <Teleport to="body">
+                    <AcceptSomeNominations
+                        v-show="showNominationModal"
+                        :data="nominationModalData"
+                        :roles="roles"
+                        @close="handleCloseNominations()"
+                    />
+                    <ReviewApplication
+                        v-show="showReviewAppModal"
+                        :data="reviewAppModalData"
+                        @close="handleCloseReviewApp()"
+                    />
+                </Teleport>
             </div>
         </AuthenticatedLayout>
     </PageLayout>
-    <Teleport to="body">
-        <AcceptSomeNominations
-            v-show="showNominationModal"
-            :data="nominationModalData"
-            :roles="roles"
-            @close="handleCloseNominations()"
-        />
-        <ReviewApplication
-            v-show="showReviewAppModal"
-            :data="reviewAppModalData"
-            @close="handleCloseReviewApp()"
-        />
-    </Teleport>
 </template>
 
 <style>
