@@ -1,7 +1,30 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 const props = defineProps({
     results: { type: Object, required: true },
 });
+let hasCC = ref(true);
+let hasMC = ref(true);
+let hasUC = ref(true);
+let hasLec = ref(true);
+
+onMounted(() => {
+    if( props.results.data.courseCoord == '') {
+        hasCC.value = false;
+    }
+
+    if( props.results.data.majorCoord == '') {
+        hasMC.value = false;
+    }
+
+    if( props.results.data.unitCoord == '') {
+        hasUC.value = false;
+    }
+
+    if( props.results.data.lecturers.length == 0) {
+        hasLec.value = false;
+    }
+})
 
 // Builds the list of lecturers to display
 function getList()
@@ -38,21 +61,33 @@ function getList()
         <!-- Results Display -->
         <div class="mb-7 overflow-auto  1440:max-h-[37rem] 1080:max-h-[32rem] laptop:max-h-[23rem] 4k:max-h-[50rem]">
 
+            <!-- Course Coordinator -->
+            <div v-show="hasCC">
+                <h2 class="mt-5 mb-1 font-bold 4k:text-xl">Course Coordinator:</h2>
+                <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.courseCoord[1] }}</h1>
+                <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.courseCoord[0] }}</h1>
+            </div>
 
-            <h2 class="mt-5 mb-1 font-bold 4k:text-xl">Course Coordinator:</h2>
-            <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.courseCoord[1] }}</h1>
-            <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.courseCoord[0] }}</h1>
+            <!-- Major Coordinator -->
+            <div v-show="hasMC">
+                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Major Coordinator:</h2>
+                <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.majorCoord[1] }}</h1>
+                <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.majorCoord[0] }}</h1>
+            </div>
 
-            <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Major Coordinator:</h2>
-            <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.majorCoord[1] }}</h1>
-            <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.majorCoord[0] }}</h1>
+            <!-- Unit Coordinator -->
+            <div v-show="hasUC">
+                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Unit Coordinator:</h2>
+                <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.unitCoord[1] }}</h1>
+                <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.unitCoord[0] }}</h1>
+            </div>
 
-            <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Unit Coordinator:</h2>
-            <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.unitCoord[1] }}</h1>
-            <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.unitCoord[0] }}</h1>
+            <!-- Lecturers -->
+            <div v-show="hasLec">
+                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Lecturers:</h2>
+                <div class="mb-7 ml-10 4k:text-xl whitespace-pre-line">{{  getList() }}</div>
+            </div>
 
-            <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Lecturers:</h2>
-            <div class="mb-7 ml-10 4k:text-xl whitespace-pre-line">{{  getList() }}</div>
         </div>
 
         <!-- Back/Search Aagain -->
