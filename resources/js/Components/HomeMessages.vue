@@ -63,13 +63,13 @@ function isMobile() {
                     </button>
                 </div>
             </div>
-            <div class="border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
+            <div class="bg-white border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="item in filteredMessages" :key="item.id" class="">
+                        <div v-for="item in filteredMessages" :key="item.id" class="bg-white mb-1">
                             <Message :source="item"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
