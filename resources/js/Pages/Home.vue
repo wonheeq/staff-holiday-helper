@@ -107,7 +107,7 @@ function isMobile() {
         <AuthenticatedLayout>
             <div v-if="isMobile()">
                 <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge">
-                    <div class="flex flex-col" v-if="dataReady">
+                    <div class="flex flex-col w-full" v-if="dataReady">
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
                         <CalendarSmall
                             class="flex drop-shadow-md mt-2"
@@ -120,6 +120,11 @@ function isMobile() {
                         ></HomeMessages>
                     </div>
                 </div>
+                <CalendarLarge
+                    class="screen-mobile mx-2 mt-2 drop-shadow-md"
+                    v-show="calendarLarge"
+                    @shrink-calendar="calendarLarge=false"
+                />
             </div>
             <div v-else>
                 <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
