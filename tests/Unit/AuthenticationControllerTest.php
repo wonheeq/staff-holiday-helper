@@ -114,7 +114,7 @@ class AuthenticationControllerTest extends TestCase
         $response = $this->post('/reset-password', [
             'email' => 'AAAAAA1@curtin.edu.au',
             'accountNo' => 'AAAAAA1'
-        ]);
+        ])->assertStatus(200);
 
         $this->assertJson($response->content());
 
