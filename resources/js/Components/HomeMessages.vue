@@ -69,7 +69,7 @@ function isMobile() {
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="(item, index) in filteredMessages" :key="item.id" class="">
+                        <div v-for="item in filteredMessages" :key="item.id" class="">
                             <Message :source="item"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
@@ -77,6 +77,11 @@ function isMobile() {
                         </div>
                     </template>
                 </VueScrollingTable>
+                <div class="h-[4.75rem] flex flex-col justify-evenly" v-show="viewing == 'all' && messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0">
+                    <p class="text-center">
+                        No messages to display.
+                    </p>
+                </div>
             </div>
             <div class="h-[0.125rem]"></div>
         </div>
