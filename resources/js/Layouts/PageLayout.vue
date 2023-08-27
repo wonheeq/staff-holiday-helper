@@ -22,6 +22,7 @@ function isMobile() {
 .bg-mobile {
     background: url('/images/background.svg') center top; 
     background-size: cover;
-    height: 100vh;
+    height: auto;
+    overflow: auto;
 }
 </style>

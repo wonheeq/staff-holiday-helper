@@ -114,7 +114,7 @@ function isMobile() {
                             @enlarge-calendar="calendarLarge=true"    
                         />
                         <HomeMessages
-                            class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
+                            class="mt-2 drop-shadow-md"
                             @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"
                             @reviewApplication="(message) => handleReviewApplication(message)"
                         ></HomeMessages>
