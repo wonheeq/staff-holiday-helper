@@ -11,6 +11,9 @@ import axios from 'axios';
 import { ref, reactive, computed } from "vue";
 import { usePage } from '@inertiajs/vue3';
 import { useApplicationStore } from '@/stores/ApplicationStore';
+import { useSubstitutionStore } from '@/stores/SubstitutionStore';
+const substitutionStore = useSubstitutionStore();
+const { fetchSubstitutions } = substitutionStore;
 let applicationStore = useApplicationStore();
 const { fetchApplications } = applicationStore;
 const page = usePage();
@@ -87,6 +90,7 @@ let calendarLarge = ref(false);
 
 fetchWelcomeMessageData();
 fetchApplications(user.value.accountNo);
+fetchSubstitutions(user.value.accountNo);
 
 function isMobile() {
     if( screen.width <= 760 ) {
