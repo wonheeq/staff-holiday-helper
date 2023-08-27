@@ -4,7 +4,7 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { usePage } from '@inertiajs/vue3'
 const page = usePage();
@@ -13,12 +13,8 @@ let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
-const { fetchApplications } = applicationStore;
 
 let emit = defineEmits(["editApplication"]);
-onMounted(() => {
-    //fetchApplications(user.value.accountNo);
-});
 
 let deadAreaColor = "#FFFFFF";
 </script>
