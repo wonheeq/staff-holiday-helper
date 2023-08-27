@@ -25,4 +25,7 @@ export let useApplicationStore = defineStore('applications', {
         }
     }
 */
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });
