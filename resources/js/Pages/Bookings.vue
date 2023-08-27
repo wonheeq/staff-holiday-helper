@@ -1,4 +1,5 @@
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
@@ -76,6 +77,7 @@ function handleActiveScreenChanged(screen) {
 </script>
 
 <template>
+<PageLayout>
     <AuthenticatedLayout>
         <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <SubpageNavbar
@@ -111,6 +113,7 @@ function handleActiveScreenChanged(screen) {
             </Teleport>
         </div>
     </AuthenticatedLayout>
+</PageLayout>
 </template>
 
 <style>
