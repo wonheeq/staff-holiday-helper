@@ -77,8 +77,8 @@ onMounted(() => {
 
 <style>
 .dot {
-    height: 25px;
-    width: 25px;
+    height: 16px;
+    width: 16px;
     border-radius: 50%;
     display: inline-block;
 }
@@ -108,6 +108,12 @@ onMounted(() => {
     .enlarge {
         height: 50px;
         width: auto;
+    }
+    .dot {
+        height: 25px;
+        width: 25px;
+        border-radius: 50%;
+        display: inline-block;
     }
 }
 </style>

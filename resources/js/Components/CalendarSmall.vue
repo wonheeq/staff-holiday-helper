@@ -55,23 +55,23 @@ const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
         <div class=" grid grid-cols-2">
             <div class="flex flex-row my-2 items-center">
                 <div class="bg-green-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
+                <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
             </div>
             <div class="flex flex-row mb-2 items-center">
                 <div class="bg-red-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
+                <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
             </div>
             <div class="flex flex-row mb-2 items-center">
                 <div class="bg-blue-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Undecided Booking</p>
+                <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
             </div>
             <div class="flex flex-row items-center">
                 <div class="bg-purple-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
+                <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
             </div>
             <div class="flex flex-row mb-2 items-center">
                 <div class="bg-orange-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
+                <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
             </div>
         </div>
     </div>
@@ -80,8 +80,8 @@ const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 
 <style>
 .dot {
-  height: 25px;
-  width: 25px;
+  height: 16px;
+  width: 16px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -94,11 +94,10 @@ const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 /* laptop */
 @media 
 (min-width: 1360px) {
-   .enlarge {
+    .enlarge {
         height: 30px;
     }
 }
-
 /* 1080p */
 @media 
 (min-width: 1920px) {
