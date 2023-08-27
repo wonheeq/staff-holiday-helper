@@ -25,7 +25,7 @@ function handleReviewApplication() {
 
 <template>
     <div class="flex flex-row justify-between bg-gray-200 p-2">
-        <div class="flex flex-col">
+        <div class="flex flex-col w-[75%] laptop:w-full">
             <div class="flex flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">{{ props.source.subject }}</p>
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">by {{ props.source.senderName }}</p>
@@ -47,6 +47,7 @@ function handleReviewApplication() {
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>
         <MessageResponses
+            class="w-[25%] laptop:w-fit"
             :source="source"
             @acceptSomeNominations="handleAcceptSomeNominations()"
             @reviewApplication="handleReviewApplication()"

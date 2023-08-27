@@ -109,88 +109,168 @@ function handleReject() {
         });
     });
 }
+
+const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
+function isMobile() {
+    if( screen.width <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
 <div class="flex flex-col justify-evenly border-l-4 border-white">
-    <!--Substitution Request - Not Acknowledged Options-->
-    <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0">
-        <!--Substitution Request for a single nomination-->
-        <div v-if="!props.source.isNominatedMultiple" :class="element_class">
-            <div class="flex flex-col justify-center">
+    <div v-if="isMobile()" class="pl-2 h-full">
+        <!--Substitution Request - Not Acknowledged Options-->
+        <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0" class="h-full">
+            <!--Substitution Request for a single nomination-->
+            <div v-if="!props.source.isNominatedMultiple" class="flex flex-col justify-evenly h-full">
                 <button class="flex flex-col items-center"
                     @click="handleAcceptAll()"
                 >
-                    <img src="/images/accept.svg"/>
-                    <p class="text-sm 1440:text-lg">Accept</p>
+                    <img src="/images/accept.svg" class="w-full"/>
+                    <p :class="textSizeClass">Accept</p>
                 </button>
-            </div>
-            <div class="flex flex-col justify-center">
-                <button class="flex flex-col items-center"
+                <button class="flex flex-col  items-center"
                     @click="handleReject()"
                 >
-                    <img src="/images/reject.svg"/>
-                    <p class="text-sm 1440:text-lg">Reject</p>
+                    <img src="/images/reject.svg" class="w-full"/>
+                    <p :class="textSizeClass">Reject</p>
                 </button>
             </div>
-        </div>
-        <!--Substitution Request for a multi nomination-->
-        <div v-if="props.source.isNominatedMultiple" :class="element_class">
-            <div class="flex flex-col justify-center">
+            <!--Substitution Request for a multi nomination-->
+            <div v-if="props.source.isNominatedMultiple" class="flex flex-col justify-evenly h-full">
                 <button class="flex flex-col items-center"
                     @click="handleAcceptAll()"
                 >
-                    <img src="/images/accept.svg"/>
-                    <p class="text-sm 1440:text-lg">Accept All</p>
+                    <img src="/images/accept.svg" class="w-full"/>
+                    <p :class="textSizeClass">Accept All</p>
                 </button>
-            </div>
-            <div class="flex flex-col justify-center">
                 <button class="flex flex-col items-center"
                     @click="handleAcceptSome()"
                 >
-                    <img src="/images/accept-some.svg"/>
-                    <p class="text-sm 1440:text-lg">Accept Some</p>
+                    <img src="/images/accept-some.svg" class="w-full"/>
+                    <p :class="textSizeClass">Accept Some</p>
                 </button>
-            </div>
-            <div class="flex flex-col justify-center">
                 <button class="flex flex-col items-center"
                     @click="handleReject()"
                 >
-                    <img src="/images/reject.svg"/>
-                    <p class="text-sm 1440:text-lg">Reject All</p>
+                    <img src="/images/reject.svg" class="w-full"/>
+                    <p :class="textSizeClass">Reject All</p>
                 </button>
             </div>
         </div>
-    </div>
-    <!--Application Awaiting Review - Not Acknowledged Options-->
-    <div v-if="props.source.subject=='Application Awaiting Review' && props.source.acknowledged == 0"
-    :class="element_class">
-        <div class="flex flex-col justify-center">
+        <!--Application Awaiting Review - Not Acknowledged Options-->
+        <div v-if="props.source.subject=='Application Awaiting Review' && props.source.acknowledged == 0"
+        class="flex flex-col h-full justify-evenly">
             <button class="flex flex-col items-center"
                 @click="handleReviewApplication()"
             >
-                <img src="/images/review-app.svg"/>
-                <p class="text-sm 1440:text-lg">Review</p>
+                <img src="/images/review-app.svg" class="w-full"/>
+                <p :class="textSizeClass">Review</p>
             </button>
         </div>
-    </div>
-    <!--Regular message, message is not acknowledged-->
-    <div v-show="props.source.subject!='Substitution Request'
-        && props.source.subject!='Application Awaiting Review'
-        && props.source.acknowledged == 0"
-        :class="element_class">
-        <div class="flex flex-col justify-center ">
+        <!--Regular message, message is not acknowledged-->
+        <div v-show="props.source.subject!='Substitution Request'
+            && props.source.subject!='Application Awaiting Review'
+            && props.source.acknowledged == 0"
+            class="flex flex-col justify-evenly h-full">
             <button @click="handleAcknowledgeMessage()"
                 class="flex flex-col items-center">
-                <img src="/images/acknowledge.svg"/>
-                <p class="text-sm 1440:text-lg">Acknowledge</p>
+                <img src="/images/acknowledge.svg" class="w-full"/>
+                <p :class="textSizeClass">Acknowledge</p>
             </button>
         </div>
+        <!--Any message, message is acknowledged-->
+        <div v-show="props.source.acknowledged == 1" class="flex flex-col justify-evenly">
+            <div class="flex flex-col justify-center text-xs text-center h-full">
+                Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
+            </div>
+        </div>
     </div>
-    <!--Any message, message is acknowledged-->
-    <div v-show="props.source.acknowledged == 1" :class="element_class">
-        <div class="flex flex-col justify-center ">
-            Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
+    <div v-else>
+        <!--Substitution Request - Not Acknowledged Options-->
+        <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0">
+            <!--Substitution Request for a single nomination-->
+            <div v-if="!props.source.isNominatedMultiple" :class="element_class">
+                <div class="flex flex-col justify-center">
+                    <button class="flex flex-col items-center"
+                        @click="handleAcceptAll()"
+                    >
+                        <img src="/images/accept.svg"/>
+                        <p :class="textSizeClass">Accept</p>
+                    </button>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <button class="flex flex-col items-center"
+                        @click="handleReject()"
+                    >
+                        <img src="/images/reject.svg"/>
+                        <p :class="textSizeClass">Reject</p>
+                    </button>
+                </div>
+            </div>
+            <!--Substitution Request for a multi nomination-->
+            <div v-if="props.source.isNominatedMultiple" :class="element_class">
+                <div class="flex flex-col justify-center">
+                    <button class="flex flex-col items-center"
+                        @click="handleAcceptAll()"
+                    >
+                        <img src="/images/accept.svg"/>
+                        <p :class="textSizeClass">Accept All</p>
+                    </button>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <button class="flex flex-col items-center"
+                        @click="handleAcceptSome()"
+                    >
+                        <img src="/images/accept-some.svg"/>
+                        <p :class="textSizeClass">Accept Some</p>
+                    </button>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <button class="flex flex-col items-center"
+                        @click="handleReject()"
+                    >
+                        <img src="/images/reject.svg"/>
+                        <p :class="textSizeClass">Reject All</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--Application Awaiting Review - Not Acknowledged Options-->
+        <div v-if="props.source.subject=='Application Awaiting Review' && props.source.acknowledged == 0"
+        :class="element_class">
+            <div class="flex flex-col justify-center">
+                <button class="flex flex-col items-center"
+                    @click="handleReviewApplication()"
+                >
+                    <img src="/images/review-app.svg"/>
+                    <p :class="textSizeClass">Review</p>
+                </button>
+            </div>
+        </div>
+        <!--Regular message, message is not acknowledged-->
+        <div v-show="props.source.subject!='Substitution Request'
+            && props.source.subject!='Application Awaiting Review'
+            && props.source.acknowledged == 0"
+            :class="element_class">
+            <div class="flex flex-col justify-center ">
+                <button @click="handleAcknowledgeMessage()"
+                    class="flex flex-col items-center">
+                    <img src="/images/acknowledge.svg"/>
+                    <p :class="textSizeClass">Acknowledge</p>
+                </button>
+            </div>
+        </div>
+        <!--Any message, message is acknowledged-->
+        <div v-show="props.source.acknowledged == 1" :class="element_class">
+            <div class="flex flex-col justify-center ">
+                Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
+            </div>
         </div>
     </div>
 </div>
