@@ -1,4 +1,5 @@
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import HomeShortcuts from "@/Components/HomeShortcuts.vue";
 import CalendarSmall from "@/Components/CalendarSmall.vue";
@@ -83,30 +84,44 @@ let calendarLarge = ref(false);
 
 
 fetchWelcomeMessageData();
+
+
+function isMobile() {
+    if( screen.width <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
-            <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4" v-if="dataReady">
-                <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
-                <HomeMessages
-                    class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
-                    @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"
-                    @reviewApplication="(message) => handleReviewApplication(message)"
-                ></HomeMessages>
+    <PageLayout>
+        <AuthenticatedLayout>
+            <div v-if="!isMobile()">
+                <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
+                    <div class="flex flex-col items-center w-4/5 1440:w-10/12 mr-4" v-if="dataReady">
+                        <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
+                        <HomeMessages
+                            class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
+                            @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"
+                            @reviewApplication="(message) => handleReviewApplication(message)"
+                        ></HomeMessages>
+                    </div>
+                    <CalendarSmall
+                        class="flex w-1/5 1440:w-2/12 drop-shadow-md"
+                        @enlarge-calendar="calendarLarge=true"    
+                    />
+                </div>
+                <CalendarLarge
+                    class="screen mx-4 mt-4 drop-shadow-md"
+                    v-show="calendarLarge"
+                    @shrink-calendar="calendarLarge=false"
+                />
             </div>
-            <CalendarSmall
-                class="flex w-1/5 1440:w-2/12 drop-shadow-md"
-                @enlarge-calendar="calendarLarge=true"    
-            />
-        </div>
-        <CalendarLarge
-            class="screen mx-4 mt-4 drop-shadow-md"
-            v-show="calendarLarge"
-            @shrink-calendar="calendarLarge=false"
-        />
-    </AuthenticatedLayout>
+        </AuthenticatedLayout>
+    </PageLayout>
     <Teleport to="body">
         <AcceptSomeNominations
             v-show="showNominationModal"

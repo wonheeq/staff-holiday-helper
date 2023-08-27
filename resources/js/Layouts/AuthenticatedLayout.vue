@@ -10,14 +10,14 @@ let settingsVisible = ref(false);
 </script>
 
 <template>
-    <main>
+    <div class="w-full h-[100vh]">
         <div class="margin-fix"></div>
         <Navbar
             class="h-[7vh] mx-4"
             @open-settings="settingsVisible = true"/>
         <slot />
         <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
-    </main>
+    </div>
 </template>
 
 <style>
