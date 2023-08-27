@@ -161,7 +161,7 @@ class AuthenticationController extends Controller
 
         $accountNo = $request->only('accountNo')['accountNo'];
         $password = $request->only('password')['password'];
-        $email = $accountNo . '@curtin.edu.au.com';
+        $email = $accountNo . '@curtin.edu.au';
 
 
         // Check if there is already a reset token for this account
