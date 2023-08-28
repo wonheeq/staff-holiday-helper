@@ -176,43 +176,51 @@ function submitApplication() {
 }
 
 const disabledClass = "bg-gray-300 border-gray-100";
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 <template>
-    <div class="flex flex-col w-full pageHeight" v-if="dataReady">
+    <div class="flex flex-col w-full laptop:pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%]">
-            <p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
+            <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
-            <div class="flex flex-row w-full justify-between 4k:py-6">
-                <div class="flex space-x-4">
+            <div class="flex w-full justify-between 4k:py-6">
+                <div class="flex space-x-1 laptop:space-x-4">
                     <div class="flex flex-col items-center">
-                    <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl">
-                        Select
-                    </p>
-                    <input type="checkbox"
-                        class="w-4 h-4 1080:w-6 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
-                        :class="selfNominateAll ? disabledClass : ''"
-                        v-model="allSelected"
-                        @change="handleSelectAll()"    
-                        :disabled="selfNominateAll"
-                    />
+                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl">
+                            Select
+                        </p>
+                        <input type="checkbox"
+                            class="w-4 h-4 1080:w-6 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                            :class="selfNominateAll ? disabledClass : ''"
+                            v-model="allSelected"
+                            @change="handleSelectAll()"    
+                            :disabled="selfNominateAll"
+                        />
+                    </div>
+                    <div class="flex flex-col w-[10rem] laptop:w-[12rem] 1080:w-[22rem] 1440:w-[31rem] 4k:w-[48rem]">
+                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
+                            Filter Roles
+                        </p>
+                        <input type="text"
+                            class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            :class="selfNominateAll ? disabledClass : ''"
+                            v-model="roleFilter"
+                            :disabled="selfNominateAll"
+                        />
+                    </div>
                 </div>
-                <div class="flex flex-col w-[12rem] 1080:w-[22rem] 1440:w-[31rem] 4k:w-[48rem]">
+                <div class="laptop:w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
+                <div class="flex flex-col mr-2.5 laptop:mr-6 items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
-                        Filter Roles
-                    </p>
-                    <input type="text"
-                        class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
-                        :class="selfNominateAll ? disabledClass : ''"
-                        v-model="roleFilter"
-                        :disabled="selfNominateAll"
-                    />
-                </div>
-                </div>
-                <div class="w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
-                <div class="flex flex-col mr-6 items-end w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
-                    <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
-                        Select Staff Member for {{ numSelectedNominations }} Entries
+                        Select Substitute ({{ numSelectedNominations }}):
                     </p>
                     <NomineeDropdown
                         class="w-full"
@@ -224,7 +232,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
             </div>
         </div>
         <div class="flex flex-col h-[90%] mt-2">
-            <div class="flex border border-black tableHeight">
+            <div class="flex border border-black laptop:tableHeight">
                 <VueScrollingTable
                     class="scrollTable"
                     :deadAreaColor="deadAreaColor"
