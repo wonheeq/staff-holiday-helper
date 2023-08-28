@@ -108,7 +108,7 @@ function isMobile() {
             <SubstitutionsSubpage
                 v-show="activeScreen === 'subs'" 
                 :class="subpageClass"
-                class="p-2 h-[95%]"
+                class="p-2"
             />
         </div>
         <div v-else class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
