@@ -52,15 +52,13 @@ function isMobile() {
 	<div class="flex laptop:flex-col w-fit h-full">
 		<div>
 			<div class="mb-2 laptop:mb-8">
-				<p v-if="!props.isEditing" class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Enter start date and time: </p>
-				<p v-if="props.isEditing" class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Edit start date and time: </p>
+				<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Start date and time: </p>
 				<div class="flex mt-2 justify-between">
 					<input type="datetime-local" v-model="period.start" class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"/>
 				</div>
 			</div>
 			<div class="mb-4 laptop:mb-8">
-				<p v-if="!props.isEditing" class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Enter end date and time: </p>
-				<p v-if="props.isEditing" class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Edit end date and time: </p>
+				<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> End date and time: </p>
 				<div class="flex mt-2 justify-between">
 					<input type="datetime-local" v-model="period.end" class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl" />
 				</div>
