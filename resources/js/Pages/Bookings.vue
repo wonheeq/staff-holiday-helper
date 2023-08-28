@@ -19,9 +19,9 @@ let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
 
 const options = [
-    { id: 'apps', title: 'Applications'},
-    { id: 'create', title: 'Create New Application'},
-    { id: 'subs', title: 'Your Substitutions'},
+    { id: 'apps', title: 'Applications', mobileTitle: 'Applications'},
+    { id: 'create', title: 'Create New Application', mobileTitle: 'Create'},
+    { id: 'subs', title: 'Your Substitutions', mobileTitle: 'Substitutions'},
 ];
 let props = defineProps({
     screenProp: {
