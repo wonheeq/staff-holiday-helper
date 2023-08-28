@@ -74,12 +74,20 @@ function handleActiveScreenChanged(screen) {
 
     changeUrl(screen);
 }
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
 <PageLayout>
     <AuthenticatedLayout>
-        <div class="flex flex-col screen-mobile laptop:screen mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
+        <div v-if="isMobile()" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
                 :options="options"
@@ -89,7 +97,7 @@ function handleActiveScreenChanged(screen) {
             <ApplicationsSubpage
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
-                class="p-2 laptop:p-4 h-[95%]"
+                class="p-2 h-[95%]"
                 @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
@@ -100,18 +108,42 @@ function handleActiveScreenChanged(screen) {
             <SubstitutionsSubpage
                 v-show="activeScreen === 'subs'" 
                 :class="subpageClass"
-                class="laptop:p-4 h-[95%]"
+                class="p-2 h-[95%]"
             />
-            <Teleport to="body">
-                <EditApplication
-                    v-show="isEditing"
-                    :applicationNo="applicationNo"
-                    :subpageClass="subpageClass"
-                    :period="period"
-                    @close="isEditing = false; applicationNo = null;"
-                />
-            </Teleport>
         </div>
+        <div v-else class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+            <SubpageNavbar
+                class="h-[5%]"
+                :options="options"
+                :activeScreen="activeScreen"
+                @screen-changed="screen => handleActiveScreenChanged(screen)"
+            />
+            <ApplicationsSubpage
+                v-show="activeScreen === 'apps'" 
+                :class="subpageClass"
+                class="p- h-[95%]"
+                @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
+            />
+            <CreateSubpage
+                class="h-[95%]"
+                v-show="activeScreen === 'create'" 
+                :subpageClass="subpageClass"
+            />
+            <SubstitutionsSubpage
+                v-show="activeScreen === 'subs'" 
+                :class="subpageClass"
+                class="p-4 h-[95%]"
+            />
+        </div>
+        <Teleport to="body">
+            <EditApplication
+                v-show="isEditing"
+                :applicationNo="applicationNo"
+                :subpageClass="subpageClass"
+                :period="period"
+                @close="isEditing = false; applicationNo = null;"
+            />
+        </Teleport>
     </AuthenticatedLayout>
 </PageLayout>
 </template>
