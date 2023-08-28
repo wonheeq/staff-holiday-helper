@@ -132,44 +132,45 @@ function isMobile() {
 }
 </script>
 <template>
-    <div v-if="isMobile()" class="w-full">
-        <div class="w-full h-fit bg-white rounded-b-md p-2">
-            <p class="text-xl font-bold">
-                Create New Leave Application:
-            </p>
-            <div>
-                <CreateSubpagePeriod :period="period" />
-                <CreateSubpageNominations
-                    @resetFields="resetFields()"
-                    @submitApplication="(data) => createApplication(data)"
-                    />
+    <div>
+        <div v-if="isMobile()" class="w-full">
+            <div class="w-full bg-white rounded-b-md p-2">
+                <p class="text-xl font-bold">
+                    Create New Leave Application:
+                </p>
+                <div class="">
+                    <CreateSubpagePeriod :period="period" />
+                    <CreateSubpageNominations
+                        @resetFields="resetFields()"
+                        @submitApplication="(data) => createApplication(data)"
+                        />
+                </div>
             </div>
+            <CalendarSmall
+                class="flex drop-shadow-md mt-2"
+                :disableEnlarge="true" 
+            />
         </div>
-        <CalendarSmall
-            class="flex drop-shadow-md mt-2"
-            :disableEnlarge="true"
-            @enlarge-calendar="calendarLarge=true"    
-        />
-        <div class="h-2">
-
+        <div v-else class="flex bg-transparent subpage-height">
+            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
+                <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
+                    Create New Leave Application:
+                </p>
+                <div class="grid grid-cols-3 h-[92%]">
+                    <CreateSubpagePeriod :period="period" class="h-full" />
+                    <CreateSubpageNominations
+                        class="col-span-2"
+                        @resetFields="resetFields()"
+                        @submitApplication="(data) => createApplication(data)"
+                        />
+                </div>
+            </div>
+            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+        </div>
+        <div v-if="isMobile()" class="h-2">
         </div>
     </div>
-    <div v-else class="flex bg-transparent subpage-height">
-        <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
-            <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
-                Create New Leave Application:
-            </p>
-            <div class="grid grid-cols-3 h-[92%]">
-                <CreateSubpagePeriod :period="period" class="h-full" />
-                <CreateSubpageNominations
-                    class="col-span-2"
-                    @resetFields="resetFields()"
-                    @submitApplication="(data) => createApplication(data)"
-                    />
-            </div>
-        </div>
-        <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
-    </div>
+    
 </template>
 <style>
 .subpage-height {

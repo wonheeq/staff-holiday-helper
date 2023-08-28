@@ -231,7 +231,7 @@ function isMobile() {
                 </div>
             </div>
         </div>
-        <div class="flex flex-col h-[90%] mt-2">
+        <div class="flex flex-col laptop:h-[90%] mt-2">
             <div class="flex border border-black laptop:tableHeight">
                 <VueScrollingTable
                     class="scrollTable"
@@ -273,7 +273,7 @@ function isMobile() {
                         @click="cancelApplication()"
                         v-if="props.isEditing"
                     >
-                        Cancel Edit of Application
+                        Cancel Edit
                     </button>
                     <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                         @click="submitApplication()"
@@ -285,7 +285,7 @@ function isMobile() {
                         @click="submitApplication()"
                         v-if="props.isEditing"
                     >
-                        Edit Application
+                        Submit Edit
                     </button>
                 </div>
             </div>

@@ -16,7 +16,7 @@ function isMobile() {
 </script>
 <template>
     <div v-if="isMobile()"  class="flex space-x-4">
-        <button class="w-1/3 h-full laptop:w-80 px-2 rounded-tl-md rounded-tr-md text-xs"
+        <button class="w-1/3 h-8 laptop:w-80 px-2 rounded-tl-md rounded-tr-md text-xs"
             :class="{ 'bg-white': activeScreen===option.id, 'bg-gray-300': activeScreen!==option.id }"
             v-for="option in options"
             @click="activeScreen = option.id; emit('screen-changed', option.id)"

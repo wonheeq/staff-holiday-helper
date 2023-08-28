@@ -132,7 +132,7 @@ function isMobile() {
             </button>
         </div>
     </div>
-    <div v-else class="flex flex-row bg-white mr-4">
+    <div v-else class="flex flex-row bg-white">
         <div class="flex flex-col w-5/6 bg-gray-200 p-2">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">

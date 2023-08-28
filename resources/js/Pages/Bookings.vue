@@ -89,7 +89,7 @@ function isMobile() {
     <AuthenticatedLayout>
         <div v-if="isMobile()" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
             <SubpageNavbar
-                class="h-[5%]"
+                class=""
                 :options="options"
                 :activeScreen="activeScreen"
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
@@ -121,7 +121,7 @@ function isMobile() {
             <ApplicationsSubpage
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
-                class="p- h-[95%]"
+                class="p-4 h-[95%]"
                 @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage

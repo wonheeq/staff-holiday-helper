@@ -49,7 +49,7 @@ function isMobile() {
 }
 </script>
 <template><div class="h-[90%]">
-	<div class="flex laptop:flex-col w-fit h-full">
+	<div class="flex flex-col w-fit h-full">
 		<div>
 			<div class="mb-2 laptop:mb-8">
 				<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Start date and time: </p>
@@ -64,7 +64,7 @@ function isMobile() {
 				</div>
 			</div>
 		</div>
-		<div class="ml-4 laptop:ml-0 laptop:mt-auto laptop:mb-12">
+		<div class="mb-4 laptop:mt-auto laptop:mb-12">
 			<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Application Details: </p>
 			<div class="mt-1 laptop:mt-4">
 				<span class="flex w-full">
