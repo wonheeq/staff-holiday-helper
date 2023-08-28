@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Mail\TestMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -10,9 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Support\Facades\Mail;
-// use Illuminate\Auth\Notifications\ResetPassword;
 use App\Notifications\ResetPassword;
 use Illuminate\Notifications\Notification;
+
 
 
 class Account extends Authenticatable
@@ -66,5 +65,11 @@ class Account extends Authenticatable
         // $email = $this->accountNo . '@curtin.edu.au';
         $email = $this->accountNo . '@test.com.au';
         return $email;
+    }
+
+    public function getName()
+    {
+        $name = $this->fName . $this->lName;
+        return $name;
     }
 }
