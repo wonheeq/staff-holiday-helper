@@ -9,6 +9,7 @@ import { setupCalendar } from 'v-calendar';
 import { createPinia } from 'pinia';
 import dayjs from 'dayjs';
 import vTitle from 'vuejs-title'
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 const appName = "LeaveOnTime";
 
 createInertiaApp({
@@ -19,7 +20,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(setupCalendar, {})
-            .use(createPinia())
+            .use(createPinia().use(piniaPluginPersistedState))
             .use(vTitle, {
                 transitionDelay: 0,
                 transitionDuration: 100,

@@ -30,6 +30,15 @@ const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
 onMounted(() => {
     fetchCalendarData(user.value.accountNo);
 })
+
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 <template>
     <div ref="divRef" class="bg-white rounded-md flex flex-col">
@@ -54,22 +63,53 @@ onMounted(() => {
         >
         </Calendar>
         <div class="absolute flex items-center bottom-2 1440:bottom-4 px-4 space-x-4">
-            <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
-            <div class="flex flex-row items-center">
-                <div class="bg-green-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
+            <div v-if="isMobile()">
+                <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
+                <div class="grid grid-cols-2">
+                    <div>
+                        <div class="flex flex-row my-2 items-center">
+                            <div class="bg-green-400 dot mr-2"></div>
+                            <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
+                        </div>
+                        <div class="flex flex-row mb-2 items-center">
+                            <div class="bg-red-400 dot mr-2"></div>
+                            <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
+                        </div>
+                        <div class="flex flex-row mb-2 items-center">
+                            <div class="bg-blue-400 dot mr-2"></div>
+                            <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex flex-row my-2 items-center">
+                            <div class="bg-purple-400 dot mx-2"></div>
+                            <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
+                        </div>
+                        <div class="flex flex-row mb-2 items-center">
+                            <div class="bg-orange-400 dot mx-2"></div>
+                            <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="flex flex-row items-center">
-                <div class="bg-orange-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
-            </div>
-            <div class="flex flex-row items-center">
-                <div class="bg-red-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
-            </div>
-            <div class="flex flex-row items-center">
-                <div class="bg-purple-400 dot mr-2"></div>
-                <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
+            <div v-else class="flex space-x-4">
+                <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
+                <div class="flex flex-row items-center">
+                    <div class="bg-green-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="bg-orange-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="bg-red-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="bg-purple-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
+                </div>
             </div>
         </div>
     </div>
@@ -77,8 +117,8 @@ onMounted(() => {
 
 <style>
 .dot {
-    height: 25px;
-    width: 25px;
+    height: 16px;
+    width: 16px;
     border-radius: 50%;
     display: inline-block;
 }
@@ -108,6 +148,12 @@ onMounted(() => {
     .enlarge {
         height: 50px;
         width: auto;
+    }
+    .dot {
+        height: 25px;
+        width: 25px;
+        border-radius: 50%;
+        display: inline-block;
     }
 }
 </style>

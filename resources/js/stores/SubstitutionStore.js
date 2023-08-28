@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia';
 import axios from "axios";
 
-export let useApplicationStore = defineStore('applications', {
+export let useSubstitutionStore = defineStore('substitutions', {
     state: () => ({
-        applications: [],
+        substitutions: [],
     }),
 
     actions: {
-        async fetchApplications(accountNo) {
+        async fetchSubstitutions(accountNo) {
             try {
-                const resp = await axios.get('/api/applications/' + accountNo);
-                this.applications = resp.data;
+                const resp = await axios.get('/api/getSubstitutionsForUser/' + accountNo);
+                this.substitutions = resp.data;
               }
               catch (error) {
                 alert(error)

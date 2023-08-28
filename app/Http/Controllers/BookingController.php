@@ -208,6 +208,11 @@ class BookingController extends Controller
             }
         }
 
+        // Sort data
+        usort($data, function ($sub1, $sub2) {
+            return $sub1['sDate'] <=> $sub2['sDate'];
+        });
+
         return response()->json($data);
     }
 }

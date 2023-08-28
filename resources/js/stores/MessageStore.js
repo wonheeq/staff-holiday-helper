@@ -32,5 +32,8 @@ export let useMessageStore = defineStore('messages', {
         unreadMessages() {
             return this.messages.filter(message => message.acknowledged === 0);
         }
-    }
+    },
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });

@@ -25,4 +25,7 @@ export let useCalendarStore = defineStore('calendar', {
             }
         }
     },
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });

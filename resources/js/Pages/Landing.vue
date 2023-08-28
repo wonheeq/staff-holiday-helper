@@ -7,7 +7,7 @@
  -->
 
 <template>
-    <main>
+    <PageLayout>
         <div>
             <!-- Login Window -->
             <login-form v-show="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
@@ -21,10 +21,11 @@
             <!-- Unit Serach Results Window -->
             <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
         </div>
-    </main>
+    </PageLayout>
 </template>
 
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import LoginForm from "@/Components/Landing/LoginForm.vue";
 import ResetForm from "@/Components/Landing/ResetForm.vue";
 import PasswordForm from "@/Components/Landing/PasswordForm.vue";

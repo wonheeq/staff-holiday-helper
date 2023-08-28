@@ -47,27 +47,33 @@ const rows = computed(() => {
         :attributes="calendarData"
     >
     </Calendar>
-    <div class="px-6 mt-auto mb-4">
-        <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend</p>
-        <div class="flex flex-row my-2 items-center">
-            <div class="bg-green-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
-        </div>
-        <div class="flex flex-row mb-2 items-center">
-            <div class="bg-blue-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Undecided Booking</p>
-        </div>
-        <div class="flex flex-row mb-2 items-center">
-            <div class="bg-orange-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
-        </div>
-        <div class="flex flex-row mb-2 items-center">
-            <div class="bg-red-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
-        </div>
-        <div class="flex flex-row items-center">
-            <div class="bg-purple-400 dot mr-2"></div>
-            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
+    <div class="px-2 mt-auto laptop:mb-4">
+        <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
+        <div class="grid grid-cols-2">
+            <div>
+                <div class="flex flex-row my-2 items-center">
+                    <div class="bg-green-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-red-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-blue-400 dot mr-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
+                </div>
+            </div>
+            <div>
+                <div class="flex flex-row my-2 items-center">
+                    <div class="bg-purple-400 dot mx-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
+                </div>
+                <div class="flex flex-row mb-2 items-center">
+                    <div class="bg-orange-400 dot mx-2"></div>
+                    <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -75,17 +81,24 @@ const rows = computed(() => {
 
 <style>
 .dot {
-  height: 25px;
-  width: 25px;
+  height: 16px;
+  width: 16px;
   border-radius: 50%;
   display: inline-block;
 }
 
 .enlarge {
-    height: 30px;
+    height: 26px;
     width: auto;
 }
 
+/* laptop */
+@media 
+(min-width: 1360px) {
+    .enlarge {
+        height: 30px;
+    }
+}
 /* 1080p */
 @media 
 (min-width: 1920px) {

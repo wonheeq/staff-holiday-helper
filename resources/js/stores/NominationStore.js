@@ -40,5 +40,8 @@ export let useNominationStore = defineStore('nominations', {
 
     getters: {
         
-    }
+    },
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });
