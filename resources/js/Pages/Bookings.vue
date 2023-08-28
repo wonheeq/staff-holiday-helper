@@ -79,7 +79,7 @@ function handleActiveScreenChanged(screen) {
 <template>
 <PageLayout>
     <AuthenticatedLayout>
-        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+        <div class="flex flex-col screen-mobile laptop:screen mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
                 :options="options"
@@ -89,7 +89,7 @@ function handleActiveScreenChanged(screen) {
             <ApplicationsSubpage
                 v-show="activeScreen === 'apps'" 
                 :class="subpageClass"
-                class="p-4 h-[95%]"
+                class="p-2 laptop:p-4 h-[95%]"
                 @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
@@ -100,7 +100,7 @@ function handleActiveScreenChanged(screen) {
             <SubstitutionsSubpage
                 v-show="activeScreen === 'subs'" 
                 :class="subpageClass"
-                class="p-4 h-[95%]"
+                class="laptop:p-4 h-[95%]"
             />
             <Teleport to="body">
                 <EditApplication
@@ -119,5 +119,8 @@ function handleActiveScreenChanged(screen) {
 <style>
 .screen {
     height: calc(93vh - 3rem);
+}
+.screen-mobile {
+    height: calc(93vh - 1.5rem);
 }
 </style>
