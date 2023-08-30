@@ -69,6 +69,23 @@ class EmailTest extends TestCase
         $this->assertStringContainsString('Foundation of Computer Science and Data Engineering', $mailable->render());
         $this->assertStringContainsString('00:00 23/04/2022 - 00:00 25/04/2022', $mailable->render());
     }
+    public function testPasswordResetLink(): void
+    {
+        $dynamicData = [
+            'name' => 'Peter',
+            'token' => 'www.google.com'
+        ];
+        $mailable = new MJML("Password Reset", "email/passwordResetLink", $dynamicData);
+        Mail::fake(); //a method that sends the email without actually sending it
+        Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
+        Mail::assertSent(MJML::class); //check if email has really been sent
+        $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
+        $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
+        
+        //after render, check if the rendered content contains below strings/details:
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('www.google.com', $mailable->render());
+    }
     public function testPasswordReset(): void
     {
         $dynamicData = [
