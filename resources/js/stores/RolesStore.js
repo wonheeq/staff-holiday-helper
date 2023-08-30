@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { useUserStore } from './UserStore';
 
 export let useRolesStore = defineStore('roles', {
     state: () => ({
