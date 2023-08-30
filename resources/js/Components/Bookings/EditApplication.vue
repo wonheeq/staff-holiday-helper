@@ -8,8 +8,7 @@ import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+
 import { useCalendarStore } from '@/stores/CalendarStore';
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
@@ -17,9 +16,6 @@ let applicationStore = useApplicationStore();
 const { fetchApplications } = applicationStore;
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
-const page = usePage();
-const user = computed(() => page.props.auth.user);
-
 let emit = defineEmits(['close']);
 let props = defineProps({
     applicationNo: Number,
@@ -82,9 +78,9 @@ function validateApplication(data) {
     return errors.length == 0;
 }
 
-function formatNomineeNo(nominee, accountNo) {
+function formatNomineeNo(nominee) {
     if (nominee == "Self Nomination") {
-        return accountNo;
+        return nominee;
     }
 
     // Should be formatted as "(XXXXXXX) - ZZZZZZZZZZZZ"
@@ -92,13 +88,13 @@ function formatNomineeNo(nominee, accountNo) {
     return nominee.substr(1, 7);
 }
 
-function formatNominations(accountNo) {
+function formatNominations() {
     let result = [];
 
     for (let nomination of nominations.value) {
         result.push({
             accountRoleId: nomination.accountRoleId,
-            nomineeNo: formatNomineeNo(nomination.nomination, accountNo),
+            nomineeNo: formatNomineeNo(nomination.nomination),
         });
     }
 
@@ -108,7 +104,7 @@ function formatNominations(accountNo) {
 function handleEditApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
-        data.nominations = formatNominations(data.accountNo);
+        data.nominations = formatNominations();
         data.sDate = props.period.start;
         data.eDate = props.period.end;
         data.applicationNo = props.applicationNo;
@@ -122,8 +118,8 @@ function handleEditApplication(data) {
                         icon: "success",
                         title: 'Successfully edited application.'
                     }).then(() => {
-                        fetchApplications(user.value.accountNo);
-                        fetchCalendarData(user.value.accountNo);
+                        fetchApplications();
+                        fetchCalendarData();
                         resetFields();
                         emit('close');
                     });
@@ -152,42 +148,11 @@ function handleEditApplication(data) {
         });
     }
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
 <Modal>
-    <div class="flex flex-col bg-transparent w-screen px-2 mt-2 mb-2">
-        <div v-if="isMobile()" class="w-full bg-white p-2 rounded-md">
-            <div class="h-[4%] flex justify-between">
-                <p class="text-xl font-bold">
-                    Edit Leave Application (ID: {{ applicationNo }}):
-                </p>
-                <button class="h-full"
-                    @click="resetFields(); $emit('close')"
-                >
-                    <img src="/images/close.svg" class="h-full w-full"/>
-                </button>
-            </div>
-            <div>
-                <CreateSubpagePeriod :period="props.period" :isEditing="true" class="h-full" />
-                <CreateSubpageNominations
-                    :isEditing="true"
-                    :applicationNo="applicationNo"
-                    @resetFields="resetFields()"
-                    @submitApplication="(data) => handleEditApplication(data)"
-                />
-            </div>
-            <div class="h-2">
-            </div>
-        </div>
-        <div v-else class="w-5/6 flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
+    <div class="flex bg-transparent subpage-height w-screen px-4 mt-auto mb-4">
+        <div class="w-5/6 flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
             <div class="h-[8%] flex justify-between">
                 <p class="text-5xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
@@ -209,7 +174,7 @@ function isMobile() {
                 />
             </div>
         </div>
-        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-1/6 flex flex-col laptop:h-full" :disableEnlarge="true"/>
+        <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
     </div>
 </Modal>
 </template>

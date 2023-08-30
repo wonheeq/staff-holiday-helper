@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useUserStore } from './UserStore';
 import axios from "axios";
 
 export let useMessageStore = defineStore('messages', {
@@ -8,9 +9,9 @@ export let useMessageStore = defineStore('messages', {
     }),
 
     actions: {
-        async fetchMessages(accountNo) {
+        async fetchMessages() {
             try {
-                const resp = await axios.get('/api/messages/' + accountNo);
+                const resp = await axios.get('/api/messages/' + useUserStore().userId);
                 this.messages = resp.data;
               }
               catch (error) {
@@ -32,8 +33,5 @@ export let useMessageStore = defineStore('messages', {
         unreadMessages() {
             return this.messages.filter(message => message.acknowledged === 0);
         }
-    },
-    persist: {
-        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
-    },
+    }
 });

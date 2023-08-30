@@ -1,33 +1,32 @@
 <script setup>
 import { Calendar } from 'v-calendar';
 import 'v-calendar/style.css';
-import { ref, onMounted, computed } from 'vue';
-import { useResizeObserver } from 'vue-screen-utils';
+import { ref, onMounted } from 'vue';
+import { useScreens } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
-import { usePage } from '@inertiajs/vue3';
-const page = usePage();
-const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
 
 onMounted(() => {
-    fetchCalendarData(user.value.accountNo);
-})
+    fetchCalendarData();
+});
 
 let emit = defineEmits(['enlarge-calendar']);
 
 let props = defineProps({ disableEnlarge: Boolean });
-const divRef = ref(null);
-const { rect } = useResizeObserver(divRef);
-const rows = computed(() => {
-    return Math.max(Math.floor((rect.value?.height - 250)/ 290), 1) || 1;
+const { mapCurrent } = useScreens({
+    'laptop': '760px',
+    '1080p': '1920px',
+    '1440p': '2560px',
+    '4k': '3840px',
 });
+const rows = mapCurrent({ '4k': 5, '1440p': 3, '1080p': 2 }, 1);
 </script>
 
 <template>
-<div ref="divRef" class="bg-white rounded-md flex flex-col">
+<div class="bg-white rounded-md flex flex-col">
     <div class="flex mx-4 mt-4 items-center">
         <button class="absolute" v-show="!disableEnlarge">
             <img src="/images/fullscreen.svg"
@@ -45,35 +44,30 @@ const rows = computed(() => {
         expanded
         transparent
         :attributes="calendarData"
+        trim-weeks
     >
     </Calendar>
-    <div class="px-2 mt-auto laptop:mb-4">
-        <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
-        <div class="grid grid-cols-2">
-            <div>
-                <div class="flex flex-row my-2 items-center">
-                    <div class="bg-green-400 dot mr-2"></div>
-                    <p class="text-sm 1080:text-base 4k:text-2xl">Approved Booking</p>
-                </div>
-                <div class="flex flex-row mb-2 items-center">
-                    <div class="bg-red-400 dot mr-2"></div>
-                    <p class="text-sm 1080:text-base  4k:text-2xl">Rejected Booking</p>
-                </div>
-                <div class="flex flex-row mb-2 items-center">
-                    <div class="bg-blue-400 dot mr-2"></div>
-                    <p class="text-sm 1080:text-base 4k:text-2xl">Undecided Booking</p>
-                </div>
-            </div>
-            <div>
-                <div class="flex flex-row my-2 items-center">
-                    <div class="bg-purple-400 dot mx-2"></div>
-                    <p class="text-sm 1080:text-base 4k:text-2xl">Substitutions</p>
-                </div>
-                <div class="flex flex-row mb-2 items-center">
-                    <div class="bg-orange-400 dot mx-2"></div>
-                    <p class="text-sm 1080:text-base 4k:text-2xl">Pending Booking</p>
-                </div>
-            </div>
+    <div class="px-6 mt-auto mb-4">
+        <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend</p>
+        <div class="flex flex-row my-2 items-center">
+            <div class="bg-green-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Approved Booking</p>
+        </div>
+        <div class="flex flex-row mb-2 items-center">
+            <div class="bg-blue-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Undecided Booking</p>
+        </div>
+        <div class="flex flex-row mb-2 items-center">
+            <div class="bg-orange-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Pending Booking</p>
+        </div>
+        <div class="flex flex-row mb-2 items-center">
+            <div class="bg-red-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Rejected Booking</p>
+        </div>
+        <div class="flex flex-row items-center">
+            <div class="bg-purple-400 dot mr-2"></div>
+            <p class="text-sm 1080:text-base 1440:text-xl 4k:text-2xl">Substitutions</p>
         </div>
     </div>
 </div>
@@ -81,24 +75,17 @@ const rows = computed(() => {
 
 <style>
 .dot {
-  height: 16px;
-  width: 16px;
+  height: 25px;
+  width: 25px;
   border-radius: 50%;
   display: inline-block;
 }
 
 .enlarge {
-    height: 26px;
+    height: 30px;
     width: auto;
 }
 
-/* laptop */
-@media 
-(min-width: 1360px) {
-    .enlarge {
-        height: 30px;
-    }
-}
 /* 1080p */
 @media 
 (min-width: 1920px) {

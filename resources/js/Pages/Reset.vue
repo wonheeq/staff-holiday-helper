@@ -7,7 +7,6 @@
  -->
 
 <script setup>
-import PageLayout from "@/Layouts/PageLayout.vue";
 import PasswordForm from "@/Components/Landing/PasswordForm.vue";
 
 const props = defineProps({
@@ -27,12 +26,12 @@ let accountNo = strArr[0];
 </script>
 
 <template>
-    <PageLayout>
+    <main>
         <div>
 
             <PasswordForm :account-no="accountNo" :token="token"></PasswordForm>
         </div>
-    </PageLayout>
+    </main>
 </template>
 
 

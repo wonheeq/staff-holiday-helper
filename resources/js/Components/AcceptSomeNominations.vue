@@ -2,13 +2,15 @@
 import Modal from './Modal.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/UserStore';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+let userStore = useUserStore();
+const { userId } = storeToRefs(userStore);
 import AcceptSomeNominationOptions from './AcceptSomeNominationOptions.vue';
-import { ref, computed } from 'vue';
-import { usePage } from '@inertiajs/vue3'
-const page = usePage();
-const user = computed(() => page.props.auth.user);
+import { ref } from 'vue';
+
 let emit = defineEmits(['close']);
 let props = defineProps({
     data: Object,
@@ -47,7 +49,7 @@ function submitResponses() {
 
     let data = {
         'messageId': props.data.messageId,
-        'accountNo': user.value.accountNo,
+        'accountNo': userId.value,
         'applicationNo': props.data.applicationNo,
         'responses': responses
     };   
