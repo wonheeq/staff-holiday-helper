@@ -108,58 +108,62 @@ let resetView = () => {
                 />
                 </button>
             </div>
-            <form>
-                <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
-                    <div class="w-full">
-                        <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
-                        <div class="flex items-center h-full w-full">
-                            <input v-model="password.password"
-                                class="w-full 4k:h-16 4k:text-2xl"
-                                :type="fieldType.password.type"
-                            >
-                            <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
-                                <img :src="fieldType.password.image"
-                                    class="h-full w-full">
-                            </button>
-                        </div>
-                    </div>
-                    <div class="pt-2 1440:pt-4 w-full">
-                        <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
-                        <div class="flex items-center h-full w-full">
-                            <input v-model="password.confirm"
-                                class="w-full 4k:h-16 4k:text-2xl"
-                                :type="fieldType.confirm.type"
-                            >
-                            <button @click.prevent="switchVis(fieldType.confirm)" tabindex="-1" class="fixed right-5">
-                                <img :src="fieldType.confirm.image"
-                                    class="h-full w-full">
-                            </button>
-                        </div>
-                    </div>
-                    <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
-                        <p class="text-xs 1440:text-base 4k:text-xl text-red-500 w-full text-center"
-                            v-for="msg in errors"
+            <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
+                <div class="w-full">
+                    <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
+                    <div class="flex items-center h-full w-full">
+                        <input v-model="password.password"
+                            class="w-[90%] 4k:h-16 4k:text-2xl"
+                            :type="fieldType.password.type"
+                            @keydown.space.prevent
+                            @copy.prevent
+                            @paste.prevent
                         >
-                            {{ msg }}
-                        </p>
+                        <button @click="switchVis(fieldType.password)" class="h-full w-[10%]">
+                            <img :src="fieldType.password.image"
+                                class="h-full w-full">
+                        </button>
                     </div>
-                    <button class="w-full rounded py-2 1440:py-4 4k:py-6 mt-2 1440:mt-4 font-bold text-lg 1440:text-2xl 4k:text-4xl"
-                        :class="{
-                            'bg-blue-300': buttonActive,
-                            'bg-gray-300': !buttonActive
-                        }"
-                        :disabled="!buttonActive"
-                        @click.prevent="handleChangePassword()"
+                </div>
+                <div class="pt-2 1440:pt-4 w-full">
+                    <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
+                    <div class="flex items-center h-full w-full">
+                        <input v-model="password.confirm"
+                            class="w-[90%] 4k:h-16 4k:text-2xl"
+                            :type="fieldType.confirm.type"
+                            @keydown.space.prevent
+                            @copy.prevent
+                            @paste.prevent
+                        >
+                        <button @click="switchVis(fieldType.confirm)" class="h-full w-[10%]">
+                            <img :src="fieldType.confirm.image"
+                                class="h-full w-full">
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
+                    <p class="text-xs 1440:text-base 4k:text-xl text-red-500 w-full text-center"
+                        v-for="msg in errors"
                     >
-                        Change Password
-                    </button>
-                    <p class="text-xs 1080:text-sm 4k:text-xl w-full text-center mt-2 1440:mt-4 bg-cyan-100 p-4 border border-black rounded-md text-blue-800 font-bold"
-                        v-show="displaySuccess"
-                    >
-                        Your password has been changed successfully!
+                        {{ msg }}
                     </p>
                 </div>
-            </form>
+                <button class="w-full rounded py-2 1440:py-4 4k:py-6 mt-2 1440:mt-4 font-bold text-lg 1440:text-2xl 4k:text-4xl"
+                    :class="{
+                        'bg-blue-300': buttonActive,
+                        'bg-gray-300': !buttonActive
+                    }"
+                    :disabled="!buttonActive"
+                    @click="handleChangePassword()"
+                >
+                    Change Password
+                </button>
+                <p class="text-xs 1080:text-sm 4k:text-xl w-full text-center mt-2 1440:mt-4 bg-cyan-100 p-4 border border-black rounded-md text-blue-800 font-bold"
+                    v-show="displaySuccess"
+                >
+                    Your password has been changed successfully!
+                </p>
+            </div>
         </div>
     </Modal>
 </template>

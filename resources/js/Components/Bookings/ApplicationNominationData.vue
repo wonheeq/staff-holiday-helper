@@ -1,5 +1,5 @@
 <script setup>
-let props = defineProps({ nominations: Object, appStatus: String, rejectReason: String });
+let props = defineProps({ nominations: Object, appStatus: String });
 
 const pClass = "text-sm";
 </script>
@@ -18,14 +18,6 @@ const pClass = "text-sm";
         <p v-if="appStatus === 'U'" :class="pClass">
             Awaiting Line Manager Decision
         </p>
-        <div v-if="appStatus === 'N'">
-            <p class="text-sm">
-                Reason: 
-            </p>
-            <p class="text-sm ml-6">
-                {{ rejectReason }}
-            </p>
-        </div>
     </div>
     <div v-if="nominations == null">
         <p v-if="appStatus === 'U'" :class="pClass">

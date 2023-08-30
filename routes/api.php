@@ -32,7 +32,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/accounts', AccountController::class);
-
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
 
@@ -53,11 +52,6 @@ Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNo
 Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
 Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
-Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
-Route::post('acceptApplication', [ApplicationController::class, 'acceptApplication']);
-Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
-
-Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);

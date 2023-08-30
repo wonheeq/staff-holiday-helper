@@ -18,7 +18,7 @@ return new class extends Migration
             $table->char('senderNo', 7)->nullable();
             $table->string('subject', 40);
             $table->json('content');
-            $table->boolean('acknowledged')->default(false);
+            $table->boolean('acknowledged');
             $table->timestamps();
         });
 

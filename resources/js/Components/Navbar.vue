@@ -1,7 +1,6 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
-
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
     left: [
@@ -26,7 +25,7 @@ let formatLink = (link) => {
 
 // Post to logout method
 async function handleLogout() {
-    await axios.post("/logout").then(
+    await axios.post("logout").then(
         function(response) {
             if( response.data.response == "success") {
                 window.location.href = response.data.url;
@@ -34,23 +33,15 @@ async function handleLogout() {
         }
     )
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
     <div class="flex flex-row justify-between border-2 rounded-md bg-white drop-shadow-md">
-        <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
-            <img src="/images/logo.svg" class="logo mr-2"/>
-            <div v-if="!isMobile()" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
-            <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
-                <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
+        <div class="flex flex-row space-x-4 ml-4 my-2 items-center">
+            <img src="/images/logo.svg" class="logo"/>
+            <div class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
+            <div class="flex flex-row space-x-2 1440:space-x-4">
+                <div class="flex flex-col justify-center items-center" v-for="option in options.left" >
                     <NavLink :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
                         <img :src="option.source"/>
                         <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
@@ -58,7 +49,7 @@ function isMobile() {
                 </div>
             </div>
         </div>
-        <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
+        <div class="flex flex-row space-x-2 1440:space-x-4 mr-2 my-2">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
                 <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
                     <img :src="option.source"/>
@@ -78,24 +69,12 @@ function isMobile() {
 
 <style>
 img{
-    height: 16px;
-    width: 16px;
+    height: 22px;
+    width: 22px;
 }
 .logo{
-    height: 30px;
+    height: 36px;
     width: auto;
-}
-/* laptop */
-@media
-(min-width: 1360px) {
-    img{
-        height: 22px;
-        width: 22px;
-    }
-    .logo{
-        height: 36px;
-        width: auto;
-    }
 }
 /* 1080p */
 @media

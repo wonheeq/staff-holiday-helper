@@ -38,29 +38,4 @@ class AccountsControllerTest extends TestCase
             ],
         ]);
     }
-
-
-
-
-    public function test_api_request_for_welcomeMessageData_is_successful(): void
-    {
-        $response = $this->get("/api/getWelcomeMessageData/000000a");
-        $response->assertStatus(200);
-    }
-
-    public function test_api_request_for_welcomeMessageData_is_succesful_valid_structure(): void
-    {
-        $response = $this->get("/api/getWelcomeMessageData/000000a");
-        $this->assertJson($response->content());
-
-        $array = json_decode($response->content(), true);
-        $this->assertTrue(gettype($array['lineManager']['name']) == 'string');
-        $this->assertTrue($array['lineManager']['id'] != null);
-    }
-
-    public function test_api_request_for_welcomeMessageData_is_unsuccesful_invalid_account(): void
-    {
-        $response = $this->get("/api/getWelcomeMessageData/aerghasrega");
-        $response->assertStatus(500);
-    }
 }

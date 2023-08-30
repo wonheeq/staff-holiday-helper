@@ -29,13 +29,15 @@ class AuthController extends Controller
         //with redirect to the home page.
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            return redirect("/home");
+            return response()->json([
+                'response' => 'success',
+                'url' => Session::get('url.intended', url('/home')),
+            ]);
         }
-
         // if auth fails, returns a fail response with error message
-        return redirect()->back()->with([
-            'customError' => 'Invalid Credentials'
+        return response()->json([
+            'response' => 'fail',
+            'error' => 'Invalid Credentials',
         ]);
     }
 

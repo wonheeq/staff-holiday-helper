@@ -21,16 +21,20 @@
     <!-- Password Input -->
     <div v-if="inType === 'passwordType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
-        <div class="flex border border-solid items-center border-black">
+        <div class="flex justify-between border border-solid  border-black">
             <input
                 class="border-none w-full"
-                :type="fieldType.type"
+                :type="fieldType"
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
-                <img :src="fieldType.image" class="">
+            <button v-if="fieldType === 'password'" @click="switchVis">
+                <img src="/images/Eye_light.svg" class="mr-5 ml-5">
+            </button>
+
+            <button v-if="fieldType === 'text'" @click="switchVis">
+                <img src="/images/Eye_fill.svg" class="mr-5 ml-5">
             </button>
         </div>
 
@@ -48,19 +52,14 @@ modelValue: { type: String, default: "" }
 
 
 // Function to toggle masking for the password input
-let fieldType = reactive({
-    type: "password",
-    image: "/images/Eye_light.svg"
-});
-let switchVis = () => {
-    if (fieldType.type === "password" ) {
-        fieldType.type = "text";
-        fieldType.image = "/images/Eye_fill.svg";
-    } else {
-        fieldType.type = "password";
-        fieldType.image = "/images/Eye_light.svg";
-    }
-};
+let fieldType = ref("password");
+function switchVis() {
+if ( fieldType.value == "password" ) {
+    fieldType.value = "text";
+} else {
+    fieldType.value = "password";
+}
+}
 
 </script>
 
