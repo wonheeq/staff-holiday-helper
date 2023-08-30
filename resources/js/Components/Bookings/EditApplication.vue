@@ -152,11 +152,42 @@ function handleEditApplication(data) {
         });
     }
 }
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 <template>
 <Modal>
-    <div class="flex bg-transparent subpage-height w-screen px-4 mt-auto mb-4">
-        <div class="w-5/6 flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
+    <div class="flex flex-col bg-transparent w-screen px-2 mt-2 mb-2">
+        <div v-if="isMobile()" class="w-full bg-white p-2 rounded-md">
+            <div class="h-[4%] flex justify-between">
+                <p class="text-xl font-bold">
+                    Edit Leave Application (ID: {{ applicationNo }}):
+                </p>
+                <button class="h-full"
+                    @click="resetFields(); $emit('close')"
+                >
+                    <img src="/images/close.svg" class="h-full w-full"/>
+                </button>
+            </div>
+            <div>
+                <CreateSubpagePeriod :period="props.period" :isEditing="true" class="h-full" />
+                <CreateSubpageNominations
+                    :isEditing="true"
+                    :applicationNo="applicationNo"
+                    @resetFields="resetFields()"
+                    @submitApplication="(data) => handleEditApplication(data)"
+                />
+            </div>
+            <div class="h-2">
+            </div>
+        </div>
+        <div v-else class="w-5/6 flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
             <div class="h-[8%] flex justify-between">
                 <p class="text-5xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
@@ -178,7 +209,7 @@ function handleEditApplication(data) {
                 />
             </div>
         </div>
-        <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-1/6 flex flex-col laptop:h-full" :disableEnlarge="true"/>
     </div>
 </Modal>
 </template>
