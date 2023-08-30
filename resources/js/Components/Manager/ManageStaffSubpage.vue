@@ -5,6 +5,10 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useStaffStore } from '@/stores/StaffStore';
 import { onMounted } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+import {computed} from 'vue';
+const user = computed(() => page.props.auth.user);
 
 
 let staffStore = useStaffStore();
@@ -14,7 +18,7 @@ let emit = defineEmits(["editRoles"]);
 
 
 onMounted(() => {
-    fetchStaffMembers();
+    fetchStaffMembers(user.value.accountNo);
 });
 
 
