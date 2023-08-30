@@ -3,6 +3,12 @@
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import AdminTabs from '@/Components/Admin/AdminTabs.vue';
 
+    let props = defineProps({
+        screenProp: {
+            type: String,
+            default: 'default'
+        }
+    });
 </script>
 
 <template>
