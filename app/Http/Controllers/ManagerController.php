@@ -49,7 +49,7 @@ class ManagerController extends Controller
 
             array_push($roleList, $task);
         }
-        error_log(implode($roleList));
+        // error_log(implode($roleList));
         return response()->json($roleList);
     }
     /*
