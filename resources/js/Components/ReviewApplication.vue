@@ -55,8 +55,11 @@ function handleApproveApp() {
                 console.log(res);
             }
             else {
-                props.data.message.acknowledged = 1;
-                props.data.message.updated_at = new Date();
+                if(props.data.message != null){
+                    props.data.message.acknowledged = 1;
+                    props.data.message.updated_at = new Date();
+                }
+                
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully approved the application.',
@@ -90,8 +93,10 @@ function handleRejectApp() {
                 console.log(res);
             }
             else {
-                props.data.message.acknowledged = 1;
-                props.data.message.updated_at = new Date();
+                if(props.data.message != null){
+                    props.data.message.acknowledged = 1;
+                    props.data.message.updated_at = new Date();
+                }
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully rejected the application.',
