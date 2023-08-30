@@ -15,6 +15,7 @@ class EmailController extends Controller
         $this->bookingCancelled();
         $this->passwordChanged();
         $this->passwordReset();
+        $this->passwordResetLink();
         $this->applicationAccept();
         $this->applicationReject();
     }
