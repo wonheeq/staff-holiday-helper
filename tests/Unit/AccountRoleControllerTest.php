@@ -7,7 +7,7 @@ use App\Models\AccountRole;
 use App\Models\Account;
 
 
-class AccountRolesControllerTest extends TestCase
+class AccountRoleControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
 
