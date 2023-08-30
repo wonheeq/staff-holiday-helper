@@ -10,13 +10,21 @@ class EmailController extends Controller
 
     public function sendEmail()
     {
-        //$this->bookingCreated();
-        //////$this->bookingEditTest();
+        $this->bookingCreated();
+        $this->bookingEdit();
         $this->bookingCancelled();
         $this->passwordChanged();
         $this->passwordReset();
         $this->applicationAccept();
         $this->applicationReject();
+    }
+    public function passwordResetLink()
+    {
+        $dynamicData = [
+            'name' => 'Chris',
+            'token' => 'www.google.com'
+        ];
+        Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Password Reset", "email/passwordResetLink", $dynamicData));
     }
     public function passwordChanged()
     {
