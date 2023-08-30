@@ -5,13 +5,18 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
 import { onMounted } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+import {computed} from 'vue';
+const user = computed(() => page.props.auth.user);
+
 
 let applicationStore = useApplicationStore();
 const { filteredApplications, viewing, applications } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
 
 onMounted(() => {
-    fetchManagerApplications();
+    fetchManagerApplications(user.value.accountNo);
 });
 
 let deadAreaColor = "#FFFFFF";
