@@ -15,18 +15,12 @@
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="font-sans antialiased bg-img">
+    <body class="font-sans antialiased">
         @inertia
     </body>
 </html>
-
 <style>
     html,body{
-        height:100%;
-        }
-    .bg-img {
-        background: url('/images/background.svg') no-repeat center top; 
-        background-size: cover;
-        height: 100vh;
+    height:100%;
     }
 </style>

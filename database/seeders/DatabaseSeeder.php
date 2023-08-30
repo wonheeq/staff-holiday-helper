@@ -66,7 +66,8 @@ class DatabaseSeeder extends Seeder
         $lineManagerNo = '000002L';
         Account::factory()->create([
             'accountNo' =>  $lineManagerNo,
-            'accountType' => 'lmanager',
+            'accountType' => 'sysadmin',
+            'password' => Hash::make('testPassword1'),
             'superiorNo' => null,
         ]);
 
@@ -101,6 +102,7 @@ class DatabaseSeeder extends Seeder
 
         Account::factory()->create([
             'accountNo' => $test_id,
+            'accountType' => 'staff',
             'fName' => 'Static',
             'lName' => 'Test User',
             'password' => Hash::make('testPassword1'),
@@ -204,9 +206,13 @@ class DatabaseSeeder extends Seeder
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
+            // Generate simple messages that only have the option of acknowledge
+                // Messages of subject type Substitution Request, Application Awaiting Review and etc...
+                // will not work if they do not have the corresponding Nominations, Applications, and etc created
             if ($account->accountNo != $test_id) {
                 Message::factory(10)->create([
                     'receiverNo' => $account['accountNo'],
+                    'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
                 ]);
             }
         }
