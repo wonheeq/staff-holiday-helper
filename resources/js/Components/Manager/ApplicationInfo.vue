@@ -11,7 +11,8 @@ let props = defineProps({ source: Object });
 function handleAccept() {
     let data = {
         'accountNo': props.source.accountNo,
-        'applicationNo': props.source.applicationNo
+        'applicationNo': props.source.applicationNo,
+        'processedBy': null
     };
     axios.post('/api/acceptApplication', data)
         .then(res => {
@@ -23,7 +24,7 @@ function handleAccept() {
                 });
             }
             else {
-                // Set acknowledged status of message to true and update updated_at date
+                // Set application status to Y
                 props.source.status = 'Y';
                 props.source.updated_at = new Date();
             }
@@ -36,6 +37,35 @@ function handleAccept() {
     });
 }
 
+function handleReject() {
+    let data = {
+        'accountNo': props.source.accountNo,
+        'applicationNo': props.source.applicationNo,
+        'rejectReason': props.source.rejectReason,
+        'processedBy' : null
+    };
+    axios.post('/api/rejectApplication', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to accept application, please try again.',
+                    text: res.message
+                });
+            }
+            else {
+                // Set application status to 'N'
+                props.source.status = 'N';
+                props.source.updated_at = new Date();
+            }
+        }).catch(err => {
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to reject applications, please try again.',
+        });
+    });
+}
 </script>
 <template>
     <!-- Render for undecided applications -->

@@ -20,7 +20,6 @@ class ManagerController extends Controller
                 return false;
             }
         }
-
         return true;
     }
     /**
@@ -74,14 +73,15 @@ class ManagerController extends Controller
         if ($application == null) {
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
-        if($application['processedBy'] != $data['processedBy'])
-        {
-            return response()->json(['error' => 'Wrong line manager.'], 500);
+        if($data['processedBy'] != null){
+            if($application['processedBy'] != $data['processedBy']){
+                return response()->json(['error' => 'Wrong line manager.'], 500);
+            }
         }
+        
         // Set application status to Yes
         $application->status = 'Y';
         $application->save();
-
         // TODO: Implement sending of approved application message for applicant and nominees.
 
         return response()->json(['success'], 200);
@@ -109,9 +109,10 @@ class ManagerController extends Controller
         if ($application == null) {
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
-        if($application['processedBy'] != $data['processedBy'])
-        {
-            return response()->json(['error' => 'Wrong line manager.'], 500);
+        if($data['processedBy'] != null){
+            if($application['processedBy'] != $data['processedBy']){
+                return response()->json(['error' => 'Wrong line manager.'], 500);
+            }
         }
         // Set application status to No
         $application->status = 'N';
