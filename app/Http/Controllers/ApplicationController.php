@@ -720,8 +720,10 @@ class ApplicationController extends Controller
         ->where('senderNo', $applicant->accountNo, "and")
         ->where('subject', "Application Awaiting Review")->first();
 
-        $message->acknowledged = true;
-        $message->save();
+        if($message != null){
+            $message->acknowledged = true;
+            $message->save();
+        }
 
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, true, null);
@@ -782,10 +784,11 @@ class ApplicationController extends Controller
         $message = Message::where('applicationNo', $applicationNo, "and")
         ->where('senderNo', $applicant->accountNo, "and")
         ->where('subject', "Application Awaiting Review")->first();
-
-        $message->acknowledged = true;
-        $message->save();
-
+        if($message != null){
+            $message->acknowledged = true;
+            $message->save();
+        }
+        
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, false, $rejectReason);
         
