@@ -1,25 +1,18 @@
-<!--
-    File: Landing.vue
-    Purpose: Parent file for the landing/login page for LeaveOnTime.
-    Author: Ellis Janson Ferrall (20562768)
-    Last Modified: 30/07/2023
-        By: Ellis Janson Ferrall (20562768)
- -->
-
 <template>
     <PageLayout>
         <div>
             <!-- Login Window -->
-            <login-form v-show="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
+            <login-form v-if="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
 
             <!-- Password Reset Window -->
-            <reset-form v-show="showReset" @resetBack="goToLogin"></reset-form>
+            <reset-form v-if="showReset" @resetBack="goToLogin"></reset-form>
 
             <!-- Unit Lookup Window -->
-            <unit-lookup v-show="showLookup" @lookupSearch="goToResults" @lookupBack="goToLogin"></unit-lookup>
+            <unit-lookup v-if="showLookup" @got-results="goToResults" @lookupBack="goToLogin"></unit-lookup>
 
-            <!-- Unit Serach Results Window -->
-            <unit-result v-show="showResult" @resultBack="goToLookup"></unit-result>
+            <!-- Unit Search Results Window -->
+            <unit-result v-if="showResult" @resultBack="goToLookup" :results="searchResults"></unit-result>
+
         </div>
     </PageLayout>
 </template>
@@ -28,17 +21,17 @@
 import PageLayout from "@/Layouts/PageLayout.vue";
 import LoginForm from "@/Components/Landing/LoginForm.vue";
 import ResetForm from "@/Components/Landing/ResetForm.vue";
-import PasswordForm from "@/Components/Landing/PasswordForm.vue";
 import UnitLookup from "@/Components/Landing/UnitLookup.vue";
 import unitResult from "@/Components/Landing/UnitResult.vue";
 import { ref } from "vue";
 
-// Variables for window visibility
+// Variables
 const showLogin = ref(true);
 const showReset = ref(false);
-const showPass = ref(false);
 const showLookup = ref(false);
 const showResult = ref(false);
+
+const searchResults = ref(null);
 
 // Show Password Reset Window
 function goToReset() {
@@ -50,7 +43,6 @@ function goToReset() {
 function goToLogin() {
     showLogin.value = true;
     showReset.value = false;
-    showPass.value = false;
     showLookup.value = false;
     showReset.value = false;
 }
@@ -62,18 +54,11 @@ function goToLookup() {
 }
 
 // Show Unit Results Window
-function goToResults() {
+function goToResults(response) {
+    searchResults.value = response;
+
     showLookup.value = false;
     showResult.value = true;
-}
-
-// Show New Password Window
-function goToPass() {
-    showPass.value = true;
-    showReset.value = false;
-    showLookup.value = false;
-    showReset.value = false;
-    showLogin.value = false;
 }
 
 </script>

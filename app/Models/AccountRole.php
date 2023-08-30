@@ -9,4 +9,5 @@ class AccountRole extends Model
 {
     use HasFactory;
     protected $primaryKey = 'accountRoleId';
+    protected $fillable = ['accountNo', 'roleId', 'unitId', 'schoolId'];
 }

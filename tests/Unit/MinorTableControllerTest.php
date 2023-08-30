@@ -7,7 +7,8 @@ use App\Models\Account;
 
 class MinorTableControllerTest extends TestCase
 {
-    protected function setup(): void {
+    protected function setup(): void
+    {
         parent::setup();
 
         $this->adminUser = Account::factory()->create([
@@ -23,7 +24,8 @@ class MinorTableControllerTest extends TestCase
         ]);
     }
 
-    protected function teardown(): void {
+    protected function teardown(): void
+    {
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
@@ -46,7 +48,7 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson("/api/allUnits/{$this->otherUser2['accountNo']}");
         $response->assertStatus(500);
 
-         // Check if response is json
+        // Check if response is json
         $response = $this->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
@@ -71,7 +73,7 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson("/api/allMajors/{$this->otherUser2['accountNo']}");
         $response->assertStatus(500);
 
-         // Check if response is json
+        // Check if response is json
         $response = $this->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
@@ -96,7 +98,7 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson("/api/allCourses/{$this->otherUser2['accountNo']}");
         $response->assertStatus(500);
 
-         // Check if response is json
+        // Check if response is json
         $response = $this->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
@@ -121,7 +123,7 @@ class MinorTableControllerTest extends TestCase
         $response = $this->getJson("/api/allSchools/{$this->otherUser2['accountNo']}");
         $response->assertStatus(500);
 
-         // Check if response is json
+        // Check if response is json
         $response = $this->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 

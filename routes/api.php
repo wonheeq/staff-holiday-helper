@@ -67,3 +67,7 @@ Route::post('acceptApplication', [ApplicationController::class, 'acceptApplicati
 Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
+
+
+Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
+Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
