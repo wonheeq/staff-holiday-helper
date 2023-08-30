@@ -29,10 +29,6 @@ Route::get('/', function () {
     return Inertia::render('Landing', []);
 });
 
-Route::get('/login', function () {
-    return Inertia::render('Landing', []);
-});
-});
 
 Route::get('/login', function () {
     return Inertia::render('Landing', []);
@@ -49,7 +45,7 @@ Route::middleware('auth:sanctum')->get('/home', function () {
 });
 
 
-Route::middleware('auth:sanctum')->get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
+
 Route::middleware('auth:sanctum')->get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
     return Inertia::render('Bookings', [
         'screenProp' => $screenProp
@@ -75,7 +71,6 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
 });
 
 Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
-Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
     ]);
@@ -98,16 +93,6 @@ Route::post(
 );
 
 
-Route::get(
-    '/login/create',
-    [AuthenticationController::class, 'create']
-);
-
-
-// Route::post(
-//     '/reset-password',
-//     [PasswordResetController::class, 'reset']
-// )->middleware('guest')->name('password.email');
 Route::post(
     '/reset-password',
     [AuthenticationController::class, 'reset']
