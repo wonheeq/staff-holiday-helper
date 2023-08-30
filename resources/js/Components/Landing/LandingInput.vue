@@ -1,4 +1,4 @@
- <template>
+<template>
     <!-- Text Input -->
     <div v-if="inType === 'textType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-3xl">{{ title }}</h1>
@@ -21,12 +21,8 @@
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button v-if="fieldType === 'password'" @click="switchVis">
-                <img src="/images/Eye_light.svg" class="mr-5 ml-5">
-            </button>
-
-            <button v-if="fieldType === 'text'" @click="switchVis">
-                <img src="/images/Eye_fill.svg" class="mr-5 ml-5">
+            <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
+                <img :src="fieldType.image" class="">
             </button>
         </div>
 
@@ -58,6 +54,3 @@ let switchVis = () => {
     }
 };
 </script>
-
-
-

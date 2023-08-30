@@ -1,7 +1,8 @@
 <script setup>
 import axios from 'axios';
 import LandingInput from './LandingInput.vue';
-import { ref } from "vue";
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 axios.defaults.withCredentials = true;
 
@@ -16,23 +17,10 @@ async function handleLogin() {
     // get csrf cookie
     await axios.get("/sanctum/csrf-cookie");
 
-    // post credentials to login route
-    await axios.post("login", {
-        accountNo: formData.value.accountNo,
-        password: formData.value.password,
-    }).then( function(response) {
-        // if login successful, redirect to url provided by response
-        // else, update error message
-        if( response.data.response == "success") {
-            window.location.href = response.data.url
-        } else {
-            errorMsg.value = response.data.error;
-        }
-    }).catch(error => {
-        // if 422 error occurs, update error message
-        if(error.response) {
-            errorMsg.value = 'Please enter your credentials'
-            console.log(error.response);
+    formData.post(route('login'), {
+        onFinish: () => formData.reset('password'),
+        onError: (error) => {
+            errorMsg.value = error;
         }
     });
 };
