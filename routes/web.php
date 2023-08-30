@@ -61,6 +61,24 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     ]);
 });
 
+Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
+    return Inertia::render('Manager', [
+        'screenProp' => $screenProp
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'appRequest'
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'manage'
+    ]);
+});
+
 Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
@@ -107,3 +125,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 */
+Route::get('/send-email', [EmailController::class, 'sendEmail']);
+
