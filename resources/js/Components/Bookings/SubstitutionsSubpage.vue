@@ -1,39 +1,19 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
+import { useSubstitutionStore } from '@/stores/SubstitutionStore';
 import { storeToRefs } from 'pinia';
-import { useUserStore } from "@/stores/UserStore";
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+const substitutionStore = useSubstitutionStore();
+const { substitutions } = storeToRefs(substitutionStore);
 let deadAreaColor = "#FFFFFF";
-
-let substitutions = [];
-
-let fetchSubstitutions = async() => {
-    try {
-        const resp = await axios.get('/api/getSubstitutionsForUser/' + userId.value);
-        substitutions = resp.data;
-    } catch (error) {
-        alert("Failed to load data: Please try again");
-        console.log(error);
-    }
-}; 
-
-const dataReady = ref(false);
-
-onMounted(async () => {
-    await fetchSubstitutions();
-    dataReady.value = true;
-});
 </script>
 <template>
-    <div v-if="dataReady" class="subpage-height w-full">
+    <div class="subpage-height-mobile laptop:subpage-height w-full">
         <div class="h-[10%]">
-            <p class="font-bold text-5xl">
+            <p class="font-bold text-3xl laptop:text-5xl">
                 Your Substitutions
             </p>
-            <p class="pt-4 text-2xl">
+            <p class="laptop:pt-4 laptop:text-2xl">
                 You have agreed to substitute for the following:
             </p>
         </div>
@@ -48,7 +28,7 @@ onMounted(async () => {
                         class=" bg-gray-200 border-b-8 border-white"
                     >
                         <div class="px-2 py-2">
-                            <p class="text-xl">
+                            <p class="text-lg laptop:text-xl">
                                 {{ item.task }} for {{  item.applicantName }}
                             </p>
                             <p>
@@ -65,5 +45,9 @@ onMounted(async () => {
 <style>
 .subpage-height {
     height: calc(0.95 * (93vh - 3rem));
+}
+.subpage-height-mobile {
+    /* 95% of (screen - 7vh for navbar height - 1.5rem for 3x gaps ) + ((screen - 7vh for navbar height - 1.5rem for 3x gaps ) - 2rem from the subpagenavbar height of h-8 css)   */
+    height: calc(0.95 * (93vh - 1.5rem + ((0.95 * (93vh - 1.5rem)) - 2rem )));
 }
 </style>

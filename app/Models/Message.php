@@ -9,5 +9,5 @@ class Message extends Model
 {
     use HasFactory;
     protected $primaryKey = 'messageId';
-    protected $fillable = ['applicationNo', 'receiverNo', 'senderNo', 'status'];
+    protected $fillable = ['applicationNo', 'receiverNo', 'senderNo', 'acknowledged', 'subject', 'content'];
 }

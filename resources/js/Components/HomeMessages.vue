@@ -3,67 +3,136 @@ import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let messageStore = useMessageStore();
-const { filteredMessages, viewing, unreadMessages } = storeToRefs(messageStore);
+const { filteredMessages, viewing, unreadMessages, messages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
-onMounted(() => {
-    fetchMessages();
-});
-let emit = defineEmits(['acceptSomeNominations']);
+let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
 let deadAreaColor = "#FFFFFF";
+
+onMounted(() => {
+    fetchMessages(user.value.accountNo);
+});
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
-    <div class="flex flex-col bg-white w-full rounded-md">
-        <div class="grid grid-cols-4 1440:p-4 p-2">
-            <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
-            <div class="flex col-span-2 ">
-                <div v-if="unreadMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
-                    <img src="/images/warning.svg" class="warning"/>
-                    <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
-                        You have {{ unreadMessages.length }} unacknowleged messages.
-                    </p>
-                    <img src="/images/warning.svg" class="warning"/>
+    <div class="bg-transparent laptop:bg-white laptop:rounded-md w-full">
+        <div v-if="isMobile()" class="w-full bg-white mb-2 rounded-md">
+            <div class="h-[0.25rem]"></div>
+            <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
+                <img src="/images/warning.svg"/>
+                <p class="text-center text-sm">
+                    You have {{ unreadMessages.length }} unacknowleged messages.
+                </p>
+                <img src="/images/warning.svg"/>
+            </div>
+            <div class="grid grid-cols-3 p-1">
+                <p class="text-xl font-bold">Messages:</p>
+                <div class="col-span-2 justify-self-end flex">
+                    <button
+                    @click="viewing = 'all'"
+                    :class="{
+                        'border-black font-bold border-2': viewing === 'all',
+                        'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
+                    }"
+                    class="px-2 border">
+                        All ({{ messages.length }})
+                    </button>
+                    <button
+                    @click="viewing = 'unread'"
+                    :class="{
+                        'border-black font-bold border-2': viewing === 'unread',
+                        'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
+                    }"
+                    class="px-2 border">
+                        Unacknowleged ({{ unreadMessages.length }})
+                    </button>
                 </div>
             </div>
-            <div class="text-2xl justify-self-end">
-                <button
-                @click="viewing = 'all'"
-                :class="{
-                'border-black font-bold': viewing === 'all',
-                'border-gray-500': viewing === 'unread',
-                }"
-                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
-                    All
-                </button>
-                <button
-                @click="viewing = 'unread'"
-                :class="{
-                'border-black font-bold': viewing === 'unread',
-                'border-gray-500': viewing === 'all',
-                }"
-                class="text-base 1080:text-3xl 1440:text-4xl 4k:text-6xl px-4 4k:py-2 border border-2">
-                    Unacknowleged
-                </button>
+            <div class="bg-white border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
+                <VueScrollingTable
+                    :deadAreaColor="deadAreaColor"
+                    :scrollHorizontal="false"
+                >
+                    <template #tbody>
+                        <div v-for="item in filteredMessages" :key="item.id" class="bg-white mb-1">
+                            <Message :source="item"
+                                @acceptSomeNominations="emit('acceptSomeNominations', item)"
+                                @reviewApplication="emit('reviewApplication', item)"
+                            ></Message>
+                        </div>
+                    </template>
+                </VueScrollingTable>
+                <div class="h-[4.75rem] flex flex-col justify-evenly" v-show="viewing == 'all' && messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0">
+                    <p class="text-center">
+                        No messages to display.
+                    </p>
+                </div>
             </div>
+            <div class="h-[0.125rem]"></div>
         </div>
-        <div class="bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-            >
-                <template #tbody>
-                    <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
-                        <Message :source="item"
-                            @acceptSomeNominations="emit('acceptSomeNominations', item)"
-                        ></Message>
+        <div v-else class="flex flex-col h-full">
+            <div class="grid grid-cols-4 1440:p-4 p-2">
+                <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
+                <div class="flex col-span-2 ">
+                    <div v-if="unreadMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                        <img src="/images/warning.svg" class="warning"/>
+                        <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
+                            You have {{ unreadMessages.length }} unacknowleged messages.
+                        </p>
+                        <img src="/images/warning.svg" class="warning"/>
                     </div>
-                </template>
-            </VueScrollingTable>
+                </div>
+                <div class="text-2xl justify-self-end">
+                    <button
+                    @click="viewing = 'all'"
+                    :class="{
+                        'border-black font-bold border-2': viewing === 'all',
+                        'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
+                    }"
+                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                        All ({{ messages.length }})
+                    </button>
+                    <button
+                    @click="viewing = 'unread'"
+                    :class="{
+                        'border-black font-bold border-2': viewing === 'unread',
+                        'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
+                    }"
+                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                        Unacknowleged ({{ unreadMessages.length }})
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white border border-black mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
+                <VueScrollingTable
+                    :deadAreaColor="deadAreaColor"
+                    :scrollHorizontal="false"
+                >
+                    <template #tbody>
+                        <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
+                            <Message :source="item"
+                                @acceptSomeNominations="emit('acceptSomeNominations', item)"
+                                @reviewApplication="emit('reviewApplication', item)"
+                            ></Message>
+                        </div>
+                    </template>
+                </VueScrollingTable>
+            </div>
         </div>
     </div>
 </template>
@@ -71,7 +140,7 @@ let deadAreaColor = "#FFFFFF";
 <style>
 .scroller {
   overflow-y: auto;
-  height: 90%;
+  height: calc(90% - 0.5rem);
 }
 .warning{
     width: 2.5vw;

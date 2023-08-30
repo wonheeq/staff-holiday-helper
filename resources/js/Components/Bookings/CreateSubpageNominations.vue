@@ -1,17 +1,16 @@
 <script setup>
 import axios from "axios"; 
-import { reactive, ref, computed, onMounted } from "vue";
+import { reactive, ref, computed, onMounted } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2'
 import Nomination from "./Nomination.vue";
 import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
-import { useUserStore } from "@/stores/UserStore";
 import { useNominationStore } from '@/stores/NominationStore';
-import { all } from "axios";
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 const { fetchNominations } = nominationStore;
@@ -35,7 +34,7 @@ let staffMembers = reactive([]);
 
 let fetchStaffMembers = async() => {
     try {
-        const resp = await axios.get('/api/getBookingOptions/' + userId.value);
+        const resp = await axios.get('/api/getBookingOptions/' + user.value.accountNo);
         staffMembers = resp.data;
     } catch (error) {
         alert("Failed to load data: Please try again");
@@ -47,7 +46,7 @@ const dataReady = ref(false);
 
 onMounted(async () => {
     if (!props.isEditing) {
-        await fetchNominations();
+        await fetchNominations(user.value.accountNo);
     }
     await fetchStaffMembers();
     dataReady.value = true;
@@ -165,7 +164,7 @@ function cancelApplication() {
 
 function submitApplication() {
     let data = {
-        'accountNo': userId.value,
+        'accountNo': user.value.accountNo,
         'selfNominateAll': selfNominateAll.value,
     }
 
@@ -177,42 +176,51 @@ function submitApplication() {
 }
 
 const disabledClass = "bg-gray-300 border-gray-100";
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 <template>
-    <div class="flex flex-col w-full pageHeight" v-if="dataReady">
+    <div class="flex flex-col w-full laptop:pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%]">
-            <p class="text-4xl">
+            <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
-            <div class="flex flex-row justify-between">
-                <div class="flex flex-row space-x-4 w-3/5">
-                    <div class="flex flex-col items-center pb-2">
-                        <p class="text-xl">
+            <div class="flex w-full justify-between 4k:py-6">
+                <div class="flex space-x-1 laptop:space-x-4">
+                    <div class="flex flex-col items-center">
+                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl">
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-8 h-8"
+                            class="w-4 h-4 1080:w-6 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
                         />
                     </div>
-                    <div class="w-full">
-                        <p class="text-xl">
+                    <div class="flex flex-col w-[10rem] laptop:w-[12rem] 1080:w-[22rem] 1440:w-[31rem] 4k:w-[48rem]">
+                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-8 w-2/3"
+                            class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
                 </div>
-                <div class="flex flex-col w-96 mr-6">
-                    <p class="text-xl">
-                        Select Staff Member for {{ numSelectedNominations }} Entries
+                <div class="laptop:w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
+                <div class="flex flex-col mr-2.5 laptop:mr-6 items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
+                    <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
+                        Select Substitute ({{ numSelectedNominations }}):
                     </p>
                     <NomineeDropdown
                         class="w-full"
@@ -223,8 +231,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </div>
             </div>
         </div>
-        <div class="flex flex-col h-[90%] mt-2">
-            <div class="flex border border-black tableHeight">
+        <div class="flex flex-col laptop:h-[90%] mt-2">
+            <div class="flex border border-black laptop:tableHeight">
                 <VueScrollingTable
                     class="scrollTable"
                     :deadAreaColor="deadAreaColor"
@@ -246,36 +254,38 @@ const disabledClass = "bg-gray-300 border-gray-100";
             <div class="h-[10%]">
                 <div class="flex items-center space-x-2 py-2 h-1/2">
                     <input type="checkbox"
-                        class="h-8 w-8"
+                        class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
                         v-model="selfNominateAll"
                         @click="handleSelfNominateAll()"    
                     />
-                    <p>This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.</p>
+                    <p class="text-xs 1080:text-sm 1440:text-base 4k:text-2xl ">
+                        This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.
+                    </p>
                 </div>
                 <div class="flex justify-between h-1/2 space-x-16">
-                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                         @click="cancelApplication()"
                         v-if="!props.isEditing"
                     >
                         Cancel Application
                     </button>
-                    <button class="py-2 bg-red-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                         @click="cancelApplication()"
                         v-if="props.isEditing"
                     >
-                        Cancel Edit of Application
+                        Cancel Edit
                     </button>
-                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                         @click="submitApplication()"
                         v-if="!props.isEditing"
                     >
                         Submit Application
                     </button>
-                    <button class="py-2 bg-green-500 rounded-md text-white font-bold text-2xl w-1/2"
+                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                         @click="submitApplication()"
                         v-if="props.isEditing"
                     >
-                        Edit Application
+                        Submit Edit
                     </button>
                 </div>
             </div>

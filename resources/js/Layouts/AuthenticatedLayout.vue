@@ -7,21 +7,41 @@ import { ref } from 'vue';
 let settingsVisible = ref(false);
 
 
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
-    <main>
-        <div class="margin-fix"></div>
-        <Navbar
+    <div class="w-full h-[100vh]">
+        <div v-if="isMobile()">
+            <div class="margin-fix-mobile"></div>
+            <Navbar
+            class="h-[7vh] mx-2"
+            @open-settings="settingsVisible = true"/>
+            <slot />
+        </div>
+        <div v-else>
+            <div class="margin-fix"></div>
+            <Navbar
             class="h-[7vh] mx-4"
             @open-settings="settingsVisible = true"/>
-        <slot />
-        <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
-    </main>
+            <slot />
+        </div>
+    </div>
+    <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
 </template>
 
 <style>
 .margin-fix{
     height: 1rem;
+}
+.margin-fix-mobile{
+    height: 0.5rem;
 }
 </style>

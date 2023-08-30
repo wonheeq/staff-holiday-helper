@@ -1,33 +1,59 @@
 <script setup>
 import Shortcut from './Shortcut.vue';
-
-let props = defineProps({ user: Object });
+import Swal from 'sweetalert2';
+import { inject } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+const dayJS = inject("dayJS");
+let applicationStore = useApplicationStore();
+const { applications } = storeToRefs(applicationStore);
+import { useSubstitutionStore } from '@/stores/SubstitutionStore';
+const substitutionStore = useSubstitutionStore();
+const { substitutions } = storeToRefs(substitutionStore);
+let props = defineProps({ welcomeData: Object });
 
 let copyEmail = () => {
-    let email = props.user.lineManager.id + "@curtin.edu.au";
+    let email = props.welcomeData.lineManager.id + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
-    alert("Email address copied to clipboard.");
+    Swal.fire("Email address copied to clipboard.");
 };
+
+function formatDate(date) {
+    if (date !== null) {
+        return dayJS(date).format('ddd, DD MMM YYYY');
+    }
+    return "";
+}
 </script>
 
 <template>
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center" v-if="props.welcomeData">
         <div class="flex flex-row">
-            <div class="flex flex-col items-center 1080:text-xl 1440:text-2xl 4k:text-4xl">
-                <p>Welcome {{ props.user.firstName }},</p>
-                <p>Your line manager is currently {{ props.user.lineManager.name }}
-                    <input @click="copyEmail" type="image" class="1440:h-8 4k:h-14 align-middle" src="/images/mail.svg" v-b-tooltip.hover title="Copy Email Address to Clipboard"/>
+            <div class="flex flex-col items-center">
+                <p class="text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                    Welcome {{ props.welcomeData.name }},
+                </p>
+                <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                    Your line manager is currently {{ props.welcomeData['lineManager']['name'] }}
+                    <input @click="copyEmail"
+                        type="image"
+                        class="h-5 1440:h-8 4k:h-14 align-middle"
+                        src="/images/mail.svg"
+                        title="Copy Email Address to Clipboard"
+                        v-title
+                    />
                 </p>
             </div>
         </div>
-        <div class="grid grid-cols-3 bg-white rounded-md p-4 1440:p-6 w-4/5 mt-2 h-full drop-shadow-md">
+        <div class="grid grid-cols-3 bg-white rounded-md p-2 laptop:p-4 1440:p-6 laptop:w-4/5 mt-1 laptop:mt-2 h-full drop-shadow-md">
             <Shortcut class="bg-green-200" href="/bookings/apps">
                 Your Leave Applications
                 <template #content>
                     <ul class="text-left text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
-                        <li>1 Approved</li>
-                        <li>1 Pending</li>
-                        <li>1 Denied</li>
+                        <li>{{ applications.filter(app => app.status == 'Y').length }} Approved</li>
+                        <li>{{ applications.filter(app => app.status == 'U').length }} Undecided</li>
+                        <li>{{ applications.filter(app => app.status == 'P').length }} Pending</li>
+                        <li>{{ applications.filter(app => app.status == 'N').length }} Denied</li>
                     </ul>
                 </template>
                 <template #strip>
@@ -45,8 +71,13 @@ let copyEmail = () => {
             <Shortcut class="bg-purple-200" href="/bookings/subs">
                 Your Substitutions
                 <template #content>
-                    <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">3 upcoming substitutions.</p>
-                    <p class="1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">Next: 12 Aug</p>
+                    <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                        {{ substitutions.length }} upcoming substitutions.
+                    </p>
+                    <p v-if="substitutions.length" class="1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                        <!--Assume that the first element is the earliest date-->
+                        Next: {{ formatDate(new Date(substitutions[0]['sDate'])) }}
+                    </p>
                 </template>
                 <template #strip>
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-purple-400"></div>

@@ -43,10 +43,10 @@ class DatabaseSeederTest extends TestCase
 
     public function test_database_accounts(): void
     {
-        // Asserting that Line Manager account was successfully inserted from seeder
+        // Asserting that Syste Admin account was successfully inserted from seeder
         $this->assertDatabaseHas('accounts', [
             'accountNo' => '000002L',
-            'accountType' => 'lmanager',
+            'accountType' => 'sysadmin',
             'superiorNo' => null
         ]);
 
