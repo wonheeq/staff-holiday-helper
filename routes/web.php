@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\AuthenticationController;
 
 
 /*
@@ -26,7 +27,13 @@ use App\Http\Controllers\PasswordResetController;
 
 Route::get('/', function () {
     return Inertia::render('Landing', []);
-})->name('login');
+});
+
+Route::get('/login', function () {
+    return Inertia::render('Landing', []);
+});
+
+
 
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
@@ -35,6 +42,7 @@ Route::get('/reset', function () {
 Route::middleware('auth:sanctum')->get('/home', function () {
     return Inertia::render('Home', []);
 });
+
 
 
 Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
@@ -61,6 +69,24 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     ]);
 });
 
+Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
+    return Inertia::render('Manager', [
+        'screenProp' => $screenProp
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'appRequest'
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'manage'
+    ]);
+});
+
 Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
@@ -70,40 +96,39 @@ Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
 Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, 'sendEmail']);
 
 
-// ----------------------AUTHENTICATION RELATED ROUTES-------------------------
+// ----------------------AUTHENTICATION RELATED ROUTES------------------------- //
 
 Route::post(
     '/login',
-    [AuthController::class, 'authenticate']
-);
+    [AuthenticationController::class, 'login']
+)->name('login');
+
 
 Route::post(
     '/logout',
-    [AuthController::class, 'logout']
-);
-
-Route::get(
-    '/login/create',
-    [AuthController::class, 'create']
+    [AuthenticationController::class, 'logout']
 );
 
 
 Route::post(
     '/reset-password',
-    [PasswordResetController::class, 'reset']
-)->middleware('guest')->name('password.email');
+    [AuthenticationController::class, 'reset']
+)->name('password.email');
 
 
-Route::get('/reset-password/{token}', [PasswordResetController::class, 'create'])
-    ->name('password.reset');
+Route::get(
+    '/reset-password/{token}',
+    [AuthenticationController::class, 'create']
+)->name('password.reset');
 
-Route::post('/update-password', [PasswordResetController::class, 'store'])
-    ->name('password.store');
 
-/*
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-*/
+Route::post(
+    '/update-password',
+    [AuthenticationController::class, 'store']
+)->name('password.store');
+
+
+Route::post(
+    '/change-password',
+    [AuthenticationController::class, 'homeStore']
+)->name('password.homeStore');

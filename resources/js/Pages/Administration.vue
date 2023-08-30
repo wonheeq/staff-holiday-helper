@@ -1,6 +1,6 @@
 <script setup>
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-    import AdminTabs from '@/Components/AdminTabs.vue';
+    import AdminTabs from '@/Components/Admin/AdminTabs.vue';
 
     let props = defineProps({
         screenProp: {
@@ -30,14 +30,9 @@
     margin: 0;
     width: 100%;
     min-height: 100vh;
-    }
+    }*/
 
     .screen {
         height: calc(93vh - 3rem);
     }
-    /*body {
-        background-image: url('/images/background.svg');
-        background-size: cover;
-        background-repeat: no-repeat;
-    }*/
 </style>

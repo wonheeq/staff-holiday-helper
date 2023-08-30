@@ -28,7 +28,6 @@ let accountNo = strArr[0];
 <template>
     <main>
         <div>
-
             <PasswordForm :account-no="accountNo" :token="token"></PasswordForm>
         </div>
     </main>

@@ -24,6 +24,18 @@ class BookingControllerTest extends TestCase
             'accountNo' => $this->user->accountNo,
         ]);
 
+        $this->adminUser = Account::factory()->create([
+            'accountType' => "sysadmin"
+        ]);
+
+        $this->otherUser1 = Account::factory()->create([
+            'accountType' => "staff"
+        ]);
+
+        $this->otherUser2 = Account::factory()->create([
+            'accountType' => "lmanager"
+        ]);
+
         $this->otherUsers = Account::factory(3)->create();
         $this->applications = array();
 
@@ -75,6 +87,10 @@ class BookingControllerTest extends TestCase
         AccountRole::where('accountNo', $this->user->accountNo)->delete();
 
         $this->user->delete();
+
+        $this->adminUser->delete();
+        $this->otherUser1->delete();
+        $this->otherUser2->delete();
 
         parent::teardown();
     }

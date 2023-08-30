@@ -25,7 +25,21 @@ class ApplicationControllerTest extends TestCase
 
         $this->otherUser = Account::factory()->create();
 
-        $this->accountRoles = AccountRole::factory(3)->create([
+        $this->adminUser = Account::factory()->create([
+            'accountType' => "sysadmin"
+        ]);
+
+        $this->otherUser1 = Account::factory()->create([
+            'accountType' => "staff"
+        ]);
+
+        $this->otherUser2 = Account::factory()->create([
+            'accountType' => "lmanager"
+        ]);
+
+        $roles = Role::pluck('roleId');
+        $this->accountRoles = array();
+        array_push($this->accountRoles, AccountRole::factory()->create([
             'accountNo' => $this->user->accountNo,
         ]);
 
@@ -63,7 +77,9 @@ class ApplicationControllerTest extends TestCase
         AccountRole::where('accountNo', $this->otherUser['accountNo'])->delete();
         Application::where('accountNo', $this->user['accountNo'])->delete();
 
-
+        $this->adminUser->delete();
+        $this->otherUser1->delete();
+        $this->otherUser2->delete();
 
         $this->user->delete();
         $this->otherUser->delete();
@@ -124,6 +140,47 @@ class ApplicationControllerTest extends TestCase
         foreach ($array as $app) {
             $this->assertTrue($app->accountNo == $this->user['accountNo']);
         }
+    }
+
+
+    /**
+     * Unit tests for getAllApplications
+     */
+    public function test_api_request_for_all_applications(): void
+    {
+        $response = $this->getJson("/api/allApplications/{$this->adminUser['accountNo']}");
+        $response->assertStatus(200);
+
+        $response = $this->getJson("/api/allApplications/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(500);
+
+        $response = $this->getJson("/api/allApplications/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(500);
+    }
+
+    public function test_api_request_for_accounts_content_is_json(): void
+    {
+        // Check if response is json
+        $response = $this->getJson("/api/allApplications/{$this->adminUser['accountNo']}");
+        $this->assertJson($response->content());
+    }
+
+    public function test_api_request_for_accounts_content_is_valid(): void
+    {
+        // Check if correct structure
+        $response = $this->getJson("/api/allApplications/{$this->adminUser['accountNo']}");
+        $response->assertJsonStructure([
+            0 => [
+                'applicationNo',
+                'accountNo',
+                'sDate',
+                'eDate',
+                'status',
+                'processedBy',
+                'rejectReason',
+                'updated_at'
+            ],
+        ]);
     }
 
 
