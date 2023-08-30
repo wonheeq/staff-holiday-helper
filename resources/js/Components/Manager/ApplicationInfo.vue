@@ -56,7 +56,7 @@ function handleAccept() {
                 </div>
             </div>
         </div>  
-        <div class="flex flex-col w-1/6 text-3xl ml-2 p-2 justify-center items-center">
+        <div class="flex flex-col w-1/6 bg-gray-200 text-3xl ml-2 p-2 justify-center items-center">
             <button class="flex flex-col items-center p-11"
                 @click="handleAccept()"
             >
@@ -64,7 +64,7 @@ function handleAccept() {
             <p class="text-sm 1440:text-lg">Accept</p>
             </button>
         </div>
-        <div v-if="source.status == 'U'" class="flex flex-col w-1/6 bg-gray-200 text-3xl ml-2 p-2 justify-center items-center">
+        <div class="flex flex-col w-1/6 bg-gray-200 text-3xl ml-2 p-2 justify-center items-center">
             <button class="flex flex-col items-center"
                 @click="handleReject()"
             >
