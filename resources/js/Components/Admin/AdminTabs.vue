@@ -1,14 +1,11 @@
 <script setup>
     
     import SubpageNavbar from '../SubpageNavbar.vue';
-    import { onMounted, ref } from 'vue';
+    import { ref, computed } from 'vue';
 
-    import { storeToRefs } from 'pinia';
-    import { useUserStore } from '@/stores/AdminUserStore';
-
-    let userStore = useUserStore();
-    const { userId } = storeToRefs(userStore);
-    //console.warn("userId: " + userId.value)
+    import { usePage } from '@inertiajs/vue3'
+    const page = usePage();
+    const user = computed(() => page.props.auth.user);
     
     const options = [
     { id: 'viewData', title: 'View/Edit Data'},
@@ -133,7 +130,7 @@
                     </button>
                 </div>
             </div>
-            <component :is="currentTable" :user="userId"></component>   
+            <component :is="currentTable" :user="user.accountNo"></component>   
         </div>
         </div>  
 
