@@ -10,6 +10,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\NominationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
@@ -48,11 +49,16 @@ Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
 
 Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
+
 Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
 Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
 Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
 Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
+
+Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
+Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
+Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
 
 Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
 Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
@@ -71,3 +77,4 @@ Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getW
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
+

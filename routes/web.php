@@ -70,7 +70,25 @@ Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
     ]);
 });
 
-Route::middleware('auth:sanctum')->get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
+Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
+    return Inertia::render('Manager', [
+        'screenProp' => $screenProp
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'appRequest'
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
+    return Inertia::render('Manager', [
+        'activeScreen' => 'manage'
+    ]);
+});
+
+Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
     return Inertia::render('Administration', [
         'screenProp' => $screenProp
     ]);

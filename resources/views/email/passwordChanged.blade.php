@@ -29,7 +29,7 @@
     </mjml>
   </mj-head>
   <mj-body width="600px">
-    <mj-wrapper background-url="https://lh3.googleusercontent.com/drive-viewer/AITFw-xjFsV_ZTqdL1QL4Qg_dxM66dcj6y03WQtLSOB4wPs2JWKGxl30_6mmv0wOIBKfvKhG4X1aYSOUPliVhtgHpg9lfrEn1A=s1600" css-class="body-section" padding="0px">
+    <mj-wrapper background-url="https://drive.google.com/uc?export=download&id=1vCe-ypjgifrHt5rZWgyRkZSP1WXfQJed" css-class="body-section" padding="0px">
       <mj-section>
           <mj-column>
             <mj-spacer height="10px" ></mj-spacer>

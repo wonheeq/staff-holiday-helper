@@ -29,7 +29,7 @@
       </mjml>
     </mj-head>
     <mj-body width="600px">
-      <mj-wrapper background-url="https://drive.google.com/uc?id=1vCe-ypjgifrHt5rZWgyRkZSP1WXfQJed&export=download" css-class="body-section" padding="0px">
+      <mj-wrapper background-url="https://drive.google.com/uc?export=download&id=1vCe-ypjgifrHt5rZWgyRkZSP1WXfQJed" css-class="body-section" padding="0px">
         <mj-section>
             <mj-column>
               <mj-spacer height="10px" ></mj-spacer>

@@ -69,31 +69,34 @@ class DatabaseSeeder extends Seeder
             'accountType' => 'sysadmin',
             'password' => Hash::make('testPassword1'),
             'superiorNo' => null,
+            'fName' => 'Static',
+            'lName' => 'Test Manager',
+            'password' => Hash::make('testPassword1'),
         ]);
 
 
         Account::factory()->create([
             'accountNo' =>  '112237t',
             'accountType' => 'lmanager',
-            'superiorNo' => null,
+            'superiorNo' => $lineManagerNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '123456a',
             'accountType' => 'lmanager',
-            'superiorNo' => null,
+            'superiorNo' => $lineManagerNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '441817e',
             'accountType' => 'lmanager',
-            'superiorNo' => null,
+            'superiorNo' => $lineManagerNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '877873p',
             'accountType' => 'lmanager',
-            'superiorNo' => null,
+            'superiorNo' => $lineManagerNo,
         ]);
 
 
@@ -152,7 +155,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create 30 accounts
-        Account::factory(30)->create([]);
+        Account::factory(30)->create([
+            'superiorNo' => $lineManagerNo
+        ]);
 
         $accounts = Account::get();
 
