@@ -11,6 +11,9 @@ import { useApplicationStore } from '@/stores/ApplicationStore';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useCalendarStore } from '@/stores/CalendarStore';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
@@ -152,19 +155,11 @@ function handleEditApplication(data) {
         });
     }
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
 <Modal>
     <div class="flex flex-col bg-transparent w-screen px-2 mt-2 mb-2">
-        <div v-if="isMobile()" class="w-full bg-white p-2 rounded-md">
+        <div v-if="isMobile" class="w-full bg-white p-2 rounded-md">
             <div class="h-[4%] flex justify-between">
                 <p class="text-xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):

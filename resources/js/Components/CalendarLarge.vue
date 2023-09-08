@@ -6,6 +6,9 @@ import { useScreens, useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3'
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
@@ -29,16 +32,7 @@ const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
 
 onMounted(() => {
     fetchCalendarData(user.value.accountNo);
-})
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+});
 </script>
 <template>
     <div ref="divRef" class="bg-white rounded-md flex flex-col">
@@ -63,7 +57,7 @@ function isMobile() {
         >
         </Calendar>
         <div class="absolute flex items-center bottom-2 1440:bottom-4 px-4 space-x-4">
-            <div v-if="isMobile()">
+            <div v-if="isMobile">
                 <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
                 <div class="grid grid-cols-2">
                     <div>

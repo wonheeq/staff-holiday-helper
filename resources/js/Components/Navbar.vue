@@ -1,6 +1,10 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
@@ -34,21 +38,13 @@ async function handleLogout() {
         }
     )
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
     <div class="flex flex-row justify-between border-2 rounded-md bg-white drop-shadow-md">
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
             <img src="/images/logo.svg" class="logo mr-2"/>
-            <div v-if="!isMobile()" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
+            <div v-if="!isMobile" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
                     <NavLink :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">

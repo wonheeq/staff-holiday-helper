@@ -12,6 +12,10 @@ import { ref, reactive, computed } from "vue";
 import { usePage } from '@inertiajs/vue3';
 import { useApplicationStore } from '@/stores/ApplicationStore';
 import { useSubstitutionStore } from '@/stores/SubstitutionStore';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const substitutionStore = useSubstitutionStore();
 const { fetchSubstitutions } = substitutionStore;
 let applicationStore = useApplicationStore();
@@ -91,21 +95,12 @@ let calendarLarge = ref(false);
 fetchWelcomeMessageData();
 fetchApplications(user.value.accountNo);
 fetchSubstitutions(user.value.accountNo);
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
     <PageLayout>
         <AuthenticatedLayout>
-            <div v-if="isMobile()">
+            <div v-if="isMobile">
                 <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge">
                     <div class="flex flex-col w-full" v-if="dataReady">
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />

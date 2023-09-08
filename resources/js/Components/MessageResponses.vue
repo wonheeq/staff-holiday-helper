@@ -3,6 +3,10 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({
@@ -111,19 +115,11 @@ function handleReject() {
 }
 
 const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
 <div class="flex flex-col justify-evenly border-l-4 border-white">
-    <div v-if="isMobile()" class="pl-2 h-full">
+    <div v-if="isMobile" class="pl-2 h-full">
         <!--Substitution Request - Not Acknowledged Options-->
         <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0" class="h-full">
             <!--Substitution Request for a single nomination-->
