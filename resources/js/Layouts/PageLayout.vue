@@ -1,15 +1,20 @@
 <script setup>
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+const { updateWidth } = screenSizeStore;
+onMounted(() => {
+    window.onresize = () => {
+        updateWidth(screen.availWidth);
     }
-    else {
-        return false;
-    }
-}
+
+    updateWidth(screen.availWidth);
+});
 </script>
 <template>
-<main :class="isMobile() ? 'bg-mobile' : 'bg-desktop'">
+<main :class="isMobile ? 'bg-mobile' : 'bg-desktop'">
     <slot/>
 </main>
 </template>

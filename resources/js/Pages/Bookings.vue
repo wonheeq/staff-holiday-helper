@@ -11,6 +11,9 @@ import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from "@/stores/ApplicationStore";
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3'
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
@@ -74,20 +77,12 @@ function handleActiveScreenChanged(screen) {
 
     changeUrl(screen);
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
 <PageLayout>
     <AuthenticatedLayout>
-        <div v-if="isMobile()" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
+        <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
             <SubpageNavbar
                 class=""
                 :options="options"
