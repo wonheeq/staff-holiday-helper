@@ -160,7 +160,7 @@ function handleEditApplication(data) {
 <Modal>
     <div class="flex flex-col laptop:flex-row bg-transparent w-screen px-2 mt-2 mb-2 laptop:px-4 laptop:mt-auto laptop:mb-4">
         <div v-if="isMobile" class="w-full bg-white p-2 rounded-md">
-            <div class="h-[4%] flex justify-between">
+            <div class="h-[4%] flex justify-between w-full">
                 <p class="text-xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
                 </p>
@@ -182,7 +182,7 @@ function handleEditApplication(data) {
             <div class="h-2">
             </div>
         </div>
-        <div v-else class="w-[80%] flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
+        <div v-else class="laptop:w-[80%] flex flex-col p-4 laptop:mr-4 subpage-height rounded-tl-md" :class="subpageClass">
             <div class="h-[8%] flex justify-between">
                 <p class="text-5xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
