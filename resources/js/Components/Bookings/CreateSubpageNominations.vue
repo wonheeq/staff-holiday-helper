@@ -176,14 +176,6 @@ function submitApplication() {
 }
 
 const disabledClass = "bg-gray-300 border-gray-100";
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
     <div class="flex flex-col w-full laptop:pageHeight" v-if="dataReady">
@@ -232,7 +224,7 @@ function isMobile() {
             </div>
         </div>
         <div class="flex flex-col laptop:h-[90%] mt-2">
-            <div class="flex border border-black laptop:tableHeight">
+            <div class="flex border border-black tableHeight">
                 <VueScrollingTable
                     class="scrollTable"
                     :deadAreaColor="deadAreaColor"
