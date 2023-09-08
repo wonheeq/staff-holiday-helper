@@ -6,6 +6,9 @@ import CalendarSmall from '../CalendarSmall.vue';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import Swal from 'sweetalert2';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
@@ -121,19 +124,10 @@ function createApplication(data) {
         });
     }
 }
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
     <div>
-        <div v-if="isMobile()" class="w-full">
+        <div v-if="isMobile" class="w-full">
             <div class="w-full bg-white rounded-b-md p-2">
                 <p class="text-xl font-bold">
                     Create New Leave Application:
@@ -167,7 +161,7 @@ function isMobile() {
             </div>
             <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
         </div>
-        <div v-if="isMobile()" class="h-2">
+        <div v-if="isMobile" class="h-2">
         </div>
     </div>
     
