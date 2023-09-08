@@ -29,7 +29,7 @@ function handleSelection(label) {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col">
         <div class="flex flex-row">
             <input type="text"
                 :class="isDisabled ? disabledClass : ''"
