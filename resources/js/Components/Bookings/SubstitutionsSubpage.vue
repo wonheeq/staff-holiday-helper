@@ -31,7 +31,7 @@ let deadAreaColor = "#FFFFFF";
                         class=" bg-gray-200 border-b-8 border-white"
                     >
                         <div class="px-2 py-2">
-                            <p class="text-lg laptop:text-xl">
+                            <p class="text-lg laptop:text-xl ">
                                 {{ item.task }} for {{  item.applicantName }}
                             </p>
                             <p>
@@ -64,10 +64,10 @@ let deadAreaColor = "#FFFFFF";
                         class=" bg-gray-200 border-b-8 border-white"
                     >
                         <div class="px-2 py-2">
-                            <p class="text-lg laptop:text-xl">
+                            <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl">
                                 {{ item.task }} for {{  item.applicantName }}
                             </p>
-                            <p>
+                            <p class="text-lg 1080:text-xl 1440:text-2xl">
                                 {{ item.sDate }} - {{ item.eDate }}
                             </p>
                         </div>
