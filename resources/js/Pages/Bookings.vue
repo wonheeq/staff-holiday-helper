@@ -9,8 +9,8 @@ import EditApplication from "@/Components/Bookings/EditApplication.vue";
 import { ref, reactive, computed } from 'vue';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from "@/stores/ApplicationStore";
+import { usePage } from '@inertiajs/vue3';
 import { storeToRefs } from 'pinia';
-import { usePage } from '@inertiajs/vue3'
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
