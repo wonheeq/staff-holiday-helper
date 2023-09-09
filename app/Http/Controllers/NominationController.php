@@ -196,7 +196,10 @@ class NominationController extends Controller
             $application->processedBy = null;
             $application->save();
 
-             // TODO: create message for line manager informing them to reveiw the app
+            // Get current line manager account number
+            $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
+            // Notify line manager of new application to review
+            app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
         }
 
         return response()->json(['success'], 200);
@@ -258,21 +261,53 @@ class NominationController extends Controller
         $message->acknowledged = true;
         $message->save();
 
+        $rejectedRoles = [];
         // set nomination statues to 'Y' or 'N'
         foreach ($responseData as $response) {
             $accountRoleId = $response['accountRoleId'];
             $status = $response['status'];
             Nomination::where('applicationNo', $applicationNo, "and")
-                        ->where('nomineeNo', $accountNo, "and")
-                        ->where('accountRoleId', $accountRoleId)
-                        ->update([
-                            "status" => $status
-                        ]);
+            ->where('nomineeNo', $accountNo, "and")
+            ->where('accountRoleId', $accountRoleId)
+            ->update([
+                "status" => $status
+            ]);
+
+            // Add to rejectedRoles if status is N
+            if ($status == 'N') {
+                array_push(
+                    $rejectedRoles,
+                    app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId)
+                );
+            }
         }
 
+        if (count($rejectedRoles) == 0) {
+            // Set application status to Undecided by system if all nominees agreed
+            $allNominations = Nomination::where('applicationNo', $applicationNo)->get()->toArray();
+            $acceptedNominations = Nomination::where('applicationNo', $applicationNo, 'and')
+                                                ->where('status', 'Y')->get()->toArray();
+            if (count($acceptedNominations) == count($allNominations)) {
+                $application->status = 'U';
+                $application->processedBy = null;
+                $application->save();
 
-        // TODO: update applicaiton status
-        // Message those involved
+                // Get current line manager account number
+                $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
+                // Notify line manager of new application to review
+                app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
+            }
+        }
+        else {
+            // Send message to applicant informing them that a nominee declined a nomination
+            app(MessageController::class)->notifyApplicantNominationDeclined($applicationNo, $accountNo, $rejectedRoles);
+
+            // Set application status to denied by system
+            $application->status = 'N';
+            $application->processedBy = null;
+            $application->save();
+        }
+        
 
         return response()->json(['success'], 200);
     }
