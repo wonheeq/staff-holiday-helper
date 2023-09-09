@@ -107,17 +107,25 @@ class NominationController extends Controller
         $message->acknowledged = true;
         $message->save();
 
-        // set nomination statues to 'N'
+        $rejectedRoles = [];
+
+        // set nomination statues to 'N' and add Role to rejectedRoles
         foreach ($nominations as $nomination) {
             Nomination::where('applicationNo', $nomination->applicationNo, "and")
-                        ->where('nomineeNo', $nomination->nomineeNo, "and")
-                        ->where('accountRoleId', $nomination->accountRoleId)
-                        ->update([
-                            "status" => 'N'
-                        ]);
+            ->where('nomineeNo', $nomination->nomineeNo, "and")
+            ->where('accountRoleId', $nomination->accountRoleId)
+            ->update([
+                "status" => 'N'
+            ]);
+
+            array_push(
+                $rejectedRoles,
+                app(RoleController::class)->getRoleFromAccountRoleId($nomination->accountRoleId)
+            );
         }
 
-        // TODO: Send message to applicant informing them that a nominee declined
+        // Send message to applicant informing them that a nominee declined a nomination
+        app(MessageController::class)->notifyApplicantNominationDeclined($applicationNo, $accountNo, $rejectedRoles);
 
         // Set application status to denied by system
         $application->status = 'N';
@@ -171,11 +179,11 @@ class NominationController extends Controller
         // set nomination statues to 'Y'
         foreach ($nominations as $nomination) {
             Nomination::where('applicationNo', $nomination->applicationNo, "and")
-                        ->where('nomineeNo', $nomination->nomineeNo, "and")
-                        ->where('accountRoleId', $nomination->accountRoleId)
-                        ->update([
-                            "status" => 'Y'
-                        ]);
+            ->where('nomineeNo', $nomination->nomineeNo, "and")
+            ->where('accountRoleId', $nomination->accountRoleId)
+            ->update([
+                "status" => 'Y'
+            ]);
         }
 
         

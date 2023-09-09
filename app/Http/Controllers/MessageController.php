@@ -432,6 +432,51 @@ class MessageController extends Controller
         ]);
     }
 
+    /*
+    Creates a message for the applicant of an application, indicating that a nomination has been declined
+    */
+    public function notifyApplicantNominationDeclined($applicationNo, $nomineeNo, $rejectedRoles) {
+        $application = Application::where("applicationNo", $applicationNo)->first();
+        $nomineee = Account::where('accountNo', $nomineeNo)->first();
+
+        $subject = "";
+        $content = [];
+
+        if (count($rejectedRoles) > 1) {
+            $subject = "Nominations Rejected for Application#{$applicationNo}";
+            $content = [
+                "{$nominee['fName']} {$nominee['lName']} has declined to takeover the following roles:",
+            ];
+        }
+        else {
+            $subject = "Nomination Rejected for Application#{$applicationNo}";
+            $content = [
+                "{$nominee['fName']} {$nominee['lName']} has declined to takeover the following role:",
+            ];
+        }
+
+        foreach ($rejectedRoles as $role) {
+            array_push(
+                $content,
+                $role
+            );
+        }
+
+        array_push(
+            $content,
+            "Duration: {$application->sDate} - {$application->eDate}"
+        );
+
+        Message::create([
+            'applicationNo' => $applicationNo,
+            'receiverNo' => $application->accountNo,
+            'senderNo' => $nomineeNo,
+            'subject' => $subject,
+            'content' => json_encode($content),
+            'acknowledged' => false,
+        ]);
+    }
+
      /*
     Returns all Messages
      */
