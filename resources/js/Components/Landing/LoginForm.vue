@@ -44,7 +44,6 @@ async function handleLogin() {
                 </landing-input>
 
                 <landing-input
-                    @submitForm="handleLogin"
                     title="Password"
                     v-model="formData.password"
                     inType="passwordType">
