@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AppRequestSubpage from '@/Components/Manager/AppRequestSubpage.vue';
 import ManageStaffSubpage from '@/Components/Manager/ManageStaffSubpage.vue';
 import { useRolesStore } from '@/stores/RolesStore';
@@ -55,7 +56,8 @@ function handleActiveScreenChanged(screen) {
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <PageLayout>
+        <AuthenticatedLayout>
         <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
@@ -65,11 +67,11 @@ function handleActiveScreenChanged(screen) {
             />
             <AppRequestSubpage
                 class="p-4 h-[95%]"
-                v-show="activeScreen === 'appRequest'" 
+                v-show="activeScreen === 'appRequest'"
                 :class="subpageClass"
             />
             <ManageStaffSubpage
-                v-show="activeScreen === 'manage'" 
+                v-show="activeScreen === 'manage'"
                 :class="subpageClass"
                 class="p-4 h-[95%]"
                 @editRoles="(staffId) => handleEditRoles(staffId)"
@@ -84,6 +86,8 @@ function handleActiveScreenChanged(screen) {
             </Teleport>
         </div>
     </AuthenticatedLayout>
+</PageLayout>
+
 </template>
 
 <style>
