@@ -18,6 +18,7 @@
                 class="border-none w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
+                @keydown.enter="submitForm"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
@@ -31,6 +32,8 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue';
+
+let emit = defineEmits(['submitForm']);
 
 defineProps({
 title: { type: String, default: "", },
@@ -53,6 +56,11 @@ let switchVis = () => {
         fieldType.image = "/images/Eye_light.svg";
     }
 };
+
+function submitForm() {
+    console.log("form enter detected");
+    emit('submitForm');
+}
 </script>
 
 
