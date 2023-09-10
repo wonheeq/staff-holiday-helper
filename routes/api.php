@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+// System Administrator
 Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
 Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
 Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
@@ -44,6 +44,16 @@ Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
 Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
 Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
 Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
+
+
+// Line Manager
+Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
+Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
+Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
+Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
+Route::post('acceptApplication', [ApplicationController::class, 'acceptApplication']);
+Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
+
 
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
 Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
@@ -56,24 +66,18 @@ Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'get
 Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
 Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
-Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
-Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
-Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
+
 
 Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
 Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
 Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
 Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
-Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
 Route::post('createApplication', [ApplicationController::class, 'createApplication']);
 Route::post('editApplication', [ApplicationController::class, 'editApplication']);
 Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
-Route::post('acceptApplication', [ApplicationController::class, 'acceptApplication']);
-Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
-
-Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
+
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
