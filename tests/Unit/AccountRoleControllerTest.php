@@ -19,12 +19,10 @@ class AccountRoleControllerTest extends TestCase
         ]);
 
         $this->otherUser1 = Account::factory()->create([
-            'accountNo' => "AAAAAA2",
             'accountType' => "staff"
         ]);
 
         $this->otherUser2 = Account::factory()->create([
-            'accountNo' => "AAAAAA3",
             'accountType' => "lmanager"
         ]);
     }
