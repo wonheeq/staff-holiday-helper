@@ -50,7 +50,7 @@ const hasDigit = new RegExp("\\d");
 // Validate and push any error messages to the error array
 let validatePasswords = () => {
     errors.length = 0;
-
+    buttonActive = false;
 
     if (!hasUppercase.test(password.password)) {
         errors.push("Password must contain at least one uppercase letter.");
