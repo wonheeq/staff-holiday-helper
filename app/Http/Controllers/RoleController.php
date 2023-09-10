@@ -12,10 +12,11 @@ use App\Models\Course;
 
 class RoleController extends Controller
 {
-     /*
+    /*
     Returns the formatted role name of the given AccountRoleId
     */
-    public function getRoleFromAccountRoleId($accountRoleId) {
+    public function getRoleFromAccountRoleId($accountRoleId)
+    {
         $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
         if ($accountRole == null) {
             return "INVALID";
@@ -27,7 +28,7 @@ class RoleController extends Controller
         $unitId = $accountRole->unitId;
         $majorId = $accountRole->majorId;
         $courseId = $accountRole->courseId;
-        
+
         // Check if role is for major coordinator
         if ($roleName == "Major Coordinator") {
             // Get major name
@@ -43,7 +44,7 @@ class RoleController extends Controller
 
             return "{$courseId} {$courseName} - {$roleName}";
         }
-        
+
         // Default to unit name
         // Get unit name
         $unit = Unit::where('unitId', $unitId)->first();
@@ -56,21 +57,14 @@ class RoleController extends Controller
     Returns all Roles
      */
     public function getAllRoles(Request $request, String $accountNo)
-    {  
+    {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        }
-        else {
-            // Verify that the account is a system admin account
-            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
-                // User is not a system admin, deny access to full table
-                return response()->json(['error' => 'User not authorized for request.'], 500);
-            }
-
+        } else {
             $roles = Role::get();
-            return response()->json($roles);  
-        }  
+            return response()->json($roles);
+        }
     }
 }

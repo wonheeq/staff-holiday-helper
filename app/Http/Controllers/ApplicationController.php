@@ -25,16 +25,15 @@ class ApplicationController extends Controller
         }
 
         $applications = Application::orderBy('created_at', 'desc')->where('accountNo', $accountNo)->get();
-        
+
         foreach ($applications as $val) {
             // get nominations for application and insert
             $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
-            
+
             // check if is self nominated for all
             if ($this->isSelfNominatedAll($nominations, $accountNo)) {
                 $val['isSelfNominatedAll'] = true;
-            }
-            else {
+            } else {
                 $val["nominations"] = $nominations;
             }
         }
@@ -42,41 +41,35 @@ class ApplicationController extends Controller
         return response()->json($applications);
     }
 
-    
+
 
     /*
     Returns all applications
      */
     public function getAllApplications(Request $request, String $accountNo)
-    {  
+    {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        }
-        else {
-            // Verify that the account is a system admin account
-            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
-                // User is not a system admin, deny access to full table
-                return response()->json(['error' => 'User not authorized for request.'], 500);
-            }
-
+        } else {
             $applications = Application::get();
-            return response()->json($applications);  
-        }  
+            return response()->json($applications);
+        }
     }
-/*
+    /*
     public function getAllApplications(Request $request)
-    {   
+    {
         $applications = Application::get();
-        return response()->json($applications);    
-        //return Applications::all(); 
+        return response()->json($applications);
+        //return Applications::all();
     }
 */
     /*
     Returns true if for all elements, nomineeNo == accountNo
     */
-    private function isSelfNominatedAll($nominations, $accountNo) {
+    private function isSelfNominatedAll($nominations, $accountNo)
+    {
         foreach ($nominations as $nomination) {
             if ($nomination['nomineeNo'] != $accountNo) {
                 return false;
@@ -86,7 +79,8 @@ class ApplicationController extends Controller
         return true;
     }
 
-    private function validateApplication($data) {
+    private function validateApplication($data)
+    {
         // Date is empty
         if ($data['sDate'] == null || $data['eDate'] == null) {
             return false;
@@ -102,8 +96,10 @@ class ApplicationController extends Controller
         }
 
         // A date is in the past
-        if ($startDate->getTimestamp() - $currentdate->getTimestamp() <= 0
-            || $endDate->getTimestamp() - $currentdate->getTimestamp() <= 0 ) {
+        if (
+            $startDate->getTimestamp() - $currentdate->getTimestamp() <= 0
+            || $endDate->getTimestamp() - $currentdate->getTimestamp() <= 0
+        ) {
             return false;
         }
 
@@ -113,7 +109,7 @@ class ApplicationController extends Controller
         }
 
         if (!$data['selfNominateAll']) {
-            $filteredForNull = array_filter($data['nominations'], function($var) {
+            $filteredForNull = array_filter($data['nominations'], function ($var) {
                 if ($var['nomineeNo'] != null) {
                     return $var;
                 }
@@ -122,8 +118,8 @@ class ApplicationController extends Controller
             if (count($filteredForNull) != count($data['nominations'])) {
                 return false;
             }
-            
-            $filteredForSelfNom = array_filter($data['nominations'], function($var) use($data){
+
+            $filteredForSelfNom = array_filter($data['nominations'], function ($var) use ($data) {
                 if ($var['nomineeNo'] == $data['accountNo']) {
                     return $var;
                 }
@@ -144,12 +140,13 @@ class ApplicationController extends Controller
         }
 
         return true;
-    } 
+    }
 
     /*
     Returns a date formatted to mysql timestamp
     */
-    private function formatDate(string $date) {
+    private function formatDate(string $date)
+    {
         return str_replace('T', ' ', $date);
     }
 
@@ -157,7 +154,8 @@ class ApplicationController extends Controller
     Creates a new Application in the database if the content is valid.
     Returns an Application encoded in json.
     */
-    public function createApplication(Request $request) {
+    public function createApplication(Request $request)
+    {
         $data = $request->all();
 
         if (!$this->validateApplication($data)) {
@@ -174,8 +172,7 @@ class ApplicationController extends Controller
                 'eDate' => $this->formatDate($data['eDate']),
                 'status' => 'U',
             ]);
-        }
-        else {
+        } else {
             $application = Application::create([
                 'accountNo' => $data['accountNo'],
                 'sDate' => $this->formatDate($data['sDate']),
@@ -183,7 +180,7 @@ class ApplicationController extends Controller
                 'status' => 'P',
             ]);
         }
-       
+
         // Generate nominations for application
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
@@ -202,7 +199,7 @@ class ApplicationController extends Controller
         }
 
 
-        // Inform line manager of new application to review (if self-nominated all) 
+        // Inform line manager of new application to review (if self-nominated all)
         if ($application->status == 'U') {
             // Get current line manager account number
             $superiorNo = app(AccountController::class)->getCurrentLineManager($data['accountNo'])->accountNo;
@@ -218,14 +215,14 @@ class ApplicationController extends Controller
     /*
     handles the logic for updating and saving the application
     */
-    public function handleEditApplication(array $data) {
+    public function handleEditApplication(array $data)
+    {
         $application = Application::where('applicationNo', $data['applicationNo'])->first();
 
         // If self nominated for all, application status should be Undecided
         if ($data['selfNominateAll']) {
             $application->status = 'U';
-        }
-        else {
+        } else {
             $application->status = 'P';
         }
 
@@ -244,12 +241,13 @@ class ApplicationController extends Controller
     Handles deleting of old nominations from the database
     Handles sending grouped messages notifying nominees of cancelled nominations
     */
-    public function handleEditApplicationCancelledNominations($oldNominations, $newNominations, $applicationNo) {
+    public function handleEditApplicationCancelledNominations($oldNominations, $newNominations, $applicationNo)
+    {
         $removedNominations = [];
-        
-        
+
+
         // Iterate through old nomination data
-        foreach($oldNominations as $old) {
+        foreach ($oldNominations as $old) {
             $foundInNew = false;
             // Iterate through new nominations
             foreach ($newNominations as $new) {
@@ -259,8 +257,8 @@ class ApplicationController extends Controller
                     break;
                 }
             }
-            // If the old nomination data wasn't found in the new nomination data 
-                // AKA The nominee was removed as a nominee
+            // If the old nomination data wasn't found in the new nomination data
+            // AKA The nominee was removed as a nominee
             if (!$foundInNew) {
                 // Delete old nomination from database
                 Nomination::where('applicationNo', $applicationNo, "and")
@@ -284,11 +282,12 @@ class ApplicationController extends Controller
         // call method to create new messages
         app(MessageController::class)->notifyNomineeNominationCancelled($removedNominations, $applicationNo);
     }
-    
+
     // Handle nonedited, edited nominations and creation of new nominations
-    public function handleEditApplicationNonCancelledNominations($oldNominations, $newNominations, $applicationNo, $oldDates) {
+    public function handleEditApplicationNonCancelledNominations($oldNominations, $newNominations, $applicationNo, $oldDates)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
-        
+
         $nonEditedNominations = [];
         $editedNominations = [];
         $toNewlyCreateNominations = [];
@@ -303,7 +302,7 @@ class ApplicationController extends Controller
         }
 
         // Iterate through new nomination data
-        foreach($newNominations as $new) {
+        foreach ($newNominations as $new) {
             $newInOld = false;
             // Iterate through old nominations
             foreach ($oldNominations as $old) {
@@ -312,7 +311,7 @@ class ApplicationController extends Controller
                     $newInOld = true;
                     // Keep old status if period not out of range
                     $status = $old->status;
-                    
+
 
                     // Set isSubset to false since at least one nomination was rejected
                     // But the nominee was again nominated for the nomination, in the new edited application
@@ -323,35 +322,33 @@ class ApplicationController extends Controller
                     }
 
                     // If it changed then it can't be solely a subset
-                    if ($old->nomineeNo != $new['nomineeNo']) 
-                    {
+                    if ($old->nomineeNo != $new['nomineeNo']) {
                         $isSubset = false;
                     }
 
                     // Edit status IF period has been altered to be out of range.
                     if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
                         // Empty on purpose
-                    }
-                    else {
+                    } else {
                         //out of range, set status to Undecided
                         $status = 'U';
                         $isSubset = false;
                     }
 
-                    // Update Nomination if status or nomineeNo has changed 
+                    // Update Nomination if status or nomineeNo has changed
                     if ($status != $old->status || $old->nomineeNo != $new['nomineeNo']) {
                         // Delete old Substitution Request message for this application and receiver (nomineeNo)
                         Message::where('applicationNo', $applicationNo, "and")
-                        ->where('subject', 'Substitution Request', 'and')
-                        ->where('receiverNo', $old->nomineeNo)->delete();
+                            ->where('subject', 'Substitution Request', 'and')
+                            ->where('receiverNo', $old->nomineeNo)->delete();
 
                         Nomination::where('applicationNo', $applicationNo, "and")
-                        ->where('nomineeNo', $old->nomineeNo, "and")
-                        ->where('accountRoleId', $old->accountRoleId)
-                        ->update([
-                            "status" => $status,
-                            "nomineeNo" => $new['nomineeNo']
-                        ]);
+                            ->where('nomineeNo', $old->nomineeNo, "and")
+                            ->where('accountRoleId', $old->accountRoleId)
+                            ->update([
+                                "status" => $status,
+                                "nomineeNo" => $new['nomineeNo']
+                            ]);
 
                         // add to editedNominations
                         if (!array_key_exists($new['nomineeNo'], $editedNominations)) {
@@ -359,8 +356,7 @@ class ApplicationController extends Controller
                         }
 
                         array_push($editedNominations[$new['nomineeNo']], $old->accountRoleId);
-                    }
-                    else {
+                    } else {
                         // add to nonEditedNominations
                         if (!array_key_exists($old['nomineeNo'], $nonEditedNominations)) {
                             $nonEditedNominations[$old['nomineeNo']] = [];
@@ -399,8 +395,7 @@ class ApplicationController extends Controller
         foreach ($editedNominations as $nomineeNo => $accountRoleIds) {
             if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 $groupedNominations[$nomineeNo] = $accountRoleIds;
-            }
-            else {
+            } else {
                 $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
             }
         }
@@ -408,8 +403,7 @@ class ApplicationController extends Controller
         foreach ($toNewlyCreateNominations as $nomineeNo => $accountRoleIds) {
             if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 $groupedNominations[$nomineeNo] = $accountRoleIds;
-            }
-            else {
+            } else {
                 $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
             }
         }
@@ -420,8 +414,8 @@ class ApplicationController extends Controller
             // Check foreach nomination if the status was not previously accepted
             foreach ($accountRoleIds as $accountRoleId) {
                 $theNomination = Nomination::where('applicationNo', $applicationNo, "and")
-                ->where('nomineeNo', $nomineeNo, "and")
-                ->where("accountRoleId", $accountRoleId)->first();
+                    ->where('nomineeNo', $nomineeNo, "and")
+                    ->where("accountRoleId", $accountRoleId)->first();
 
                 if ($theNomination->status != 'Y') {
                     // One of the nominations for the nominee was previously rejected or just not responded to
@@ -431,13 +425,13 @@ class ApplicationController extends Controller
                     break;
                 }
             }
-            
+
             if ($shouldSendEditedMessageForNominee) {
                 // One of the nominations for the nominee was previously rejected, or just not responded to
                 // Now we delete all old nominations for the nominee and recreate them with status 'U'
-                    
+
                 Nomination::where('applicationNo', $applicationNo, "and")
-                ->where('nomineeNo', $nomineeNo)->delete();
+                    ->where('nomineeNo', $nomineeNo)->delete();
 
                 // For each accountRoleId, create new nomination
                 foreach ($accountRoleIds as $accountRoleId) {
@@ -445,7 +439,7 @@ class ApplicationController extends Controller
                         'applicationNo' => $applicationNo,
                         'nomineeNo' => $nomineeNo,
                         'accountRoleId' => $accountRoleId,
-                        'status' => 'U' 
+                        'status' => 'U'
                     ]);
                 }
 
@@ -453,28 +447,24 @@ class ApplicationController extends Controller
                 if (!array_key_exists($nomineeNo, $groupedNominations)) {
                     // set the subarray as accountRoleId if it doesn't exist already
                     $groupedNominations[$nomineeNo] = $accountRoleIds;
-                }
-                else {
+                } else {
                     // Merge the accountRoleIds in
                     $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
                 }
 
                 // just in case, set isSubset to false again
                 $isSubset = false;
-            }
-            else if (!array_key_exists($nomineeNo, $groupedNominations)) {
+            } else if (!array_key_exists($nomineeNo, $groupedNominations)) {
                 // DO NOTHING, do not group non edited nominations if not existing already due to edited or new nominations
-                // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset 
-            }
-            else {
+                // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset
+            } else {
                 $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
             }
         }
 
         if ($isSubset) {
             app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo);
-        }
-        else {
+        } else {
             app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $groupedNominations);
         }
     }
@@ -483,7 +473,8 @@ class ApplicationController extends Controller
     Edits an Application in the database if the content is valid.
     Returns an Application encoded in json.
     */
-    public function editApplication(Request $request) {
+    public function editApplication(Request $request)
+    {
         $data = $request->all();
         $accountNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
@@ -493,7 +484,7 @@ class ApplicationController extends Controller
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
-    
+
         if (!$this->validateApplication($data)) {
             return response()->json(['error' => 'Application details invalid.'], 500);
         }
@@ -508,12 +499,12 @@ class ApplicationController extends Controller
 
         // EDIT APPLICATION
         $application = $this->handleEditApplication($data);
-        
+
         // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
         $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations'], $applicationNo);
         // Handle nonedited, edited nominations and creation of new nominations
         $this->handleEditApplicationNonCancelledNominations($oldNominations, $data['nominations'], $applicationNo, $oldDates);
-        
+
         return response()->json(['success' => 'success'], 200);
     }
 
@@ -522,7 +513,8 @@ class ApplicationController extends Controller
     Cancels an application by setting it's status to Cancelled
     Deletes Nominations for application
     */
-    public function cancelApplication(Request $request, String $accountNo, String $appNo) {
+    public function cancelApplication(Request $request, String $accountNo, String $appNo)
+    {
         $applicationNo = intval($appNo);
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
@@ -531,13 +523,12 @@ class ApplicationController extends Controller
         }
 
         $application = Application::where('applicationNo', $applicationNo, "and")
-        ->where('accountNo', $accountNo)->first();
+            ->where('accountNo', $accountNo)->first();
 
         // Check if application exists and belongs to the user
-        if (!$application)
-        {
-             // Application does not exist or does not belong to accountNo, return exception
-             return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
+        if (!$application) {
+            // Application does not exist or does not belong to accountNo, return exception
+            return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
         }
 
         // Get current line manager account number
@@ -546,9 +537,9 @@ class ApplicationController extends Controller
         if ($application->status == 'Y' || $application->status == "U") {
             // Delete old message
             Message::where('receiverNo', $superiorNo, 'and')
-            ->where('senderNo', $accountNo, 'and')
-            ->where('applicationNo', $applicationNo, 'and')
-            ->where('subject', "Application Awaiting Review")->delete();
+                ->where('senderNo', $accountNo, 'and')
+                ->where('applicationNo', $applicationNo, 'and')
+                ->where('subject', "Application Awaiting Review")->delete();
 
             app(MessageController::class)->notifyManagerApplicationCancelled($superiorNo, $applicationNo);
         }
@@ -589,7 +580,8 @@ class ApplicationController extends Controller
         Applicant Name
     Route: getApplicationForReview/{accountNo}/{applicationNo}
     */
-    public function getApplicationForReview($accountNo, $applicationNo) {
+    public function getApplicationForReview($accountNo, $applicationNo)
+    {
         $applicationNo = intval($applicationNo);
 
         // Check if user exists for given user id
@@ -600,7 +592,7 @@ class ApplicationController extends Controller
         }
 
         $application = Application::where('applicationNo', $applicationNo, "and")->first();
-        
+
         // Check that the application exists for the given applicationNo
         if (!$application) {
             return response()->json(['error' => 'Application does not exist.'], 500);
@@ -666,7 +658,8 @@ class ApplicationController extends Controller
     /*
     Sets the application's status to approved if valid
     */
-    public function acceptApplication(Request $request) {
+    public function acceptApplication(Request $request)
+    {
         $data = $request->all();
         $superiorNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
@@ -717,24 +710,25 @@ class ApplicationController extends Controller
         // Mark Application Awaiting Review message as acknowledged
         $message = Message::where('applicationNo', $applicationNo, "and")
 
-        ->where('senderNo', $applicant->accountNo, "and")
-        ->where('subject', "Application Awaiting Review")->first();
+            ->where('senderNo', $applicant->accountNo, "and")
+            ->where('subject', "Application Awaiting Review")->first();
 
-        if($message != null){
+        if ($message != null) {
             $message->acknowledged = true;
             $message->save();
         }
 
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, true, null);
-        
+
         return response()->json(['success' => 'success'], 200);
     }
 
     /*
     Sets the application's status to rejected if valid
     */
-    public function rejectApplication(Request $request) {
+    public function rejectApplication(Request $request)
+    {
         $data = $request->all();
         $superiorNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
@@ -782,16 +776,16 @@ class ApplicationController extends Controller
 
         // Mark Application Awaiting Review message as acknowledged
         $message = Message::where('applicationNo', $applicationNo, "and")
-        ->where('senderNo', $applicant->accountNo, "and")
-        ->where('subject', "Application Awaiting Review")->first();
-        if($message != null){
+            ->where('senderNo', $applicant->accountNo, "and")
+            ->where('subject', "Application Awaiting Review")->first();
+        if ($message != null) {
             $message->acknowledged = true;
             $message->save();
         }
-        
+
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, false, $rejectReason);
-        
+
         return response()->json(['success' => 'success'], 200);
     }
 }
