@@ -15,7 +15,6 @@ class AccountRoleControllerTest extends TestCase
     {
         parent::setup();
         $this->adminUser = Account::factory()->create([
-            'accountNo' => "AAAAAA1",
             'accountType' => "sysadmin"
         ]);
 
@@ -46,34 +45,29 @@ class AccountRoleControllerTest extends TestCase
     public function test_api_request_for_all_AccountRoles(): void
     {
         // Acting as Admin
-        $user = Account::where('accountNo', 'AAAAAA1')->first();
-        $response = $this->actingAs($user)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        // Acting as staff
-        $user = Account::where('accountNo', 'AAAAAA2')->first();
-        $response = $this->actingAs($user)->getJson("/api/allAccountRoles/{$this->otherUser1['accountNo']}");
+        // Acting as staff, assert forbidden
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allAccountRoles/{$this->otherUser1['accountNo']}");
         $response->assertStatus(403);
 
-        // Acting as line manager
-        $user = Account::where('accountNo', 'AAAAAA3')->first();
-        $response = $this->actingAs($user)->getJson("/api/allAccountRoles/{$this->otherUser2['accountNo']}");
+        // Acting as line manager, assert forbidden
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allAccountRoles/{$this->otherUser2['accountNo']}");
         $response->assertStatus(403);
     }
 
     public function test_api_request_for_AccountRoles_content_is_json(): void
     {
         // Act as Admin
-        $user = Account::where('accountNo', 'AAAAAA1')->first();
-        $response = $this->actingAs($user)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_AccountRoles_content_is_valid(): void
     {
         // Check if correct structure, acting as admin
-        $user = Account::where('accountNo', 'AAAAAA1')->first();
-        $response = $this->actingAs($user)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'accountRoleId',
