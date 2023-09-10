@@ -39,14 +39,14 @@ Route::get('/reset', function () {
 
 
 // Home Page
-Route::middleware('auth:sanctum')->get('/home', function () {
+Route::middleware('auth:sanctum', 'web')->get('/home', function () {
     return Inertia::render('Home', []);
 });
 
 
 
 // Bookings Page Route Group
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
         return Inertia::render('Bookings', [
             'screenProp' => $screenProp
@@ -75,7 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 // Line Manager Page Route Group
-Route::middleware(['auth:sanctum', 'lmanager'])->group(function () {
+Route::middleware(['auth:sanctum', 'lmanager', 'web'])->group(function () {
 
     Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
         return Inertia::render('Manager', [
@@ -99,7 +99,7 @@ Route::middleware(['auth:sanctum', 'lmanager'])->group(function () {
 
 
 // Admin Page Route Group
-Route::middleware(['auth:sanctum', 'sysadmin'])->group(function () {
+Route::middleware(['auth:sanctum', 'sysadmin', 'web'])->group(function () {
     Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
         return Inertia::render('Administration', [
             'screenProp' => $screenProp
