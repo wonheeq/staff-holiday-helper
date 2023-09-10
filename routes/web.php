@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\AuthenticationController;
-
+use App\Http\Middleware\EnsureUserIsManager;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
     ]);
 });
 
-Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
+Route::middleware('auth:sanctum', EnsureUserIsManager::class)->get('/Manager/manage', function () {
     return Inertia::render('Manager', [
         'activeScreen' => 'manage'
     ]);
