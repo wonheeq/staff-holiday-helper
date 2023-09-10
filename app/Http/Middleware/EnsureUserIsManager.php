@@ -6,9 +6,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\Guard;
 
 class EnsureUserIsManager
 {
+    protected $auth;
+
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
     /**
      * Handle an incoming request.
      *
@@ -17,8 +24,10 @@ class EnsureUserIsManager
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
+
         $level = $user->accountType;
-        if ($level !== "sysadmin" || $level !== "lmanager") {
+        // dd($level);
+        if ($level != "sysadmin" && $level != "lmanager") {
             abort(403, 'You are not authorised to access this.');
         }
 

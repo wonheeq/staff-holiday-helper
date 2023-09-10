@@ -40,7 +40,7 @@ Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
 
-Route::middleware('auth:sanctum')->get('/home', function () {
+Route::middleware('auth:sanctum', EnsureUserIsManager::class)->get('/home', function () {
     return Inertia::render('Home', []);
 });
 
@@ -82,7 +82,7 @@ Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
     ]);
 });
 
-Route::middleware('auth:sanctum', EnsureUserIsManager::class)->get('/Manager/manage', function () {
+Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
     return Inertia::render('Manager', [
         'activeScreen' => 'manage'
     ]);
