@@ -77,4 +77,3 @@ Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getW
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
-
