@@ -24,19 +24,18 @@ use App\Http\Middleware\EnsureUserIsManager;
 */
 
 // Landing Page Route Group
-Route::group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Landing', []);
-    });
-
-    Route::get('/login', function () {
-        return Inertia::render('Landing', []);
-    });
-
-    Route::get('/reset', function () {
-        return Inertia::render('Reset', []);
-    });
+Route::get('/', function () {
+    return Inertia::render('Landing', []);
 });
+
+Route::get('/login', function () {
+    return Inertia::render('Landing', []);
+});
+
+Route::get('/reset', function () {
+    return Inertia::render('Reset', []);
+});
+
 
 
 // Home Page

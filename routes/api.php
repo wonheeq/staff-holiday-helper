@@ -33,26 +33,32 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// System Administrator
-Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
-Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
-Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
-Route::get('/allMessages/{accountNo}', [MessageController::class, 'getAllMessages']);
-Route::get('/allAccountRoles/{accountNo}', [AccountRoleController::class, 'getAllAccountRoles']);
-Route::get('/allRoles/{accountNo}', [RoleController::class, 'getAllRoles']);
-Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
-Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
-Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
-Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
+
+// System Administrator Route Group
+Route::middleware(['auth:sanctum', 'sysadmin'])->group(function () {
+    Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
+    Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
+    Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
+    Route::get('/allMessages/{accountNo}', [MessageController::class, 'getAllMessages']);
+    Route::get('/allAccountRoles/{accountNo}', [AccountRoleController::class, 'getAllAccountRoles']);
+    Route::get('/allRoles/{accountNo}', [RoleController::class, 'getAllRoles']);
+    Route::get('/allUnits/{accountNo}', [UnitController::class, 'getAllUnits']);
+    Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
+    Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
+    Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
+});
 
 
-// Line Manager
-Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
-Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
-Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
-Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
-Route::post('acceptApplication', [ApplicationController::class, 'acceptApplication']);
-Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
+// Line Manager Route Group
+Route::middleware(['auth:sanctum', 'lmanager'])->group(function () {
+    Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
+    Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
+    Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
+    Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
+    Route::post('acceptApplication', [ApplicationController::class, 'acceptApplication']);
+    Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
+});
+
 
 
 Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
