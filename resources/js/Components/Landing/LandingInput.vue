@@ -18,11 +18,10 @@
                 class="border-none w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
-                @keydown.enter="submitForm"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
+            <button @click.prevent="switchVis" tabindex="-1" type="button" class="fixed right-7">
                 <img :src="fieldType.image" class="">
             </button>
         </div>
