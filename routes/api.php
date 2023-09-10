@@ -35,7 +35,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 // System Administrator Route Group
-Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
+// Route::middleware(['sysadmin'])->group(function () {
+Route::middleware(['sysadmin', 'api'])->group(function () {
     Route::get('/allAccounts/{accountNo}', [AccountController::class, 'getAllAccounts']);
     Route::get('/allApplications/{accountNo}', [ApplicationController::class, 'getAllApplications']);
     Route::get('/allNominations/{accountNo}', [NominationController::class, 'getAllNominations']);
