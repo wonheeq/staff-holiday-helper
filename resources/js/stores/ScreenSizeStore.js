@@ -7,7 +7,7 @@ export let useScreenSizeStore = defineStore('screenSize', {
 
     actions: {
         updateWidth(w) {
-            let isMobileSize = w <= 760;
+            let isMobileSize = w < 768;
             if (this.isMobile != isMobileSize) {
                 this.isMobile = isMobileSize;
             }
