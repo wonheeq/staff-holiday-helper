@@ -10,6 +10,9 @@
     import { usePage } from '@inertiajs/vue3'
     const page = usePage();
     const user = computed(() => page.props.auth.user);
+
+    // Store of fields needed to create new database entry
+    let fieldsStore = useDataFieldsStore();
     
     const options = [
     { id: 'viewData', title: 'View/Edit Data'},
