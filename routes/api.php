@@ -15,7 +15,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
-
+use App\Http\Controllers\ForeignKeyController;
 
 
 /*
