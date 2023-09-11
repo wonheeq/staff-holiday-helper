@@ -138,7 +138,6 @@
             </div>
             <component :is="currentTable" :user="user.accountNo"></component>   
         </div>
-        </div>  
 
         <div
             v-show="activeScreen === 'addData'"
@@ -155,7 +154,7 @@
         >
             settings subpage
         </div>
-
+    </div>
 <!---->
 </template>
 

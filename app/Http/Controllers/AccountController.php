@@ -6,6 +6,8 @@ use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use \DateTime;
+use DB;
+
 use Illuminate\Support\Facades\Log;
 
 define("DEFAULT_ADMIN_ACCOUNT_NO", "000002L");
