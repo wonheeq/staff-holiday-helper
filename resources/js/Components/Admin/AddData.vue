@@ -150,10 +150,9 @@ import "vue-select/dist/vue-select.css";
 
 
     <h1 class="mt-1.5 px-4 mt-6">Add Manually:</h1>
-    <div class= manualArea
-         :style="{ maxHeight: bHeight }">
+    <div class= manualArea :style="{ maxHeight: bHeight }">
         <div class="flex justify-between">
-            <div class="flex flex-col mt-4 mx-4">
+            <div class="flex flex-col mt-4 mx-4 mb-3">
                 <!--<div>array: {{ fieldsList.accountFields }}</div>-->
                 <!--<div>array: {{ fieldsList[currentFields] }}</div>-->
                 <!--v-for="name in namesList[field.fk]""-->
