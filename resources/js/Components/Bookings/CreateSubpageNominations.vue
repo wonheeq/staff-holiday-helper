@@ -178,8 +178,8 @@ function submitApplication() {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex flex-col w-full justify-between laptop:pageHeight" v-if="dataReady">
-        <div class="flex flex-col w-full h-[10%] pb-2 laptop:pb-0">
+    <div class="flex flex-col w-full justify-between pageHeight" v-if="dataReady">
+        <div class="flex flex-col w-full h-[10%] 1080:h-[15%] 1440:h-[10%] pb-2 laptop:pb-0">
             <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
@@ -223,8 +223,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </div>
             </div>
         </div>
-        <div class="h-[1%]"></div>
-        <div class="flex border border-black tableHeight">
+        <div class="flex border border-black h-[67%] 1080:h-[76%]">
             <VueScrollingTable
                 class="scrollTable"
                 :deadAreaColor="deadAreaColor"
@@ -243,8 +242,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </template>
             </VueScrollingTable>
         </div>
-        <div class="flex flex-col h-[10%] justify-between">
-            <div class="flex items-center space-x-2 py-2 laptop:pb-2 laptop:pt-0">
+        <div class="flex flex-col h-[14%] 1080:h-[12%] justify-between">
+            <div class="flex items-center space-x-2 py-2">
                 <input type="checkbox"
                     class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
                     v-model="selfNominateAll"
@@ -254,7 +253,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     I will handle all my responsibilities for this period of leave, therefore no nominations are required.
                 </p>
             </div>
-            <div class="flex justify-between h-3/4 space-x-16">
+            <div class="flex justify-between h-3/4 space-x-16 pb-2">
                 <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                     @click="cancelApplication()"
                     v-if="!props.isEditing"
@@ -291,6 +290,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
     height: calc(0.92 * 0.95 * (93vh - 3rem) - 1rem);
 }
 .tableHeight{
+    height: calc(0.7 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
+}
+.tableHeight1080{
     height: calc(0.77 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
 }
 </style>
