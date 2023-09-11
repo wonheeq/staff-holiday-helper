@@ -74,7 +74,8 @@ Route::post('rejectApplication', [ApplicationController::class, 'rejectApplicati
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 
-
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
+Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
+Route::get('/allLManagers/{accountNo}', [AccountController::class, 'getAllLMAccounts']);
