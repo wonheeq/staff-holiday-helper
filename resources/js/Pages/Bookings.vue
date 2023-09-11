@@ -109,6 +109,7 @@ function handleActiveScreenChanged(screen) {
         <div v-else class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
+                :class="activeScreen === 'create' ? 'w-4/5 1080:w-[85%] 1440:w-5/6 pr-4 ': ''"
                 :options="options"
                 :activeScreen="activeScreen"
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
