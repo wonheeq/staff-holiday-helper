@@ -4,7 +4,6 @@
     import { ref, computed } from 'vue';
     import AddDataPage from './AddData.vue'
 
-    import { storeToRefs } from 'pinia';
     import { useDataFieldsStore } from '@/stores/AddDataStore';
 
     import { usePage } from '@inertiajs/vue3'
@@ -146,7 +145,8 @@
             :class="subpageClass"
             class="p-4 h-[95%]"
         >
-            add data subpage
+            <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" />
         </div>
         <div
             v-show="activeScreen === 'sysSettings'"
