@@ -7,6 +7,7 @@ import "vue-select/dist/vue-select.css";
 
 <script>
     import axios from "axios";
+    import { ref } from 'vue'
 
     export default {
         props: {
@@ -62,13 +63,21 @@ import "vue-select/dist/vue-select.css";
                     { db_name: 'Y', name: 'Yes'},
                     { db_name: 'N', name: 'No'},
                     { db_name: 'U', name: 'Undecided'}
-                ]
+                ],
+
+                // An array containing the data entered into the manual input:
+                attributeEntries: []    
             }
         },
         methods: {
             activate: function(message, fArray) {
                 this.content = message;
                 this.currentFields = fArray;
+            },
+            addToDB: function() {
+                //console.log(this.attributeEntries)
+
+                // Now we have an array, it must be sent somewhere (can it be checked for fullness first?)
             },
             getArray(arrayName) {
                 return this[arrayName];
@@ -94,7 +103,7 @@ import "vue-select/dist/vue-select.css";
                 this.courses = this.completeFKs[6];
                 this.schools = this.completeFKs[7];
 
-                console.log(response.data);
+                //console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -102,7 +111,7 @@ import "vue-select/dist/vue-select.css";
             axios.get("/api/allLManagers/" + this.user)
             .then((response) => {
                 this.lmanagers = response.data;
-                console.log(response.data);
+                //console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -157,14 +166,15 @@ import "vue-select/dist/vue-select.css";
                 <!--<div>array: {{ fieldsList[currentFields] }}</div>-->
                 <!--v-for="name in namesList[field.fk]""-->
                 <div 
-                    v-for="field in fieldsList[currentFields]"
+                    v-for="(field, index) in fieldsList[currentFields]" :key="index"
                     
                 >
                     <div class="flex justify-between space-x-7">
                         <span class="mt-4">{{ field.desc }}: </span>
                         <input v-if="field.fk === 'none'"
                                style="width: 35rem; height: 2rem; margin-top: 0.75rem;" 
-                               type="text" autocomplete="off" v-model="output" :placeholder="field.plhldr" />
+                               type="text" autocomplete="off" :placeholder="field.plhldr" 
+                               v-model="attributeEntries[index]" />
                         <!--<v-select v-else v-model="selected" style="width: 35rem; height: 2rem; margin-top: 0.75rem;">
                             <option disabled value="" >{{ field.plhldr }}</option>
                             <option v-for="item in schools" :key="item.name" :value="item.name">{{ item.name }}</option>
@@ -174,7 +184,8 @@ import "vue-select/dist/vue-select.css";
                                      style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: white; 
                                      border: solid; border-color: #6b7280; border-width: 1px;
                                      --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
-                                     :placeholder="field.plhldr">
+                                     :placeholder="field.plhldr"
+                                     v-model="attributeEntries[index]" >
                             </vSelect>
                         </form>
                     </div>
@@ -184,7 +195,7 @@ import "vue-select/dist/vue-select.css";
             <div class="flex self-center">
                 <button
                     class="bg-white px-4 py-1 mx-16 mt-1 text-center text-1xl"
-                >
+                    @click="addToDB()">
                     <span> Add </span>
                 </button>
             </div>
@@ -203,4 +214,6 @@ import "vue-select/dist/vue-select.css";
         margin-top: 0.5rem;
         height: 100%;
     }
+
+    
 </style>
