@@ -215,5 +215,16 @@ import "vue-select/dist/vue-select.css";
         height: 100%;
     }
 
-    
+    .vs__selected-options {
+        flex-wrap: nowrap;
+        max-width: calc(100% - 40px);
+    }
+
+    .vs__selected {
+        display: block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        overflow: hidden;
+    }
 </style>
