@@ -2,6 +2,10 @@
     
     import SubpageNavbar from '../SubpageNavbar.vue';
     import { ref, computed } from 'vue';
+    import AddDataPage from './AddData.vue'
+
+    import { storeToRefs } from 'pinia';
+    import { useDataFieldsStore } from '@/stores/AddDataStore';
 
     import { usePage } from '@inertiajs/vue3'
     const page = usePage();
