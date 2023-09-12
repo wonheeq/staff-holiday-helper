@@ -135,6 +135,9 @@ class NominationControllerTest extends TestCase
 
     protected function teardown(): void {
         Message::where('senderNo', $this->otherUser->accountNo)->delete();
+        Message::where('senderNo', $this->user->accountNo)->delete();
+        Message::where('receiverNo', $this->otherUser->accountNo)->delete();
+        Message::where('receiverNo', $this->user->accountNo)->delete();
         Nomination::where('nomineeNo',$this->user->accountNo)->delete();
         AccountRole::where('accountNo', $this->otherUser->accountNo)->delete();
         Application::where('accountNo', $this->otherUser->accountNo)->delete();
@@ -236,6 +239,20 @@ class NominationControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_acceptNominations_changes_application_status_to_undecided_if_all_nominations_accepted(): void {
+        $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'P');
+        
+        $response = $this->postJson('/api/acceptNominations', [
+            'messageId' => $this->message->messageId,
+            'accountNo' => $this->user->accountNo,
+            'applicationNo' => $this->message->applicationNo,
+        ]);
+        $response->assertStatus(200);
+
+        $application = Application::where('applicationNo', $this->message->applicationNo)->first();
+        $this->assertTrue($application->status == "U");
+    }
+
     public function test_acceptNominations_api_call_is_unsuccessful_accountNo_does_not_exist(): void {
         $response = $this->postJson('/api/acceptNominations', [
             'messageId' => $this->message->messageId,
@@ -290,6 +307,20 @@ class NominationControllerTest extends TestCase
             'applicationNo' => $this->message->applicationNo,
         ]);
         $response->assertStatus(200);
+    }
+
+    public function test_rejectNominations_creates_message_for_applicant(): void {
+        $response = $this->postJson('/api/rejectNominations', [
+            'messageId' => $this->message->messageId,
+            'accountNo' => $this->user->accountNo,
+            'applicationNo' => $this->message->applicationNo,
+        ]);
+        $response->assertStatus(200);
+
+        $m = Message::where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo, "and")
+        ->where('subject', "Nomination/s Rejected")->first();
+        $this->assertTrue($m != null);
     }
 
     public function test_rejectNominations_api_call_is_unsuccessful_accountNo_does_not_exist(): void {
@@ -362,6 +393,59 @@ class NominationControllerTest extends TestCase
             'responses' => $nominationResponses,
         ]);
         $response->assertStatus(200);
+    }
+
+    public function test_acceptSomeNominations_updates_application_status_if_all_nominations_have_been_accepted(): void {
+        $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'P');
+        $nominationResponses = [];
+        $nominations = Nomination::where('applicationNo', $this->message->applicationNo)
+            ->where('nomineeNo', $this->user->accountNo)->get();
+
+        foreach ($nominations as $nom) {
+            array_push($nominationResponses, [
+                'accountRoleId' => $nom->accountRoleId,
+                'status' => 'Y'
+            ]);
+        }
+
+        $response = $this->postJson('/api/acceptSomeNominations', [
+            'messageId' => $this->message->messageId,
+            'accountNo' => $this->user->accountNo,
+            'applicationNo' => $this->message->applicationNo,
+            'responses' => $nominationResponses,
+        ]);
+        $response->assertStatus(200);
+
+        $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'U');
+    }
+
+    public function test_acceptSomeNominations_updates_application_status_to_denied_if_any_nomination_rejected(): void {
+        $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'P');
+        $nominationResponses = [];
+        $nominations = Nomination::where('applicationNo', $this->message->applicationNo)
+            ->where('nomineeNo', $this->user->accountNo)->get();
+
+        foreach ($nominations as $nom) {
+            array_push($nominationResponses, [
+                'accountRoleId' => $nom->accountRoleId,
+                'status' => 'N'
+            ]);
+        }
+
+        $response = $this->postJson('/api/acceptSomeNominations', [
+            'messageId' => $this->message->messageId,
+            'accountNo' => $this->user->accountNo,
+            'applicationNo' => $this->message->applicationNo,
+            'responses' => $nominationResponses,
+        ]);
+        $response->assertStatus(200);
+
+        $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'N');
+
+        $m = Message::where('receiverNo', $this->otherUser->accountNo, "and")
+        ->where('senderNo', $this->user->accountNo, "and")
+        ->where('subject', "Nomination/s Rejected")->first();
+        $this->assertTrue($m != null);
     }
 
     public function test_acceptSomeNominations_api_call_is_unsuccessful_accountNo_does_not_exist(): void {
@@ -493,7 +577,7 @@ class NominationControllerTest extends TestCase
 
         $i = 0;
         foreach ($updatedNominations as $nom) {
-            $this->assertTrue($nom['status'] !== 'U');
+            $this->assertTrue($nom['status'] != 'U');
             
             // Ccheck that all statuses are the same as the randomly selected ones
             $this->assertTrue($nom['status'] == $statuses[$i]);
