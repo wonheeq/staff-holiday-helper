@@ -11,7 +11,8 @@ class RolesControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
 
-    protected function setup(): void {
+    protected function setup(): void
+    {
         parent::setup();
 
         $this->adminUser = Account::factory()->create([
@@ -27,7 +28,8 @@ class RolesControllerTest extends TestCase
         ]);
     }
 
-    protected function teardown(): void {
+    protected function teardown(): void
+    {
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
@@ -41,27 +43,27 @@ class RolesControllerTest extends TestCase
      */
     public function test_api_request_for_all_Roles(): void
     {
-        $response = $this->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allRoles/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allRoles/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->getJson("/api/allRoles/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allRoles/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
     }
 
     public function test_api_request_for_Roles_content_is_json(): void
     {
         // Check if response is json
-        $response = $this->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_Roles_content_is_valid(): void
     {
         // Check if correct structure
-        $response = $this->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allRoles/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'roleId',
