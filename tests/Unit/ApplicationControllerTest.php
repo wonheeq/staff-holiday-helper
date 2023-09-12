@@ -1809,7 +1809,7 @@ class ApplicationControllerTest extends TestCase
 
         $response->assertStatus(500);
     }
-
+ 
     public function test_api_request_for_rejectApplication_is_unsuccessful_no_reject_reason(): void {
         $secondApp = $this->applications[1];
         array_push($this->nominations, Nomination::factory()->create([
