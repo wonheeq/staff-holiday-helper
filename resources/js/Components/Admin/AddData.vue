@@ -63,7 +63,8 @@ import "vue-select/dist/vue-select.css";
 
                 // An array containing the data entered into the manual input:
                 attributeEntries: [],
-                warning: false
+                warning: false,
+                errorMsg: ''
             }
         },
         methods: {
@@ -72,7 +73,7 @@ import "vue-select/dist/vue-select.css";
                 this.currentFields = fArray;
             },
             addToDB: function() {
-                //console.log(this.attributeEntries)
+                console.log(this.attributeEntries)
                 this.warning = false;
 
                 // Checking array is at least populated
@@ -80,12 +81,14 @@ import "vue-select/dist/vue-select.css";
                     // Checking that none of the entries are null
                     for (let i = 0; i < this.fieldsList[this.currentFields].length; i++) {
                         if (this.attributeEntries[i] == null || this.attributeEntries[i] === "") {
+                            this.errorMsg = 'One or more fields<br />are missing';
                             this.warning = true;
                         }
                     }
                 }
                 else {
                     // Warning message
+                    this.errorMsg = 'One or more fields<br />are missing';
                     this.warning = true;
                 }
 
@@ -109,7 +112,8 @@ import "vue-select/dist/vue-select.css";
                         console.log(err)
                         // Something went wrond
                         // Add message below 'add' button
-                        // errorMsg = err;
+                        this.warning = true;
+                        this.errorMsg = err.response.data.error;
                     });
                 }
 
@@ -234,7 +238,7 @@ import "vue-select/dist/vue-select.css";
                     <span> Add </span>       
                 </button>
                 <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
-                    One or more fields<br />are missing
+                    <span v-html="errorMsg"></span>
                 </h4>
             </div>     
         </div>     
