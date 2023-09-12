@@ -1,14 +1,17 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
-
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
     left: [
-        { source: "/images/home.svg", caption: "Home" },
-        { source: "/images/booking.svg", caption: "Bookings" },
-        { source: "/images/manager.svg", caption: "Manager" },
-        { source: "/images/admin.svg", caption: "Admin" },
+        { source: "/images/home.svg", caption: "Home", minPerm: "staff" },
+        { source: "/images/booking.svg", caption: "Bookings", minPerm: "staff" },
+        { source: "/images/manager.svg", caption: "Manager", minPerm: "lmanager" },
+        { source: "/images/admin.svg", caption: "Admin", minPerm: "sysadmin" },
     ],
     right: [
         { source: "/images/account.svg", caption: "Settings", noLink: () => {
@@ -42,6 +45,19 @@ function isMobile() {
         return false;
     }
 }
+
+function shouldDisplayOption(minPerm) {
+    if (user.value.accountType == minPerm) {
+        return true;
+    }
+    else if (user.value.accountType == "lmanager" && user.value.accountType == "staff") {
+        return true;
+    }
+    else if (user.value.accountType == "sysadmin") {
+        return true;
+    }
+    return false;
+}
 </script>
 
 <template>
@@ -51,7 +67,7 @@ function isMobile() {
             <div v-if="!isMobile()" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
-                    <NavLink :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
+                    <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
                         <img :src="option.source"/>
                         <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                     </NavLink>
