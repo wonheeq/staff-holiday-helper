@@ -7,7 +7,6 @@ import "vue-select/dist/vue-select.css";
 
 <script>
     import axios from "axios";
-    import { ref } from 'vue'
 
     export default {
         props: {
@@ -19,10 +18,6 @@ import "vue-select/dist/vue-select.css";
                 type: String,
                 required: true
             }
-            /*namesList: {
-                type: [Array, Object],
-                required: true
-            }*/
         },
         data: function() {
             return {
@@ -66,7 +61,8 @@ import "vue-select/dist/vue-select.css";
                 ],
 
                 // An array containing the data entered into the manual input:
-                attributeEntries: []    
+                attributeEntries: [],
+                warning: false
             }
         },
         methods: {
@@ -76,8 +72,33 @@ import "vue-select/dist/vue-select.css";
             },
             addToDB: function() {
                 //console.log(this.attributeEntries)
+                this.warning = false;
 
-                // Now we have an array, it must be sent somewhere (can it be checked for fullness first?)
+                // Checking array is at least populated
+                if (this.attributeEntries.length === this.fieldsList[this.currentFields].length) {
+                    // Checking that none of the entries are null
+                    for (let i = 0; i < this.fieldsList[this.currentFields].length; i++) {
+                        if (this.attributeEntries[i] == null || this.attributeEntries[i] === "") {
+                            this.warning = true;
+                        }
+                    }
+                }
+                else {
+                    // Warning message
+                    this.warning = true;
+                }
+
+                // If all fields are filled, send the array
+                if (this.warning === false) { 
+                    // Sending array plus 'currentFields' name so controller can work out the intended relation or the new entry
+                    let data = {
+                        'fields': this.currentFields,
+                        'newEntry':this.attributeEntries
+                    }
+
+                    
+                }
+
             },
             getArray(arrayName) {
                 return this[arrayName];
@@ -191,14 +212,17 @@ import "vue-select/dist/vue-select.css";
                     </div>
                 </div>
                 
-            </div>
-            <div class="flex self-center">
+            </div>        
+            <div class="flex flex-col self-center">
                 <button
                     class="bg-white px-4 py-1 mx-16 mt-1 text-center text-1xl"
                     @click="addToDB()">
-                    <span> Add </span>
+                    <span> Add </span>       
                 </button>
-            </div>
+                <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
+                    One or more fields<br />are missing
+                </h4>
+            </div>     
         </div>     
     </div>
 
