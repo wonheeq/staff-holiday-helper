@@ -7,6 +7,7 @@ import "vue-select/dist/vue-select.css";
 
 <script>
     import axios from "axios";
+    import Swal from 'sweetalert2';
 
     export default {
         props: {
@@ -96,7 +97,20 @@ import "vue-select/dist/vue-select.css";
                         'newEntry':this.attributeEntries
                     }
 
-                    
+                    axios.post("/api/addSingleEntry/" + this.user, data)
+                    .then(res => {
+                        if (res.status == 200) {
+                            Swal.fire({
+                                icon: "success",
+                                title: 'Successfully added entry.'
+                            });
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                        // Something went wrond
+                        // Add message below 'add' button
+                        // errorMsg = err;
+                    });
                 }
 
             },

@@ -16,6 +16,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\ForeignKeyController;
+use App\Http\Controllers\DatabaseController;
 
 
 /*
@@ -79,3 +80,5 @@ Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
 Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
 Route::get('/allLManagers/{accountNo}', [AccountController::class, 'getAllLMAccounts']);
+
+Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
