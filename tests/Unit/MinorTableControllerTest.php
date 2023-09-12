@@ -7,6 +7,8 @@ use App\Models\Account;
 
 class MinorTableControllerTest extends TestCase
 {
+    private Account $adminUser, $otherUser1, $otherUser2;
+
     protected function setup(): void
     {
         parent::setup();
@@ -39,21 +41,21 @@ class MinorTableControllerTest extends TestCase
      */
     public function test_units_api_requests(): void
     {
-        $response = $this->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allUnits/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allUnits/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->getJson("/api/allUnits/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allUnits/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
 
         // Check if response is json
-        $response = $this->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
         // Check if correct structure
-        $response = $this->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'unitId',
@@ -64,21 +66,21 @@ class MinorTableControllerTest extends TestCase
 
     public function test_majors_api_requests(): void
     {
-        $response = $this->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allMajors/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allMajors/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
         $response = $this->getJson("/api/allMajors/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response->assertStatus(403);
 
         // Check if response is json
-        $response = $this->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
         // Check if correct structure
-        $response = $this->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'majorId',
@@ -89,21 +91,21 @@ class MinorTableControllerTest extends TestCase
 
     public function test_courses_api_requests(): void
     {
-        $response = $this->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allCourses/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allCourses/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->getJson("/api/allCourses/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allCourses/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
 
         // Check if response is json
-        $response = $this->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
         // Check if correct structure
-        $response = $this->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'courseId',
@@ -114,21 +116,21 @@ class MinorTableControllerTest extends TestCase
 
     public function test_schools_api_requests(): void
     {
-        $response = $this->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allSchools/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allSchools/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->getJson("/api/allSchools/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allSchools/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
 
         // Check if response is json
-        $response = $this->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
 
         // Check if correct structure
-        $response = $this->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allSchools/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'schoolId',
