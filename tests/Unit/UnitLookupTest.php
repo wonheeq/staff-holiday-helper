@@ -18,10 +18,15 @@ use App\Models\Nomination;
 
 class UnitLookupTest extends TestCase
 {
+    private Account $adminUser, $otherUser1, $otherUser2;
+
     protected function setup(): void
     {
         parent::setup();
 
+        $this->adminUser = Account::factory()->create([
+            'accountType' => "sysadmin"
+        ]);
         // create test accounts
         $this->createAccount("000000b"); // UnitCoord
         $this->createAccount("000000c"); // MajorCoord
@@ -55,6 +60,7 @@ class UnitLookupTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->adminUser->delete();
         // delete any leftover applications
         $this->deleteNominations('000000g');
         $this->deleteAllApplications();
@@ -87,7 +93,7 @@ class UnitLookupTest extends TestCase
     public function test_lookup_valid_unit_no_subs(): void
     {
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -126,7 +132,7 @@ class UnitLookupTest extends TestCase
         $this->createSub('000000f', 4);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -165,7 +171,7 @@ class UnitLookupTest extends TestCase
         $this->createSub('000000b', 1);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -186,7 +192,7 @@ class UnitLookupTest extends TestCase
         $this->createSub('000000c', 2);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -207,7 +213,7 @@ class UnitLookupTest extends TestCase
         $this->createSub('000000d', 3);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -228,7 +234,7 @@ class UnitLookupTest extends TestCase
         $this->createSub('000000e', 4);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -248,7 +254,7 @@ class UnitLookupTest extends TestCase
     public function test_lookup_invalid_unit(): void
     {
         // assert fails validation
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'thisIsNotAValidCode'
         ])->assertStatus(302);
     }
@@ -259,7 +265,7 @@ class UnitLookupTest extends TestCase
     public function test_lookup_no_unit(): void
     {
         // assert fails validation
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => ''
         ])->assertStatus(302);
     }
@@ -271,7 +277,7 @@ class UnitLookupTest extends TestCase
     public function test_lookup_valid_but_nonexistent_unit(): void
     {
         // unit matches regex but doesn't exist
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'CCCC0000'
         ])->assertStatus(500);
 
@@ -296,7 +302,7 @@ class UnitLookupTest extends TestCase
         $this->createSubAppNotAcc('000000c', 2);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -319,7 +325,7 @@ class UnitLookupTest extends TestCase
         $this->createSubAppNotAcc('000000d', 3);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -342,7 +348,7 @@ class UnitLookupTest extends TestCase
         $this->createSubAppNotAcc('000000b', 1);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -365,7 +371,7 @@ class UnitLookupTest extends TestCase
         $this->createSubAppNotAcc('000000e', 4);
 
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'AAAA0000'
         ])->assertStatus(200);
 
@@ -383,7 +389,7 @@ class UnitLookupTest extends TestCase
     public function test_lookup_valid_unit_no_staff_for_role(): void
     {
         // check response code
-        $response = $this->post('/api/getUnitDetails', [
+        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
             'code' => 'BBBB0000'
         ])->assertStatus(200);
 
