@@ -1,5 +1,9 @@
 <script setup>
 import NomineeDropdown from '@/Components/Bookings/NomineeDropdown.vue';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let props = defineProps({
     nomination: Object,
     options: Object,
@@ -9,14 +13,6 @@ let props = defineProps({
 let emit = defineEmits(['nominationSelected']);
 
 const disabledClass = "bg-gray-300 border-gray-100";
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
     <div class="flex mb-2.5 mt-2.5 w-full">
@@ -34,11 +30,11 @@ function isMobile() {
                         {{ nomination.role }}
                     </p>
                 </div>
-                <p v-if="isMobile()" v-show="nomination.nomination !== ''" class="text-xs pl-6">
+                <div v-if="isMobile" v-show="nomination.nomination !== ''" class="text-xs pl-10 pt-1">
                     →{{ nomination.nomination }}
-                </p>
+                </div>
             </div>
-            <p v-if="!isMobile()" class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl h-full w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]">
+            <p v-if="!isMobile" class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl h-full w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]">
                 {{ nomination.nomination }}
             </p>
             <NomineeDropdown

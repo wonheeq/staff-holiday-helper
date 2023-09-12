@@ -39,16 +39,9 @@ let calcDuration = (dates) => {
 
     return "NaN";
 };
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
-<template><div class="h-[90%]">
+<template>
+<div class="h-[90%]">
 	<div class="flex flex-col w-fit h-full">
 		<div>
 			<div class="mb-2 laptop:mb-8">

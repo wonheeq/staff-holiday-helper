@@ -5,6 +5,9 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
 import { onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 import { usePage } from '@inertiajs/vue3'
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -19,19 +22,11 @@ let deadAreaColor = "#FFFFFF";
 onMounted(() => {
     fetchMessages(user.value.accountNo);
 });
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
     <div class="bg-transparent laptop:bg-white laptop:rounded-md w-full">
-        <div v-if="isMobile()" class="w-full bg-white mb-2 rounded-md">
+        <div v-if="isMobile" class="w-full bg-white mb-2 rounded-md">
             <div class="h-[0.25rem]"></div>
             <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
                 <img src="/images/warning.svg"/>

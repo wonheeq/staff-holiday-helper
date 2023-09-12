@@ -8,7 +8,7 @@ import Nomination from "./Nomination.vue";
 import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
-import { usePage } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3';
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
@@ -176,18 +176,10 @@ function submitApplication() {
 }
 
 const disabledClass = "bg-gray-300 border-gray-100";
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
-    <div class="flex flex-col w-full laptop:pageHeight" v-if="dataReady">
-        <div class="flex flex-col w-full h-[10%]">
+    <div class="flex flex-col w-full justify-between pageHeight" v-if="dataReady">
+        <div class="flex flex-col w-full h-[10%] 1080:h-[15%] 1440:h-[10%] pb-2 laptop:pb-0">
             <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
@@ -218,7 +210,7 @@ function isMobile() {
                     </div>
                 </div>
                 <div class="laptop:w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
-                <div class="flex flex-col mr-2.5 laptop:mr-6 items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
+                <div class="flex flex-col mr-2.5 items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
@@ -231,63 +223,61 @@ function isMobile() {
                 </div>
             </div>
         </div>
-        <div class="flex flex-col laptop:h-[90%] mt-2">
-            <div class="flex border border-black laptop:tableHeight">
-                <VueScrollingTable
-                    class="scrollTable"
-                    :deadAreaColor="deadAreaColor"
-                    :scrollHorizontal="false"
-                >
-                    <template #tbody>
-                        <div>
-                            <Nomination
-                            v-for="nomination in filteredNominations"
-                            :nomination="nomination"
-                            :options="staffMembers"
-                            :isDisabled="selfNominateAll"
-                            @nominationSelected="(value) => handleSingleNominationSelected(value)"
-                        />
-                        </div>
-                    </template>
-                </VueScrollingTable>
-            </div>
-            <div class="h-[10%]">
-                <div class="flex items-center space-x-2 py-2 h-1/2">
-                    <input type="checkbox"
-                        class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
-                        v-model="selfNominateAll"
-                        @click="handleSelfNominateAll()"    
+        <div class="flex border border-black h-[67%] 1080:h-[76%]">
+            <VueScrollingTable
+                class="scrollTable"
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div>
+                        <Nomination
+                        v-for="nomination in filteredNominations"
+                        :nomination="nomination"
+                        :options="staffMembers"
+                        :isDisabled="selfNominateAll"
+                        @nominationSelected="(value) => handleSingleNominationSelected(value)"
                     />
-                    <p class="text-xs 1080:text-sm 1440:text-base 4k:text-2xl ">
-                        This period of leave will not affect my ability to handle all my responsibilities and as such, no nominations are required.
-                    </p>
-                </div>
-                <div class="flex justify-between h-1/2 space-x-16">
-                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
-                        @click="cancelApplication()"
-                        v-if="!props.isEditing"
-                    >
-                        Cancel Application
-                    </button>
-                    <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
-                        @click="cancelApplication()"
-                        v-if="props.isEditing"
-                    >
-                        Cancel Edit
-                    </button>
-                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
-                        @click="submitApplication()"
-                        v-if="!props.isEditing"
-                    >
-                        Submit Application
-                    </button>
-                    <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
-                        @click="submitApplication()"
-                        v-if="props.isEditing"
-                    >
-                        Submit Edit
-                    </button>
-                </div>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div class="flex flex-col h-[14%] 1080:h-[12%] justify-between">
+            <div class="flex items-center space-x-2 py-2">
+                <input type="checkbox"
+                    class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                    v-model="selfNominateAll"
+                    @click="handleSelfNominateAll()"    
+                />
+                <p class="text-xs 1080:text-sm 1440:text-base 4k:text-2xl ">
+                    I will handle all my responsibilities for this period of leave, therefore no nominations are required.
+                </p>
+            </div>
+            <div class="flex justify-between h-3/4 space-x-16 pb-2">
+                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="cancelApplication()"
+                    v-if="!props.isEditing"
+                >
+                    Cancel Application
+                </button>
+                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="cancelApplication()"
+                    v-if="props.isEditing"
+                >
+                    Cancel Edit
+                </button>
+                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="submitApplication()"
+                    v-if="!props.isEditing"
+                >
+                    Submit Application
+                </button>
+                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="submitApplication()"
+                    v-if="props.isEditing"
+                >
+                    Submit Edit
+                </button>
             </div>
         </div>
     </div>
@@ -300,6 +290,9 @@ function isMobile() {
     height: calc(0.92 * 0.95 * (93vh - 3rem) - 1rem);
 }
 .tableHeight{
-    height: calc(0.9 * 0.9 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
+    height: calc(0.7 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
+}
+.tableHeight1080{
+    height: calc(0.77 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
 }
 </style>
