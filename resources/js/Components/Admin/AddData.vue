@@ -134,12 +134,16 @@ import "vue-select/dist/vue-select.css";
                 this.accountRoles = this.completeFKs[1];
                 //this.applications = this.completeFKs[2];
                 this.roles = this.completeFKs[2];
-                this.units = this.completeFKs[3];
-                this.majors = this.completeFKs[4];
-                this.courses = this.completeFKs[5];
+                this.units = this.nullUnits = this.completeFKs[3];
+                this.majors = this.nullMajors = this.completeFKs[4];
+                this.courses = this.nullCourses = this.completeFKs[5];
                 this.schools = this.completeFKs[6];
 
                 //console.log(response.data);
+                // In the 'accountRole' table some of the fields are nullable, and so require a 'none' option
+                this.units.unshift({unitId: null, disName: 'None'});
+                this.majors.unshift({majorId: null, disName: 'None'});
+                this.courses.unshift({courseId: null, disName: 'None'});
             })
             .catch((error) => {
                 console.log(error);
@@ -149,7 +153,11 @@ import "vue-select/dist/vue-select.css";
                 var resposeArr = response.data;
                 this.lmanagers = resposeArr[0];
                 this.displayAccounts = resposeArr[1];
-                //console.log(response.data);
+                console.log(response.data);
+
+                // lmanagers is a nullable field, adding "none" option
+                var nullObject = {accountNo: null, fullName: 'None'}
+                this.lmanagers.unshift(nullObject);
             })
             .catch((error) => {
                 console.log(error);
@@ -230,17 +238,18 @@ import "vue-select/dist/vue-select.css";
                 </div>
                 
             </div>        
-            <div class="flex flex-col self-center">
+               
+        </div><!--<div class="flex flex-col self-center">-->
+            <div class="centeredRight">
                 <button
-                    class="bg-white px-6 py-2 mx-28 mt-1 text-center text-xl font-bold"
+                    class="bg-white px-6 py-2 mx-28 mt-8 text-center text-xl font-bold"
                     @click="addToDB()">
                     <span> Add </span>       
                 </button>
                 <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
                     <span v-html="errorMsg"></span>
                 </h4>
-            </div>     
-        </div>     
+            </div>       
     </div>
 
 </template> 
@@ -254,6 +263,17 @@ import "vue-select/dist/vue-select.css";
         margin-right: 1rem;
         margin-top: 0.5rem;
         height: 100%;
+        position: relative;
+    }
+
+    .centeredRight {
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 75%;
+        right: 0;
+        margin: auto;
+        transform: translateY(-50%);
     }
 
     .vs__selected-options {

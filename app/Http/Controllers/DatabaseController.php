@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\AccountRole;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,27 @@ class DatabaseController extends Controller
                 case 'accountFields':
                     $response = $this->addAccount($data['newEntry']);
                     break;
+                case 'accountRoleFields':
+                    $response = $this->addAccountRole($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'p':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
             }
@@ -60,7 +82,7 @@ class DatabaseController extends Controller
         }
 
 
-        $account = Account::create([
+        Account::create([
             'accountNo' => $attributes[0],
             'accountType' =>  $attributes[1]['db_name'],
             'lname' => $attributes[2],
@@ -68,6 +90,26 @@ class DatabaseController extends Controller
             'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')), // Password created randomly
             'superiorNo' => $attributes[5]['accountNo'],
             'schoolId' => $attributes[4]['schoolId'],
+        ]);
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+
+    private function addAccountRole(array $attributes) {
+        //Log::info($attributes);
+        //Log::info($attributes[1]['db_name']);
+
+        // No unrestricted attributes to check when manually adding to accountRoles
+
+        AccountRole::create([
+            // New accountRoleId automatically generated   
+            'accountNo' => $attributes[0]['accountNo'],
+            'roleId' =>  $attributes[1]['roleId'],
+            'unitId' => $attributes[2]['unitId'],
+            'majorId' => $attributes[3]['majorId'],
+            'courseId' => $attributes[4]['courseId'],
+            'schoolId' => $attributes[5]['schoolId'],
         ]);
 
         return response()->json(['success' => 'success'], 200);

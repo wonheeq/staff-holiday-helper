@@ -8,35 +8,33 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Surname",attr:"lName",plhldr:"Fill",fk:"none",fkAttr:""},
             {desc:"First/Other Names",attr:"fName",plhldr:"Fill",fk:"none",fkAttr:""},
             {desc:"School Name",attr:"school",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"},
-            {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select",fk:"lmanagers",fkAttr:"fullName"}
+            {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select Account or \"None\"",fk:"lmanagers",fkAttr:"fullName"}
         ],
         accountRoleFields: [
             {desc:"Account Number (Staff ID)",attr:"accountNo",plhldr:"Select",fk:"displayAccounts",fkAttr:"fullName"},
             {desc:"Role",attr:"roleId",plhldr:"e.g. Unit Coordinator",fk:"roles",fkAttr:"name"},
-            {desc:"Unit",attr:"unitId",plhldr:"Select",fk:"units",fkAttr:"disName"},
-            {desc:"Major",attr:"majorId",plhldr:"Select",fk:"majors",fkAttr:"disName"},
-            {desc:"Course",attr:"courseId",plhldr:"Select",fk:"courses",fkAttr:"disName"},
-            {desc:"School",attr:"schoolId",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"},
+            {desc:"Unit",attr:"unitId",plhldr:"Select Unit or \"None\"",fk:"units",fkAttr:"disName"},
+            {desc:"Major",attr:"majorId",plhldr:"Select Major or \"None\"",fk:"majors",fkAttr:"disName"},
+            {desc:"Course",attr:"courseId",plhldr:"Select Course or \"None\"",fk:"courses",fkAttr:"disName"},
+            {desc:"School",attr:"schoolId",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"}
         ],
         roleFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"Role Name",attr:"name",plhldr:"New Role Name",fk:"none",fkAttr:""}
         ],
         unitFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"Unit Name",attr:"name",plhldr:"New Unit Name",fk:"none",fkAttr:""},
+            {desc:"Unit Code",attr:"unitId",plhldr:"e.g. ABCD1234",fk:"none",fkAttr:""}
         ],
         majorFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"Major Name",attr:"name",plhldr:"New Major Name",fk:"none",fkAttr:""},
+            {desc:"Major Code",attr:"majorId",plhldr:"e.g. MJRU-SFTEN",fk:"none",fkAttr:""}
         ],
         courseFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"Course Name",attr:"name",plhldr:"New Course Name",fk:"none",fkAttr:""},
+            {desc:"Course Code",attr:"courseId",plhldr:"e.g. B-COMP",fk:"none",fkAttr:""}
         ],
         schoolFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"School Name",attr:"name",plhldr:"New School Name",fk:"none",fkAttr:""},
         ],
     }),
 
