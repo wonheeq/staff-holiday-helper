@@ -34,7 +34,7 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Course Code",attr:"courseId",plhldr:"e.g. B-COMP",fk:"none",fkAttr:""}
         ],
         schoolFields: [
-            {desc:"School Name",attr:"name",plhldr:"New School Name",fk:"none",fkAttr:""},
+            {desc:"School Name",attr:"name",plhldr:"New School Name",fk:"none",fkAttr:""}
         ],
     }),
 
