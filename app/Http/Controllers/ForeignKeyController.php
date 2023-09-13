@@ -7,11 +7,12 @@ use App\Models\Course;
 use App\Models\Major;
 use App\Models\Unit;
 use App\Models\Account;
-use App\Models\Nomination;
-use App\Models\Application;
+//use App\Models\Nomination;
+//use App\Models\Application;
 use App\Models\AccountRole;
 use App\Models\Role;
-use App\Models\Message;
+//use App\Models\Message;
+use DB;
 
 use Illuminate\Http\Request;
 
@@ -47,21 +48,21 @@ class ForeignKeyController extends Controller
             $roleFK = Role::get();
             $roleFK->makeHidden(['created_at','updated_at']);
 
-            $unitFK = Unit::get();
-            $unitFK->makeHidden(['created_at','updated_at']);
+            $unitFK = Unit::select("unitId",DB::raw("CONCAT(name, ' (', unitId, ')') AS disName"))->get();
+            //$unitFK->makeHidden(['created_at','updated_at']);
 
-            $majorFK = Major::get();
-            $majorFK->makeHidden(['created_at','updated_at']);
+            $majorFK = Major::select("majorId",DB::raw("CONCAT(name, ' (', majorId, ')') AS disName"))->get();
+            //$majorFK->makeHidden(['created_at','updated_at']);
 
-            $courseFK = Course::get();
-            $courseFK->makeHidden(['created_at','updated_at']);
+            $courseFK = Course::select("courseId",DB::raw("CONCAT(name, ' (', courseId, ')') AS disName"))->get();
+            //$courseFK->makeHidden(['created_at','updated_at']);
 
             $schoolFK = School::get();
             $schoolFK->makeHidden(['created_at','updated_at']);
 
             $result = array($accountFK, $accountRoleFK, $roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);
 
-            return response()->json($result);  
+            return response()->json($result);
         }  
     }
 }

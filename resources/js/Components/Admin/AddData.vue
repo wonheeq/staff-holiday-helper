@@ -39,7 +39,7 @@ import "vue-select/dist/vue-select.css";
                 completeFKs: [],
                 accounts: [], accountRoles: [], roles: [], units: [], majors: [], courses: [], schools: [],
 
-                lmanagers: [],
+                lmanagers: [], displayAccounts: [],
                 acctTypes: [
                     { db_name: 'staff', name: 'Staff'},
                     { db_name: 'lmanager', name: 'Line Manager'},
@@ -144,9 +144,11 @@ import "vue-select/dist/vue-select.css";
             .catch((error) => {
                 console.log(error);
             });
-            axios.get("/api/allLManagers/" + this.user)
+            axios.get("/api/allAccountsDisplay/" + this.user)
             .then((response) => {
-                this.lmanagers = response.data;
+                var resposeArr = response.data;
+                this.lmanagers = resposeArr[0];
+                this.displayAccounts = resposeArr[1];
                 //console.log(response.data);
             })
             .catch((error) => {

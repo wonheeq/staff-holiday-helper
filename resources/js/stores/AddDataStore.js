@@ -11,8 +11,12 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select",fk:"lmanagers",fkAttr:"fullName"}
         ],
         accountRoleFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
+            {desc:"Account Number (Staff ID)",attr:"accountNo",plhldr:"Select",fk:"displayAccounts",fkAttr:"fullName"},
+            {desc:"Role",attr:"roleId",plhldr:"e.g. Unit Coordinator",fk:"roles",fkAttr:"name"},
+            {desc:"Unit",attr:"unitId",plhldr:"Select",fk:"units",fkAttr:"disName"},
+            {desc:"Major",attr:"majorId",plhldr:"Select",fk:"majors",fkAttr:"disName"},
+            {desc:"Course",attr:"courseId",plhldr:"Select",fk:"courses",fkAttr:"disName"},
+            {desc:"School",attr:"schoolId",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"},
         ],
         roleFields: [
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},

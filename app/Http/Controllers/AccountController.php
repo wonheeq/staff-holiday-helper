@@ -127,9 +127,9 @@ class AccountController extends Controller
     }
 
     /*
-    Returns all line manager (lmanager) Accounts
+    Returns all Accounts w/ formatted full names, and a seperate array holding only line managers
     */
-    public function getAllLMAccounts(Request $request, String $accountNo)
+    public function getAllAccountsDisplay(Request $request, String $accountNo)
     {  
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
@@ -144,8 +144,11 @@ class AccountController extends Controller
             }
 
             $lmAccounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))
-                          ->where('accountType', 'lmanager')->get();
-            return response()->json($lmAccounts);  
+                ->where('accountType', 'lmanager')->get();
+
+            $accounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))->get();
+
+            return response()->json($result = array($lmAccounts, $accounts));  
         }  
     }
 }

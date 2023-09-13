@@ -79,6 +79,6 @@ Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getW
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
 Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
-Route::get('/allLManagers/{accountNo}', [AccountController::class, 'getAllLMAccounts']);
+Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']);
 
 Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
