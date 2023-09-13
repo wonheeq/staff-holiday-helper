@@ -10,19 +10,6 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"School Name",attr:"school",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"},
             {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select",fk:"lmanagers",fkAttr:"fullName"}
         ],
-        applicationFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""}   
-        ],
-        nominationFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-        ],
         accountRoleFields: [
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
@@ -44,10 +31,6 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
         ],
         schoolFields: [
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-            {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
-        ],
-        messageFields: [
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
             {desc:"",attr:"",plhldr:"",fk:"none",fkAttr:""},
         ],

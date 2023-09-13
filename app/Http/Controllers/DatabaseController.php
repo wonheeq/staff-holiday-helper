@@ -37,8 +37,7 @@ class DatabaseController extends Controller
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
             }
-
-            
+  
             return $response;
         }  
     }

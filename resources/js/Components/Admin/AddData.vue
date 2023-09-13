@@ -26,21 +26,18 @@ import "vue-select/dist/vue-select.css";
                 selected: null,
                 currentFields: "accountFields",
                 buttons: [
-                    { message: 'Staff Accounts', fArray: "accountFields"},
-                    { message: 'Leave\nApplications', fArray: "applicationFields"},
-                    { message: 'Substitute\nNominations', fArray: "nominationFields"},
+                    { message: 'Staff Accounts', fArray: "accountFields"},  
                     { message: 'Account Roles', fArray: "accountRoleFields"},
                     { message: 'Roles', fArray: "roleFields"},
                     { message: 'Units', fArray: "unitFields"},
                     { message: 'Majors', fArray: "majorFields"},
                     { message: 'Courses', fArray: "courseFields"},
-                    { message: 'Schools', fArray: "schoolFields"},
-                    { message: 'Messages', fArray: "messageFields"}
+                    { message: 'Schools', fArray: "schoolFields"},             
                 ],
-                bHeight: ((0.8889 * window.innerHeight) - 358.2223).toFixed(0) + "px",
+                bHeight: ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px",
 
                 completeFKs: [],
-                accounts: [], accountRoles: [], applications: [], roles: [], units: [], majors: [], courses: [], schools: [],
+                accounts: [], accountRoles: [], roles: [], units: [], majors: [], courses: [], schools: [],
 
                 lmanagers: [],
                 acctTypes: [
@@ -48,7 +45,7 @@ import "vue-select/dist/vue-select.css";
                     { db_name: 'lmanager', name: 'Line Manager'},
                     { db_name: 'sysadmin', name: 'System Administor'}
                 ],
-                applStatus: [
+                /*applStatus: [
                     { db_name: 'Y', name: 'Approved'},
                     { db_name: 'N', name: 'Denied'},
                     { db_name: 'U', name: 'Undecided'},
@@ -59,7 +56,7 @@ import "vue-select/dist/vue-select.css";
                     { db_name: 'Y', name: 'Yes'},
                     { db_name: 'N', name: 'No'},
                     { db_name: 'U', name: 'Undecided'}
-                ],
+                ],*/
 
                 // An array containing the data entered into the manual input:
                 attributeEntries: [],
@@ -122,7 +119,7 @@ import "vue-select/dist/vue-select.css";
                 return this[arrayName];
             },
             onResize() {
-            this.bHeight = ((0.8889 * window.innerHeight) - 358.2223).toFixed(0) + "px"
+            this.bHeight = ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px"
             //this.tHeight = (window.innerHeight).toFixed(0) + "px"
             //console.warn("tHeight: ", this.tHeight)
             },
@@ -135,12 +132,12 @@ import "vue-select/dist/vue-select.css";
 
                 this.accounts = this.completeFKs[0];
                 this.accountRoles = this.completeFKs[1];
-                this.applications = this.completeFKs[2];
-                this.roles = this.completeFKs[3];
-                this.units = this.completeFKs[4];
-                this.majors = this.completeFKs[5];
-                this.courses = this.completeFKs[6];
-                this.schools = this.completeFKs[7];
+                //this.applications = this.completeFKs[2];
+                this.roles = this.completeFKs[2];
+                this.units = this.completeFKs[3];
+                this.majors = this.completeFKs[4];
+                this.courses = this.completeFKs[5];
+                this.schools = this.completeFKs[6];
 
                 //console.log(response.data);
             })
@@ -233,7 +230,7 @@ import "vue-select/dist/vue-select.css";
             </div>        
             <div class="flex flex-col self-center">
                 <button
-                    class="bg-white px-4 py-1 mx-16 mt-1 text-center text-1xl"
+                    class="bg-white px-6 py-2 mx-28 mt-1 text-center text-xl font-bold"
                     @click="addToDB()">
                     <span> Add </span>       
                 </button>
