@@ -126,14 +126,14 @@ class AccountsControllerTest extends TestCase
     public function test_api_request_for_accounts_display_content_is_json(): void
     {
         // Check if response is json
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_accounts_display_content_is_valid(): void
     {
         // Check if correct structure
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 '*' => [
@@ -153,7 +153,7 @@ class AccountsControllerTest extends TestCase
     public function test_api_request_for_accounts_display_only_lmanagers_sent(): void
     {
         // Check that only line manager accounts are sent in th efirst element of the reponse
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
 
         $lmArray = json_decode($response->content(), true);
         //Log::info($lmArray[0]);
@@ -173,7 +173,7 @@ class AccountsControllerTest extends TestCase
     public function test_api_request_for_accounts_display_all_lmAccounts_sent(): void
     {
         // Check that all line manager accounts were sent in the second element of the response
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
 
         $lmArray = json_decode($response->content(), true);
 
@@ -184,7 +184,7 @@ class AccountsControllerTest extends TestCase
     public function test_api_request_for_accounts_display_all_accounts_sent(): void
     {
         // Check that all account were sent in the second element of the response
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
 
         $acctArray = json_decode($response->content(), true);
 

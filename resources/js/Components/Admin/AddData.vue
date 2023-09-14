@@ -37,7 +37,7 @@ import "vue-select/dist/vue-select.css";
                 bHeight: ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px",
 
                 completeFKs: [],
-                accounts: [], accountRoles: [], roles: [], units: [], majors: [], courses: [], schools: [],
+                roles: [], units: [], majors: [], courses: [], schools: [],
 
                 lmanagers: [], displayAccounts: [],
                 acctTypes: [
@@ -130,14 +130,14 @@ import "vue-select/dist/vue-select.css";
             .then((response) => {
                 this.completeFKs = response.data;
 
-                this.accounts = this.completeFKs[0];
-                this.accountRoles = this.completeFKs[1];
+                //this.accounts = this.completeFKs[0];
+                //this.accountRoles = this.completeFKs[1];
                 //this.applications = this.completeFKs[2];
-                this.roles = this.completeFKs[2];
-                this.units = this.nullUnits = this.completeFKs[3];
-                this.majors = this.nullMajors = this.completeFKs[4];
-                this.courses = this.nullCourses = this.completeFKs[5];
-                this.schools = this.completeFKs[6];
+                this.roles = this.completeFKs[0];
+                this.units = this.nullUnits = this.completeFKs[1];
+                this.majors = this.nullMajors = this.completeFKs[2];
+                this.courses = this.nullCourses = this.completeFKs[3];
+                this.schools = this.completeFKs[4];
 
                 //console.log(response.data);
                 // In the 'accountRole' table some of the fields are nullable, and so require a 'none' option
@@ -242,7 +242,7 @@ import "vue-select/dist/vue-select.css";
         </div><!--<div class="flex flex-col self-center">-->
             <div class="centeredRight">
                 <button
-                    class="bg-white px-6 py-2 mx-28 mt-8 text-center text-xl font-bold"
+                    class="bg-white px-6 py-2 mx-28 text-center text-xl font-bold"
                     @click="addToDB()">
                     <span> Add </span>       
                 </button>

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ForeignKeyControllerTest extends TestCase
 {
-    /*private Account $adminUser, $otherUser1, $otherUser2;
+    private Account $adminUser, $otherUser1, $otherUser2;
 
     protected function setup(): void {
         parent::setup();
@@ -33,44 +33,89 @@ class ForeignKeyControllerTest extends TestCase
         $this->otherUser2->delete();
 
         parent::teardown();
-    }*/
+    }
 
     /**
      * Unit tests for ForeignKeyController.php
      */
-    /*public function test_api_request_for_all_accounts(): void
+    public function test_api_request_for_all_accounts(): void
     {
-        $response = $this->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
-        $response->assertStatus(200);
+                // Delete before merge
+                $response = $this->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
+                $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allFKData/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+                $response = $this->getJson("/api/allFKData/{$this->otherUser2['accountNo']}");
+                $response->assertStatus(500);
 
-        $response = $this->getJson("/api/allFKData/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+                $response = $this->getJson("/api/allFKData/{$this->otherUser1['accountNo']}");
+                $response->assertStatus(500);
+        
+                
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
+        $response->assertStatus(200); 
+
+        /*$response = $this->actingAs($this->otherUser1)->getJson("/api/allFKData/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);*/
+
+        /*$response = $this->actingAs($this->otherUser2)->getJson("/api/allFKData/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);*/
     }
 
     public function test_api_request_for_accounts_content_is_json(): void
     {
         // Check if response is json
-        $response = $this->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_accounts_content_is_valid(): void
     {
         // Check if correct structure
-        $response = $this->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
-                'accountNo',
-                'accountType',
-                'lName',
-                'fName',
-                'superiorNo',
-                'schoolId'
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
             ],
+            1 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ],
+            2 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ],
+            3 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ],
+            4 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ],
+            5 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ],
+            6 => [
+                '*' => [
+                    'accountNo',
+                    'fullName'
+                ]
+            ]
         ]);
-    }*/
+    }
 
 }

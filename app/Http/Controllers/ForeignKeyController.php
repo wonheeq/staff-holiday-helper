@@ -36,11 +36,11 @@ class ForeignKeyController extends Controller
             }
 
             // Getting attributes needed as foreign keys, identifiers or user friendly data
-            $accountFK = Account::get();
-            $accountFK->makeHidden(['accountType','schoolId','created_at','updated_at']);
+            //$accountFK = Account::get();
+            //$accountFK->makeHidden(['accountType','schoolId','created_at','updated_at']);
 
-            $accountRoleFK = AccountRole::get();
-            $accountRoleFK->makeHidden(['accountNo','roleId','unitId','majorId','courseId','schoolId','created_at','updated_at']);
+            //$accountRoleFK = AccountRole::get();
+            //$accountRoleFK->makeHidden(['accountNo','roleId','unitId','majorId','courseId','schoolId','created_at','updated_at']);
 
             //$applicationFK = Application::get();
             //$applicationFK->makeHidden(['accountNo','sDate','eDate','status','processedBy','rejectReason','created_at','updated_at']);
@@ -60,7 +60,7 @@ class ForeignKeyController extends Controller
             $schoolFK = School::get();
             $schoolFK->makeHidden(['created_at','updated_at']);
 
-            $result = array($accountFK, $accountRoleFK, $roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);
+            $result = array($roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);
 
             return response()->json($result);
         }  
