@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Account;
+use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Unit;
 use App\Models\Major;
@@ -70,7 +71,7 @@ class DatabaseControllerTest extends TestCase
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
         $tempSchool = School::create(['name' => 'School of Test']);
-        $schoolId1 = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
+        $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
 
@@ -81,7 +82,7 @@ class DatabaseControllerTest extends TestCase
                 1 => $accountType1, 
                 2 => 'TestA', 
                 3 => 'TestB', 
-                4 => $schoolId1, 
+                4 => $schoolObj, 
                 5 => $superiorNo1)
             )
         );
@@ -94,7 +95,7 @@ class DatabaseControllerTest extends TestCase
                 ->where('lName', 'TestA')
                 ->where('fName', 'TestB')
                 ->where('superiorNo', $superiorNo1['accountNo'])
-                ->where('schoolId', $schoolId1['schoolId'])->exists()     
+                ->where('schoolId', $schoolObj['schoolId'])->exists()     
         ); 
 
         // Removing account and school created for this test.
@@ -111,7 +112,7 @@ class DatabaseControllerTest extends TestCase
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
         $tempSchool = School::create(['name' => 'School of Test']);
-        $schoolId1 = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
+        $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
 
@@ -122,7 +123,7 @@ class DatabaseControllerTest extends TestCase
                 1 => $accountType1, 
                 2 => 'TestA', 
                 3 => 'TestB', 
-                4 => $schoolId1, 
+                4 => $schoolObj, 
                 5 => $superiorNo1)
             )
         );
@@ -135,7 +136,7 @@ class DatabaseControllerTest extends TestCase
                 ->where('lName', 'TestA')
                 ->where('fName', 'TestB')
                 ->where('superiorNo', $superiorNo1['accountNo'])
-                ->where('schoolId', $schoolId1['schoolId'])->exists()     
+                ->where('schoolId', $schoolObj['schoolId'])->exists()     
         ); 
 
         // Check for valid response to adding user w/ taken accountNo
@@ -145,7 +146,7 @@ class DatabaseControllerTest extends TestCase
                 1 => $accountType1, 
                 2 => 'TestA', 
                 3 => 'TestB', 
-                4 => $schoolId1, 
+                4 => $schoolObj, 
                 5 => $superiorNo1)
             )
         );
@@ -158,12 +159,65 @@ class DatabaseControllerTest extends TestCase
                 ->where('lName', 'TestA')
                 ->where('fName', 'TestB')
                 ->where('superiorNo', $superiorNo1['accountNo'])
-                ->where('schoolId', $schoolId1['schoolId'])->exists()     
+                ->where('schoolId', $schoolObj['schoolId'])->exists()     
         ); 
 
         // Removing account and school created for this test. (If the invalid accounts were somehow added)
         Account::where('accountNo', $accountNoInvalid)->delete();
         Account::where('accountNo', $accountNoTaken)->where('lname', 'TestA')->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();
-    }   
+    } 
+    
+    public function test_api_request_for_addentry_adding_valid_accountrole(): void
+    {
+        // Creating data to add to for test
+        $accountObj = array('accountNo' => $this->otherUser1->accountNo, 'fullName' => 'Test Account');
+
+        $tempRole = Role::create(['name' => 'Tester']);
+        $roleObj = array('roleId' => $tempRole->roleId, 'name' => $tempRole->name);
+
+        $tempUnit = Unit::create(['unitId' => 'ABCD1234', 'name' => 'Testing Tester\'s Tests']);
+        $unitObj = array('unitId' => $tempUnit->unitId, 'disName' => $tempUnit->name);
+
+        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE', 'name' => 'Test Testing']);
+        $majorObj = array('majorId' => $tempMajor->majorId, 'disName' => $tempMajor->name);
+
+        $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG', 'name' => 'Masters of Testing']);
+        $courseObj = array('courseId' => $tempCourse->courseId, 'disName' => $tempCourse->name);
+
+        $tempSchool = School::create(['name' => 'School of Test']);
+        $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
+
+
+        // Check for valid response to adding valid accountRole
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'accountRoleFields', 'newEntry' => array(
+                0 => $accountObj, 
+                1 => $roleObj, 
+                2 => $unitObj, 
+                3 => $majorObj, 
+                4 => $courseObj, 
+                5 => $schoolObj)
+            )
+        );
+        $response->assertStatus(200);
+
+        // Checking new accountRole added
+        $this->assertTrue(
+            AccountRole::where('accountNo', $accountObj['accountNo'])
+                ->where('roleId', $roleObj['roleId'])
+                ->where('unitId', $unitObj['unitId'])
+                ->where('majorId', $majorObj['majorId'])
+                ->where('courseId', $courseObj['courseId'])
+                ->where('schoolId', $schoolObj['schoolId'])->exists()
+        ); 
+
+        // Removing accountRole and other entries created for this test.
+        AccountRole::where('accountNo', $accountObj['accountNo'])->delete();
+        Role::where('roleId', $tempRole->roleId)->delete();
+        Unit::where('unitId', $tempUnit->unitId)->delete();
+        Major::where('majorId', $tempMajor->majorId)->delete();
+        Course::where('courseId', $tempCourse->courseId)->delete();
+        School::where('schoolId', $tempSchool->schoolId)->delete();
+    }  
 }
