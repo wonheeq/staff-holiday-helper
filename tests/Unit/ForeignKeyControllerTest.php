@@ -4,6 +4,11 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Account;
+use App\Models\Role;
+use App\Models\Unit;
+use App\Models\Major;
+use App\Models\Course;
+use App\Models\School;
 
 use Illuminate\Support\Facades\Log;
 
@@ -38,7 +43,7 @@ class ForeignKeyControllerTest extends TestCase
     /**
      * Unit tests for ForeignKeyController.php
      */
-    public function test_api_request_for_all_accounts(): void
+    public function test_api_request_for_all_fks(): void
     {
                 // Delete before merge
                 $response = $this->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
@@ -61,61 +66,48 @@ class ForeignKeyControllerTest extends TestCase
         $response->assertStatus(403);*/
     }
 
-    public function test_api_request_for_accounts_content_is_json(): void
+    public function test_api_request_for_fks_content_is_json(): void
     {
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
-    public function test_api_request_for_accounts_content_is_valid(): void
+    public function test_api_request_for_fks_content_is_valid(): void
     {
         // Check if correct structure
         $response = $this->actingAs($this->adminUser)->getJson("/api/allFKData/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 '*' => [
-                    'accountNo',
-                    'fullName'
+                    'roleId',
+                    'name'
                 ]
             ],
             1 => [
                 '*' => [
-                    'accountNo',
-                    'fullName'
+                    'unitId',
+                    'disName'
                 ]
             ],
             2 => [
                 '*' => [
-                    'accountNo',
-                    'fullName'
+                    'majorId',
+                    'disName'
                 ]
             ],
             3 => [
                 '*' => [
-                    'accountNo',
-                    'fullName'
+                    'courseId',
+                    'disName'
                 ]
             ],
             4 => [
                 '*' => [
-                    'accountNo',
-                    'fullName'
+                    'schoolId',
+                    'name'
                 ]
             ],
-            5 => [
-                '*' => [
-                    'accountNo',
-                    'fullName'
-                ]
-            ],
-            6 => [
-                '*' => [
-                    'accountNo',
-                    'fullName'
-                ]
-            ]
         ]);
     }
-
 }
