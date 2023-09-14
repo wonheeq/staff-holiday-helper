@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Account;
 
-use Illuminate\Support\Facades\Log;
 
 class AccountsControllerTest extends TestCase
 {
@@ -98,56 +97,4 @@ class AccountsControllerTest extends TestCase
         $response = $this->get("/api/getWelcomeMessageData/aerghasrega");
         $response->assertStatus(500);
     }
-
-
-    /*public function test_api_request_for_all_accounts_display(): void
-    {
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
-        $response->assertStatus(200);
-
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
-
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
-    }
-
-    public function test_api_request_for_accounts_display_content_is_json(): void
-    {
-        // Check if response is json
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
-        $this->assertJson($response->content());
-    }
-
-    public function test_api_request_for_accounts_display_content_is_valid(): void
-    {
-        // Check if correct structure
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
-        $response->assertJsonStructure([
-            0 => [
-                '*' => [
-                    'accountNo',
-                    'fullName'
-                ]
-            ],
-            1 => [
-                '*' => [
-                    'accountNo',
-                    'fullName'
-                ]
-            ]
-        ]);
-    }
-
-    public function test_api_request_for_accounts_display_only_lmanagers_sent(): void
-    {
-        // Check if response is json
-        $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
-
-        $lmArray = json_decode($response->content(), true);
-
-        Log::info($lmArray);
-
-        $this->assertTrue(true);
-    }*/
 }
