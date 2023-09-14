@@ -150,7 +150,8 @@ class AccountController extends Controller
             $accounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))->get();
 
             //Log::info(array($lmAccounts, $accounts));
-            return response()->json($result = array($lmAccounts, $accounts));  
+            //return response()->json($result = array($lmAccounts, $accounts));  
+            return response()->json(array($lmAccounts, $accounts));  
         }  
     }
 }
