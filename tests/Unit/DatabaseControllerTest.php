@@ -220,4 +220,37 @@ class DatabaseControllerTest extends TestCase
         Course::where('courseId', $tempCourse->courseId)->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();
     }  
+
+    public function test_api_request_for_addentry_adding_valid_role(): void
+    {
+        $testName = 'Tester';
+
+        // Check for valid response to adding valid Role
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'roleFields', 'newEntry' => array(0 => $testName))
+        );
+        $response->assertStatus(200);
+
+        // Checking new Role added
+        $this->assertTrue(Role::where('name', $testName)->exists()); 
+
+        Role::where('name', $testName)->delete();
+    }
+
+
+    public function test_api_request_for_addentry_adding_valid_school(): void
+    {
+        $testName = 'School of Testing';
+
+        // Check for valid response to adding valid School
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'schoolFields', 'newEntry' => array(0 => $testName))
+        );
+        $response->assertStatus(200);
+
+        // Checking new School added
+        $this->assertTrue(School::where('name', $testName)->exists()); 
+
+        School::where('name', $testName)->delete();
+    }
 }
