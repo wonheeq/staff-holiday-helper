@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Nomination;
 use App\Models\Application;
+use DateTime;
 
 class BookingController extends Controller
 {
@@ -185,7 +186,11 @@ class BookingController extends Controller
             if ($nomination['status'] == 'Y') {
                 $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
                 
-                if ($application != null && $application['status'] == 'Y') {
+                // application exists, application is accepted, application endDate later than now
+                $endDateTime = new DateTime($application['eDate']);
+                $nowTime = new DateTime();
+
+                if ($application != null && $application['status'] == 'Y' && $endDateTime > $nowTime) {
                     // Get details of accepted application
 
                     $startDate = $application['sDate'];
