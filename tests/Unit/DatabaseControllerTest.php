@@ -238,6 +238,123 @@ class DatabaseControllerTest extends TestCase
     }
 
 
+    public function test_api_request_for_addentry_adding_valid_and_invalid_unit(): void
+    {
+        $tempUnit = Unit::create(['unitId' => 'ABCD1234', 'name' => 'Testing Tester\'s Tests']);
+        $unitObjInserted = array('unitId' => $tempUnit->unitId, 'disName' => $tempUnit->name);
+
+        $unitObjUninserted = array('unitId' => 'WXYZ6789', 'disName' => 'Other Testing Unit');
+
+        // Check for valid response to adding valid Unit
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'unitFields', 'newEntry' => array(
+                0 => $unitObjUninserted['disName'],
+                1 => $unitObjUninserted['unitId'])
+            )
+        );
+        $response->assertStatus(200);
+
+        // Checking new Unit added
+        $this->assertTrue(Unit::where('unitId', $unitObjUninserted['unitId'])
+            ->where('name', $unitObjUninserted['disName'])->exists()); 
+
+        // Check for valid response to adding invalid Unit (attempts to use already-taken unitId)
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'unitFields', 'newEntry' => array(
+                0 => $unitObjUninserted['disName'],
+                1 => $unitObjInserted['unitId'])
+            )
+        );
+        $response->assertStatus(500);
+        
+        // Checking new Unit not added
+        $this->assertFalse(Unit::where('unitId', $unitObjInserted['unitId'])
+            ->where('name', $unitObjUninserted['disName'])->exists()); 
+
+        // Removing added units
+        Unit::where('unitId', $unitObjUninserted['unitId'])->delete();
+        Unit::where('unitId', $tempUnit->unitId)->delete();
+    }
+
+
+    public function test_api_request_for_addentry_adding_valid_and_invalid_major(): void
+    {
+        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE', 'name' => 'Test Testing']);
+        $majorObjInserted = array('majorId' => $tempMajor->majorId, 'disName' => $tempMajor->name);
+
+        $majorObjUninserted = array('majorId' => 'MJRU-VWXYZ', 'disName' => 'Other Testing major');
+
+        // Check for valid response to adding valid major
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'majorFields', 'newEntry' => array(
+                0 => $majorObjUninserted['disName'],
+                1 => $majorObjUninserted['majorId'])
+            )
+        );
+        $response->assertStatus(200);
+
+        // Checking new Major added
+        $this->assertTrue(Major::where('majorId', $majorObjUninserted['majorId'])
+            ->where('name', $majorObjUninserted['disName'])->exists()); 
+
+        // Check for valid response to adding invalid major (attempts to use already-taken majorId)
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'majorFields', 'newEntry' => array(
+                0 => $majorObjUninserted['disName'],
+                1 => $majorObjInserted['majorId'])
+            )
+        );
+        $response->assertStatus(500);
+        
+        // Checking new major not added
+        $this->assertFalse(Major::where('majorId', $majorObjInserted['majorId'])
+            ->where('name', $majorObjUninserted['disName'])->exists()); 
+
+        // Removing added majors
+        Major::where('majorId', $majorObjUninserted['majorId'])->delete();
+        Major::where('majorId', $tempMajor->majorId)->delete();
+    }
+
+
+    public function test_api_request_for_addentry_adding_valid_and_invalid_course(): void
+    {
+        $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG', 'name' => 'Masters of Testing']);
+        $courseObjInserted = array('courseId' => $tempCourse->courseId, 'disName' => $tempCourse->name);
+
+        $courseObjUninserted = array('courseId' => 'B-ABCD', 'disName' => 'Other Testing course');
+
+        // Check for valid response to adding valid course
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'courseFields', 'newEntry' => array(
+                0 => $courseObjUninserted['disName'],
+                1 => $courseObjUninserted['courseId'])
+            )
+        );
+        $response->assertStatus(200);
+
+        // Checking new Course added
+        $this->assertTrue(Course::where('courseId', $courseObjUninserted['courseId'])
+            ->where('name', $courseObjUninserted['disName'])->exists()); 
+
+        // Check for valid response to adding invalid course (attempts to use already-taken courseId)
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+            array('fields' => 'courseFields', 'newEntry' => array(
+                0 => $courseObjUninserted['disName'],
+                1 => $courseObjInserted['courseId'])
+            )
+        );
+        $response->assertStatus(500);
+        
+        // Checking new Course not added
+        $this->assertFalse(Course::where('courseId', $courseObjInserted['courseId'])
+            ->where('name', $courseObjUninserted['disName'])->exists()); 
+
+        // Removing added courses
+        Course::where('courseId', $courseObjUninserted['courseId'])->delete();
+        Course::where('courseId', $tempCourse->courseId)->delete();
+    }
+
+
     public function test_api_request_for_addentry_adding_valid_school(): void
     {
         $testName = 'School of Testing';
