@@ -65,10 +65,13 @@ let deadAreaColor = "#FFFFFF";
                     >
                         <div class="px-2 py-2">
                             <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl">
-                                {{ item.task }} for {{  item.applicantName }}
+                                {{  item.applicantName }}
                             </p>
                             <p class="text-lg 1080:text-xl 1440:text-2xl">
-                                {{ item.sDate }} - {{ item.eDate }}
+                                Duration: {{ item.sDate }} - {{ item.eDate }}
+                            </p>
+                            <p class="text-lg 1080:text-xl" v-for="task in item.tasks">
+                                →{{ task }} 
                             </p>
                         </div>
                     </div>

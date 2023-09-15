@@ -195,16 +195,22 @@ class BookingController extends Controller
                     // Call Role Controller to get role descriptor
                     $task = app(RoleController::class)->getRoleFromAccountRoleId($nomination['accountRoleId']);
 
-                    $content = "{$task} for {$applicationMaker} ({$startDate} - {$endDate})";
-
-                    $subData = array(
-                        'sDate' => $startDate,
-                        'eDate' => $endDate,
-                        'task' => $task,
-                        'applicantName' => $applicationMakerName,
-                    );
-                    array_push($data, $subData);
-                }
+                    // Group nominations in data array by applicationNo
+                    if (!array_key_exists($application->applicationNo, $data)) {
+                        $data[$application->applicationNo] = array(
+                            'sDate' => $startDate,
+                            'eDate' => $endDate,
+                            'applicantName' => $applicationMakerName,
+                            'tasks' => array(
+                                $task
+                            )
+                        );
+                    }
+                    else {
+                        // Add task to list of tasks
+                        array_push($data[$application->applicationNo]['tasks'], $task);
+                    }
+                } 
             }
         }
 

@@ -213,7 +213,7 @@ class BookingControllerTest extends TestCase
             [
                 'sDate',
                 'eDate',
-                'task',
+                'tasks',
                 'applicantName',
             ],
         ]);
