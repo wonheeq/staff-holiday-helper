@@ -68,6 +68,9 @@ import "vue-select/dist/vue-select.css";
             activate: function(message, fArray) {
                 this.content = message;
                 this.currentFields = fArray;
+
+                // Clear Fields if needed
+                this.attributeEntries = [];   
             },
             addToDB: function() {
                 console.log(this.attributeEntries)
@@ -94,7 +97,7 @@ import "vue-select/dist/vue-select.css";
                     // Sending array plus 'currentFields' name so controller can work out the intended relation or the new entry
                     let data = {
                         'fields': this.currentFields,
-                        'newEntry':this.attributeEntries
+                        'newEntry': this.attributeEntries
                     }
 
                     axios.post("/api/addSingleEntry/" + this.user, data)
@@ -104,6 +107,9 @@ import "vue-select/dist/vue-select.css";
                                 icon: "success",
                                 title: 'Successfully added entry.'
                             });
+
+                            // Clear Fields
+                            this.attributeEntries = [];     
                         }
                     }).catch(err => {
                         console.log(err)
@@ -217,7 +223,7 @@ import "vue-select/dist/vue-select.css";
                 >
                     <div class="flex justify-between space-x-7">
                         <span class="mt-4">{{ field.desc }}: </span>
-                        <input v-if="field.fk === 'none'"
+                        <input  v-if="field.fk === 'none'"
                                style="width: 35rem; height: 2rem; margin-top: 0.75rem;" 
                                type="text" autocomplete="off" :placeholder="field.plhldr" 
                                v-model="attributeEntries[index]" />
@@ -225,7 +231,7 @@ import "vue-select/dist/vue-select.css";
                             <option disabled value="" >{{ field.plhldr }}</option>
                             <option v-for="item in schools" :key="item.name" :value="item.name">{{ item.name }}</option>
                         </v-select>-->
-                        <form v-else >
+                        <form  autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
                                      style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: white; 
                                      border: solid; border-color: #6b7280; border-width: 1px;
