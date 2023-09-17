@@ -3,20 +3,10 @@ import { onMounted, ref } from 'vue';
 const props = defineProps({
     results: { type: Object, required: true },
 });
-let hasCC = ref(true);
-let hasMC = ref(true);
 let hasUC = ref(true);
 let hasLec = ref(true);
 
 onMounted(() => {
-    if( props.results.data.courseCoord == '') {
-        hasCC.value = false;
-    }
-
-    if( props.results.data.majorCoord == '') {
-        hasMC.value = false;
-    }
-
     if( props.results.data.unitCoord == '') {
         hasUC.value = false;
     }
@@ -60,28 +50,6 @@ function getList()
 
         <!-- Results Display -->
         <div class="mb-7 overflow-auto  1440:max-h-[37rem] 1080:max-h-[32rem] laptop:max-h-[23rem] 4k:max-h-[50rem]">
-
-            <!-- Course Coordinator -->
-            <div>
-                <h2 class="mt-5 mb-1 font-bold 4k:text-xl">Course Coordinator:</h2>
-                <div v-show="hasCC">
-                    <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.courseCoord[1] }}</h1>
-                    <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.courseCoord[0] }}</h1>
-                </div>
-                <h1 v-show="!hasCC" class="mb-1 4k:text-xl indent-10">None Found</h1>
-            </div>
-
-
-            <!-- Major Coordinator -->
-            <div>
-                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Major Coordinator:</h2>
-                <div v-show="hasMC">
-                    <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.majorCoord[1] }}</h1>
-                    <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.majorCoord[0] }}</h1>
-                </div>
-                <h1 v-show="!hasMC" class="mb-1 4k:text-xl indent-10">None Found</h1>
-            </div>
-
 
             <!-- Unit Coordinator -->
             <div>

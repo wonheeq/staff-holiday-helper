@@ -29,8 +29,6 @@ class UnitLookupTest extends TestCase
         ]);
         // create test accounts
         $this->createAccount("000000b"); // UnitCoord
-        $this->createAccount("000000c"); // MajorCoord
-        $this->createAccount("000000d"); // CourseCoord
         $this->createAccount("000000e"); // Lecturer1
         $this->createAccount("000000f"); // Lecturer2
         $this->createAccount("000000g"); // NOMINATION ACCOUNT
@@ -50,8 +48,6 @@ class UnitLookupTest extends TestCase
 
         // create roles for each account
         $this->createAccountRole("000000b", 1); //UC
-        $this->createAccountRole("000000c", 2); //MC
-        $this->createAccountRole("000000d", 3); //CC
         $this->createAccountRole("000000e", 4); //L1
         $this->createAccountRole("000000f", 4); //L2
     }
@@ -67,15 +63,11 @@ class UnitLookupTest extends TestCase
 
         // delete created roles
         $this->deleteAccountRole('000000b', 1);
-        $this->deleteAccountRole('000000c', 2);
-        $this->deleteAccountRole('000000d', 3);
         $this->deleteAccountRole('000000e', 4);
         $this->deleteAccountRole('000000f', 4);
 
         // delete created accounts
         Account::where('accountNo', '000000b')->delete();
-        Account::where('accountNo', '000000c')->delete();
-        Account::where('accountNo', '000000d')->delete();
         Account::where('accountNo', '000000e')->delete();
         Account::where('accountNo', '000000f')->delete();
         Account::where('accountNo', '000000g')->delete();
@@ -101,8 +93,6 @@ class UnitLookupTest extends TestCase
         $response->assertJsonStructure([
             'unitId',
             'unitName',
-            'courseCoord',
-            'majorCoord',
             'unitCoord',
             'lecturers'
         ]);
@@ -110,8 +100,6 @@ class UnitLookupTest extends TestCase
         // check data
         $response->assertJsonPath('unitId', 'AAAA0000');
         $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('unitCoord', array('000000b@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('lecturers', array(
             array('000000e@curtin.edu.au', 'Static Test User'),
@@ -126,8 +114,6 @@ class UnitLookupTest extends TestCase
     {
         // create subs for eahc role
         $this->createSub('000000b', 1);
-        $this->createSub('000000c', 2);
-        $this->createSub('000000d', 3);
         $this->createSub('000000e', 4);
         $this->createSub('000000f', 4);
 
@@ -140,8 +126,6 @@ class UnitLookupTest extends TestCase
         $response->assertJsonStructure([
             'unitId',
             'unitName',
-            'courseCoord',
-            'majorCoord',
             'unitCoord',
             'lecturers'
         ]);
@@ -149,8 +133,6 @@ class UnitLookupTest extends TestCase
         // check that the email for the substitute was returned (000000g), not the orignals (b/c/d/e/f)
         $response->assertJsonPath('unitId', 'AAAA0000');
         $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('unitCoord', array('000000g@curtin.edu.au', 'Static Test User'));
         $response->assertJsonPath('lecturers', array(
             array('000000g@curtin.edu.au', 'Static Test User'),
@@ -182,47 +164,6 @@ class UnitLookupTest extends TestCase
         $this->deleteApplications('000000b');
     }
 
-
-
-    // Test for correct behaviour with a valid unit,
-    // and a valid substute only for the major coordinator
-    public function test_lookup_valid_unit_valid_majorCoord_sub(): void
-    {
-        // create a valid substution
-        $this->createSub('000000c', 2);
-
-        // check response code
-        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check that the email for the substitute is returned (000000g, not the original c).
-        $response->assertJsonPath('majorCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000c');
-    }
-
-
-
-    // Test for correct behaviour with a valid unit,
-    // and a valid substute only for the course coordinator
-    public function test_lookup_valid_unit_valid_courseCoord_sub(): void
-    {
-        // create a valid substution
-        $this->createSub('000000d', 3);
-
-        // check response code
-        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check that the email for the substitute is returned (000000g, not the original d).
-        $response->assertJsonPath('courseCoord', array('000000g@curtin.edu.au', 'Static Test User'));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000d');
-    }
 
 
 
@@ -291,53 +232,6 @@ class UnitLookupTest extends TestCase
     }
 
 
-
-    // Test for correct behaviour when there exist valid substitutes for the major coordinator
-    // role, but the relevant applications are invalid
-    public function test_lookup_valid_unit_invalid_majorCoord_sub(): void
-    {
-        // create two invalid applications.
-        // One where the leave isn't active, one where the application isn't accepted
-        $this->createSubAppBadTime('000000c', 2);
-        $this->createSubAppNotAcc('000000c', 2);
-
-        // check response code
-        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check that there was no sub ( email is still 000000c, not g)
-        $response->assertJsonPath('majorCoord', array('000000c@curtin.edu.au', 'Static Test User'));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000c');
-    }
-
-
-
-    // Test for correct behaviour when there exist valid substitutes for the course coordinator
-    // role, but the relevant applications are invalid
-    public function test_lookup_valid_unit_invalid_courseCoord_sub(): void
-    {
-        // create two invalid applications.
-        // One where the leave isn't active, one where the application isn't accepted
-        $this->createSubAppBadTime('000000d', 3);
-        $this->createSubAppNotAcc('000000d', 3);
-
-        // check response code
-        $response = $this->actingAs($this->adminUser)->post('/api/getUnitDetails', [
-            'code' => 'AAAA0000'
-        ])->assertStatus(200);
-
-        // check that there was no sub ( email is still 000000d, not g)
-        $response->assertJsonPath('courseCoord', array('000000d@curtin.edu.au', 'Static Test User'));
-
-        $this->deleteNominations('000000g');
-        $this->deleteApplications('000000d');
-    }
-
-
-
     // Test for correct behaviour when there exist valid substitutes for the unit coordinator
     // role, but the relevant applications are invalid
     public function test_lookup_valid_unit_invalid_unitCoord_sub(): void
@@ -397,8 +291,6 @@ class UnitLookupTest extends TestCase
         $response->assertJsonStructure([
             'unitId',
             'unitName',
-            'courseCoord',
-            'majorCoord',
             'unitCoord',
             'lecturers'
         ]);
@@ -406,8 +298,6 @@ class UnitLookupTest extends TestCase
         // check that nothing is being returned
         $response->assertJsonPath('unitId', 'BBBB0000');
         $response->assertJsonPath('unitName', 'tempName');
-        $response->assertJsonPath('courseCoord', '');
-        $response->assertJsonPath('majorCoord', '');
         $response->assertJsonPath('unitCoord', '');
         $response->assertJsonPath('lecturers', array());
     }
