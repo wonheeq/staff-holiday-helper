@@ -48,22 +48,12 @@ class UnitController extends Controller
 
         // get details of Unit Coordinator, Major Coordinator, Course Coordinator for the unit
         $ucDetails = $this->getAccountForUnitRole($id, 1);
-        $mcDetails = $this->getAccountForUnitRole($id, 2);
-        $ccDetails = $this->getAccountForUnitRole($id, 3);
 
 
         // check if there is a substitue / get the current details for each of them
-        $currentCc = '';
-        $currentMc = '';
         $currentUc = '';
         if ($ucDetails != null) {
             $currentUc = $this->checkForSub($ucDetails->accountRoleId, $ucDetails->accountNo);
-        }
-        if ($mcDetails != null) {
-            $currentMc = $this->checkForSub($mcDetails->accountRoleId, $mcDetails->accountNo);
-        }
-        if ($ccDetails != null) {
-            $currentCc = $this->checkForSub($ccDetails->accountRoleId, $ccDetails->accountNo);
         }
 
         // get the current lecturers for the unit
@@ -74,8 +64,6 @@ class UnitController extends Controller
         return response()->json([
             'unitId' => $id,
             'unitName' => $unitName,
-            'courseCoord' => $currentCc,
-            'majorCoord' => $currentMc,
             'unitCoord' => $currentUc,
             'lecturers' => $currentLecturers
         ]);

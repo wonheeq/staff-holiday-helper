@@ -30,10 +30,12 @@ async function handleReset() {
         if (error.response) {
             // fixing errors cause of laravel backend jank.
             if (((error.response.data.message) === "The email field must be a valid email address.") ||
-                ((error.response.data.message) === "We can't find a user with that email address.")) {
+                ((error.response.data.message) === "We can't find a user with that email address.") ||
+                ((error.response.data.message) === "The account no field is required.")){
                 errorMsg.value = "Invalid Staff ID."
             }
             else {
+                // errorMsg.value = "Invalid Staff ID."
                 errorMsg.value = error.response.data.message;
             }
         }
@@ -41,15 +43,24 @@ async function handleReset() {
     // uncomment below to show conf regardless of if id was correct.
     // showConf.value = true;
 }
+
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 <template>
     <div class="w-screen h-screen flex flex-col justify-center items-center ">
         <!-- Box/White Area -->
-        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
             <!-- Logo -->
-            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5">
+            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5">
 
             <form action="#" @submit.prevent="handleReset">
                 <!-- Staff ID -->
@@ -79,13 +90,26 @@ async function handleReset() {
         </div>
 
         <!-- Confirmation Popup -->
-        <div v-show="showConf === true" class="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+        <div class="max-w-[90%]">
+            <div v-show="showConf === true" class="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
             <p class="text-center">A confirmation email has been sent to the email address linked to
                 this account if it exists!</p>
             <p class="text-center">Please follow the steps in the email to proceed with the password
                 reset</p>
+            </div>
         </div>
+
+
     </div>
 </template>
 
+<style>
+@media
+(max-width: 1360px) {
 
+    .logo{
+        height: auto;
+        width: 60%;
+    }
+}
+</style>

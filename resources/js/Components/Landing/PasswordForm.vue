@@ -3,10 +3,12 @@
 <template>
 <div class="w-screen h-screen flex flex-col justify-center items-center ">
     <!-- Box/White Backgorund -->
-    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+    <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md ">
+    <!-- <div class="bg-white w-1/5 min-w-[320px] 1080:min-w-[420px] h-fit rounded-md drop-shadow-md pl-2 pb-2 1440:pl-4 1440:pb-4"> -->
+
 
         <!-- Logo -->
-        <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="mx-auto mb-5" >
+        <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" >
 
         <form action="#" @submit.prevent="handleReset">
             <!-- Password Input 1 -->
@@ -36,13 +38,13 @@
 
 
         <!-- Error Message -->
-        <div class="flex justify-center mb-2 text-red-500 4k:text-xl text-center">
-            <ul>
-                <li v-for="error in errors.slice(0, 1)">
-                    {{ error }}
-                </li>
-            </ul>
-        </div>
+        <div class="flex justify-center mb-2 mt-2 text-red-500 4k:text-xl text-center">
+                        <ul>
+                            <li v-for="error in errors.slice(0, 1)">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
 
         <!-- Bottom Links -->
         <div class="flex justify-between mt-5">
@@ -52,12 +54,23 @@
     </div>
 
     <!-- Confirmation Message -->
-    <div v-show="showConf" class =" 4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+    <div v-show="showConf" class ="max-w-[90%] 4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
         <p class="text-center">Your password has been successfully changed!</p>
     </div>
 
 </div>
 </template>
+
+<style>
+@media
+(max-width: 1360px) {
+
+    .logo{
+        height: auto;
+        width: 60%;
+    }
+}
+</style>
 
 <script setup>
 import axios from 'axios';
@@ -167,6 +180,15 @@ watch(password, () => {
     validatePasswords();
 });
 
+
+function isMobile() {
+    if( screen.availWidth <= 760 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 </script>
 
 
