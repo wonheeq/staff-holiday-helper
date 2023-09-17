@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\AuthenticationController;
-
+use App\Http\Middleware\EnsureUserIsManager;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,76 +23,92 @@ use App\Http\Controllers\AuthenticationController;
 |
 */
 
-
-
+// Landing Page Route Group
 Route::get('/', function () {
     return Inertia::render('Landing', []);
 });
-
 
 Route::get('/login', function () {
     return Inertia::render('Landing', []);
 });
 
-
-
 Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
 
-Route::middleware('auth:sanctum')->get('/home', function () {
+
+
+// Home Page
+Route::middleware('auth:sanctum', 'web')->get('/home', function () {
     return Inertia::render('Home', []);
 });
 
 
 
-Route::middleware('auth:sanctum')->get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
-    return Inertia::render('Bookings', [
-        'screenProp' => $screenProp
-    ]);
+// Bookings Page Route Group
+Route::middleware(['auth:sanctum', 'web'])->group(function () {
+    Route::get('/bookings/{screenProp?}', function (string $screenProp = "apps") {
+        return Inertia::render('Bookings', [
+            'screenProp' => $screenProp
+        ]);
+    });
+
+    Route::get('/bookings/apps', function () {
+        return Inertia::render('Bookings', [
+            'activeScreen' => 'apps'
+        ]);
+    });
+
+    Route::get('/bookings/create', function () {
+        return Inertia::render('Bookings', [
+            'activeScreen' => 'create'
+        ]);
+    });
+
+    Route::get('/bookings/subs', function () {
+        return Inertia::render('Bookings', [
+            'activeScreen' => 'subs'
+        ]);
+    });
 });
 
-Route::middleware('auth:sanctum')->get('/bookings/apps', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'apps'
-    ]);
+
+
+// Line Manager Page Route Group
+Route::middleware(['auth:sanctum', 'lmanager', 'web'])->group(function () {
+
+    Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
+        return Inertia::render('Manager', [
+            'screenProp' => $screenProp
+        ]);
+    });
+
+    Route::get('/Manager/appRequest', function () {
+        return Inertia::render('Manager', [
+            'activeScreen' => 'appRequest'
+        ]);
+    });
+
+    Route::get('/Manager/manage', function () {
+        return Inertia::render('Manager', [
+            'activeScreen' => 'manage'
+        ]);
+    });
 });
 
-Route::middleware('auth:sanctum')->get('/bookings/create', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'create'
-    ]);
+
+
+// Admin Page Route Group
+Route::middleware(['auth:sanctum', 'sysadmin', 'web'])->group(function () {
+    Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
+        return Inertia::render('Administration', [
+            'screenProp' => $screenProp
+        ]);
+    });
 });
 
-Route::middleware('auth:sanctum')->get('/bookings/subs', function () {
-    return Inertia::render('Bookings', [
-        'activeScreen' => 'subs'
-    ]);
-});
 
-Route::get('/manager/{screenProp?}', function (string $screenProp = "appRequest") {
-    return Inertia::render('Manager', [
-        'screenProp' => $screenProp
-    ]);
-});
 
-Route::middleware('auth:sanctum')->get('/Manager/appRequest', function () {
-    return Inertia::render('Manager', [
-        'activeScreen' => 'appRequest'
-    ]);
-});
-
-Route::middleware('auth:sanctum')->get('/Manager/manage', function () {
-    return Inertia::render('Manager', [
-        'activeScreen' => 'manage'
-    ]);
-});
-
-Route::get('/admin/{screenProp?}', function (string $screenProp = "viewData") {
-    return Inertia::render('Administration', [
-        'screenProp' => $screenProp
-    ]);
-});
 
 Route::middleware('auth:sanctum')->get('/send-email', [EmailController::class, 'sendEmail']);
 
