@@ -30,10 +30,10 @@ async function handleLogin() {
     <div class="w-screen h-screen flex justify-center items-center ">
 
         <!-- Box/Background -->
-        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
             <!-- Logo -->
-            <img src="/images/logo-horizontal.svg" class="mx-auto mb-5" >
+            <img src="/images/logo-horizontal.svg" class="logo mx-auto mb-5" >
 
             <form action="#" @submit.prevent="handleLogin">
                 <!-- Username and Password Input -->
@@ -72,3 +72,14 @@ async function handleLogin() {
         </div>
     </div>
 </template>
+
+<style>
+@media
+(max-width: 1360px) {
+
+    .logo{
+        height: auto;
+        width: 60%;
+    }
+}
+</style>
