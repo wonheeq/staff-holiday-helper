@@ -85,4 +85,6 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 });
+
+// Unit Lookup Route
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
