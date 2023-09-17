@@ -27,13 +27,6 @@ function getList()
         var email = lecturer[0];
         str += 'Name: ' + name + '\n';
         str += 'Email: ' + email + '\n\n';
-        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';        str += 'Name: ' + name + '\n';
-        str += 'Email: ' + email + '\n\n';
     });
     // chop trailing whitespace off
     str = str.slice(0, -6);
