@@ -24,106 +24,62 @@ async function handleLogin() {
         }
     });
 };
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
+    <div class="w-screen h-screen flex justify-center items-center ">
 
-    <!-- Box/Background -->
-    <div v-if="isMobile()">
-        <div class="w-screen h-screen flex justify-center items-center ">
-            <div class="h-fit bg-white p-5 drop-shadow-md">
-                <!-- Logo -->
-                <img src="/images/logo-horizontal.svg" class="mx-auto mb-5" >
-                <form action="#" @submit.prevent="handleLogin">
-                    <!-- Username and Password Input -->
-                    <landing-input
-                        title="Staff ID"
-                        v-model="formData.accountNo"
-                        inType="textType">
-                    </landing-input>
+        <!-- Box/Background -->
+        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
 
-                    <landing-input
-                        title="Password"
-                        v-model="formData.password"
-                        inType="passwordType">
-                    </landing-input>
+            <!-- Logo -->
+            <img src="/images/logo-horizontal.svg" class="logo mx-auto mb-5" >
 
-                     <!-- Login Button -->
-                    <button
-                        type="submit"
-                        class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
-                    >Sign In</button>
-                </form>
+            <form action="#" @submit.prevent="handleLogin">
+                <!-- Username and Password Input -->
+                <landing-input
+                    title="Staff ID"
+                    v-model="formData.accountNo"
+                    inType="textType">
+                </landing-input>
 
-                <!-- Error Message -->
-                <div class="flex justify-center mb-2">
-                    <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
-                </div>
+                <landing-input
+                    title="Password"
+                    v-model="formData.password"
+                    inType="passwordType">
+                </landing-input>
 
-                <!-- Bottom Links -->
-                <div class="flex justify-between">
-                    <!-- Forgot Password -->
-                    <button @click="$emit('forgotPass')" class="underline font-bold 4k:text-xl">Forgot Password?</button>
+                 <!-- Login Button -->
+                <button
+                    type="submit"
+                    class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
+                >Sign In</button>
+            </form>
 
-                    <!-- Unit Lookup -->
-                    <button @click="$emit('unitLookup')" class="underline font-bold 4k:text-xl">Unit Lookup</button>
-                </div>
+            <!-- Error Message -->
+            <div class="flex justify-center mb-2">
+                <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
             </div>
-        </div>
-    </div>
 
+            <!-- Bottom Links -->
+            <div class="flex justify-between">
+                <!-- Forgot Password -->
+                <button @click="$emit('forgotPass')" class="underline font-bold 4k:text-xl">Forgot Password?</button>
 
-    <div v-else>
-        <div class="w-screen h-screen flex justify-center items-center ">
-            <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
-
-                <!-- Logo -->
-                <img src="/images/logo-horizontal.svg" class="mx-auto mb-5" >
-
-                <form action="#" @submit.prevent="handleLogin">
-                    <!-- Username and Password Input -->
-                    <landing-input
-                        title="Staff ID"
-                        v-model="formData.accountNo"
-                        inType="textType">
-                    </landing-input>
-
-                    <landing-input
-                        title="Password"
-                        v-model="formData.password"
-                        inType="passwordType">
-                    </landing-input>
-
-                     <!-- Login Button -->
-                    <button
-                        type="submit"
-                        class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
-                    >Sign In</button>
-                </form>
-
-                <!-- Error Message -->
-                <div class="flex justify-center mb-2">
-                    <h1 class="text-red-500 4k:text-xl">{{ errorMsg }}</h1>
-                </div>
-
-                <!-- Bottom Links -->
-                <div class="flex justify-between">
-                    <!-- Forgot Password -->
-                    <button @click="$emit('forgotPass')" class="underline font-bold 4k:text-xl">Forgot Password?</button>
-
-                    <!-- Unit Lookup -->
-                    <button @click="$emit('unitLookup')" class="underline font-bold 4k:text-xl">Unit Lookup</button>
-                </div>
+                <!-- Unit Lookup -->
+                <button @click="$emit('unitLookup')" class="underline font-bold 4k:text-xl">Unit Lookup</button>
             </div>
         </div>
     </div>
 </template>
+
+<style>
+@media
+(max-width: 1360px) {
+
+    .logo{
+        height: auto;
+        width: 60%;
+    }
+}
+</style>
