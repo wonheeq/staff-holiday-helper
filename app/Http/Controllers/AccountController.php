@@ -6,6 +6,8 @@ use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use \DateTime;
+use DB;
+
 use Illuminate\Support\Facades\Log;
 
 define("DEFAULT_ADMIN_ACCOUNT_NO", "000002L");
@@ -33,6 +35,7 @@ class AccountController extends Controller
             }
 
             $Accounts = Account::get();
+            //Log::info(array($Accounts));
             return response()->json($Accounts);  
         }  
     }
@@ -122,5 +125,33 @@ class AccountController extends Controller
             // Error occurred, return default response
             return false;
         }
+    }
+
+    /*
+    Returns all Accounts w/ formatted full names, and a seperate array holding only line managers
+    */
+    public function getAllAccountsDisplay(Request $request, String $accountNo)
+    {  
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            $lmAccounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))
+                ->where('accountType', 'lmanager')->get();
+
+            $accounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))->get();
+
+            //Log::info(array($lmAccounts, $accounts));
+            //return response()->json($result = array($lmAccounts, $accounts));  
+            return response()->json(array($lmAccounts, $accounts));  
+        }  
     }
 }

@@ -15,7 +15,8 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
-
+use App\Http\Controllers\ForeignKeyController;
+use App\Http\Controllers\DatabaseController;
 
 
 /*
@@ -74,7 +75,10 @@ Route::post('rejectApplication', [ApplicationController::class, 'rejectApplicati
 
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 
-
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
+Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
+Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']);
+
+Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);

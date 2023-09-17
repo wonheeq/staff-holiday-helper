@@ -2,10 +2,16 @@
     
     import SubpageNavbar from '../SubpageNavbar.vue';
     import { ref, computed } from 'vue';
+    import AddDataPage from './AddData.vue'
+
+    import { useDataFieldsStore } from '@/stores/AddDataStore';
 
     import { usePage } from '@inertiajs/vue3'
     const page = usePage();
     const user = computed(() => page.props.auth.user);
+
+    // Store of fields needed to create new database entry
+    let fieldsStore = useDataFieldsStore();
     
     const options = [
     { id: 'viewData', title: 'View/Edit Data'},
@@ -132,14 +138,14 @@
             </div>
             <component :is="currentTable" :user="user.accountNo"></component>   
         </div>
-        </div>  
 
         <div
             v-show="activeScreen === 'addData'"
             :class="subpageClass"
             class="p-4 h-[95%]"
         >
-            add data subpage
+            <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" />
         </div>
         <div
             v-show="activeScreen === 'sysSettings'"
@@ -148,7 +154,7 @@
         >
             settings subpage
         </div>
-
+    </div>
 <!---->
 </template>
 

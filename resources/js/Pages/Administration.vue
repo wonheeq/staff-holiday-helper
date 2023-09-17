@@ -13,12 +13,8 @@
 
 <template>
 <PageLayout>
-    <AuthenticatedLayout>
-        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
-            <div class="tabarea">
-                <AdminTabs :screenProp="props.screenProp"/>  
-            </div> 
-        </div> 
+    <AuthenticatedLayout>       
+            <AdminTabs :screenProp="props.screenProp"/>     
     </AuthenticatedLayout>
 </PageLayout>
 </template>
