@@ -11,6 +11,7 @@ use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Message;
+use App\Models\ReminderTimeframe;
 use Illuminate\Support\Facades\Hash;
 
 //use Illuminate\Support\Facades\Log;
@@ -58,6 +59,11 @@ class DatabaseSeeder extends Seeder
             \App\Models\School::create([
                 'schoolId' => $school['schoolId'],
                 'name' => $school['name'],
+            ]);
+
+            ReminderTimeframe::create([
+                'schoolId' => $school['schoolId'],
+                'timeframe' => '2 days',
             ]);
         }
 
