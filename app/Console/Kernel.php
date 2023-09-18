@@ -32,17 +32,44 @@ class Kernel extends ConsoleKernel
         // after the reminder timeframe has passed...
         //    the system will send a reminder every day until the nominations are responded to
         $schedule->call(function () {
-            $this->generateReminders();
+            // now timestamp UTC
+            $now = new DateTime();
+            $reminderLists = $this->getReminderLists($now);
+            foreach ($reminderLists as $reminders) {
+                $this->sendReminders($reminders);
+            }
         })->everyTenSeconds();
     }
 
-    public function generateReminders() {
+    /*
+    For each school, generates a list of accountNo and for each accountNo a list of applications they have yet to respond to
+    Format:
+    [
+        SchoolList,
+        SchoolList,
+        SchoolList,
+    ]
+
+    SchoolList:
+    [
+        NomineeNo = [
+            ApplicationNo,
+            ApplicationNo,
+            ApplicationNo,
+        ],
+        NomineeNo = [
+            ApplicationNo,
+            ApplicationNo,
+            ApplicationNo,
+        ],
+    ]
+    */
+    public function getReminderLists($now) {
         Log::debug("running reminder checker");
+        $reminders = array();
+
         // iterate through each school
         $schools = DB::select('SELECT * FROM schools');
-
-        // now timestamp UTC
-        $now = new DateTime();
 
         foreach ($schools as $school) {
             // get reminder timeframe for school
@@ -103,9 +130,10 @@ class Kernel extends ConsoleKernel
             }
 
             if (count($remindersToSend) > 0) {
-                $this->sendReminders($remindersToSend);
+                $reminders[$school->schoolId] = $remindersToSend;
             }
         }
+        return $reminders;
     }
 
     /**
