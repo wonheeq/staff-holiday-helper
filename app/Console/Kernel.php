@@ -71,72 +71,65 @@ class Kernel extends ConsoleKernel
         Log::debug("running reminder checker");
         $remindersToSend = array();
 
-        // iterate through each school
-        $schools = DB::select('SELECT * FROM schools');
+        // get all pending applications
+        $applications = DB::select("SELECT * FROM applications WHERE status='P'");
 
-        foreach ($schools as $school) {
-            // get reminder timeframe for school
-            $reminderQuery = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$school->schoolId}");
-            $reminderTimeframe = $reminderQuery[0]->timeframe;
-            // split using space delimiter and get the value + day/days/week
-            $split = explode(" ", $reminderTimeframe);
-            $reminderValue = intval($split[0]);
-            $reminderPeriod = $split[1];
+        // iterate through each application
+        foreach ($applications as $application) {
+            // get all undecided nominations
+            $nominations = DB::select("SELECT * FROM nominations WHERE status='U' AND applicationNo={$application->applicationNo}");
 
-            // get all pending applications
-            $applications = DB::select("SELECT * FROM applications WHERE status='P'");
+            // iterate through each nomination
+            foreach ($nominations as $nomination) {
+                $schoolId = Account::where('accountNo', $nomination->nomineeNo)->first()->schoolId;
+                // get reminder timeframe for school
+                $reminderQuery = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$schoolId}");
+                $reminderTimeframe = $reminderQuery[0]->timeframe;
+                // split using space delimiter and get the value + day/days/week
+                $split = explode(" ", $reminderTimeframe);
+                $reminderValue = intval($split[0]);
+                $reminderPeriod = $split[1];
+                $created = new DateTime($nomination->created_at); // UTC
+                
+                $diff = date_diff($created, $now);
+                
+                // reminder timeframe is in days
+                if (str_contains($reminderPeriod, "day")) {
+                    // check if period has been surpassed
+                    if ($diff->d >= $reminderValue) {
+                        // Add schoolId to remindersToSend if not there already
+                        if (!array_key_exists($schoolId, $remindersToSend)) {
+                            $remindersToSend[$schoolId] = array();
+                        }
 
-            // iterate through each application
-            foreach ($applications as $application) {
-                // get all undecided nominations
-                $nominations = DB::select("SELECT * FROM nominations WHERE status='U' AND applicationNo={$application->applicationNo}");
+                        // Add nomineeNo to remindersToSend if not in there already
+                        if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
+                            $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
+                        }
 
-                // iterate through each nomination
-                foreach ($nominations as $nomination) {
-                    $schoolId = Account::where('accountNo', $nomination->nomineeNo)->first()->schoolId;
-                    
-                    $created = new DateTime($nomination->created_at); // UTC
-                    
-                    $diff = date_diff($created, $now);
-                    
-                    // reminder timeframe is in days
-                    if (str_contains($reminderPeriod, "day")) {
-                        // check if period has been surpassed
-                        if ($diff->d >= $reminderValue) {
-                            // Add schoolId to remindersToSend if not there already
-                            if (!array_key_exists($schoolId, $remindersToSend)) {
-                                $remindersToSend[$schoolId] = array();
-                            }
-
-                            // Add nomineeNo to remindersToSend if not in there already
-                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
-                                $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
-                            }
-
-                            // Add applicationNo to remindersToSend if not in there already
-                            if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
-                                array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
-                            }
+                        // Add applicationNo to remindersToSend if not in there already
+                        if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
+                            array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
                         }
                     }
-                    // reminder timeframe is in weeks
-                    else if (str_contains($reminderPeriod, "week")) {
-                        // check if period has been surpassed
-                        if ($diff->d >= 7) {                   
-                            // Add schoolId to remindersToSend if not there already
-                            if (!array_key_exists($schoolId, $remindersToSend)) {
-                                $remindersToSend[$schoolId] = array();
-                            }
+                }
+                // reminder timeframe is in weeks
+                else if (str_contains($reminderPeriod, "week")) {
+                    // check if period has been surpassed
+                    if ($diff->d >= 7) {                   
+                        // Add schoolId to remindersToSend if not there already
+                        if (!array_key_exists($schoolId, $remindersToSend)) {
+                            $remindersToSend[$schoolId] = array();
+                        }
 
-                            // Add nomineeNo to remindersToSend if not in there already
-                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
-                                $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
-                            }
+                        // Add nomineeNo to remindersToSend if not in there already
+                        if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
+                            $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
+                        }
 
-                            // Add applicationNo to remindersToSend if not in there already
-                            if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
-                                array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
-                            }
+                        // Add applicationNo to remindersToSend if not in there already
+                        if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
+                            array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
                         }
                     }
                 }
