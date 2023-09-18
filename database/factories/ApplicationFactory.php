@@ -4,7 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Account;
-use \DateTime;
+use DateTime;
+use DateTimeZone;
 
 class ApplicationFactory extends Factory
 {
@@ -19,9 +20,11 @@ class ApplicationFactory extends Factory
         $daysToAdd2 = $daysToAdd1 + rand(1, 14);
 
         $start = new DateTime('NOW');
+        $start->setTimezone(new DateTimeZone('Australia/Perth'));
         $start->modify("+{$daysToAdd1} days");
 
         $end = new DateTime('NOW');
+        $end->setTimezone(new DateTimeZone('Australia/Perth'));
         $end->modify("+{$daysToAdd2} days");
 
         return [

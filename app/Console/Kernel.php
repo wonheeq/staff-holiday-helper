@@ -7,7 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use DateTime;
-
+use DateTimeZone;
 class Kernel extends ConsoleKernel
 {
     /**
@@ -40,8 +40,8 @@ class Kernel extends ConsoleKernel
 
             foreach ($schools as $school) {
                 // get reminder timeframe for school
-                $reminderTimeframe = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$school->schoolId}")['timeframe'];
-                
+                $reminderQuery = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$school->schoolId}");
+                $reminderTimeframe = $reminderQuery[0]->timeframe;
                 // split using space delimiter and get the value + day/days/week
                 $split = explode(" ", $reminderTimeframe);
                 $reminderValue = intval($split[0]);

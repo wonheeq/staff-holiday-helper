@@ -10,6 +10,7 @@ use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\Application;
