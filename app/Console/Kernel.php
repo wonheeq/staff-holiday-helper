@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel
 
             foreach ($schools as $school) {
                 // get reminder timeframe for school
-                $reminderTimeframe = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$school->schoolId}")->timeframe;
+                $reminderTimeframe = DB::select("SELECT * FROM reminder_timeframes WHERE schoolId = {$school->schoolId}")['timeframe'];
                 
                 // split using space delimiter and get the value + day/days/week
                 $split = explode(" ", $reminderTimeframe);
@@ -101,7 +101,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->daily();
+        })->everyTenSeconds();
     }
 
     /**
