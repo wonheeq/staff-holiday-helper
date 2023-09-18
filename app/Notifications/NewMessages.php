@@ -53,6 +53,7 @@ class NewMessages extends Notification
             'otherMessages' => $this->getOtherMessages(),
             'url' => $this->getURL(),
         ];
+        dd($dynamicData);
         // create and return mailable object
         $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());
@@ -85,12 +86,21 @@ class NewMessages extends Notification
         // consider how to display
     }
 
-    private function getAppText()
-    {
-    }
+
 
     private function getAppMessages()
     {
+        $messages = $this->messages;
+        $appMessages = [];
+        foreach ($messages as $message) {
+            if (
+                $message->subject == "Application Approved" || $message->subject == "Application Denied" ||
+                $message->subject == "Nomination/s Rejected"
+            ) {
+                array_push($appMessages, $message);
+            }
+        }
+        // dd($appMessages);
     }
 
     private function getNumOther()

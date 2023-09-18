@@ -75,7 +75,7 @@ class Account extends Authenticatable
 
     public function getName()
     {
-        $name = $this->fName . $this->lName;
+        $name = $this->fName . " " . $this->lName;
         return $name;
     }
 
