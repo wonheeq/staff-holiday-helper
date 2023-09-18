@@ -453,6 +453,7 @@ class MessageController extends Controller
         }
     }
 
+    // get each account, call the sendMessage function for each.
     public function sendDailyMessages()
     {
         $accounts = Account::get();
@@ -463,6 +464,12 @@ class MessageController extends Controller
 
     private function sendMessage($accountNo)
     {
-        print($accountNo);
+
+        $messages = Message::where('receiverNo', $accountNo)->where('acknowledged', 0)->get();
+        if (!$messages->isEmpty()) {
+            foreach ($messages as $message) {
+                // do message stuff
+            }
+        }
     }
 }

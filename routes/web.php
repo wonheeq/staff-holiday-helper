@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Middleware\EnsureUserIsManager;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -149,3 +150,9 @@ Route::post(
     '/change-password',
     [AuthenticationController::class, 'homeStore']
 )->name('password.homeStore');
+
+
+Route::get(
+    '/testSend',
+    [MessageController::class, 'sendDailymessages']
+);
