@@ -52,7 +52,6 @@ class AdminController extends Controller
 
         // Check that the given timeframe is valid
         $validTimeframes = [
-            "12 hours",
             "1 day",
             "2 days",
             "3 days",

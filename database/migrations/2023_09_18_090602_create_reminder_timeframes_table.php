@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('reminder_timeframes', function (Blueprint $table) {
             $table->integer("schoolId", 3);
-            $table->string('timeframe', 8); 
+            $table->string('timeframe', 6); 
             /*
-            12 hours
             1 day
             2 days
             3 days
