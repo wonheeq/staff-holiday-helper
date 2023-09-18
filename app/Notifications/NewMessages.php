@@ -9,20 +9,20 @@ use Illuminate\Notifications\Notification;
 use App\Mail\MJML;
 use Illuminate\Mail\Mailable;
 
-class StaffNewMessages extends Notification
+class NewMessages extends Notification
 {
     use Queueable;
 
     public $messages;
-    public bool $isManager;
+    public $isManager;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($messages, bool $isManager)
+    public function __construct($messages, $isManager)
     {
-        $this->$messages = $messages;
-        $this->$isManager = $isManager;
+        $this->messages = $messages;
+        $this->isManager = $isManager;
     }
 
     /**
@@ -40,28 +40,49 @@ class StaffNewMessages extends Notification
      */
     public function toMail($notifiable): Mailable
     {
+
         // get the name and build the URL
         $dynamicData = [
             'name' => $notifiable->getName(),
-            'num' => $this->getNum(),
+            'num' => $this->messages->count(),
             'numApp' => $this->getNumApp(),
-            'appMessage' => $this->getAppText(),
             'appMessages' => $this->getAppMessages(),
+            'numAppRev' => $this->getNumAppRev(),
+            'appRevMessages' => $this->getAppRevMessages(),
             'numOther' => $this->getNumOther(),
             'otherMessages' => $this->getOtherMessages(),
             'url' => $this->getURL(),
         ];
         // create and return mailable object
-        $mailable = new MJML("Unacknowledged Messages", "email/dailyMessage", $dynamicData);
+        $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());
     }
 
-    private function getNum()
+    protected function getAppRevMessages()
     {
+    }
+
+    protected function getNumAppRev()
+    {
+    }
+
+    protected function getMailName()
+    {
+        $name = null;
+        if ($this->isManager) {
+            $name = "email/managerDailyMessage";
+        } else {
+            $name = "email/staffDailyMessage";
+        }
+        return $name;
     }
 
     private function getNumApp()
     {
+        // Fix email/make second email so that manager can have their
+        // leave requests listed as well.
+        // consider how to count appliction related emails
+        // consider how to display
     }
 
     private function getAppText()

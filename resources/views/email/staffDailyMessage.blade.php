@@ -37,7 +37,7 @@
 
             <mj-text padding-bottom="0">
                 <mj-raw>
-                  <span style="font-weight:bold">{{ $dynamicData['numApp'] }}</span> {{ $dynamicData['appMessage'] }}
+                  <span style="font-weight:bold">{{ $dynamicData['numApp'] }}</span> Messages regarding your applications:
               </mj-raw>
             </mj-text>
             <mj-text padding-top="0" padding-bottom="0" >

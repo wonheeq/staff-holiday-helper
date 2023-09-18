@@ -458,18 +458,8 @@ class MessageController extends Controller
     {
         $accounts = Account::get();
         foreach ($accounts as $account) {
-            $this->sendMessage($account->accountNo);
-        }
-    }
-
-    private function sendMessage($accountNo)
-    {
-
-        $messages = Message::where('receiverNo', $accountNo)->where('acknowledged', 0)->get();
-        if (!$messages->isEmpty()) {
-            foreach ($messages as $message) {
-                // do message stuff
-            }
+            $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
+            $account->sendDailyMessageNotification($messages);
         }
     }
 }
