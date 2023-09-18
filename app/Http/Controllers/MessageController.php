@@ -486,7 +486,7 @@ class MessageController extends Controller
         $data = $request->all();
         $accountNo = $data['accountNo'];
         $content = $data['content'];
-        return response()->json(['error' => 'Account does not exist.'], 500);
+        
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
