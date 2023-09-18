@@ -6,6 +6,11 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\RoleController;
+use App\Models\Account;
+use App\Models\Application;
+use App\Models\Nomination;
 use DateTime;
 use DateTimeZone;
 class Kernel extends ConsoleKernel
@@ -161,11 +166,57 @@ class Kernel extends ConsoleKernel
     nomineeNo as key
     array of applications with unresponded nominations as the value
     */
-    private function sendReminders($reminders) {
+    public function sendReminders($reminders) {
         Log::debug("Sending Reminders:");
         Log::debug($reminders);
 
-        // TODO: get information from each application and generate email
-        // TODO: send email to nominee
+        // iterate through each schoolId, array pair
+        foreach ($reminders as $schoolReminders) {
+            // iterate through each accountNo, array of applicationNos pair
+            foreach ($schoolReminders as $accountNo => $applicationNoList) {
+                $account = Account::where('accountNo', $accountNo)->first();
+                // create dynamicData for the user
+                $dynamicData = array(
+                    'receiverName' => "{$account->fName} {$account->lName}",
+                    'numApps' => count($applicationNoList),
+                    'numNominations' => 0,
+                    'applications' => array()
+                );
+                // iterate through list of applicationNo's
+                foreach ($applicationNoList as $applicationNo) {
+                    $application = Application::where('applicationNo', $applicationNo)->first();
+                    $applicant = Account::where('accountNo', $application->accountNo)->first();
+                    $applicantName = "{$applicant->fName} {$applicant->lName}";    
+                
+                    $duration = "{$application->sDate} - {$application->eDate}";
+
+                    $roles = "";
+                    // Get the nominated roles
+                    $nominations = Nomination::where('applicationNo', $applicationNo)->where('nomineeNo', $accountNo)->where('status', 'U')->get();
+                    foreach ($nominations as $nomination) {
+                        $dynamicData['numNominations']++;
+                        
+                        $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nomination->accountRoleId);
+                        
+                        // Process roles into a string with newlines
+                        if ($roles == "") {
+                            $roles = $roleName."\n";
+                        }
+                        else {
+                            $roles = $roles.$roleName."\n";
+                        }
+                    }
+
+                    array_push($dynamicData['applications'], array(
+                        'duration' => $duration,
+                        'applicantName' => $applicantName,
+                        'roles' => $roles
+                    ));
+                }
+
+                Log::debug($dynamicData);
+                app(EmailController::class)->nominationReminder($dynamicData, $accountNo);
+            }
+        }
     }
 }

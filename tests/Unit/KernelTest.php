@@ -8,6 +8,8 @@ use App\Models\School;
 use App\Models\ReminderTimeframe;
 use App\Models\Application;
 use App\Models\Nomination;
+use App\Models\Role;
+use App\Models\AccountRole;
 use Illuminate\Support\Facades\DB;
 use DateTime;
 use DateInterval;
@@ -18,6 +20,8 @@ class KernelTest extends TestCase
     private Account $admin, $nonAdmin;
     private ReminderTimeframe $reminder;
     private Application $application;
+    private $roles;
+    private $accountRoles;
     private $nominations;
 
     protected function setup(): void {
@@ -43,6 +47,24 @@ class KernelTest extends TestCase
             'accountType' => 'staff'
         ]);
 
+        $this->roles = Role::factory(3)->create([
+            'name' => 'test',
+        ]);
+        $this->accountRoles = array(
+            AccountRole::factory()->create([
+                'accountNo' => $this->nonAdmin->accountNo,
+                'roleId' => $this->roles[0]->roleId
+            ]),
+            AccountRole::factory()->create([
+                'accountNo' => $this->nonAdmin->accountNo,
+                'roleId' => $this->roles[1]->roleId
+            ]),
+            AccountRole::factory()->create([
+                'accountNo' => $this->nonAdmin->accountNo,
+                'roleId' => $this->roles[2]->roleId
+            ]),
+        );
+
         // generate datetime based off of NOW - 7 days
         $this->now = new DateTime();
         
@@ -56,13 +78,32 @@ class KernelTest extends TestCase
             'updated_at' => $this->now->format('Y-m-d H:i:s')
         ]);
 
-        $this->nominations = Nomination::factory(3)->create([
-            'applicationNo' => $this->application->applicationNo,
-            'nomineeNo' => $this->admin->accountNo,
-            'status' => 'U',
-            'created_at' => $this->now->format('Y-m-d H:i:s'),
-            'updated_at' => $this->now->format('Y-m-d H:i:s')
-        ]);
+        $this->nominations = array(
+            Nomination::factory()->create([
+                'applicationNo' => $this->application->applicationNo,
+                'nomineeNo' => $this->admin->accountNo,
+                'status' => 'U',
+                'created_at' => $this->now->format('Y-m-d H:i:s'),
+                'updated_at' => $this->now->format('Y-m-d H:i:s'),
+                'accountRoleId' => $this->accountRoles[0]->accountRoleId
+            ]),
+            Nomination::factory()->create([
+                'applicationNo' => $this->application->applicationNo,
+                'nomineeNo' => $this->admin->accountNo,
+                'status' => 'U',
+                'created_at' => $this->now->format('Y-m-d H:i:s'),
+                'updated_at' => $this->now->format('Y-m-d H:i:s'),
+                'accountRoleId' => $this->accountRoles[1]->accountRoleId
+            ]),
+            Nomination::factory()->create([
+                'applicationNo' => $this->application->applicationNo,
+                'nomineeNo' => $this->admin->accountNo,
+                'status' => 'U',
+                'created_at' => $this->now->format('Y-m-d H:i:s'),
+                'updated_at' => $this->now->format('Y-m-d H:i:s'),
+                'accountRoleId' => $this->accountRoles[2]->accountRoleId
+            ]),
+        );
     }
 
     protected function teardown(): void {
@@ -71,6 +112,10 @@ class KernelTest extends TestCase
             Nomination::where('applicationNo', $nomination->applicationNo, "and")
             ->where('nomineeNo', $nomination->nomineeNo, "and")
             ->where('status', $nomination->status)->delete();
+        }
+        AccountRole::where('accountNo', $this->nonAdmin->accountNo)->delete();
+        foreach ($this->roles as $role) {
+            $role->delete();
         }
         Application::where('applicationNo', $this->application->applicationNo)->delete();
         Account::where('accountNo', $this->admin->accountNo)->delete();
@@ -201,5 +246,16 @@ class KernelTest extends TestCase
 
         $reminderLists = app(Kernel::class)->getReminderLists($date);
         $this->assertTrue(!array_key_exists($this->school->schoolId, $reminderLists));
+    }
+
+    public function test_send_reminder_email(): void {
+        $date = new DateTime();
+        $oldReminderLists = app(Kernel::class)->getReminderLists($date);
+        $reminderList = array(
+            $oldReminderLists[$this->school->schoolId]
+        );
+        
+        app(Kernel::class)->sendReminders($reminderList);
+        $this->assertTrue(true);
     }
 }
