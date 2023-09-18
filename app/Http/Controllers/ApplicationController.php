@@ -95,6 +95,7 @@ class ApplicationController extends Controller
         $startDate = new DateTime($data['sDate']);
         $endDate = new DateTime($data['eDate']);
         $currentdate = new DateTime();
+        $currentdate->setTimeZone(new DateTimeZone("Australia/Perth"));
 
         // End date is earlier or equal to start date
         if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {

@@ -108,6 +108,7 @@ class AccountController extends Controller
 
             // Iterate through each application and check if current date is inside the period
             $currentDate = new DateTime();
+            $currentdate->setTimeZone(new DateTimeZone("Australia/Perth"));
             foreach ($applications as $app) {
                 $startDate = new DateTime($app['sDate']);
                 $endDate = new DateTime($app['eDate']);
