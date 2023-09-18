@@ -1,0 +1,105 @@
+<script setup>
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+import { ref, watch, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const MAX_SYSTEM_NOTIFICATION_LENGTH = 300;
+const options = {
+    default: "2 days",
+    all: [
+        "12 hours",
+        "1 day",
+        "2 days",
+        "3 days",
+        "4 days",
+        "5 days",
+        "6 days",
+    ]
+}
+let oldReminderTimeframe = ref(options.default);
+let reminderTimeframe = ref(options.default);
+let systemNotificationContent = ref("");
+
+let showReminderApplyButton = ref(false);
+let showSystemNotificationButton = ref(false);
+
+watch(reminderTimeframe, () => {
+    if (reminderTimeframe.value != oldReminderTimeframe.value) {
+        showReminderApplyButton.value = true;
+    }
+    else {
+        showReminderApplyButton.value = false;
+    }
+});
+
+function changeReminderTimeframe() {
+    showReminderApplyButton.value = false;
+    oldReminderTimeframe.value = reminderTimeframe.value;
+}
+
+
+watch(systemNotificationContent, () => {
+    if (systemNotificationContent.value.length > 0 && systemNotificationContent.value.length <= MAX_SYSTEM_NOTIFICATION_LENGTH) {
+        showSystemNotificationButton.value = true;
+    }
+    else {
+        showSystemNotificationButton.value = false;
+    }
+});
+
+const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font-bold"
+</script>
+<template>
+    <div class="space-y-4">
+        <div>
+            <div class="flex flex-row h-[2rem] space-x-4 items-center">
+                <p class="text-2xl h-full">
+                    Reminder Timeframe:
+                </p>
+                <vSelect :options="options.all" :clearable="false"
+                    style="width: 33rem; height: 2rem; background-color: white; 
+                    border: solid; border-color: #6b7280; border-width: 1px;
+                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                    v-model="reminderTimeframe"
+                />
+                <button v-show="showReminderApplyButton" :class="buttonClass"
+                    @click="changeReminderTimeframe"
+                >
+                    Apply Change
+                </button>
+            </div>
+            <p>
+                The amount of time after being nominated that a nominee will receive a reminder if they have not responded.
+            </p>
+        </div>
+        <div>
+            <p class="text-2xl">
+                Create System Notification
+            </p>
+            <p>
+                This will send a message to <b>all</b> accounts.
+            </p>
+            <div class="w-[48.5rem] h-32 relative">
+                <textarea class="w-full h-full" v-model="systemNotificationContent">
+                </textarea>
+                <p class="absolute right-1 bottom-0"
+                    v-show="systemNotificationContent.length > 0"
+                    :class="systemNotificationContent.length > MAX_SYSTEM_NOTIFICATION_LENGTH ? 'text-red-600': ''"
+                >
+                    {{ MAX_SYSTEM_NOTIFICATION_LENGTH - systemNotificationContent.length }}
+                </p>
+            </div>
+            <button v-show="showSystemNotificationButton" :class="buttonClass" class="py-2 mt-2">
+                Create Notification
+            </button>
+        </div>
+    </div>
+</template>
+<style>
+textarea {
+  resize: none;
+  overflow: hidden;
+}
+</style>
