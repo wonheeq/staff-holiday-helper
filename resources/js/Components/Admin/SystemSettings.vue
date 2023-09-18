@@ -1,6 +1,8 @@
 <script setup>
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import axios from "axios";
+import Swal from "sweetalert2";
 import { ref, watch, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 const page = usePage();
@@ -39,7 +41,6 @@ function changeReminderTimeframe() {
     oldReminderTimeframe.value = reminderTimeframe.value;
 }
 
-
 watch(systemNotificationContent, () => {
     if (systemNotificationContent.value.length > 0 && systemNotificationContent.value.length <= MAX_SYSTEM_NOTIFICATION_LENGTH) {
         showSystemNotificationButton.value = true;
@@ -48,6 +49,38 @@ watch(systemNotificationContent, () => {
         showSystemNotificationButton.value = false;
     }
 });
+
+function createSystemNotification() {
+    let data = {
+        'content': systemNotificationContent.value,
+        'accountNo': user.value.accountNo,
+    };
+
+    systemNotificationContent.value = "";
+    showSystemNotificationButton.value = false;
+
+    axios.post('/api/createSystemNotification', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to create notification, please try again',
+                });
+            }
+            else {
+                Swal.fire({
+                    icon: "success",
+                    title: 'Successfully created notification',
+                });
+            }
+        }).catch(err => {
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to create notification, please try again',
+        });
+    });
+}
 
 const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font-bold"
 </script>
@@ -91,7 +124,10 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
                     {{ MAX_SYSTEM_NOTIFICATION_LENGTH - systemNotificationContent.length }}
                 </p>
             </div>
-            <button v-show="showSystemNotificationButton" :class="buttonClass" class="py-2 mt-2">
+            <button v-show="showSystemNotificationButton"
+                :class="buttonClass" class="py-2 mt-2"
+                @click="createSystemNotification"    
+            >
                 Create Notification
             </button>
         </div>

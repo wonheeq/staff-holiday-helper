@@ -477,6 +477,45 @@ class MessageController extends Controller
         ]);
     }
 
+
+    /*
+    Creates a system wide notification
+    ALL users will receive this message
+    */
+    public function createSystemNotification(Request $request) {
+        $data = $request->all();
+        $accountNo = $data['accountNo'];
+        $content = $data['content'];
+        return response()->json(['error' => 'Account does not exist.'], 500);
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        // Verify that the account is a system admin account
+        if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+            // User is not a system admin, deny access to full table
+            return response()->json(['error' => 'User not authorized for request.'], 500);
+        }
+
+        // get all accounts
+        $accounts = Account::get();
+
+        foreach ($accounts as $account) {
+            Message::create([
+                'applicationNo' => null,
+                'receiverNo' => $account->accountNo,
+                'senderNo' => $accountNo,
+                'subject' => "System Notification",
+                'content' => json_encode($content),
+                'acknowledged' => false,
+            ]);
+        }
+
+        return response()->json(['success'], 200);
+    }
+
+
      /*
     Returns all Messages
      */
