@@ -486,7 +486,7 @@ class MessageController extends Controller
         $data = $request->all();
         $accountNo = $data['accountNo'];
         $content = $data['content'];
-        
+
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
@@ -496,6 +496,10 @@ class MessageController extends Controller
         if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
             // User is not a system admin, deny access to full table
             return response()->json(['error' => 'User not authorized for request.'], 500);
+        }
+        // Verify that the content length <= 300 and > 0
+        if ($content == null || strlen($content) < 0 || strlen($content > 300)) {
+            return response()->json(['error' => 'Invalid content - length must be between 1 and 300 (inclusive).'], 500);
         }
 
         // get all accounts
