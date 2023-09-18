@@ -79,3 +79,5 @@ Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getW
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
 Route::post('createSystemNotification', [MessageController::class, 'createSystemNotification']);
+Route::post('setReminderTimeframe', [AdminController::class, 'setReminderTimeframe']);
+Route::get('getReminderTimeframe/{accountNo}', [AdminController::class, 'getReminderTimeframe']);

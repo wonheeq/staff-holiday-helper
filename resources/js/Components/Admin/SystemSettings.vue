@@ -18,6 +18,7 @@ const options = {
         "4 days",
         "5 days",
         "6 days",
+        "1 week"
     ]
 }
 let oldReminderTimeframe = ref(options.default);
@@ -39,6 +40,33 @@ watch(reminderTimeframe, () => {
 function changeReminderTimeframe() {
     showReminderApplyButton.value = false;
     oldReminderTimeframe.value = reminderTimeframe.value;
+
+    let data = {
+        'timeframe': reminderTimeframe.value,
+        'accountNo': user.value.accountNo,
+    };
+
+    axios.post('/api/setReminderTimeframe', data)
+        .then(res => {
+            if (res.status == 500) {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Failed to change reminder timeframe, please try again',
+                });
+            }
+            else {
+                Swal.fire({
+                    icon: "success",
+                    title: 'Successfully changed reminder timeframe',
+                });
+            }
+        }).catch(err => {
+        console.log(err);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to change reminder timeframe, please try again',
+        });
+    });
 }
 
 watch(systemNotificationContent, () => {
@@ -81,6 +109,19 @@ function createSystemNotification() {
         });
     });
 }
+
+axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
+.then(res => {
+    if (res.status == 200) {
+        reminderTimeframe.value = res.data;
+        oldReminderTimeframe.value = res.data;
+    }
+    else {
+        console.log("Failed to getReminderTimeframe");
+    }
+}).catch(err => {
+    console.log(err);
+});
 
 const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font-bold"
 </script>
