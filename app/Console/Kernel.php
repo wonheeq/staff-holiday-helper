@@ -40,10 +40,8 @@ class Kernel extends ConsoleKernel
             // now timestamp UTC
             $now = new DateTime();
             $reminderLists = $this->getReminderLists($now);
-            foreach ($reminderLists as $reminders) {
-                $this->sendReminders($reminders);
-            }
-        })->everyTenSeconds();
+            $this->sendReminders($reminderLists);
+        })->everyThirtySeconds();
     }
 
     /*
@@ -71,7 +69,7 @@ class Kernel extends ConsoleKernel
     */
     public function getReminderLists($now) {
         Log::debug("running reminder checker");
-        $reminders = array();
+        $remindersToSend = array();
 
         // iterate through each school
         $schools = DB::select('SELECT * FROM schools');
@@ -85,18 +83,18 @@ class Kernel extends ConsoleKernel
             $reminderValue = intval($split[0]);
             $reminderPeriod = $split[1];
 
-            $remindersToSend = array();
-
-            // get all pending applications for each school
-            $applications = DB::select("SELECT * FROM applications INNER JOIN accounts ON applications.accountNo = accounts.accountNo WHERE accounts.schoolId = {$school->schoolId} AND applications.status = 'P'");
+            // get all pending applications
+            $applications = DB::select("SELECT * FROM applications WHERE status='P'");
 
             // iterate through each application
             foreach ($applications as $application) {
                 // get all undecided nominations
-                $nominations = DB::select("SELECT * FROM nominations WHERE status='U'");
+                $nominations = DB::select("SELECT * FROM nominations WHERE status='U' AND applicationNo={$application->applicationNo}");
 
                 // iterate through each nomination
                 foreach ($nominations as $nomination) {
+                    $schoolId = Account::where('accountNo', $nomination->nomineeNo)->first()->schoolId;
+                    
                     $created = new DateTime($nomination->created_at); // UTC
                     
                     $diff = date_diff($created, $now);
@@ -105,14 +103,19 @@ class Kernel extends ConsoleKernel
                     if (str_contains($reminderPeriod, "day")) {
                         // check if period has been surpassed
                         if ($diff->d >= $reminderValue) {
+                            // Add schoolId to remindersToSend if not there already
+                            if (!array_key_exists($schoolId, $remindersToSend)) {
+                                $remindersToSend[$schoolId] = array();
+                            }
+
                             // Add nomineeNo to remindersToSend if not in there already
-                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend)) {
-                                $remindersToSend[$nomination->nomineeNo] = array();
+                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
+                                $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
                             }
 
                             // Add applicationNo to remindersToSend if not in there already
-                            if (!in_array($application->applicationNo, $remindersToSend[$nomination->nomineeNo])) {
-                                array_push($remindersToSend[$nomination->nomineeNo], $application->applicationNo);
+                            if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
+                                array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
                             }
                         }
                     }
@@ -120,25 +123,26 @@ class Kernel extends ConsoleKernel
                     else if (str_contains($reminderPeriod, "week")) {
                         // check if period has been surpassed
                         if ($diff->d >= 7) {                   
+                            // Add schoolId to remindersToSend if not there already
+                            if (!array_key_exists($schoolId, $remindersToSend)) {
+                                $remindersToSend[$schoolId] = array();
+                            }
+
                             // Add nomineeNo to remindersToSend if not in there already
-                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend)) {
-                                $remindersToSend[$nomination->nomineeNo] = array();
+                            if (!array_key_exists($nomination->nomineeNo, $remindersToSend[$schoolId])) {
+                                $remindersToSend[$schoolId][$nomination->nomineeNo] = array();
                             }
 
                             // Add applicationNo to remindersToSend if not in there already
-                            if (!in_array($application->applicationNo, $remindersToSend[$nomination->nomineeNo])) {
-                                array_push($remindersToSend[$nomination->nomineeNo], $application->applicationNo);
-                            }    
+                            if (!in_array($application->applicationNo, $remindersToSend[$schoolId][$nomination->nomineeNo])) {
+                                array_push($remindersToSend[$schoolId][$nomination->nomineeNo], $application->applicationNo);
+                            }
                         }
                     }
                 }
             }
-
-            if (count($remindersToSend) > 0) {
-                $reminders[$school->schoolId] = $remindersToSend;
-            }
         }
-        return $reminders;
+        return $remindersToSend;
     }
 
     /**
@@ -170,6 +174,9 @@ class Kernel extends ConsoleKernel
         Log::debug("Sending Reminders:");
         Log::debug($reminders);
 
+        // TEMPORARY
+        $hasSentOne = false;
+
         // iterate through each schoolId, array pair
         foreach ($reminders as $schoolReminders) {
             // iterate through each accountNo, array of applicationNos pair
@@ -179,43 +186,50 @@ class Kernel extends ConsoleKernel
                 $dynamicData = array(
                     'receiverName' => "{$account->fName} {$account->lName}",
                     'numApps' => count($applicationNoList),
-                    'numNominations' => 0,
                     'applications' => array()
                 );
+                $num = 0;
                 // iterate through list of applicationNo's
                 foreach ($applicationNoList as $applicationNo) {
                     $application = Application::where('applicationNo', $applicationNo)->first();
+                    
                     $applicant = Account::where('accountNo', $application->accountNo)->first();
                     $applicantName = "{$applicant->fName} {$applicant->lName}";    
                 
                     $duration = "{$application->sDate} - {$application->eDate}";
 
-                    $roles = "";
+                    $roles = [];
                     // Get the nominated roles
                     $nominations = Nomination::where('applicationNo', $applicationNo)->where('nomineeNo', $accountNo)->where('status', 'U')->get();
+                    Log::debug("NOMINATIONS: appNo{$applicationNo} nom{$accountNo}");
+                    Log::debug($nominations);
                     foreach ($nominations as $nomination) {
-                        $dynamicData['numNominations']++;
+                        $num++;
                         
                         $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nomination->accountRoleId);
                         
-                        // Process roles into a string with newlines
-                        if ($roles == "") {
-                            $roles = $roleName."\n";
-                        }
-                        else {
-                            $roles = $roles.$roleName."\n";
-                        }
+                        array_push($roles, $roleName);
                     }
+
+                    $roleString = implode("\n", $roles);
+                    Log::debug($roleString);
 
                     array_push($dynamicData['applications'], array(
                         'duration' => $duration,
                         'applicantName' => $applicantName,
-                        'roles' => $roles
+                        'roles' => $roleString
                     ));
                 }
 
-                Log::debug($dynamicData);
-                app(EmailController::class)->nominationReminder($dynamicData, $accountNo);
+                $dynamicData['numNominations'] = $num;
+                // TEMPORARY: don't wanna spam too many emails
+                if (!$hasSentOne) {
+                    $hasSentOne = true;
+                    Log::debug($dynamicData);
+                    app(EmailController::class)->nominationReminder($dynamicData, $accountNo);
+                }
+                //Log::debug($dynamicData);
+                //app(EmailController::class)->nominationReminder($dynamicData, $accountNo);
             }
         }
     }

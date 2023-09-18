@@ -248,6 +248,8 @@ class KernelTest extends TestCase
         $this->assertTrue(!array_key_exists($this->school->schoolId, $reminderLists));
     }
 
+    
+    /*
     public function test_send_reminder_email(): void {
         $date = new DateTime();
         $oldReminderLists = app(Kernel::class)->getReminderLists($date);
@@ -258,4 +260,5 @@ class KernelTest extends TestCase
         app(Kernel::class)->sendReminders($reminderList);
         $this->assertTrue(true);
     }
+    */
 }

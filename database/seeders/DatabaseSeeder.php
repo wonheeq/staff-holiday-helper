@@ -174,9 +174,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Each account gets 4 applications
+        $count = 0;
+        // 4 accounts gets 1 applications
         foreach ($accounts as $account) {
-            Application::factory(4)->create([
+            if ($count >= 4) {break;} 
+            Application::factory(1)->create([
                 'accountNo' => $account['accountNo'],
                 'processedBy' => $lineManagerNo,
             ]);
@@ -216,6 +218,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        /*
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
@@ -229,6 +232,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+        */
 
 
 
