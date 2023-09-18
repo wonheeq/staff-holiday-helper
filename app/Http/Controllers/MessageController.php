@@ -452,4 +452,17 @@ class MessageController extends Controller
             return response()->json($messages);
         }
     }
+
+    public function sendDailyMessages()
+    {
+        $accounts = Account::get();
+        foreach ($accounts as $account) {
+            $this->sendMessage($account->accountNo);
+        }
+    }
+
+    private function sendMessage($accountNo)
+    {
+        print($accountNo);
+    }
 }
