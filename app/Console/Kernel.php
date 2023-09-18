@@ -66,7 +66,7 @@ class Kernel extends ConsoleKernel
                         // reminder timeframe is in days
                         if (str_contains($reminderPeriod, "day")) {
                             // check if period has been surpassed
-                            if ($diff->d >= $reminderPeriod) {
+                            if ($diff->d >= $reminderValue) {
                                 // Add nomineeNo to remindersToSend if not in there already
                                 if (!array_key_exists($nomination->nomineeNo, $remindersToSend)) {
                                     $remindersToSend[$nomination->nomineeNo] = array();
@@ -101,7 +101,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->everyTenSeconds();
+        })->daily();
     }
 
     /**
@@ -132,5 +132,8 @@ class Kernel extends ConsoleKernel
     private function sendReminders($reminders) {
         Log::debug("Sending Reminders:");
         Log::debug($reminders);
+
+        // TODO: get information from each application and generate email
+        // TODO: send email to nominee
     }
 }
