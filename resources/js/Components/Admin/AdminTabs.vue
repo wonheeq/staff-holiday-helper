@@ -2,6 +2,7 @@
     
     import SubpageNavbar from '../SubpageNavbar.vue';
     import { ref, computed } from 'vue';
+    import SystemSettings from './SystemSettings.vue';
 
     import { usePage } from '@inertiajs/vue3'
     const page = usePage();
@@ -132,7 +133,6 @@
             </div>
             <component :is="currentTable" :user="user.accountNo"></component>   
         </div>
-        </div>  
 
         <div
             v-show="activeScreen === 'addData'"
@@ -141,15 +141,13 @@
         >
             add data subpage
         </div>
-        <div
-            v-show="activeScreen === 'sysSettings'"
+        <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="subpageClass"
             class="p-4 h-[95%]"
-        >
-            settings subpage
-        </div>
-
+        />
 <!---->
+
+    </div>
 </template>
 
 <style>
