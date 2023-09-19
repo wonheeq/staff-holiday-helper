@@ -5,6 +5,9 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Account;
 use App\Models\Message;
+use App\Notifications\NewMessages;
+use Illuminate\Support\Facades\Notification;
+use App\Http\Controllers\MessageController;
 
 class MessageControllerTest extends TestCase
 {
@@ -184,5 +187,24 @@ class MessageControllerTest extends TestCase
 
         $updatedMessage = Message::where('messageId', $message->messageId)->first();
         $this->assertTrue($updatedMessage->acknowledged == 1);
+    }
+
+
+    public function test_daily_email_user_has_messages(): void
+    {
+        Notification::fake();
+        $controller = new MessageController();
+        $controller->sendDailyMessagesUnitTestFunction($this->user);
+        Notification::assertSentTo($this->user, NewMessages::class);
+    }
+
+
+    public function test_daily_email_user_has_no_messages(): void
+    {
+        Notification::fake();
+        Message::where('receiverNo', $this->user->accountNo)->delete();
+        $controller = new MessageController();
+        $controller->sendDailyMessagesUnitTestFunction($this->user);
+        Notification::assertNotSentTo($this->user, NewMessages::class);
     }
 }

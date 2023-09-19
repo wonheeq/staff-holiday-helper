@@ -475,4 +475,13 @@ class MessageController extends Controller
         $account1->sendDailyMessageNotification($messages1);
         $account2->sendDailyMessageNotification($messages2);
     }
+
+    public function sendDailyMessagesUnitTestFunction($user)
+    {
+        $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
+        if ($messages->count() != 0) {
+            $user->sendDailyMessageNotification($messages);
+            sleep(2); // to get around mailtrap emails per second limit
+        }
+    }
 }
