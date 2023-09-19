@@ -24,7 +24,12 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $msgController = new MessageController();
             $msgController->sendDailyMessages();
-        })->everyMinute();
+        })
+        ->dailyAt('10:00'); // once a day at 10 am
+        // ->daily(); // once a day at midnight
+        // ->twiceDailyAt('8', '15', '30'); // twice a day at 8:30 and 5:30
+        // ->twiceDaily(); // twice a day
+
     }
 
     /**
