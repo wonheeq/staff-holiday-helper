@@ -9,45 +9,38 @@ import { usePage } from '@inertiajs/vue3'
 const page = usePage();
 import {computed} from 'vue';
 const user = computed(() => page.props.auth.user);
-
-
 let staffStore = useStaffStore();
 const { staffValue, searchStaff} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
-let emit = defineEmits(["editRoles"]);
-
 
 onMounted(() => {
     fetchStaffMembers(user.value.accountNo);
 });
 
-
 let deadAreaColor = "#FFFFFF";
-
-
 </script>
 <template>
     <div class="subpage-height w-full">
         <div class="h-[7%]">
-            <p class="font-bold text-5xl">
+            <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Your Staff Members:
             </p>
         </div>
-        <div class="grid grid-cols-6 bg-white mr-4 gap-x-2 mx-10">
+        <div class="staff-text grid grid-cols-6 bg-white mr-4 gap-x-2 mx-10 ml-6">
             <div>
-              <p style="font-size: 25px;"><b>Name:</b></p>
+              <p><b>Name:</b></p>
             </div>
             <div>
-              <p style="font-size: 25px;"><b>ID:</b></p>
+              <p><b>ID:</b></p>
             </div>
             <div>
-              <p style="font-size: 25px;"><b>Email Address:</b></p>
+              <p><b>Email Address:</b></p>
             </div>
             <div>
-              <p style="font-size: 25px;"><b>On Leave:</b></p>
+              <p><b>On Leave:</b></p>
             </div>
             <div>
-              <p style="font-size: 25px;"><b>Pending Application:</b></p>
+              <p><b>Pending Application:</b></p>
             </div>
           </div>
             <div class="bg-white 1440:mx-4 1440:mb-4 scroll">
@@ -59,15 +52,13 @@ let deadAreaColor = "#FFFFFF";
                         <div v-for="item in searchStaff" :key="item.id" class="mb-2 row-divider pt-2">
                             <StaffInfo
                                 :source="item"
-                                @editRoles="$emit('editRoles', item.accountNo)"
                             ></StaffInfo>
                         </div>
-
                     </template>
                 </VueScrollingTable>
                 
             </div>
-            <div style="font-size: 25px; padding-left: 30px;">
+            <div class="pt-2 font-bold text-sm laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 <p ><b>Staff name or ID</b></p>
                 <div>
                     <input 
@@ -89,10 +80,6 @@ let deadAreaColor = "#FFFFFF";
     overflow-y: auto;
     height: 70%;
   }
-.filter-radio {
-    transform: scale(1.5);
-    margin-right: 10px;
-}
 .filter-label {
     font-size: 18px; 
 }
@@ -122,5 +109,26 @@ let deadAreaColor = "#FFFFFF";
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+}
+/* 1080p */
+@media 
+(min-width: 1920px) {
+    .staff-text{
+        font-size: 25px;
+    }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .staff-text{
+        font-size: 25px;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .staff-text{
+        font-size: 25px;
+    }
 }
 </style>
