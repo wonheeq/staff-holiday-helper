@@ -1,6 +1,6 @@
 <script setup>
 import Navbar from "@/Components/Navbar.vue";
-import SettingsModal from "@/Components/SettingsModal.vue";
+import SettingsModal from "@/Components/Settings/SettingsModal.vue";
 import axios from "axios";
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
