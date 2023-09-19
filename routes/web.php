@@ -154,5 +154,5 @@ Route::post(
 
 Route::get(
     '/testSend',
-    [MessageController::class, 'sendDailymessages']
+    [MessageController::class, 'demoSendDailyMessages']
 );
