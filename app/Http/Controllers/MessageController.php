@@ -456,7 +456,7 @@ class MessageController extends Controller
         foreach ($rejectedRoles as $role) {
             array_push(
                 $content,
-                $role
+                "→{$role}"
             );
         }
 
