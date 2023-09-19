@@ -4,9 +4,12 @@ import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
 import { storeToRefs } from 'pinia';
+import { useApplicationStore } from '@/stores/ApplicationStore';
 import { useNominationStore } from '@/stores/NominationStore';
 import Swal from 'sweetalert2';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const applicationStore = useApplicationStore();
+const { addNewApplication } = applicationStore;
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 let nominationStore = useNominationStore();
@@ -107,6 +110,8 @@ function createApplication(data) {
         axios.post('/api/createApplication', data)
             .then(res => {
                 if (res.status == 200) {
+                    let newApp = res.data;
+                    addNewApplication(newApp);
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully created application.'
