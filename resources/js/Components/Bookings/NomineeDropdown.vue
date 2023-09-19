@@ -1,8 +1,10 @@
 <script setup>
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import NomineeDropdownOption from "./NomineeDropdownOption.vue";
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 
 let emit = defineEmits(['optionSelected']);
 let props = defineProps({
@@ -15,7 +17,9 @@ let props = defineProps({
 
 let dropdownSearch = ref("");
 let displayOptions = ref(false);
-let deadAreaColor = "#FFFFFF";
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 
 let getButtonSrc = (val) => {
     return val ? '/images/triangle_up.svg' : '/images/triangle_down.svg';
@@ -25,15 +29,14 @@ function handleSelection(label) {
     displayOptions.value = false;
     emit('optionSelected', label);
 };
-
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div class="flex flex-col">
         <div class="flex flex-row">
             <input type="text"
-                :class="isDisabled ? disabledClass : ''"
                 class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                :class="isDark?isDisabled ? disabledClass : 'bg-gray-800 text-white':isDisabled ? disabledClass : ''"
                 v-model="dropdownSearch"
                 @focusin="displayOptions=true"
                 :disabled="isDisabled"
@@ -45,11 +48,11 @@ const disabledClass = "bg-gray-300 border-gray-100";
             >
                 <img :src="getButtonSrc(displayOptions)"
                     class="border-y border-r h-full w-full"
-                    :class="isDisabled ? disabledClass : 'border-colour'"
+                    :class="isDark?isDisabled ? disabledClass : 'border-colour darkModeImage': isDisabled ? disabledClass : 'border-colour'"
                 />
             </button>
         </div>
-        <div class="bg-white border-x border-b border-black h-40 z-10"
+        <div class="border-x border-b border-black h-40 z-10"
             v-show="displayOptions && !isDisabled"
         >
             <VueScrollingTable
@@ -69,6 +72,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
     </div>
 </template>
 <style>
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .border-colour {
     border-right-color: #6b7280;
     border-top-color: #6b7280;
