@@ -1,11 +1,12 @@
 <script setup>
 import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
-import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 import { usePage } from '@inertiajs/vue3'
@@ -17,15 +18,18 @@ const { fetchMessages } = messageStore;
 
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
-let deadAreaColor = "#FFFFFF";
-
 onMounted(() => {
     fetchMessages(user.value.accountNo);
 });
+
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+})
 </script>
 
 <template>
-    <div class="bg-transparent laptop:bg-white laptop:rounded-md w-full">
+    <div class="laptop:rounded-md w-full"
+    :class="isDark?'bg-transparent laptop:bg-gray-800':'bg-transparent laptop:bg-white'">
         <div v-if="isMobile" class="w-full bg-white mb-2 rounded-md">
             <div class="h-[0.25rem]"></div>
             <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
@@ -60,11 +64,12 @@ onMounted(() => {
             </div>
             <div class="bg-white border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
                 <VueScrollingTable
+                    id="messageTable"
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="item in filteredMessages" :key="item.id" class="bg-white mb-1">
+                        <div v-for="item in filteredMessages" :key="item.id">
                             <Message :source="item"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
@@ -117,6 +122,7 @@ onMounted(() => {
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
+                    class=""
                 >
                     <template #tbody>
                         <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
@@ -133,6 +139,20 @@ onMounted(() => {
 </template>
 
 <style>
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9d9d9d;
+    -webkit-border-radius: 1ex;
+}
+
+::-webkit-scrollbar-corner {
+    background: #9d9d9d;
+}
 .scroller {
   overflow-y: auto;
   height: calc(90% - 0.5rem);
