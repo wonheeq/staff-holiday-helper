@@ -2,6 +2,10 @@
 import MessageResponses from './MessageResponses.vue';
 import Swal from 'sweetalert2';
 import { useDark } from "@vueuse/core";
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 let props = defineProps({
     source: Object,
@@ -28,12 +32,32 @@ function handleReviewApplication() {
 <template>
     <div class="flex flex-row justify-between p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
         <div class="flex flex-col w-[75%] laptop:w-full">
-            <div class="flex flex-col laptop:flex-row items-center">
+            <div v-if="isMobile" class="flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
                 <div class="flex">
-                    <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-2">
+                    <p class="text-sm">
+                        by {{ props.source.senderName }}
+                    </p>
+                    <input
+                        type="image"
+                        v-if="props.source.senderNo != null"
+                        class="ml-1.5 email"
+                        :class="isDark?'darkModeEmail':''"
+                        src="/images/mail.svg"
+                        title="Copy Email Address to Clipboard"
+                        @click="copyEmail(props.source.senderNo)"
+                        v-title
+                    />
+                </div>
+            </div>
+            <div v-else class="flex flex-row items-center">
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
+                    {{ props.source.subject }}
+                </p>
+                <div class="flex">
+                    <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-1.5">
                         by {{ props.source.senderName }}
                     </p>
                     <input
