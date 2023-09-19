@@ -40,28 +40,68 @@
                   <span style="font-weight:bold">{{ $dynamicData['numApp'] }}</span> Messages regarding your applications:
               </mj-raw>
             </mj-text>
-            <mj-text padding-top="0" padding-bottom="0" >
-                {{ $dynamicData['appMessages'] }}
-            </mj-text>
+            <mj-table>
+                @foreach($dynamicData['appMessages'] as $message)
+                  <tr>
+                    <th align="left">
+                        &#x2022;
+                        @foreach ($message as $part)
+                                {{ $part}}
+                        @endforeach
+                  </th>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;"></td>
+                </tr>
+                @endforeach
+              </mj-table>
 
-            <mj-text padding-bottom="0">
+            <mj-text padding-bottom="0" padding-top="30px">
                 <mj-raw>
                   <span style="font-weight:bold">{{ $dynamicData['numAppRev'] }}</span> Messages regarding applications requiring review:
               </mj-raw>
             </mj-text>
-            <mj-text padding-top="0" padding-bottom="0" >
-                {{ $dynamicData['appRevMessages'] }}
-            </mj-text>
+            <mj-table>
+                @foreach($dynamicData['appRevMessages'] as $message)
+                  <tr>
+                    <th align="left">
+                        &#x2022;
+                        @foreach ($message as $part)
+                                {{ $part}}
+                        @endforeach
+                  </th>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;"></td>
+                </tr>
+                @endforeach
+              </mj-table>
 
 
-            <mj-text >
+              <mj-text padding-bottom="0" padding-top="30px">
                 <mj-raw>
-                  <span style="font-weight:bold">{{ $dynamicData['numOther'] }}</span> Other messages:
+                  <span style="font-weight:bold">{{ $dynamicData['numOther'] }} Other messages:</span>
               </mj-raw>
             </mj-text>
 
-            <mj-text padding-top="0" padding-bottom="0">
-                {{ $dynamicData['otherMessages'] }}
+            <mj-table>
+                @foreach($dynamicData['otherMessages'] as $message)
+                  <tr>
+                    <th align="left">
+                        &#x2022;
+                        @foreach ($message as $part)
+                             {{ $part}}
+                        @endforeach
+                  </th>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;"></td>
+                </tr>
+                @endforeach
+              </mj-table>
+
+            <mj-text color="#637381" font-size="16px">
+                To acknowledge these messages, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
             </mj-text>
 
             <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "{{ $dynamicData['url'] }}" width="210px" padding-top="40px">

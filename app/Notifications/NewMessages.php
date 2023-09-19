@@ -48,7 +48,7 @@ class NewMessages extends Notification
      */
     public function toMail($notifiable): Mailable
     {
-
+        // dd($this->messages);
         // get the name and build the URL
         $dynamicData = [
             'name' => $notifiable->getName(),
@@ -61,6 +61,7 @@ class NewMessages extends Notification
             'numOther' => $this->numOther,
             'url' => URL::to('/home'),
         ];
+        // dd($dynamicData);
         // create and return mailable object
         $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());
@@ -70,20 +71,19 @@ class NewMessages extends Notification
     {
         $messages = $this->messages;
         $appRevMessages = [];
-        $stringMessages = "";
-
         foreach ($messages as $message) {
             if ($message->subject == "Application Awaiting Review" || $message->subject == "Application Cancelled") {
                 $this->numAppRev++;
-                $stringMessages = $stringMessages . $message->content . "<br></br>";
+
+                // $content = json_decode($message->content);
+                // array_push($appRevMessages, $content);
+
             }
         }
-        return $stringMessages;
+        return $appRevMessages;
     }
 
-    protected function getNumAppRev()
-    {
-    }
+
 
     protected function getMailName()
     {
@@ -102,13 +102,15 @@ class NewMessages extends Notification
         $messages = $this->messages;
         $appMessages = [];
         foreach ($messages as $message) {
-            $this->numApp++;
             if (
                 $message->subject == "Application Approved" || $message->subject == "Application Denied" ||
                 $message->subject == "Nomination/s Rejected"
             ) {
-                $content = json_decode($message->content);
-                array_push($appMessages, $content);
+                $this->numApp++;
+                $data = [];
+                array_push($data, $message->subject . ": ");
+                array_push($data, json_decode($message->content));
+                array_push($appMessages, $data);
             }
         }
         return $appMessages;
@@ -129,8 +131,10 @@ class NewMessages extends Notification
                 $message->subject != "Nomination/s Rejected"
             ) {
                 $this->numOther++;
-                $content = $this->formatContent(json_decode($message->content));
-                array_push($otherMessages, $content);
+                $data = [];
+                array_push($data, $message->subject . ": ");
+                array_push($data, $this->formatContent(json_decode($message->content)));
+                array_push($otherMessages, $data);
             }
         }
 

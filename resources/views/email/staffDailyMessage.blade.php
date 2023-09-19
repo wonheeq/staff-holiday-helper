@@ -45,8 +45,9 @@
                   <tr>
                     <th align="left">
                         &#x2022;
-                        @foreach ($message as $part)
-                                {{ $part}}
+                        {{ $message[0]}}
+                        @foreach ($message[1] as $part)
+                             {{ $part }}
                         @endforeach
                   </th>
                 </tr>
@@ -68,8 +69,9 @@
                   <tr>
                     <th align="left">
                         &#x2022;
-                        @foreach ($message as $part)
-                             {{ $part}}
+                        {{ $message[0]}}
+                        @foreach ($message[1] as $part)
+                             {{ $part }}
                         @endforeach
                   </th>
                 </tr>
@@ -83,13 +85,13 @@
                 To acknowledge these messages, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
             </mj-text>
 
-            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "{{ $dynamicData['url'] }}" width="210px" padding-top="40px">
+            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "leaveontime.cyber.curtin.io" width="210px" padding-top="40px">
                 Go To LeaveOnTime
               </mj-button>
 
 
             <mj-text padding-top="20px" color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold">
-              <a class="text-link" href="{{ $dynamicData['url'] }}">www.LeaveOnTime.com.au</a>
+              <a class="text-link" href="leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
             </mj-text>
           </mj-column>
           <mj-column width="90%">
