@@ -187,7 +187,7 @@ class MessageControllerTest extends TestCase
 
         $updatedMessage = Message::where('messageId', $message->messageId)->first();
         $this->assertTrue($updatedMessage->acknowledged == 1);
-    }
+}
 
 
     public function test_daily_email_user_has_messages(): void

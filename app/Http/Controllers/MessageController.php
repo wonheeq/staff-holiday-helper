@@ -466,6 +466,8 @@ class MessageController extends Controller
         }
     }
 
+
+    // demo function for manually testing daily message functionality without emailing all accounts.
     public function demoSendDailyMessages()
     {
         $account1 = Account::where('accountNo', '000000a')->first();
@@ -476,12 +478,15 @@ class MessageController extends Controller
         $account2->sendDailyMessageNotification($messages2);
     }
 
+
+    // function used only by MessageControllerTest to test notification functionality without
+    // sending to all accounts. Do not call in any other context.
     public function sendDailyMessagesUnitTestFunction($user)
     {
         $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
         if ($messages->count() != 0) {
             $user->sendDailyMessageNotification($messages);
-            sleep(2); // to get around mailtrap emails per second limit
+            sleep(2);
         }
     }
 }
