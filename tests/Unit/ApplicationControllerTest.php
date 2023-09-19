@@ -1525,7 +1525,7 @@ class ApplicationControllerTest extends TestCase
         $secondApp->save();
         
         $response = $this->postJson("/api/acceptApplication", [
-            'accountNo' => $this->otherUser->accountNo,
+            'accountNo' => Account::where('accountNo', "!=", $this->user->superiorNo )->first()->accountNo,
             'applicationNo' => $secondApp->applicationNo,
         ]);
 
@@ -1799,7 +1799,7 @@ class ApplicationControllerTest extends TestCase
         $secondApp->save();
         
         $response = $this->postJson("/api/rejectApplication", [
-            'accountNo' => $this->otherUser->accountNo,
+            'accountNo' => Account::where('accountNo', "!=", $this->user->superiorNo)->first()->accountNo,
             'applicationNo' => $secondApp->applicationNo,
             'rejectReason' => "Not enough leave"
         ]);
