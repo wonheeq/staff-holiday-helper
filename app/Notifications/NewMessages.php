@@ -7,7 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\MJML;
+use Error;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\URL;
 
 class NewMessages extends Notification
 {
@@ -15,6 +17,9 @@ class NewMessages extends Notification
 
     public $messages;
     public $isManager;
+    public $numApp;
+    public $numAppRev;
+    public $numOther;
 
     /**
      * Create a new notification instance.
@@ -23,6 +28,9 @@ class NewMessages extends Notification
     {
         $this->messages = $messages;
         $this->isManager = $isManager;
+        $this->numApp = 0;
+        $this->numAppRev = 0;
+        $this->numOther = 0;
     }
 
     /**
@@ -45,15 +53,14 @@ class NewMessages extends Notification
         $dynamicData = [
             'name' => $notifiable->getName(),
             'num' => $this->messages->count(),
-            'numApp' => $this->getNumApp(),
             'appMessages' => $this->getAppMessages(),
-            'numAppRev' => $this->getNumAppRev(),
+            'numApp' => $this->numApp,
             'appRevMessages' => $this->getAppRevMessages(),
-            'numOther' => $this->getNumOther(),
+            'numAppRev' => $this->numAppRev,
             'otherMessages' => $this->getOtherMessages(),
-            'url' => $this->getURL(),
+            'numOther' => $this->numOther,
+            'url' => URL::to('/home'),
         ];
-        dd($dynamicData);
         // create and return mailable object
         $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());
@@ -61,6 +68,17 @@ class NewMessages extends Notification
 
     protected function getAppRevMessages()
     {
+        $messages = $this->messages;
+        $appRevMessages = [];
+        $stringMessages = "";
+
+        foreach ($messages as $message) {
+            if ($message->subject == "Application Awaiting Review" || $message->subject == "Application Cancelled") {
+                $this->numAppRev++;
+                $stringMessages = $stringMessages . $message->content . "<br></br>";
+            }
+        }
+        return $stringMessages;
     }
 
     protected function getNumAppRev()
@@ -78,29 +96,22 @@ class NewMessages extends Notification
         return $name;
     }
 
-    private function getNumApp()
-    {
-        // Fix email/make second email so that manager can have their
-        // leave requests listed as well.
-        // consider how to count appliction related emails
-        // consider how to display
-    }
-
-
 
     private function getAppMessages()
     {
         $messages = $this->messages;
         $appMessages = [];
         foreach ($messages as $message) {
+            $this->numApp++;
             if (
                 $message->subject == "Application Approved" || $message->subject == "Application Denied" ||
                 $message->subject == "Nomination/s Rejected"
             ) {
-                array_push($appMessages, $message);
+                $content = json_decode($message->content);
+                array_push($appMessages, $content);
             }
         }
-        // dd($appMessages);
+        return $appMessages;
     }
 
     private function getNumOther()
@@ -109,11 +120,32 @@ class NewMessages extends Notification
 
     private function getOtherMessages()
     {
+        $messages = $this->messages;
+        $otherMessages = [];
+        foreach ($messages as $message) {
+            if (
+                $message->subject != "Application Awaiting Review" && $message->subject != "Application Cancelled" &&
+                $message->subject != "Application Approved" && $message->subject != "Application Denied" &&
+                $message->subject != "Nomination/s Rejected"
+            ) {
+                $this->numOther++;
+                $content = $this->formatContent(json_decode($message->content));
+                array_push($otherMessages, $content);
+            }
+        }
+
+        return $otherMessages;
     }
 
-    private function getURL()
+    private function formatContent($content)
     {
+        for ($i = 1; $i < sizeof($content); $i++) {
+            $content[$i] = " " . $content[$i] . ", ";
+        }
+        $content[sizeof($content) - 1] = rtrim($content[sizeof($content) - 1], ', ');
+        return $content;
     }
+
 
     /**
      * Get the array representation of the notification.
