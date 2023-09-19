@@ -167,7 +167,9 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
             <button class="flex flex-col items-center"
                 @click="handleReviewApplication()"
             >
-                <img src="/images/review-app.svg" class="w-full"/>
+                <img src="/images/review-app.svg" class="w-full"
+                    :class="isDark?'darkModeImage':''"
+                />
                 <p :class="textSizeClass">Review</p>
             </button>
         </div>
@@ -246,7 +248,9 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
                 <button class="flex flex-col items-center"
                     @click="handleReviewApplication()"
                 >
-                    <img src="/images/review-app.svg"/>
+                    <img src="/images/review-app.svg" 
+                    :class="isDark?'darkModeImage':''"
+                />
                     <p :class="textSizeClass">Review</p>
                 </button>
             </div>
@@ -273,3 +277,8 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
     </div>
 </div>
 </template>
+<style>
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
+</style>
