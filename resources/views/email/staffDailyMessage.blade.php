@@ -64,7 +64,7 @@
               </mj-raw>
             </mj-text>
 
-            <mj-table>
+            {{-- <mj-table>
                 @foreach($dynamicData['otherMessages'] as $message)
                   <tr>
                     <th align="left">
@@ -79,7 +79,21 @@
                   <td style="padding: 0 0 20px 0;"></td>
                 </tr>
                 @endforeach
+              </mj-table> --}}
+
+                          <mj-table>
+                @foreach($dynamicData['otherMessages'] as $message)
+                <tr>
+                    <td>
+                        {!! $message !!}
+                    </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;"></td>
+                </tr>
+                @endforeach
               </mj-table>
+
 
             <mj-text color="#637381" font-size="16px">
                 To acknowledge these messages, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.

@@ -45,8 +45,9 @@
                   <tr>
                     <th align="left">
                         &#x2022;
-                        @foreach ($message as $part)
-                                {{ $part}}
+                        {{ $message[0]}}
+                        @foreach ($message[1] as $part)
+                             {{ $part }}
                         @endforeach
                   </th>
                 </tr>
@@ -66,8 +67,9 @@
                   <tr>
                     <th align="left">
                         &#x2022;
-                        @foreach ($message as $part)
-                                {{ $part}}
+                        {{ $message[0]}}
+                        @foreach ($message[1] as $part)
+                             {{ $part }}
                         @endforeach
                   </th>
                 </tr>
@@ -84,15 +86,28 @@
               </mj-raw>
             </mj-text>
 
-            <mj-table>
+            {{-- <mj-table>
                 @foreach($dynamicData['otherMessages'] as $message)
                   <tr>
                     <th align="left">
                         &#x2022;
-                        @foreach ($message as $part)
-                             {{ $part}}
+                        {{ $message[0]}}
+                        @foreach ($message[1] as $part)
+                             {{ $part }}
                         @endforeach
                   </th>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;"></td>
+                </tr>
+                @endforeach
+              </mj-table> --}}
+              <mj-table>
+                @foreach($dynamicData['otherMessages'] as $message)
+                <tr>
+                    <td>
+                        {!! nl2br($message) !!}
+                    </td>
                 </tr>
                 <tr>
                   <td style="padding: 0 0 20px 0;"></td>

@@ -214,8 +214,8 @@ class DatabaseSeeder extends Seeder
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
             // Generate simple messages that only have the option of acknowledge
-                // Messages of subject type Substitution Request, Application Awaiting Review and etc...
-                // will not work if they do not have the corresponding Nominations, Applications, and etc created
+            // Messages of subject type Substitution Request, Application Awaiting Review and etc...
+            // will not work if they do not have the corresponding Nominations, Applications, and etc created
             if ($account->accountNo != $test_id) {
                 Message::factory(10)->create([
                     'receiverNo' => $account['accountNo'],
@@ -330,5 +330,27 @@ class DatabaseSeeder extends Seeder
             ]),
             'acknowledged' => false
         ]);
+
+
+        //Applicaiton Awaiting Review
+
+
+        //Application Cancelled
+
+        //Application Approved
+
+        //Application Denied
+
+        //Nomination/s Rejected
+
+        //Substituion Request
+
+        // Nomination Cancelled
+
+        // Nomionation's cancelled
+
+        // Substituion period edited (subset)
+
+        // editec substitution request
     }
 }

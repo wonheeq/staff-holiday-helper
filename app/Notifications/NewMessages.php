@@ -74,10 +74,10 @@ class NewMessages extends Notification
         foreach ($messages as $message) {
             if ($message->subject == "Application Awaiting Review" || $message->subject == "Application Cancelled") {
                 $this->numAppRev++;
-
-                // $content = json_decode($message->content);
-                // array_push($appRevMessages, $content);
-
+                $data = [];
+                array_push($data, $message->subject . ": ");
+                array_push($data, $this->formatContent(json_decode($message->content)));
+                array_push($appRevMessages, $data);
             }
         }
         return $appRevMessages;
@@ -126,23 +126,44 @@ class NewMessages extends Notification
         $otherMessages = [];
         foreach ($messages as $message) {
             if (
-                $message->subject != "Application Awaiting Review" && $message->subject != "Application Cancelled" &&
+                $message->subject != "Application Awaiting Review" && $message->subject != "Nomination/s Rejected" &&
                 $message->subject != "Application Approved" && $message->subject != "Application Denied" &&
-                $message->subject != "Nomination/s Rejected"
+                $message->subject != "Application Cancelled"
+
             ) {
                 $this->numOther++;
-                $data = [];
-                array_push($data, $message->subject . ": ");
-                array_push($data, $this->formatContent(json_decode($message->content)));
-                array_push($otherMessages, $data);
+                $content = json_decode($message->content);
+                $messageString = $message->subject . ": " . $content[0];
+                for ($i = 1; $i < sizeof($content); $i++) {
+                    if (str_contains($content[$i], "→")) {
+                        $messageString = $messageString . "\n    ";
+                    }
+                    if (str_contains($content[$i], "Duration")) {
+                        $messageString = $messageString . "\n    ";
+                    }
+                    $messageString = $messageString . $content[$i] . ", ";
+                }
+                // foreach ($content as $part) {
+                // }
+                $messageString = rtrim($messageString, ', ');
+                if (str_contains($messageString, "→")) {
+                    // dd($messageString);
+                }
+                array_push($otherMessages, $messageString);
+                // $data = [];
+                // array_push($data, $message->subject . ": ");
+                // array_push($data, $this->formatContent(json_decode($message->content)));
+                // array_push($otherMessages, $data);
             }
         }
-
+        // dd($otherMessages);
         return $otherMessages;
     }
 
     private function formatContent($content)
     {
+        // $msgStr = $message->subject . ": ";
+        // $content = json_decode($message->content);
         for ($i = 1; $i < sizeof($content); $i++) {
             $content[$i] = " " . $content[$i] . ", ";
         }
