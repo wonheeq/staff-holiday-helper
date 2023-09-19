@@ -77,7 +77,10 @@ const deadAreaColor = computed(() => {
                         </div>
                     </template>
                 </VueScrollingTable>
-                <div class="h-[4.75rem] flex flex-col justify-evenly" v-show="viewing == 'all' && messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0">
+                <div class="h-[4.75rem] flex flex-col justify-evenly"
+                v-show="viewing == 'all'&& messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0"
+                :class="isDark?'bg-gray-800':''"
+                >
                     <p class="text-center">
                         No messages to display.
                     </p>
