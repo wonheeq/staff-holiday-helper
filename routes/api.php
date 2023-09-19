@@ -59,6 +59,10 @@ Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'ge
 Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
 Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
 Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
+Route::get('getSpecificStaffMember/{accountNo}', [ManagerController::class, 'getSpecificStaffMember']);
+Route::post('addStaffRole', [ManagerController::class, 'addStaffRole']);
+Route::post('removeStaffRole', [ManagerController::class, 'removeStaffRole']);
+
 
 Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
 Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
