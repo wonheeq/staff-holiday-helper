@@ -124,7 +124,7 @@ fetchSubstitutions(user.value.accountNo);
             <div v-else>
                 <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
                     <div class="flex flex-col items-center w-3/4 1080:4/6 1440:w-10/12 mr-4" v-if="dataReady">
-                        <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[800px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
+                        <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[400px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                         <HomeMessages
                             class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"
                             @acceptSomeNominations="(message) => handleAcceptSomeNominations(message)"

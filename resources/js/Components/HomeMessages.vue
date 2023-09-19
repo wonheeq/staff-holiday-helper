@@ -88,11 +88,11 @@ const deadAreaColor = computed(() => {
             </div>
             <div class="h-[0.125rem]"></div>
         </div>
-        <div v-else class="flex flex-col h-full">
-            <div class="grid grid-cols-4 1440:p-4 p-2">
+        <div v-else class="flex flex-col h-full rounded-md drop-shadow-md" :class="isDark?'bg-gray-800':'bg-white'">
+            <div class="relative flex 1440:p-4 p-2 justify-between">
                 <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
-                <div class="flex col-span-2 ">
-                    <div v-if="unreadMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                <div class="absolute left-1/4 flex w-[45%] 1080:w-[50%]">
+                    <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 py-1 1080:py-2 1080:px-4 text-lg 1080:text-xl w-full bg-red-400 text-white rounded-3xl items-center">
                         <img src="/images/warning.svg" class="warning"/>
                         <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
                             You have {{ unreadMessages.length }} unacknowleged messages.
@@ -100,14 +100,14 @@ const deadAreaColor = computed(() => {
                         <img src="/images/warning.svg" class="warning"/>
                     </div>
                 </div>
-                <div class="text-2xl justify-self-end">
+                <div class="justify-self-end">
                     <button
                     @click="viewing = 'all'"
                     :class="{
                         'border-black font-bold border-2': viewing === 'all',
                         'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
                     }"
-                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                    class="text-base 1080:text-2xl 1440:text-4xl 4k:text-5xl px-1 1080:px-2 1080:py-2 border">
                         All ({{ messages.length }})
                     </button>
                     <button
@@ -116,7 +116,7 @@ const deadAreaColor = computed(() => {
                         'border-black font-bold border-2': viewing === 'unread',
                         'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
                     }"
-                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                    class="text-base 1080:text-2xl 1440:text-4xl 4k:text-5xl px-1 1080:px-2 1080:py-2 border">
                         Unacknowleged ({{ unreadMessages.length }})
                     </button>
                 </div>
@@ -144,7 +144,7 @@ const deadAreaColor = computed(() => {
 <style>
 
 @media 
-(min-width: 1366px) {
+(min-width: 761px) {
     ::-webkit-scrollbar {
         height: 12px;
         width: 12px;
