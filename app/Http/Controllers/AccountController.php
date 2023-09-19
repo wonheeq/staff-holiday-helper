@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
-use \DateTime;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Log;
 
 define("DEFAULT_ADMIN_ACCOUNT_NO", "000002L");
@@ -108,6 +109,7 @@ class AccountController extends Controller
 
             // Iterate through each application and check if current date is inside the period
             $currentDate = new DateTime();
+            $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
             foreach ($applications as $app) {
                 $startDate = new DateTime($app['sDate']);
                 $endDate = new DateTime($app['eDate']);

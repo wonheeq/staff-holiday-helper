@@ -7,7 +7,8 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
 use App\Models\Message;
-use \DateTime;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
@@ -94,7 +95,8 @@ class ApplicationController extends Controller
 
         $startDate = new DateTime($data['sDate']);
         $endDate = new DateTime($data['eDate']);
-        $currentdate = new DateTime();
+        $currentDate = new DateTime();
+        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
 
         // End date is earlier or equal to start date
         if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {
@@ -102,8 +104,8 @@ class ApplicationController extends Controller
         }
 
         // A date is in the past
-        if ($startDate->getTimestamp() - $currentdate->getTimestamp() <= 0
-            || $endDate->getTimestamp() - $currentdate->getTimestamp() <= 0 ) {
+        if ($startDate->getTimestamp() - $currentDate->getTimestamp() <= 0
+            || $endDate->getTimestamp() - $currentDate->getTimestamp() <= 0 ) {
             return false;
         }
 

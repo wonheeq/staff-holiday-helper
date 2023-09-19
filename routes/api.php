@@ -15,6 +15,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\AdminController;
 
 
 
@@ -78,3 +79,6 @@ Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getW
 Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
 
+Route::post('createSystemNotification', [MessageController::class, 'createSystemNotification']);
+Route::post('setReminderTimeframe', [AdminController::class, 'setReminderTimeframe']);
+Route::get('getReminderTimeframe/{accountNo}', [AdminController::class, 'getReminderTimeframe']);

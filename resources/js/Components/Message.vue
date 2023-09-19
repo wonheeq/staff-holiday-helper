@@ -31,8 +31,8 @@ function handleReviewApplication() {
 
 <template>
     <div class="flex flex-row justify-between p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
-        <div class="flex flex-col w-[75%] laptop:w-full">
-            <div v-if="isMobile" class="flex-row items-center">
+        <div v-if="props.source.subject !== 'System Notification'" class="flex flex-col w-[75%] laptop:w-full">
+            <div v-if="isMobile && props.source.subject !== 'System Notification'" class="flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
@@ -52,7 +52,7 @@ function handleReviewApplication() {
                     />
                 </div>
             </div>
-            <div v-else class="flex flex-row items-center">
+            <div v-if="!isMobile && props.source.subject !== 'System Notification'" class="flex flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
@@ -72,10 +72,21 @@ function handleReviewApplication() {
                         />
                 </div>
             </div>
-            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
+            <p v-if="props.source.subject !== 'System Notification'" class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
                 v-for="content in JSON.parse(props.source.content)"
             >
                 {{ content }}
+            </p>
+            <p v-if="props.source.subject !== 'System Notification'" class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
+        </div>
+        <div v-if="props.source.subject == 'System Notification'" class="flex flex-col w-[75%] laptop:w-full">
+            <div class="flex laptop:flex-row items-center">
+                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl">
+                    <b>{{ props.source.subject }}</b>
+                </p>
+            </div>
+            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
+                {{ JSON.parse(props.source.content) }}
             </p>
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>
         </div>

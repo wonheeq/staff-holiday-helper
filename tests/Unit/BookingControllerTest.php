@@ -9,6 +9,7 @@ use App\Models\Nomination;
 use App\Models\Application;
 use App\Http\Controllers\RoleController;
 use DateTime;
+use DateTimeZone;
 
 class BookingControllerTest extends TestCase
 {
@@ -259,6 +260,7 @@ class BookingControllerTest extends TestCase
 
         foreach ($arr as $a) {
             $nowTime = new DateTime();
+            $nowTime->setTimezone(new DateTimeZone("Australia/Perth"));
             $endTime = new DateTime($a['eDate']);
             $this->assertTrue($endTime >= $nowTime);
         }

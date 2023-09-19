@@ -11,6 +11,7 @@ use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Message;
+use App\Models\ReminderTimeframe;
 use Illuminate\Support\Facades\Hash;
 
 //use Illuminate\Support\Facades\Log;
@@ -58,6 +59,11 @@ class DatabaseSeeder extends Seeder
             \App\Models\School::create([
                 'schoolId' => $school['schoolId'],
                 'name' => $school['name'],
+            ]);
+
+            ReminderTimeframe::create([
+                'schoolId' => $school['schoolId'],
+                'timeframe' => '2 days',
             ]);
         }
 
@@ -168,9 +174,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Each account gets 4 applications
+        $count = 0;
+        // 4 accounts gets 1 applications
         foreach ($accounts as $account) {
-            Application::factory(4)->create([
+            if ($count >= 4) {break;} 
+            Application::factory(1)->create([
                 'accountNo' => $account['accountNo'],
                 'processedBy' => $lineManagerNo,
             ]);
@@ -210,6 +218,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        /*
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
@@ -223,7 +232,14 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+        */
 
+
+        // CREATE messages for 000002L for DBSeederTest
+        Message::factory(1)->create([
+            'receiverNo' => "000002L",
+            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
+        ]);
 
 
 
