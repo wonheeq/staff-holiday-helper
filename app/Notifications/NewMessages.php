@@ -49,7 +49,6 @@ class NewMessages extends Notification
      */
     public function toMail($notifiable): Mailable
     {
-        // dd($this->messages);
         // get the name and build the URL
         $dynamicData = [
             'name' => $notifiable->getName(),
@@ -63,7 +62,9 @@ class NewMessages extends Notification
         ];
         // create and return mailable object
         $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
-        // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual one
+
+        // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
+
         // uncomment / comment so that it goes to you
         // return $mailable->to("wonhee.qin@student.curtin.edu.au");
         // return $mailable->to("b.lee20@student.curtin.edu.au");
@@ -71,34 +72,8 @@ class NewMessages extends Notification
         return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
     }
 
-    protected function getAppRevMessages()
-    {
-        $messages = $this->messages;
-        $appRevMessages = [];
-        foreach ($messages as $message) {
-            if ($message->subject == "Application Cancelled") {
-                $this->numAppRev++;
-                $content = json_decode($message->content);
-                $messageString = $message->subject . ": " . $content[0];
-                for ($i = 1; $i < sizeof($content); $i++) {
-                    $messageString = $messageString . "\n " . $content[$i];
-                }
-                $messageString = rtrim($messageString, ', ');
-                array_push($appRevMessages, $messageString);
-            } else if ($message->subject == "Application Awaiting Review") {
-                $this->numAppRev++;
-                $content = json_decode($message->content);
-                $messageString = $message->subject . ": " . " Staff Member " . $message->senderNo .
-                    " has an application ready for review.\n" . $content[sizeof($content) - 1];
 
-                array_push($appRevMessages, $messageString);
-            }
-        }
-        return $appRevMessages;
-    }
-
-
-
+    // determine which mail to send based off if the user is a line manager
     protected function getMailName()
     {
         $name = null;
@@ -111,6 +86,7 @@ class NewMessages extends Notification
     }
 
 
+    // get and format messages related to the user's own applications
     private function getAppMessages()
     {
         $messages = $this->messages;
@@ -122,68 +98,71 @@ class NewMessages extends Notification
             ) {
                 $this->numApp++;
                 $content = json_decode($message->content);
-                $messageString = $message->subject . ": " . $content[0];
-                for ($i = 1; $i < sizeof($content); $i++) {
+                $messageString = $message->subject . ": " . $content[0]; // subject and first line
+                for ($i = 1; $i < sizeof($content); $i++) { // rest of lines with a new line
                     $messageString = $messageString . "\n " . $content[$i];
                 }
-                $messageString = rtrim($messageString, ', ');
                 array_push($appMessages, $messageString);
             }
-            // } else if ($message->subject == "Nomination/s Rejected") {
-            //     $content = json_decode($message->content);
-
-            //     $messageString = $message->subject . ": " . $content[0];
-            //     $i = 1;
-            //     for ($i; $i < sizeof($content) - 3; $i++) {
-            //         $messageString = $messageString . "\n " . "→" . $content[$i];
-            //     }
-            //     for ($i; $i < sizeof($content); $i++) {
-            //         $messageString = $messageString . "\n " . $content[$i];
-            //     }
-            //     array_push($appMessages, $messageString);
-            // }
         }
         return $appMessages;
     }
 
-    private function getNumOther()
+
+
+
+    // Get and format the messages related to Applications needing review by a line manager
+    private function getAppRevMessages()
     {
+        $messages = $this->messages;
+        $appRevMessages = [];
+        foreach ($messages as $message) {
+            if ($message->subject == "Application Cancelled") {
+                $this->numAppRev++;
+                $content = json_decode($message->content);
+                $messageString = $message->subject . ": " . $content[0]; // get subject and first line
+                for ($i = 1; $i < sizeof($content); $i++) { // get the rest of the lines with a newline
+                    $messageString = $messageString . "\n " . $content[$i];
+                }
+                array_push($appRevMessages, $messageString);
+
+            } else if ($message->subject == "Application Awaiting Review") {
+                $this->numAppRev++;
+                $content = json_decode($message->content);
+                // build a message to reduce clutter
+                $messageString = $message->subject . ": " . " Staff Member " . $message->senderNo .
+                    " has an application ready for review.\n" . $content[sizeof($content) - 1];
+                array_push($appRevMessages, $messageString);
+            }
+        }
+        return $appRevMessages;
     }
 
+
+
+    // get and format other messages for the user
     private function getOtherMessages()
     {
         $messages = $this->messages;
         $otherMessages = [];
         foreach ($messages as $message) {
-            if (
+            if ( // I know this is ugly but its still 5 conditions to get all the "other" types
                 $message->subject != "Application Awaiting Review" && $message->subject != "Nomination/s Rejected" &&
                 $message->subject != "Application Approved" && $message->subject != "Application Denied" &&
                 $message->subject != "Application Cancelled"
-
             ) {
                 $this->numOther++;
                 $content = json_decode($message->content);
-                $messageString = $message->subject . ": " . $content[0];
-                for ($i = 1; $i < sizeof($content); $i++) {
+                $messageString = $message->subject . ": " . $content[0]; // subject and first line
+                for ($i = 1; $i < sizeof($content); $i++) { // rest of lines with newline
                     $messageString = $messageString . "\n " . $content[$i];
                 }
-                $messageString = rtrim($messageString, ', ');
                 array_push($otherMessages, $messageString);
             }
         }
         return $otherMessages;
     }
 
-    private function formatContent($content)
-    {
-        // $msgStr = $message->subject . ": ";
-        // $content = json_decode($message->content);
-        for ($i = 1; $i < sizeof($content); $i++) {
-            $content[$i] = " " . $content[$i] . ", ";
-        }
-        $content[sizeof($content) - 1] = rtrim($content[sizeof($content) - 1], ', ');
-        return $content;
-    }
 
 
     /**

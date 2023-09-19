@@ -77,14 +77,14 @@
                 To acknowledge these messages, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
             </mj-text>
 
-            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href= "leaveontime.cyber.curtin.io" width="210px" padding-top="40px">
-                Go To LeaveOnTime
-              </mj-button>
+            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="https://leaveontime.cyber.curtin.io" width="240px" padding-bottom="30px" padding-top="30px">
+                View in App
+            </mj-button>
 
 
-            <mj-text padding-top="20px" color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold">
-              <a class="text-link" href="leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
-            </mj-text>
+            <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold" padding-top="0px">
+                <a class="text-link" href="https://leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
+              </mj-text>
           </mj-column>
           <mj-column width="90%">
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
