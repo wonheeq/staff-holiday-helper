@@ -1,7 +1,7 @@
 <script setup>
 import Navbar from "@/Components/Navbar.vue";
 import SettingsModal from "@/Components/Settings/SettingsModal.vue";
-import axios from "axios";
+import SweetalertEmpty from "./SweetalertEmpty.vue";
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
@@ -12,6 +12,7 @@ let settingsVisible = ref(false);
 </script>
 
 <template>
+    <SweetalertEmpty/>
     <div class="w-full h-[100vh]">
         <div v-if="isMobile">
             <div class="margin-fix-mobile"></div>
@@ -31,7 +32,7 @@ let settingsVisible = ref(false);
     <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
 </template>
 
-<style src="@sweetalert2/theme-dark/dark.css">
+<style>
 .margin-fix{
     height: 1rem;
 }
