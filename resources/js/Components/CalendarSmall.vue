@@ -6,6 +6,8 @@ import { useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
@@ -27,11 +29,12 @@ const rows = computed(() => {
 </script>
 
 <template>
-<div ref="divRef" class="bg-white rounded-md flex flex-col">
+<div ref="divRef" class="rounded-md flex flex-col" :class="isDark?'bg-gray-800':'bg-white'">
     <div class="flex mx-4 mt-4 items-center">
         <button class="absolute" v-show="!disableEnlarge">
             <img src="/images/fullscreen.svg"
                 class="enlarge"
+                :class="isDark?'darkModeImage':''"
                 @click="$emit('enlarge-calendar')"
             />
         </button>
@@ -40,6 +43,7 @@ const rows = computed(() => {
         </p>
     </div>
     <Calendar
+        :is-dark="isDark"
         :rows="rows"
         borderless
         expanded
@@ -87,6 +91,9 @@ const rows = computed(() => {
   display: inline-block;
 }
 
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .enlarge {
     height: 26px;
     width: auto;
