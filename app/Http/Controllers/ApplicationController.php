@@ -183,7 +183,7 @@ class ApplicationController extends Controller
                 'status' => 'P',
             ]);
         }
-       
+
         // Generate nominations for application
         foreach ($data['nominations'] as $nomination) {
             // if nomineeNo is Self Nomination, $nominee is applicant accountNo, else the provided nomineeNo
@@ -193,7 +193,7 @@ class ApplicationController extends Controller
                 $status = 'Y';
             }
 
-            Nomination::create([
+            $newNom = Nomination::create([
                 'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nomination['nomineeNo'],
                 'accountRoleId' => $nomination['accountRoleId'],
@@ -212,7 +212,22 @@ class ApplicationController extends Controller
         // Not all nominations were self-nominations, group together roles and inform all nominees
         app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
 
-        response()->json(['success' => 'success'], 200);
+
+        $result = Application::where('applicationNo', $application->applicationNo)->get();
+        
+        foreach ($result as $val) {
+            // get nominations for application and insert
+            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
+            
+            // check if is self nominated for all
+            if ($this->isSelfNominatedAll($nominations, $data['accountNo'])) {
+                $val['isSelfNominatedAll'] = true;
+            }
+            else {
+                $val["nominations"] = $nominations;
+            }
+        }
+        return response()->json($result[0]);
     }
 
     /*

@@ -29,6 +29,10 @@ export let useApplicationStore = defineStore('applications', {
                 alert(error)
                 console.log(error)
             }
+        },
+
+        addNewApplication(app) {
+            this.applications.push(app);
         }
     },
     getters: {
