@@ -31,6 +31,7 @@ onMounted(() => {
     background: url('/images/background_dark.svg') no-repeat center top; 
     background-size: cover;
     height: 100vh;
+    color: white;
 }
 .bg-mobile {
     background: url('/images/background.svg') center top; 
@@ -38,10 +39,11 @@ onMounted(() => {
     height: auto;
     overflow: auto;
 }
-.bg-mobile {
+.bg-mobile-dark {
     background: url('/images/background_dark.svg') center top; 
     background-size: cover;
     height: auto;
     overflow: auto;
+    color: white;
 }
 </style>
