@@ -5,7 +5,7 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import axios from 'axios';
 import Swal from 'sweetalert2';
-let emit = defineEmits(['close']);
+let emit = defineEmits(['close', 'removeRole']);
 
 let buttonActive = ref(false);
 
@@ -52,7 +52,6 @@ function handleAddRole(staffNo){
                     icon: "success",
                     title: 'Successfully added role.',
                 }).then(() => {
-                    handleClose();
                 });
             }
         }).catch(err => {
@@ -84,7 +83,7 @@ function handleRemoveRole(staffNo, currentUnitId, currentRoleName){
                     icon: "success",
                     title: 'Successfully removed role.',
                 }).then(() => {
-                    handleClose();
+                    emit('removeRole', currentUnitId, currentRoleName);
                 });
             }
         }).catch(err => {
@@ -100,11 +99,11 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 </script>
 <template>
 <Modal>
-    <div class="bg-white w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" v-if="staffInfo[0]">
+    <div class="bg-white w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" v-if="staffInfo">
         <div class="flex h-[10%] items-center justify-between">
             <div class="flex flex-col">
-              <p style="font-size: 25px;"><b>Staff Name: {{staffInfo[0].fName}} {{ staffInfo[0].lName}} </b> </p>
-              <p style="font-size: 25px;"><b>Staff ID: {{staffInfo[0].accountNo}}</b></p>
+              <p style="font-size: 25px;"><b>Staff Name: {{staffInfo[0].fName}} {{staffInfo[0].lName}} </b> </p>
+              <p style="font-size: 25px;"><b>Staff ID: {{ staffInfo[0].accountNo }}</b></p>
               <p style="font-size: 25px;"><b>Roles: </b></p>
             </div>
             <button class="h-full" @click="handleClose()">
@@ -125,9 +124,9 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
                             <span class="button-text">Remove</span>
                         </button>
                     </div>
-                    <div class="text-center text-3xl mt-20" v-if="Object.keys(staffRoles).length === 0">
+                    <!-- <div class="text-center text-3xl mt-20" v-if="Object.keys(staffRoles).length === 0">
                         <strong>This staff does not have any roles currently.</strong>
-                    </div>
+                    </div> -->
                 </template>
             </VueScrollingTable>
         </div>

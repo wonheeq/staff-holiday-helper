@@ -1,36 +1,6 @@
 <script setup>
-import EditRoles from './EditRoles.vue';
-import { ref, reactive} from 'vue';
-
-
 let props = defineProps({ source: Object });
 let emit = defineEmits(['editRoles']);
-let showEditModal = ref(false);
-let staffRoles = reactive([]);
-let staffInfo = reactive([]);
-
-async function handleEditRoles() {
-    await fetchRolesForStaff();
-    showEditModal.value = true;
-}
-
-let fetchRolesForStaff = async() => {
-    try {
-        const resp = await axios.get('/api/getRolesForStaffs/' + props.source.accountNo);
-        const resp2 = await axios.get('/api/getSpecificStaffMember/' + props.source.accountNo);
-        staffRoles = resp.data;
-        staffInfo = resp2.data;
-    } catch (error) {
-        alert("Failed to load data: Please try again");
-        console.log(error);
-    }
-}; 
-function handleCloseEdit() {
-    staffInfo = [];
-    staffRoles = [];
-    showEditModal.value = false;
-}
-
 </script>
 <template>
     <div class="grid grid-cols-6 bg-white mr-4 mx-6" style="grid-auto-columns: min-content;"> 
@@ -51,20 +21,12 @@ function handleCloseEdit() {
         </div>
         <div class="laptop:pl-5 1080:text-pl-5 1440:pl-5 4k:pl-5">
             <div >
-                <button @click="handleEditRoles()" class="roles_button">
+                <button @click="emit('editRoles', source.accountNo)" class="roles_button">
                     <span class="button-text">View/Edit Roles</span>
                 </button>
             </div>
         </div>
     </div>
-    <Teleport to="body">
-        <EditRoles
-            v-show="showEditModal"
-            :staffRoles="staffRoles"
-            :staffInfo="staffInfo"
-            @close="handleCloseEdit()"
-        />
-    </Teleport>
 </template>
 <style>
 .roles_button {
