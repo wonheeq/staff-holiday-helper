@@ -139,20 +139,25 @@ const deadAreaColor = computed(() => {
 </template>
 
 <style>
-::-webkit-scrollbar {
-    height: 12px;
-    width: 12px;
-    background: #555555;
+
+@media 
+(min-width: 1366px) {
+    ::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+        background: #555555;
+    }
+
+        ::-webkit-scrollbar-thumb {
+        background: #9d9d9d;
+        -webkit-border-radius: 1ex;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: #9d9d9d;
+    }
 }
 
-::-webkit-scrollbar-thumb {
-    background: #9d9d9d;
-    -webkit-border-radius: 1ex;
-}
-
-::-webkit-scrollbar-corner {
-    background: #9d9d9d;
-}
 .scroller {
   overflow-y: auto;
   height: calc(90% - 0.5rem);
