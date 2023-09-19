@@ -141,20 +141,20 @@ fetchSubstitutions(user.value.accountNo);
                     v-show="calendarLarge"
                     @shrink-calendar="calendarLarge=false"
                 />
-                <Teleport to="body">
-                    <AcceptSomeNominations
-                        v-show="showNominationModal"
-                        :data="nominationModalData"
-                        :roles="roles"
-                        @close="handleCloseNominations()"
-                    />
-                    <ReviewApplication
-                        v-show="showReviewAppModal"
-                        :data="reviewAppModalData"
-                        @close="handleCloseReviewApp()"
-                    />
-                </Teleport>
             </div>
+            <Teleport to="body">
+                <AcceptSomeNominations
+                    v-show="showNominationModal"
+                    :data="nominationModalData"
+                    :roles="roles"
+                    @close="handleCloseNominations()"
+                />
+                <ReviewApplication
+                    v-show="showReviewAppModal"
+                    :data="reviewAppModalData"
+                    @close="handleCloseReviewApp()"
+                />
+            </Teleport>
         </AuthenticatedLayout>
     </PageLayout>
 </template>
