@@ -51,7 +51,58 @@ class RoleController extends Controller
 
         return "{$unitId} {$unitName} - {$roleName}";
     }
+     /*
+        Returns the object formatted role name of the given AccountRoleId
+    */
+    public function getRoleObjectFromAccountRoleId($accountRoleId) {
+        $accountRole = AccountRole::where('accountRoleId', $accountRoleId)->first();
+        if ($accountRole == null) {
+            return "INVALID";
+        }
 
+        $role = Role::where('roleId', $accountRole['roleId'])->first();
+        $roleName = $role['name'];
+
+        $unitId = $accountRole->unitId;
+        $majorId = $accountRole->majorId;
+        $courseId = $accountRole->courseId;
+        
+        // Check if role is for major coordinator
+        if ($roleName == "Major Coordinator") {
+            // Get major name
+            $major = Major::where('majorId', $majorId)->first();
+            $majorName = $major->name;
+            $task = [
+                'id' => $majorId,
+                'name' => $majorName,
+                'roleName' => $roleName
+            ];
+            return response()->json($task);
+        }
+        // Check if role is for course coordinator
+        else if ($roleName == "Course Coordinator") {
+            // Get course name
+            $course = Course::where('courseId', $courseId)->first();
+            $courseName = $course->name;
+            $task = [
+                'id' => $courseId,
+                'name' => $courseName,
+                'roleName' => $roleName
+            ];
+            return response()->json($task);
+        }
+        
+        // Default to unit name
+        // Get unit name
+        $unit = Unit::where('unitId', $unitId)->first();
+        $unitName = $unit->name;
+        $task = [
+            'id' => $unitId,
+            'name' => $unitName,
+            'roleName' => $roleName
+        ];
+        return response()->json($task);
+    }
     /*
     Returns all Roles
      */
