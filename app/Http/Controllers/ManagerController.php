@@ -257,4 +257,24 @@ class ManagerController extends Controller
         }
         return response()->json($managerApplications);
     }
+    public function getUCM(){
+        $allUnits = array();
+        $units = Unit::get();
+        $majors = Major::get();
+        $courses = Course::get();
+
+        foreach($units as $unit)
+        {
+            array_push($allUnits, $unit->unitId);
+        }
+        foreach($majors as $major)
+        {
+            array_push($allUnits, $major->majorId);
+        }
+        foreach($courses as $course)
+        {
+            array_push($allUnits, $course->courseId);
+        }
+        return $allUnits;
+    }
 }
