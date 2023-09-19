@@ -7,6 +7,9 @@ import axios from 'axios';
 import AcceptSomeNominationOptions from './AcceptSomeNominationOptions.vue';
 import { ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { useMessageStore } from "@/stores/MessageStore";
+const messageStore = useMessageStore();
+const { fetchMessages } = messageStore;
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let emit = defineEmits(['close']);
@@ -65,6 +68,7 @@ function submitResponses() {
             else {
                 props.data.acknowledged = 1;
                 props.data.updated_at = new Date();
+                fetchMessages(user.value.accountNo);
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully responded to the nominations.',

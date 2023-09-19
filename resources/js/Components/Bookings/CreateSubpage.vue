@@ -1,13 +1,19 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { useNominationStore } from '@/stores/NominationStore';
+import { useNominationStore } from '@/stores/NominationStore'; 
 import Swal from 'sweetalert2';
+import { useCalendarStore } from '@/stores/CalendarStore';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const calendarStore = useCalendarStore();
+const { fetchCalendarData } = calendarStore;
 const applicationStore = useApplicationStore();
 const { addNewApplication } = applicationStore;
 const screenSizeStore = useScreenSizeStore();
@@ -112,6 +118,7 @@ function createApplication(data) {
                 if (res.status == 200) {
                     let newApp = res.data;
                     addNewApplication(newApp);
+                    fetchCalendarData(user.value.accountNo);
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully created application.'

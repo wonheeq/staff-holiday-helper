@@ -5,6 +5,9 @@ import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useMessageStore } from "@/stores/MessageStore";
+const messageStore = useMessageStore();
+const { fetchMessages } = messageStore;
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
@@ -62,6 +65,9 @@ function handleAcceptAll() {
                 // Set acknowledged status of message to true and update updated_at date
                 props.source.acknowledged = 1;
                 props.source.updated_at = new Date();
+
+                // Call getMessages to update inbox 
+                fetchMessages(user.value.accountNo);
             }
         }).catch(err => {
         console.log(err);
