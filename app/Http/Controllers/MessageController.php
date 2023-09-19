@@ -456,10 +456,10 @@ class MessageController extends Controller
     // get each account, call the sendMessage function for each.
     public function sendDailyMessages()
     {
-        // $account = Account::where('accountNo', '000000a')->first();
-        // $messages = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
-        $account = Account::where('accountNo', '000002L')->first();
-        $messages = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
+        $account = Account::where('accountNo', '000000a')->first();
+        $messages = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
+        // $account = Account::where('accountNo', '000002L')->first();
+        // $messages = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
         $account->sendDailyMessageNotification($messages);
         // $accounts = Account::get();
         // foreach ($accounts as $account) {

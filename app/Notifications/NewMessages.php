@@ -72,12 +72,22 @@ class NewMessages extends Notification
         $messages = $this->messages;
         $appRevMessages = [];
         foreach ($messages as $message) {
-            if ($message->subject == "Application Awaiting Review" || $message->subject == "Application Cancelled") {
+            if ($message->subject == "Application Cancelled") {
                 $this->numAppRev++;
-                $data = [];
-                array_push($data, $message->subject . ": ");
-                array_push($data, $this->formatContent(json_decode($message->content)));
-                array_push($appRevMessages, $data);
+                $content = json_decode($message->content);
+                $messageString = $message->subject . ": " . $content[0];
+                for ($i = 1; $i < sizeof($content); $i++) {
+                    $messageString = $messageString . "\n " . $content[$i];
+                }
+                $messageString = rtrim($messageString, ', ');
+                array_push($appRevMessages, $messageString);
+            } else if ($message->subject == "Application Awaiting Review") {
+                $this->numAppRev++;
+                $content = json_decode($message->content);
+                $messageString = $message->subject . ": " . " Staff Member " . $message->senderNo .
+                    " has an application ready for review.\n" . $content[sizeof($content) - 1];
+
+                array_push($appRevMessages, $messageString);
             }
         }
         return $appRevMessages;
@@ -103,15 +113,31 @@ class NewMessages extends Notification
         $appMessages = [];
         foreach ($messages as $message) {
             if (
-                $message->subject == "Application Approved" || $message->subject == "Application Denied" ||
-                $message->subject == "Nomination/s Rejected"
+                $message->subject == "Application Approved" || $message->subject == "Application Denied"
+                || $message->subject == "Nomination/s Rejected"
             ) {
                 $this->numApp++;
-                $data = [];
-                array_push($data, $message->subject . ": ");
-                array_push($data, json_decode($message->content));
-                array_push($appMessages, $data);
+                $content = json_decode($message->content);
+                $messageString = $message->subject . ": " . $content[0];
+                for ($i = 1; $i < sizeof($content); $i++) {
+                    $messageString = $messageString . "\n " . $content[$i];
+                }
+                $messageString = rtrim($messageString, ', ');
+                array_push($appMessages, $messageString);
             }
+            // } else if ($message->subject == "Nomination/s Rejected") {
+            //     $content = json_decode($message->content);
+
+            //     $messageString = $message->subject . ": " . $content[0];
+            //     $i = 1;
+            //     for ($i; $i < sizeof($content) - 3; $i++) {
+            //         $messageString = $messageString . "\n " . "→" . $content[$i];
+            //     }
+            //     for ($i; $i < sizeof($content); $i++) {
+            //         $messageString = $messageString . "\n " . $content[$i];
+            //     }
+            //     array_push($appMessages, $messageString);
+            // }
         }
         return $appMessages;
     }
@@ -135,28 +161,12 @@ class NewMessages extends Notification
                 $content = json_decode($message->content);
                 $messageString = $message->subject . ": " . $content[0];
                 for ($i = 1; $i < sizeof($content); $i++) {
-                    if (str_contains($content[$i], "→")) {
-                        $messageString = $messageString . "\n    ";
-                    }
-                    if (str_contains($content[$i], "Duration")) {
-                        $messageString = $messageString . "\n    ";
-                    }
-                    $messageString = $messageString . $content[$i] . ", ";
+                    $messageString = $messageString . "\n " . $content[$i];
                 }
-                // foreach ($content as $part) {
-                // }
                 $messageString = rtrim($messageString, ', ');
-                if (str_contains($messageString, "→")) {
-                    // dd($messageString);
-                }
                 array_push($otherMessages, $messageString);
-                // $data = [];
-                // array_push($data, $message->subject . ": ");
-                // array_push($data, $this->formatContent(json_decode($message->content)));
-                // array_push($otherMessages, $data);
             }
         }
-        // dd($otherMessages);
         return $otherMessages;
     }
 

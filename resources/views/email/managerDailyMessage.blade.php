@@ -35,9 +35,9 @@
               </mj-raw>
             </mj-text>
 
-            <mj-text padding-bottom="0">
+            <mj-text padding-bottom="0" padding-top="30px">
                 <mj-raw>
-                  <span style="font-weight:bold">{{ $dynamicData['numApp'] }}</span> Messages regarding your applications:
+                  <span style="font-weight:bold">{{ $dynamicData['numApp'] }} Messages regarding your applications:</span>
               </mj-raw>
             </mj-text>
             <mj-table>
@@ -52,29 +52,25 @@
                   </th>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
+                  <td style="padding: 0 0 30px 0;"></td>
                 </tr>
                 @endforeach
               </mj-table>
 
-            <mj-text padding-bottom="0" padding-top="30px">
+              <mj-text padding-bottom="0" padding-top="30px">
                 <mj-raw>
-                  <span style="font-weight:bold">{{ $dynamicData['numAppRev'] }}</span> Messages regarding applications requiring review:
+                  <span style="font-weight:bold">{{ $dynamicData['numAppRev'] }} Messages regarding applications requiring review:</span>
               </mj-raw>
             </mj-text>
             <mj-table>
                 @foreach($dynamicData['appRevMessages'] as $message)
-                  <tr>
-                    <th align="left">
-                        &#x2022;
-                        {{ $message[0]}}
-                        @foreach ($message[1] as $part)
-                             {{ $part }}
-                        @endforeach
-                  </th>
+                <tr>
+                    <td>
+                        {!! nl2br($message) !!}
+                    </td>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
+                  <td style="padding: 0 0 30px 0;"></td>
                 </tr>
                 @endforeach
               </mj-table>
@@ -86,22 +82,7 @@
               </mj-raw>
             </mj-text>
 
-            {{-- <mj-table>
-                @foreach($dynamicData['otherMessages'] as $message)
-                  <tr>
-                    <th align="left">
-                        &#x2022;
-                        {{ $message[0]}}
-                        @foreach ($message[1] as $part)
-                             {{ $part }}
-                        @endforeach
-                  </th>
-                </tr>
-                <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
-                </tr>
-                @endforeach
-              </mj-table> --}}
+
               <mj-table>
                 @foreach($dynamicData['otherMessages'] as $message)
                 <tr>
@@ -110,7 +91,7 @@
                     </td>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
+                  <td style="padding: 0 0 30px 0;"></td>
                 </tr>
                 @endforeach
               </mj-table>

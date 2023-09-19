@@ -42,17 +42,13 @@
             </mj-text>
             <mj-table>
                 @foreach($dynamicData['appMessages'] as $message)
-                  <tr>
-                    <th align="left">
-                        &#x2022;
-                        {{ $message[0]}}
-                        @foreach ($message[1] as $part)
-                             {{ $part }}
-                        @endforeach
-                  </th>
+                <tr>
+                    <td>
+                        {!! nl2br($message) !!}
+                    </td>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
+                  <td style="padding: 0 0 30px 0;"></td>
                 </tr>
                 @endforeach
               </mj-table>
