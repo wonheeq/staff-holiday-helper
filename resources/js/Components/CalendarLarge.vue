@@ -7,6 +7,8 @@ import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3'
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
@@ -35,11 +37,12 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div ref="divRef" class="bg-white rounded-md flex flex-col">
+    <div ref="divRef" class="rounded-md flex flex-col" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="flex mx-4 mt-2 1440:mt-4 items-center">
             <button class="absolute">
                 <img src="/images/fullscreen-exit.svg"
                     class="enlarge"
+                    :class="isDark?'darkModeImage':''"
                     @click="emit('shrink-calendar')"
                 />
             </button>
@@ -48,6 +51,7 @@ onMounted(() => {
             </p>
         </div>
         <Calendar
+            :is-dark="isDark"
             :rows="rows"
             :columns="columns"
             borderless
@@ -117,6 +121,9 @@ onMounted(() => {
     display: inline-block;
 }
 
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .enlarge {
     height: 30px;
     width: auto;

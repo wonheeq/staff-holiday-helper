@@ -1,11 +1,12 @@
 <script setup>
 import Message from './Message.vue';
 import VueScrollingTable from "vue-scrolling-table";
-import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useMessageStore } from '@/stores/MessageStore';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 import { usePage } from '@inertiajs/vue3'
@@ -17,16 +18,19 @@ const { fetchMessages } = messageStore;
 
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
-let deadAreaColor = "#FFFFFF";
-
 onMounted(() => {
     fetchMessages(user.value.accountNo);
 });
+
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+})
 </script>
 
 <template>
-    <div class="bg-transparent laptop:bg-white laptop:rounded-md w-full">
-        <div v-if="isMobile" class="w-full bg-white mb-2 rounded-md">
+    <div class="laptop:rounded-md w-full"
+    :class="isDark?'bg-transparent laptop:bg-gray-800':'bg-transparent laptop:bg-white'">
+        <div v-if="isMobile" class="w-full mb-2 rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="h-[0.25rem]"></div>
             <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
                 <img src="/images/warning.svg"/>
@@ -60,11 +64,12 @@ onMounted(() => {
             </div>
             <div class="bg-white border border-black mx-1 mb-1 laptop:mx-2 laptop:mb-2 1440:mx-4 1440:mb-4 scroller">
                 <VueScrollingTable
+                    id="messageTable"
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="item in filteredMessages" :key="item.id" class="bg-white mb-1">
+                        <div v-for="item in filteredMessages" :key="item.id">
                             <Message :source="item"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
@@ -72,7 +77,10 @@ onMounted(() => {
                         </div>
                     </template>
                 </VueScrollingTable>
-                <div class="h-[4.75rem] flex flex-col justify-evenly" v-show="viewing == 'all' && messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0">
+                <div class="h-[4.75rem] flex flex-col justify-evenly"
+                v-show="viewing == 'all'&& messages.length == 0 || viewing == 'unread' && unreadMessages.length == 0"
+                :class="isDark?'bg-gray-800':''"
+                >
                     <p class="text-center">
                         No messages to display.
                     </p>
@@ -80,11 +88,11 @@ onMounted(() => {
             </div>
             <div class="h-[0.125rem]"></div>
         </div>
-        <div v-else class="flex flex-col h-full">
-            <div class="grid grid-cols-4 1440:p-4 p-2">
+        <div v-else class="flex flex-col h-full rounded-md drop-shadow-md" :class="isDark?'bg-gray-800':'bg-white'">
+            <div class="relative flex 1440:p-4 p-2 justify-between">
                 <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-6xl font-bold">Messages:</p>
-                <div class="flex col-span-2 ">
-                    <div v-if="unreadMessages.length" class="flex flex-row justify-between px-4 text-xl w-full bg-red-400 text-white p-2 rounded-3xl items-center">
+                <div class="absolute left-1/4 flex w-[45%] 1080:w-[50%]">
+                    <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 py-1 1080:py-2 1080:px-4 text-lg 1080:text-xl w-full bg-red-400 text-white rounded-3xl items-center">
                         <img src="/images/warning.svg" class="warning"/>
                         <p class="text-center text-sm 1080:text-base 1440:text-2xl 4k:text-3xl">
                             You have {{ unreadMessages.length }} unacknowleged messages.
@@ -92,14 +100,14 @@ onMounted(() => {
                         <img src="/images/warning.svg" class="warning"/>
                     </div>
                 </div>
-                <div class="text-2xl justify-self-end">
+                <div class="justify-self-end">
                     <button
                     @click="viewing = 'all'"
                     :class="{
                         'border-black font-bold border-2': viewing === 'all',
                         'border-gray-500 text-gray-500 border-t-2 border-l-2 border-b-2': viewing === 'unread',
                     }"
-                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                    class="text-base 1080:text-2xl 1440:text-4xl 4k:text-5xl px-1 1080:px-2 1080:py-2 border">
                         All ({{ messages.length }})
                     </button>
                     <button
@@ -108,7 +116,7 @@ onMounted(() => {
                         'border-black font-bold border-2': viewing === 'unread',
                         'border-gray-500 text-gray-500 border-t-2 border-r-2 border-b-2': viewing === 'all',
                     }"
-                    class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl px-2 py-2 border">
+                    class="text-base 1080:text-2xl 1440:text-4xl 4k:text-5xl px-1 1080:px-2 1080:py-2 border">
                         Unacknowleged ({{ unreadMessages.length }})
                     </button>
                 </div>
@@ -117,6 +125,7 @@ onMounted(() => {
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
+                    class=""
                 >
                     <template #tbody>
                         <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
@@ -133,6 +142,25 @@ onMounted(() => {
 </template>
 
 <style>
+
+@media 
+(min-width: 761px) {
+    ::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+        background: #555555;
+    }
+
+        ::-webkit-scrollbar-thumb {
+        background: #9d9d9d;
+        -webkit-border-radius: 1ex;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: #9d9d9d;
+    }
+}
+
 .scroller {
   overflow-y: auto;
   height: calc(90% - 0.5rem);

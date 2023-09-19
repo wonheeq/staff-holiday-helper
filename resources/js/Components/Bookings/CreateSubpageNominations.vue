@@ -210,7 +210,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     </div>
                 </div>
                 <div class="laptop:w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
-                <div class="flex flex-col mr-2.5 items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
+                <div class="flex flex-col mr-[1.3rem] items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
