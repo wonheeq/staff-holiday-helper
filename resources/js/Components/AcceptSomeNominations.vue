@@ -7,8 +7,12 @@ import axios from 'axios';
 import AcceptSomeNominationOptions from './AcceptSomeNominationOptions.vue';
 import { ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let emit = defineEmits(['close']);
@@ -93,7 +97,62 @@ function handleClose() {
 </script>
 <template>
 <Modal>
-    <div class="w-3/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data">
+    <div v-if="isMobile" class="h-fit rounded-md p-2 mx-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div class="flex h-[10%] items-center justify-between">
+            <p class="text-xl font-bold" :class="isDark?'text-white':''">
+                <!-- Filter for content element that contains 'Duration' and get the first element
+                    Assumes that there is Duration in one of the content elements    
+                -->
+                {{ props.data.content && JSON.parse(props.data.content).filter(content => content.includes('Duration:'))[0] }}
+            </p>
+            <button @click="handleClose()">
+                    <img src="/images/close.svg"
+                    class="close-button h-full"
+                    :class="isDark?'darkModeImage':''"
+                />
+            </button>
+        </div>
+        <div class="flex h-[10%] items-center justify-between">
+            <p class="text-lg " :class="isDark?'text-white':''">
+                You have been nominated for the following roles by {{ props.data.senderName }}:
+            </p>
+        </div>
+        <div class="h-[70%] py-4">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div class="flex mb-2 items-center h-[5rem] space-x-1 justify-between mr-4"
+                        v-for="role in props.roles" :key="role.id">
+                        <p class="w-4/5 border-b h-full" :class="isDark?'text-white':''">
+                            {{ role.roleName }}
+                        </p>
+                        <AcceptSomeNominationOptions
+                            class="w-1/5 h-full"
+                            @statusUpdated="(status) => handleStatusChangedForRole(role, status)"
+                        />
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div class="h-[10%]">
+            <button
+                class="w-full h-full p-2  rounded-md text-lg font-bold"
+                :class="{
+                    'bg-blue-300': buttonActive && !isDark,
+                    'bg-gray-300': !buttonActive && !isDark,
+                    'bg-blue-800 text-white': buttonActive && isDark,
+                    'bg-gray-900 text-white': !buttonActive && isDark,
+                }"
+                :disabled="!buttonActive"
+                @click="submitResponses()"
+            >
+                Submit Responses
+            </button>
+        </div>
+    </div>
+    <div v-else class="w-3/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="flex h-[10%] items-center justify-between">
             <p class="text-2xl 1080:text-3xl 4k:text-5xl font-bold" :class="isDark?'text-white':''">
                 <!-- Filter for content element that contains 'Duration' and get the first element
@@ -153,9 +212,18 @@ function handleClose() {
 .darkModeImage {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
 }
+
 .close-button {
-    height: 70px;
+    height: 50px;
     width: auto;
+}
+/* laptop */
+@media 
+(min-width: 1360) {
+    .close-button {
+        height: 50px;
+        width: auto;
+    }
 }
 /* 1080p */
 @media 
