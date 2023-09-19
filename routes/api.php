@@ -60,6 +60,8 @@ Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getMan
 Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
 Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
 Route::get('getSpecificStaffMember/{accountNo}', [ManagerController::class, 'getSpecificStaffMember']);
+Route::get('getUCM', [ManagerController::class, 'getUCM']);
+
 Route::post('addStaffRole', [ManagerController::class, 'addStaffRole']);
 Route::post('removeStaffRole', [ManagerController::class, 'removeStaffRole']);
 
