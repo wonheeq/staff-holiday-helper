@@ -59,9 +59,7 @@ class NewMessages extends Notification
             'numAppRev' => $this->numAppRev,
             'otherMessages' => $this->getOtherMessages(),
             'numOther' => $this->numOther,
-            'url' => URL::to('/home'),
         ];
-        // dd($dynamicData);
         // create and return mailable object
         $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
         return $mailable->to($notifiable->getEmailForPasswordReset());

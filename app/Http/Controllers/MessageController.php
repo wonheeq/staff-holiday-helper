@@ -456,18 +456,19 @@ class MessageController extends Controller
     // get each account, call the sendMessage function for each.
     public function sendDailyMessages()
     {
-        $account = Account::where('accountNo', '000000a')->first();
-        $messages = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
-        // $account = Account::where('accountNo', '000002L')->first();
-        // $messages = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
-        $account->sendDailyMessageNotification($messages);
-        // $accounts = Account::get();
-        // foreach ($accounts as $account) {
-        //     $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
-        //     if ($messages->count() != 0) {
-        //         $account->sendDailyMessageNotification($messages);
-        //         sleep(2); // to get around mailtrap emails per second limit
-        //     }
-        // }
+        // $account1 = Account::where('accountNo', '000000a')->first();
+        // $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
+        // $account2 = Account::where('accountNo', '000002L')->first();
+        // $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
+        // $account1->sendDailyMessageNotification($messages1);
+        // $account2->sendDailyMessageNotification($messages2);
+        $accounts = Account::get();
+        foreach ($accounts as $account) {
+            $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
+            if ($messages->count() != 0) {
+                $account->sendDailyMessageNotification($messages);
+                sleep(2); // to get around mailtrap emails per second limit
+            }
+        }
     }
 }

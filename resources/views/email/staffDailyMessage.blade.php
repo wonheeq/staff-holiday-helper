@@ -53,43 +53,25 @@
                 @endforeach
               </mj-table>
 
-
             <mj-text padding-bottom="0" padding-top="30px">
                 <mj-raw>
                   <span style="font-weight:bold">{{ $dynamicData['numOther'] }} Other messages:</span>
               </mj-raw>
             </mj-text>
 
-            {{-- <mj-table>
-                @foreach($dynamicData['otherMessages'] as $message)
-                  <tr>
-                    <th align="left">
-                        &#x2022;
-                        {{ $message[0]}}
-                        @foreach ($message[1] as $part)
-                             {{ $part }}
-                        @endforeach
-                  </th>
-                </tr>
-                <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
-                </tr>
-                @endforeach
-              </mj-table> --}}
 
-                          <mj-table>
+              <mj-table>
                 @foreach($dynamicData['otherMessages'] as $message)
                 <tr>
                     <td>
-                        {!! $message !!}
+                        {!! nl2br($message) !!}
                     </td>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;"></td>
+                  <td style="padding: 0 0 30px 0;"></td>
                 </tr>
                 @endforeach
               </mj-table>
-
 
             <mj-text color="#637381" font-size="16px">
                 To acknowledge these messages, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
