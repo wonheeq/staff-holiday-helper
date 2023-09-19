@@ -1,18 +1,21 @@
 <script setup>
 import Modal from '../Modal.vue';
-import { ref, watch, computed } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { storeToRefs } from 'pinia';
+import { useManagerStore } from '@/stores/ManagerStore';
+const managerStore = useManagerStore();
+const { staffRoles, staffInfo, allUnits } = storeToRefs(managerStore);
+const { fetchRolesForStaff } = managerStore;
+
 let emit = defineEmits(['close', 'removeRole']);
 
 let buttonActive = ref(false);
-
-let props = defineProps({
-    staffInfo: Object,
-    staffRoles: Object,
-});
 let unitCode = ref("");
 let roleName = ref("");
 
@@ -32,6 +35,7 @@ function handleClose() {
     emit('close');
 }
 function handleAddRole(staffNo){
+    
     let data = {
         'staffNo': staffNo,
         'unitCode': unitCode.value,
@@ -48,10 +52,13 @@ function handleAddRole(staffNo){
                 console.log(res);
             }
             else {
+                staffRoles.value = fetchRolesForStaff(staffNo);
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully added role.',
                 }).then(() => {
+                    unitCode.value ="";
+                    roleName.value ="";
                 });
             }
         }).catch(err => {
@@ -62,7 +69,7 @@ function handleAddRole(staffNo){
         });
     });
 }
-function handleRemoveRole(staffNo, currentUnitId, currentRoleName){
+function handleRemoveRole(staffNo, currentUnitId, currentRoleName, role){
     let data = {
         'staffNo': staffNo,
         'unitCode': currentUnitId,
@@ -79,11 +86,14 @@ function handleRemoveRole(staffNo, currentUnitId, currentRoleName){
                 console.log(res);
             }
             else {
+                const index = staffRoles.value.indexOf(role);
+                if (index > -1) { // only splice array when item is found
+                    staffRoles.value.splice(index, 1); // 2nd parameter means remove one item only
+                }
+
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully removed role.',
-                }).then(() => {
-                    emit('removeRole', currentUnitId, currentRoleName);
                 });
             }
         }).catch(err => {
@@ -94,12 +104,13 @@ function handleRemoveRole(staffNo, currentUnitId, currentRoleName){
         });
     });
 }
+const allRoles = ['Course Coordinator', 'Major Coordinator', 'Unit Coordinator', 'Lecturer', 'Tutor'];
 const disabledClass = "p-4 w-full rounded-md text-white text-2xl font-bold bg-gray-300";
 const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 </script>
 <template>
 <Modal>
-    <div class="bg-white w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" v-if="staffInfo">
+    <div class="bg-white w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" v-if="staffInfo[0]">
         <div class="flex h-[10%] items-center justify-between">
             <div class="flex flex-col">
               <p style="font-size: 25px;"><b>Staff Name: {{staffInfo[0].fName}} {{staffInfo[0].lName}} </b> </p>
@@ -119,14 +130,14 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
                         </p>
                         <button 
                         class="roles_button"
-                        @click="handleRemoveRole(staffInfo[0].accountNo, role.original.id, role.original.roleName)"
+                        @click="handleRemoveRole(staffInfo[0].accountNo, role.original.id, role.original.roleName, role)"
                         >
                             <span class="button-text">Remove</span>
                         </button>
                     </div>
-                    <!-- <div class="text-center text-3xl mt-20" v-if="Object.keys(staffRoles).length === 0">
+                    <div class="text-center text-3xl mt-20" v-if="Object.keys(staffRoles).length === 0">
                         <strong>This staff does not have any roles currently.</strong>
-                    </div> -->
+                    </div>
                 </template>
             </VueScrollingTable>
         </div>
@@ -134,14 +145,14 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
             <p style="font-size:25px; padding-bottom:20px"><b>Add Role: </b></p>
         </div>
         <div class="h-[10%]">
-            <div class="flex space-x-25 ">
+            <div class="flex ">
                 <div>
                     <p style="font-size:20px;"><b>Unit Code: </b></p>
-                    <input class="searchbox" v-model="unitCode">
+                    <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown"></v-select>
                 </div>
                 <div class="pl-5">
                     <p style="font-size:20px;"><b>Role Name: </b></p>
-                    <input class="searchbox" v-model="roleName">
+                    <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown"></v-select>
                 </div>
                 <div class="ml-auto pt-2 pr-5">
                     <button
@@ -152,7 +163,6 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
                     <span >Add Role  </span>
                 </button>
                 </div>
-               
             </div>
         </div>
     </div>
@@ -186,5 +196,68 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
   .addRoleButton:active{
       background-color: #999;
   }
-
+  .short-dropdown .vs__dropdown-menu {
+    background-color: white; 
+    width: 250px;
+    border: solid; 
+    border-color: #6b7280; 
+    border-width: 1px;
+    --vs-border-style: none; 
+    --vs-search-input-placeholder-color: #6b7280;
+    max-height: 60px;
+  }
+  .short-dropdown .vs__dropdown-toggle {
+    width: 250px; /* Set the desired width here */
+  }
+  /* 1080p */
+@media 
+(min-width: 1920px) {
+    .short-dropdown .vs__dropdown-menu {
+        background-color: white; 
+        width: 300px;
+        border: solid; 
+        border-color: #6b7280; 
+        border-width: 1px;
+        --vs-border-style: none; 
+        --vs-search-input-placeholder-color: #6b7280;
+        max-height: 100px;
+      }
+      .short-dropdown .vs__dropdown-toggle {
+        width: 300px; /* Set the desired width here */
+      }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .short-dropdown .vs__dropdown-menu {
+        background-color: white; 
+        width: 400px;
+        border: solid; 
+        border-color: #6b7280; 
+        border-width: 1px;
+        --vs-border-style: none; 
+        --vs-search-input-placeholder-color: #6b7280;
+        max-height: 100px;
+      }
+      .short-dropdown .vs__dropdown-toggle {
+        width: 400px; /* Set the desired width here */
+      }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .short-dropdown .vs__dropdown-menu {
+        background-color: white; 
+        width: 400px;
+        border: solid; 
+        border-color: #6b7280; 
+        border-width: 1px;
+        --vs-border-style: none; 
+        --vs-search-input-placeholder-color: #6b7280;
+        max-height: 100px;
+      }
+      .short-dropdown .vs__dropdown-toggle {
+        width: 400px; /* Set the desired width here */
+      }
+}
 </style>

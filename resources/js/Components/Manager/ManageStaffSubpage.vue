@@ -6,45 +6,28 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useStaffStore } from '@/stores/StaffStore';
+import { useManagerStore } from '@/stores/ManagerStore';
 import { onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+const managerStore = useManagerStore();
+const { fetchRolesForStaff, fetchAllUnits } = managerStore;
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let staffStore = useStaffStore();
-const { staffValue, searchStaff} = storeToRefs(staffStore);
+const { staffValue, searchStaff, allUnits} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
+
 
 onMounted(() => {
     fetchStaffMembers(user.value.accountNo);
 });
 let props = defineProps({ source: Object });
 let showEditModal = ref(false);
-let staffRoles = ref(null);
-let staffInfo = ref(null);
-
-let fetchRolesForStaff = async(accountNo) => {
-    try {
-        const resp = await axios.get('/api/getRolesForStaffs/' + accountNo);
-        const resp2 = await axios.get('/api/getSpecificStaffMember/' + accountNo);
-        staffRoles = resp.data;
-        staffInfo = resp2.data;
-        alert(staffRoles);
-
-    } catch (error) {
-        alert("Failed to load data: Please try again");
-        console.log(error);
-    }
-}; 
 
 async function handleEditRoles(accountNo) {
     await fetchRolesForStaff(accountNo);
+    await fetchAllUnits();
     showEditModal.value = true;
-}
-function handleDeleteRole(currentUnitId, currentRoleName){
-    // alert(currentUnitId);
-    // alert(currentRoleName);
-    // staffRoles = staffRoles.filter(staffRole => staffRole.unitId !== currentUnitId && staffRole !== currentRoleName);
-    // alert(staffRoles);
 }
 let deadAreaColor = "#FFFFFF";
 </script>
@@ -101,9 +84,6 @@ let deadAreaColor = "#FFFFFF";
             <Teleport to="body">
                 <EditRole
                     v-show="showEditModal"
-                    :staffRoles="staffRoles"
-                    :staffInfo="staffInfo"
-                    @removeRole="(currentUnitId, currentRoleName) => handleDeleteRole(currentUnitId, currentRoleName)"
                     @close="showEditModal=false;"
                 />
             </Teleport>
