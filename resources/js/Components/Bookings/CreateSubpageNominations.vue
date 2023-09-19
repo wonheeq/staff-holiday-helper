@@ -1,11 +1,12 @@
 <script setup>
 import axios from "axios"; 
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import { reactive, ref, computed, onMounted } from 'vue';
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2'
 import Nomination from "./Nomination.vue";
-import NomineeDropdown from "@/Components/Bookings/NomineeDropdown.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { usePage } from '@inertiajs/vue3';
@@ -30,6 +31,7 @@ let selfNominateAll = isSelfNominateAll;
 let allSelected = ref(false);
 let roleFilter = ref("");
 let staffMembers = reactive([]);
+let multiSelectNominee = ref("");
 
 
 let fetchStaffMembers = async() => {
@@ -58,6 +60,8 @@ function handleDropdownStaffSelection(selection) {
             nomination.nomination = selection;
         }
     }
+
+    multiSelectNominee.value = "";
 }
 
 function handleSelectAll() {
@@ -183,42 +187,43 @@ const disabledClass = "bg-gray-300 border-gray-100";
             <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
-            <div class="flex w-full justify-between 4k:py-6">
-                <div class="flex space-x-1 laptop:space-x-4">
-                    <div class="flex flex-col items-center">
-                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl">
+            <div class="flex w-full justify-between 4k:py-6 space-x-7 pr-2">
+                <div class="flex space-x-6 1080:space-x-3 1440:space-x-0 w-[60%]">
+                    <div class="flex flex-col">
+                        <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl pl-2 1440:pl-0">
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-4 h-4 1080:w-6 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                            class="w-8 h-8 ml-2"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
                         />
                     </div>
-                    <div class="flex flex-col w-[10rem] laptop:w-[12rem] 1080:w-[22rem] 1440:w-[31rem] 4k:w-[48rem]">
+                    <div class="flex flex-col w-full 1440:pl-2.5 4k:pl-0">
                         <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            class="h-8 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
                 </div>
-                <div class="laptop:w-[11rem] 1080:w-[17rem] 1440:w-[20rem] 4k:w-[32rem]"></div>
-                <div class="flex flex-col mr-[1.3rem] items-end w-[8rem] laptop:w-[12rem] 1080:w-[17rem] 1440:w-[22rem] 4k:w-[32rem]">
+                <div class="flex flex-col items-end w-[40.7%] pr-3.5">
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
-                    <NomineeDropdown
-                        class="w-full"
-                        :options="staffMembers"
-                        @optionSelected="(selection) => handleDropdownStaffSelection(selection)"
-                        :isDisabled="selfNominateAll"
+                    <vSelect :options="staffMembers" :clearable="false"
+                        style="width: 100%; height: 2rem; background-color: white; 
+                        border: solid; border-color: #6b7280; border-width: 1px;
+                        --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                        v-model="multiSelectNominee"
+                        @option:selected="(selection) => handleDropdownStaffSelection(selection)"
+                        :disabled="selfNominateAll"
                     />
                 </div>
             </div>

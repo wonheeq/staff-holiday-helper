@@ -17,27 +17,28 @@ const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div class="flex mb-2.5 mt-2.5 w-full">
-        <div class="flex laptop:space-x-4 1080:space-x-7 ml-2 1080:ml-2.5 1440:ml-3 4k:ml-4 w-full mr-2 justify-between">
-            <div class="w-[70%]">
-                <div class="flex space-x-3 laptop:space-x-6 4k:space-x-8">
+        <div class="flex space-x-6 mx-2 w-full justify-between">
+            <div class="w-[60%]">
+                <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
                     <input type="checkbox"
-                        class="1080:w-6 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                        class="w-8 h-8"
                         :class="isDisabled ? disabledClass : ''"
                         v-model="nomination.selected"
                         :disabled="isDisabled"   
                         @click="emit('nominationSelected', nomination.selected)" 
                     />
-                    <p class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl h-full w-full">
+                    <p class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl h-full w-full 4k:pl-3">
                         {{ nomination.role }}
                     </p>
                 </div>
             </div>
             <vSelect :options="props.options" :clearable="true"
-                style="width: 30%; height: 2rem; background-color: white; 
+                style="width: 40%; height: 2rem; background-color: white; 
                 border: solid; border-color: #6b7280; border-width: 1px;
                 --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
                 v-model="props.nomination.nomination"
                 @option:selected="(selection) => nomination.nomination = selection"
+                :disabled="isDisabled"
             />
         </div>
     </div>
