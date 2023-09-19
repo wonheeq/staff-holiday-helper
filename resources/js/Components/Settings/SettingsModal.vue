@@ -29,7 +29,7 @@ const options = [
 </script>
 <template>
     <Modal>
-        <div class="bg-white w-1/5 min-w-[320px] 1080:min-w-[420px] h-[24rem] rounded-md drop-shadow-md pl-2 pb-2 1440:pl-4 1440:pb-4">
+        <div class="w-1/5 min-w-[320px] 1080:min-w-[420px] h-fit min-h-[24rem] rounded-md drop-shadow-md pl-2 pb-2 1440:pl-4 1440:pb-4" :class="isDark?'bg-gray-800':'bg-white'">
             <div v-if="activeScreen==''" class="flex flex-row items-center justify-between">
                 <button :disabled="true">
                     <img src="/images/back.svg"
@@ -42,11 +42,13 @@ const options = [
                 <button @click="resetView();">
                     <img src="/images/close.svg"
                         class="close-button p-4"
+                        :class="isDark?'darkModeImage':''"
                     />
                 </button>
             </div>
             <div class="flex flex-col space-y-2 mr-2" v-if="activeScreen == ''">
-                <div class="rounded-md border-black border py-2"
+                <div class="rounded-md border py-2"
+                    :class="isDark?'bg-gray-700 border-gray-600':'border-black'"
                     v-for="option in options">
                     <button v-if="option.click == null" class="text-lg 1080:text-xl 1440:text-2xl 4k:text-3xl w-full"
                         @click="activeScreen=option.screen">
@@ -66,6 +68,9 @@ const options = [
     </Modal>
 </template>
 <style>
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .close-button {
     height: 40px;
     width: auto;

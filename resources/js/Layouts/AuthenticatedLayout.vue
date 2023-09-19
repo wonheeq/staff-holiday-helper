@@ -31,7 +31,7 @@ let settingsVisible = ref(false);
     <SettingsModal @close-settings="settingsVisible = false" v-show="settingsVisible"/>
 </template>
 
-<style>
+<style src="@sweetalert2/theme-dark/dark.css">
 .margin-fix{
     height: 1rem;
 }

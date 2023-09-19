@@ -1,7 +1,8 @@
 <script setup>
 import { ref, watch, reactive, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
-
+import { useDark } from '@vueuse/core';
+const isDark = useDark();
 
 let emit = defineEmits(['close-settings', 'close-password']);
 const page = usePage();
@@ -138,6 +139,7 @@ function back() {
         <button @click="back(); emit('close-password');">
             <img src="/images/back.svg"
                 class="close-button p-4"
+                :class="isDark?'darkModeImage':''"
             />
         </button>
         <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold">
@@ -146,6 +148,7 @@ function back() {
         <button @click="resetView(); emit('close-settings');">
             <img src="/images/close.svg"
                 class="close-button p-4"
+                :class="isDark?'darkModeImage':''"
             />
         </button>
     </div>
@@ -156,11 +159,14 @@ function back() {
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.current"
                         class="w-full 4k:h-16 4k:text-2xl"
+                        :class="isDark?'bg-black':''"
                         :type="fieldType.current.type"
                     >
                     <button @click.prevent="switchVis(fieldType.current)" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.current.image"
-                            class="h-full w-full">
+                            class="h-full w-full"
+                            :class="isDark?'darkModeImage':''"
+                        >
                     </button>
                 </div>
             </div>
@@ -169,11 +175,14 @@ function back() {
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.password"
                         class="w-full 4k:h-16 4k:text-2xl"
+                        :class="isDark?'bg-black':''"
                         :type="fieldType.password.type"
                     >
                     <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.password.image"
-                            class="h-full w-full">
+                            class="h-full w-full"
+                            :class="isDark?'darkModeImage':''"
+                        >
                     </button>
                 </div>
             </div>
@@ -182,11 +191,14 @@ function back() {
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.confirm"
                         class="w-full 4k:h-16 4k:text-2xl"
+                        :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
                     >
                     <button @click.prevent="switchVis(fieldType.confirm)" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.confirm.image"
-                            class="h-full w-full">
+                            class="h-full w-full"
+                            :class="isDark?'darkModeImage':''"
+                        >
                     </button>
                 </div>
             </div>
@@ -206,15 +218,18 @@ function back() {
             </div> -->
             <button class="w-full rounded py-2 1440:py-4 4k:py-6 mt-2 1440:mt-4 font-bold text-lg 1440:text-2xl 4k:text-4xl"
                 :class="{
-                    'bg-blue-300': buttonActive,
-                    'bg-gray-300': !buttonActive
+                    'bg-blue-300': buttonActive && !isDark,
+                    'bg-gray-300': !buttonActive && !isDark,
+                    'bg-blue-500': buttonActive && isDark,
+                    'bg-gray-900': !buttonActive && isDark,
                 }"
                 :disabled="!buttonActive"
                 type="submit"
             >
                 Change Password
             </button>
-            <p class="text-xs 1080:text-sm 4k:text-xl w-full text-center mt-2 1440:mt-4 bg-cyan-100 p-4 border border-black rounded-md text-blue-800 font-bold"
+            <p class="text-xs 1080:text-sm 4k:text-xl w-full text-center mt-2 1440:mt-4 p-4 border border-black rounded-md font-bold"
+                :class="isDark?'bg-cyan-600 text-blue-200':'bg-cyan-100 text-blue-800'"
                 v-show="displaySuccess"
             >
                 Your password has been changed successfully!
@@ -224,6 +239,9 @@ function back() {
 </div>
 </template>
 <style>
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .close-button {
     height: 40px;
     width: auto;
