@@ -116,7 +116,7 @@ function handleReject() {
     });
 }
 
-const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
+const textSizeClass = "text-xs laptop:text-sm 1440:text-lg 4k:text-2xl";
 </script>
 
 <template>
@@ -270,7 +270,7 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
         </div>
         <!--Any message, message is acknowledged-->
         <div v-show="props.source.acknowledged == 1" :class="element_class">
-            <div class="flex flex-col justify-center ">
+            <div class="flex flex-col justify-center " :class="textSizeClass">
                 Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
             </div>
         </div>

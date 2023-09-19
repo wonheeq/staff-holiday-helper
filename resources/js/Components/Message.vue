@@ -36,7 +36,7 @@ function handleReviewApplication() {
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
-                <div class="flex">
+                <div class="flex items-center">
                     <p class="text-sm">
                         by {{ props.source.senderName }}
                     </p>
@@ -56,7 +56,7 @@ function handleReviewApplication() {
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
-                <div class="flex">
+                <div class="flex items-center">
                     <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-1.5">
                         by {{ props.source.senderName }}
                     </p>
