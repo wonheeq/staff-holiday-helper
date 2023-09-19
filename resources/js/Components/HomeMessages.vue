@@ -142,7 +142,7 @@ const deadAreaColor = computed(() => {
 ::-webkit-scrollbar {
     height: 12px;
     width: 12px;
-    background: #000;
+    background: #555555;
 }
 
 ::-webkit-scrollbar-thumb {

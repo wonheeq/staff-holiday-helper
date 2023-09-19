@@ -220,8 +220,8 @@ function back() {
                 :class="{
                     'bg-blue-300': buttonActive && !isDark,
                     'bg-gray-300': !buttonActive && !isDark,
-                    'bg-blue-500': buttonActive && isDark,
-                    'bg-gray-900': !buttonActive && isDark,
+                    'bg-blue-800 text-white': buttonActive && isDark,
+                    'bg-gray-900 text-white': !buttonActive && isDark,
                 }"
                 :disabled="!buttonActive"
                 type="submit"
