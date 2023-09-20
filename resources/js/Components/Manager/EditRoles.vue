@@ -231,7 +231,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 (min-width: 2560px) {
     .short-dropdown .vs__dropdown-menu {
         background-color: white; 
-        width: 400px;
+        width: 300px;
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
@@ -240,7 +240,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         max-height: 100px;
       }
       .short-dropdown .vs__dropdown-toggle {
-        width: 400px; /* Set the desired width here */
+        width: 300px; /* Set the desired width here */
       }
 }
 /* 2160p */
@@ -248,7 +248,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 (min-width: 3840px) {
     .short-dropdown .vs__dropdown-menu {
         background-color: white; 
-        width: 400px;
+        width: 300px;
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
@@ -257,7 +257,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         max-height: 100px;
       }
       .short-dropdown .vs__dropdown-toggle {
-        width: 400px; /* Set the desired width here */
+        width: 300px; /* Set the desired width here */
       }
 }
 </style>
