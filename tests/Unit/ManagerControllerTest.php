@@ -25,7 +25,6 @@ class ManagerControllerTest extends TestCase
     
 
 
-    protected function setup(): void {
     protected function setup(): void
     {
         parent::setup();
@@ -289,7 +288,7 @@ class ManagerControllerTest extends TestCase
      */
     public function test_api_request_for_remove_course_roles_success(): void{
         $accRole = $this->accountRoles[0];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => Course::where('courseId', $accRole->courseId)->first()->courseId,
             'roleName' => 'Course Coordinator'
@@ -301,7 +300,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_course_roles_fail_wrong_course_role_name(): void{
         $accRole = $this->accountRoles[0];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => Course::where('courseId', $accRole->courseId)->first()->courseId,
             'roleName' => 'Unit Coordinator'
@@ -310,7 +309,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_course_roles_fail_wrong_course_code(): void{
         $accRole = $this->accountRoles[0];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => 'LLL3123',
             'roleName' => 'Course Coordinator'
@@ -320,7 +319,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_major_roles_success(): void{
         $accRole = $this->accountRoles[1];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => Major::where('majorId', $accRole->majorId)->first()->majorId,
             'roleName' => 'Major Coordinator'
@@ -332,7 +331,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_major_roles_fail_wrong_major_role_name(): void{
         $accRole = $this->accountRoles[1];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => Major::where('majorId', $accRole->majorId)->first()->majorId,
             'roleName' => 'Course Coordinator'
@@ -342,7 +341,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_major_roles_fail_wrong_major_code(): void{
         $accRole = $this->accountRoles[1];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => 'LLL3123',
             'roleName' => 'Major Coordinator'
@@ -351,7 +350,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_unit_roles_success(): void{
         $accRole = $this->accountRoles[2];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => Unit::where('unitId', $accRole->unitId)->first()->unitId,
             'roleName' => 'Unit Coordinator'
@@ -364,7 +363,7 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_remove_unit_roles_fail_wrong_unit_role_name(): void{
         $accRole = $this->accountRoles[2];
         $currentUnitId = Unit::where('unitId', $accRole->unitId)->first();
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $currentUnitId->unitId,
             'roleName' => 'Major Coordinator'
@@ -373,7 +372,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_unit_roles_fail_wrong_unit_code(): void{
         $accRole = $this->accountRoles[2];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => 'LL12313',
             'roleName' => 'Major Coordinator'
@@ -382,7 +381,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_role_fail_account_not_exist(): void{
         $accRole = $this->accountRoles[2];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => '1fdadf',
             'unitCode' => 'LL1223',
             'roleName' => 'Major Coordinator'
@@ -391,7 +390,7 @@ class ManagerControllerTest extends TestCase
     }
     public function test_api_request_for_remove_role_fail_account_does_not_have_any_roles(): void{
         $accRole = $this->accountRoles[2];
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->lineManager->accountNo,
             'unitCode' => 'LLLL123123',
             'roleName' => 'Major Coordinator'
@@ -402,14 +401,14 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_add_course_roles_success(): void{
         $accRole = $this->accountRoles[0];
         $courseCode = Course::where('courseId', $accRole->courseId)->first()->courseId;
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $courseCode,
             'roleName' => 'Course Coordinator'
         ]);
         $response->assertStatus(200);
 
-        $response = $this->postJson("/api/addStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/addStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $courseCode,
             'roleName' => 'Course Coordinator'
@@ -420,14 +419,14 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_add_major_roles_success(): void{
         $accRole = $this->accountRoles[1];
         $majorCode = Major::where('majorId', $accRole->majorId)->first()->majorId;
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $majorCode,
             'roleName' => 'Major Coordinator'
         ]);
         $response->assertStatus(200);
 
-        $response = $this->postJson("/api/addStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/addStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $majorCode,
             'roleName' => 'Major Coordinator'
@@ -438,14 +437,14 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_add_unit_roles_success(): void{
         $accRole = $this->accountRoles[3];
         $unitCode = Unit::where('unitId', $accRole->unitId)->first()->unitId;
-        $response = $this->postJson("/api/removeStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/removeStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $unitCode,
             'roleName' => 'Tutor'
         ]);
         $response->assertStatus(200);
 
-        $response = $this->postJson("/api/addStaffRole", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/addStaffRole", [
             'staffNo' => $this->staff->accountNo,
             'unitCode' => $unitCode,
             'roleName' => 'Tutor'
