@@ -15,7 +15,8 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
-
+use App\Http\Controllers\ForeignKeyController;
+use App\Http\Controllers\DatabaseController;
 
 
 /*
@@ -46,6 +47,9 @@ Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
     Route::get('/allMajors/{accountNo}', [MajorController::class, 'getAllMajors']);
     Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
     Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
+    Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
+    Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']); 
+    Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
 });
 
 
@@ -58,7 +62,6 @@ Route::middleware(['auth:sanctum', 'lmanager', 'api'])->group(function () {
     Route::post('rejectApplication', [ApplicationController::class, 'rejectApplication']);
     Route::get('getSpecificStaffMember/{accountNo}', [ManagerController::class, 'getSpecificStaffMember']);
     Route::get('getUCM', [ManagerController::class, 'getUCM']);
-
     Route::post('addStaffRole', [ManagerController::class, 'addStaffRole']);
     Route::post('removeStaffRole', [ManagerController::class, 'removeStaffRole']);
 });
@@ -77,9 +80,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
     Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
-Route::get('managerApplications/{accountNo}', [ManagerController::class, 'getManagerApplications']);
-Route::get('getStaffMembers/{superiorNo}', [ManagerController::class, 'getStaffMembers']);
-Route::get('getRolesForStaffs/{accountNo}', [ManagerController::class, 'getRolesForStaffs']);
+
 
 
 
@@ -97,5 +98,6 @@ Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNomi
     Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
 });
 
-// Unit Lookup Route
+
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
+

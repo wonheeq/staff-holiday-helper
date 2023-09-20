@@ -41,18 +41,6 @@ class ApplicationControllerTest extends TestCase
             'accountType' => "lmanager"
         ]);
 
-        $this->adminUser = Account::factory()->create([
-            'accountType' => "sysadmin"
-        ]);
-
-        $this->otherUser1 = Account::factory()->create([
-            'accountType' => "staff"
-        ]);
-
-        $this->otherUser2 = Account::factory()->create([
-            'accountType' => "lmanager"
-        ]);
-
 
         $roles = Role::pluck('roleId');
         $this->accountRoles = array();

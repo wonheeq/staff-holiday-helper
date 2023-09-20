@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Major extends Model
 {
     use HasFactory;
+    protected $primarayKey = 'majorId';
+    protected $fillable = ['majorId', 'name'];
 }
