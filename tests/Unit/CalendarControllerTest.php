@@ -10,7 +10,7 @@ use App\Models\Nomination;
 
 class CalendarControllerTest extends TestCase
 {
-    private Account $user, $adminUser;
+    private Account $user;
     private array $applications;
     private array $nominations;
     private Account $otherUser;
@@ -27,9 +27,6 @@ class CalendarControllerTest extends TestCase
             'accountNo' => $this->user->accountNo,
         ]);
 
-        $this->adminUser = Account::factory()->create([
-            'accountType' => "sysadmin"
-        ]);
         // Do not create application with Cancelled status since it does not get returned with getCalendarData
         $statuses = ["Y", "N", "P", "U"];
         $this->applications = array();
@@ -71,8 +68,6 @@ class CalendarControllerTest extends TestCase
 
     protected function teardown(): void
     {
-        $this->adminUser->delete();
-
         Nomination::where('applicationNo', $this->otherUserNom->applicationNo, 'and')
             ->where('nomineeNo', $this->otherUserNom->nomineeNo, 'and')
             ->where('accountRoleId', $this->otherUserNom->accountRoleId)
@@ -98,7 +93,7 @@ class CalendarControllerTest extends TestCase
 
     public function test_getCalendarData_api_call_is_successful(): void
     {
-        $response = $this->actingAs($this->adminUser)->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
@@ -110,13 +105,13 @@ class CalendarControllerTest extends TestCase
 
     public function test_getCalendarData_api_call_returns_json(): void
     {
-        $response = $this->actingAs($this->adminUser)->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_getCalendarData_api_returns_valid_content(): void
     {
-        $response = $this->actingAs($this->adminUser)->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $array = json_decode($response->content());
 
         // 4 applications created for test user + 1 substitution from the other User

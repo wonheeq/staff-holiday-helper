@@ -57,11 +57,11 @@ class DatabaseControllerTest extends TestCase
         $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", $this->validEntry);
         $response->assertStatus(200);
 
-        $response = $this->/*actingAs($this->otherUser1)->*/postJson("/api/addSingleEntry/{$this->otherUser1['accountNo']}", $this->validEntry);
-        $response->assertStatus(500/*403*/);
+        $response = $this->actingAs($this->otherUser1)->postJson("/api/addSingleEntry/{$this->otherUser1['accountNo']}", $this->validEntry);
+        $response->assertStatus(403);
 
-        $response = $this->/*actingAs($this->otherUser2)->*/postJson("/api/addSingleEntry/{$this->otherUser2['accountNo']}", $this->validEntry);
-        $response->assertStatus(500/*403*/);
+        $response = $this->actingAs($this->otherUser2)->postJson("/api/addSingleEntry/{$this->otherUser2['accountNo']}", $this->validEntry);
+        $response->assertStatus(403);
     }
 
     public function test_api_request_for_addentry_adding_valid_account(): void

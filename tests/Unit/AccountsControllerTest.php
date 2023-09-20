@@ -105,24 +105,24 @@ class AccountsControllerTest extends TestCase
     public function test_api_request_for_all_accounts_display(): void
     {
                 // Delete before merge
-                $response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
-                $response->assertStatus(200);
+                //$response = $this->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
+                //$response->assertStatus(200);
         
-                $response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser2['accountNo']}");
-                $response->assertStatus(500);
+                //$response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser2['accountNo']}");
+                //$response->assertStatus(500);
 
-                $response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser1['accountNo']}");
-                $response->assertStatus(500);
+                //$response = $this->getJson("/api/allAccountsDisplay/{$this->otherUser1['accountNo']}");
+                //$response->assertStatus(500);
           
                 
         $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountsDisplay/{$this->adminUser['accountNo']}");
         $response->assertStatus(200); 
 
-        /*$response = $this->actingAs($this->otherUser1)->getJson("/api/allAccountsDisplay/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);*/
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allAccountsDisplay/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        /*$response = $this->actingAs($this->otherUser2)->getJson("/api/allAccountsDisplay/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);*/
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allAccountsDisplay/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
     }
 
     public function test_api_request_for_accounts_display_content_is_json(): void
