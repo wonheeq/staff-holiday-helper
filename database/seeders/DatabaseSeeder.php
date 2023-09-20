@@ -73,10 +73,9 @@ class DatabaseSeeder extends Seeder
         Account::factory()->create([
             'accountNo' =>  $lineManagerNo,
             'accountType' => 'sysadmin',
-            'password' => Hash::make('testPassword1'),
             'superiorNo' => null,
-            'fName' => 'Static',
-            'lName' => 'Test Manager',
+            'fName' => 'TEST',
+            'lName' => 'DEFAULT ADMIN',
             'password' => Hash::make('testPassword1'),
         ]);
 
@@ -105,6 +104,62 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => $lineManagerNo,
         ]);
 
+        // Create test users for Hannes and co
+        $hannesAdmin = Account::factory()->create([
+            'accountNo' => '000000X',
+            'accountType' => 'sysadmin',
+            'fName' => '(Admin) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => '000002L',
+        ]);
+       
+        $hannesManager = Account::factory()->create([
+            'accountNo' => '000000Y',
+            'accountType' => 'lmanager',
+            'fName' => '(Manager) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $hannesAdmin->accountNo,
+        ]);
+
+        $hannesStaff = Account::factory()->create([
+            'accountNo' => '000000Z',
+            'accountType' => 'staff',
+            'fName' => '(Staff) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $hannesManager->accountNo,
+        ]);
+
+
+         // Create test users for Hannes and co
+        $ianAdmin = Account::factory()->create([
+            'accountNo' => '000000U',
+            'accountType' => 'sysadmin',
+            'fName' => '(Admin) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => '000002L',
+        ]);
+       
+        $ianManager = Account::factory()->create([
+            'accountNo' => '000000V',
+            'accountType' => 'lmanager',
+            'fName' => '(Manager) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $ianAdmin->accountNo,
+        ]);
+
+        $ianStaff = Account::factory()->create([
+            'accountNo' => '000000W',
+            'accountType' => 'staff',
+            'fName' => '(Staff) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $ianManager->accountNo,
+        ]);
 
         // TEST USER
         $test_id = '000000a';

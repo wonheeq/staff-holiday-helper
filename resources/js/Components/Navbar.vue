@@ -46,13 +46,13 @@ async function handleLogout() {
 }
 
 function shouldDisplayOption(minPerm) {
+    if (user.value.accountType == "sysadmin") {
+        return true;
+    }
     if (user.value.accountType == minPerm) {
         return true;
     }
-    else if (user.value.accountType == "lmanager" && user.value.accountType == "staff") {
-        return true;
-    }
-    else if (user.value.accountType == "sysadmin") {
+    if (minPerm == "staff") {
         return true;
     }
     return false;
