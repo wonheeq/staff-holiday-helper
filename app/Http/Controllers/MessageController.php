@@ -250,7 +250,7 @@ class MessageController extends Controller
             'applicationNo' => $applicationNo,
             'receiverNo' => $nomineeNo,
             'senderNo' => $application->accountNo,
-            'subject' => 'Application Cancelled',
+            'subject' => 'Nomination Cancelled',
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
@@ -450,6 +450,43 @@ class MessageController extends Controller
         } else {
             $messages = Message::get();
             return response()->json($messages);
+        }
+    }
+
+    // get each account, call the sendMessage function for each.
+    public function sendDailyMessages()
+    {
+        $accounts = Account::get();
+        foreach ($accounts as $account) {
+            $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
+            if ($messages->count() != 0) {
+                $account->sendDailyMessageNotification($messages);
+                sleep(2); // to get around mailtrap emails per second limit
+            }
+        }
+    }
+
+
+    // demo function for manually testing daily message functionality without emailing all accounts.
+    public function demoSendDailyMessages()
+    {
+        $account1 = Account::where('accountNo', '000000a')->first();
+        $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
+        $account2 = Account::where('accountNo', '000002L')->first();
+        $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
+        $account1->sendDailyMessageNotification($messages1);
+        $account2->sendDailyMessageNotification($messages2);
+    }
+
+
+    // function used only by MessageControllerTest to test notification functionality without
+    // sending to all accounts. Do not call in any other context.
+    public function sendDailyMessagesUnitTestFunction($user)
+    {
+        $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
+        if ($messages->count() != 0) {
+            $user->sendDailyMessageNotification($messages);
+            sleep(2);
         }
     }
 }

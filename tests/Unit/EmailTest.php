@@ -81,7 +81,7 @@ class EmailTest extends TestCase
         Mail::assertSent(MJML::class); //check if email has really been sent
         $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
         $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
-        
+
         //after render, check if the rendered content contains below strings/details:
         $this->assertStringContainsString('Peter', $mailable->render());
         $this->assertStringContainsString('www.google.com', $mailable->render());
@@ -208,6 +208,86 @@ class EmailTest extends TestCase
         $this->assertStringContainsString('a123455', $mailable->render());
         $this->assertStringContainsString('00:00 12/04/2024 - 00:00 22/04/2024', $mailable->render());
         $this->assertStringContainsString('COMP2001 - Unit Coordinator', $mailable->render());
+    }
+
+
+    public function testStaffDailymessage(): void
+    {
+        Mail::fake();
+        $appMessages = ['AppMessageOne', 'AppMessageTwo', 'AppMessageThree'];
+        $otherMessages = ['OtherMessageOne', 'OtherMessageTwo', 'OtherMessageThree'];
+        $dynamicData = [
+            'name' => 'Test User',
+            'num' => 7,
+            'appMessages' => $appMessages,
+            'numApp' => 6,
+            'appRevMessages' => null,
+            'numAppRev' => 0,
+            'otherMessages' => $otherMessages,
+            'numOther' => 4,
+        ];
+
+        $mailable = new MJML("Unacknowledged Messages", 'email/staffDailyMessage', $dynamicData);
+        Mail::to('000000a@test.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        $this->assertEquals('000000a@test.com', $mailable->to[0]['address']); // check recipient
+        $this->assertEquals('Unacknowledged Messages', $mailable->subject); // check subject
+        // check all messages make it into the email
+        $this->assertStringContainsString('7', $mailable->render());
+        $this->assertStringContainsString('6', $mailable->render());
+        $this->assertStringContainsString('4', $mailable->render());
+
+        $this->assertStringContainsString('AppMessageOne', $mailable->render());
+        $this->assertStringContainsString('AppMessageTwo', $mailable->render());
+        $this->assertStringContainsString('AppMessageThree', $mailable->render());
+
+        $this->assertStringContainsString('OtherMessageOne', $mailable->render());
+        $this->assertStringContainsString('OtherMessageTwo', $mailable->render());
+        $this->assertStringContainsString('OtherMessageThree', $mailable->render());
+
+    }
+
+
+    public function testManagerDailymessage(): void
+    {
+        Mail::fake();
+        $appMessages = ['AppMessageOne', 'AppMessageTwo', 'AppMessageThree'];
+        $appRevMessages = ['AppRevMessageOne', 'AppRevMessageTwo', 'AppRevMessageThree'];
+        $otherMessages = ['OtherMessageOne', 'OtherMessageTwo', 'OtherMessageThree'];
+        $dynamicData = [
+            'name' => 'Test User',
+            'num' => 7,
+            'appMessages' => $appMessages,
+            'numApp' => 6,
+            'appRevMessages' => $appRevMessages,
+            'numAppRev' => 5,
+            'otherMessages' => $otherMessages,
+            'numOther' => 4,
+        ];
+
+        $mailable = new MJML("Unacknowledged Messages", 'email/managerDailyMessage', $dynamicData);
+        Mail::to('000000a@test.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        $this->assertEquals('000000a@test.com', $mailable->to[0]['address']); // check recipient
+        $this->assertEquals('Unacknowledged Messages', $mailable->subject); // check subject
+        // check all messages make it into the email
+        $this->assertStringContainsString('7', $mailable->render());
+        $this->assertStringContainsString('6', $mailable->render());
+        $this->assertStringContainsString('5', $mailable->render());
+        $this->assertStringContainsString('4', $mailable->render());
+
+        $this->assertStringContainsString('AppMessageOne', $mailable->render());
+        $this->assertStringContainsString('AppMessageTwo', $mailable->render());
+        $this->assertStringContainsString('AppMessageThree', $mailable->render());
+
+        $this->assertStringContainsString('AppRevMessageOne', $mailable->render());
+        $this->assertStringContainsString('AppRevMessageTwo', $mailable->render());
+        $this->assertStringContainsString('AppRevMessageThree', $mailable->render());
+
+        $this->assertStringContainsString('OtherMessageOne', $mailable->render());
+        $this->assertStringContainsString('OtherMessageTwo', $mailable->render());
+        $this->assertStringContainsString('OtherMessageThree', $mailable->render());
+
     }
 }
 /*
