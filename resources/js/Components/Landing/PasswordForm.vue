@@ -180,17 +180,7 @@
         validatePasswords();
     });
 
-
-    function isMobile() {
-        if( screen.availWidth <= 760 ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
     </script>
-
 
 
 

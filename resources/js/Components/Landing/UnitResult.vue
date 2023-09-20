@@ -1,5 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const props = defineProps({
     results: { type: Object, required: true },
 });
@@ -34,21 +40,15 @@ function getList()
 }
 
 
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
-<div v-if="isMobile()">
+<div v-if="isMobile">
     <div class="w-screen h-screen flex justify-center items-center ">
         <!-- Box/Background -->
-        <div class="w-[80%]  bg-white p-5 drop-shadow-md w-[80%] max-h-[75%] flex flex-col" >
+        <div class="w-[80%] p-5 drop-shadow-md rounded-md max-h-[75%] flex flex-col"
+            :class="isDark?'bg-gray-800':'bg-white'"
+        >
 
             <!-- Results Heading -->
             <h1 class="font-bold text-2xl mb-1">Showing Results For:</h1>
@@ -80,7 +80,8 @@ function isMobile() {
             <!-- Back/Search Aagain -->
             <button
                 @click="$emit('resultBack')"
-                class="w-full font-bold text-2xl bg-blue-300 p-2 mb-2"
+                class="w-full font-bold text-2xl p-2 mb-2"
+                :class="isDark?'bg-blue-800':'bg-blue-300'"
             >Back</button>
         </div>
     </div>
@@ -90,10 +91,11 @@ function isMobile() {
 <div v-else>
     <div class="w-screen h-screen flex justify-center items-center ">
         <!-- Box/Background -->
-        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] bg-white p-5 drop-shadow-md
+        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] p-5 drop-shadow-md
                      laptop:h-fit 1080:h-fit 1440:h-fit 4k:h-fit
                      laptop:max-h-[80%] 1080:max-h-[80%] 1440:max-h-[60%] 4k:max-h-[60%]
-                     flex flex-col" >
+                     flex flex-col rounded-md" 
+            :class="isDark?'bg-gray-800':'bg-white'">
 
             <!-- Results Heading -->
             <h1 class="font-bold text-2xl 4k:text-3xl mb-1">Showing Results For:</h1>
@@ -125,12 +127,12 @@ function isMobile() {
             <!-- Back/Search Aagain -->
             <button
                 @click="$emit('resultBack')"
-                class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
+                class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2"
+                :class="isDark?'bg-blue-800':'bg-blue-300'"
             >Back</button>
         </div>
     </div>
 </div>
 
 </template>
-
 

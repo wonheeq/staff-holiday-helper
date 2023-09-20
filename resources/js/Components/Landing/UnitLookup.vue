@@ -10,6 +10,8 @@
  import { ref } from "vue";
  import axios from 'axios';
  import LandingInput from './LandingInput.vue';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 
  let emit = defineEmits(['gotResults']);
 
@@ -39,10 +41,10 @@
  <template>
  <div class="w-screen h-screen flex justify-center items-center ">
      <!-- Box/White Background -->
-     <div class="w-[80%]  laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+     <div class="w-[80%]  laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit p-5 drop-shadow-md rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
 
          <!-- Logo -->
-         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" >
+         <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" :class="isDark?'darkModeImage':''">
 
          <form action="#" @submit.prevent="handleSearch">
              <!-- Unit name/ID input -->
@@ -55,7 +57,8 @@
              <!-- Search Button -->
              <button
                  type="submit"
-                 class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
+                 class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2"
+                 :class="isDark?'bg-blue-800':'bg-blue-300'"
              >Search</button>
          </form>
 

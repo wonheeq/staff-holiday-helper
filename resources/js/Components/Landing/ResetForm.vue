@@ -3,6 +3,8 @@ import axios from 'axios';
 import LandingInput from './LandingInput.vue';
 import Spinner from './Spinner.vue';
 import { ref } from "vue";
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 
 let showConf = ref(false);
 const staffID = ref('');
@@ -44,33 +46,30 @@ async function handleReset() {
     // showConf.value = true;
 }
 
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
     <div class="w-screen h-screen flex flex-col justify-center items-center ">
         <!-- Box/White Area -->
-        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md">
+        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit p-5 drop-shadow-md rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
 
             <!-- Logo -->
-            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5">
+            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5"  :class="isDark?'darkModeImage':''">
 
             <form action="#" @submit.prevent="handleReset">
                 <!-- Staff ID -->
                 <div class="mb-5">
-                    <landing-input title="Staff ID" v-model="staffID" inType="textType">
+                    <landing-input
+                        title="Staff ID"
+                        v-model="staffID"
+                        inType="textType"   
+                    >
                     </landing-input>
                 </div>
 
                 <!-- Reset Button -->
-                <button :disabled="isLoading" type="submit" class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2">
+                <button :disabled="isLoading" type="submit" class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2" 
+                    :class="isDark?'bg-blue-800':'bg-blue-300'">
                     <spinner v-show="isLoading"></spinner>
                     <div :class="{ 'invisible': isLoading }">
                         Reset Password
