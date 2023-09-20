@@ -23,7 +23,7 @@ class EmailController extends Controller
     {
         $dynamicData = [
             'name' => 'Chris',
-            'token' => 'www.google.com'
+            'url' => 'www.google.com'
         ];
         Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Password Reset", "email/passwordResetLink", $dynamicData));
     }

@@ -1,14 +1,10 @@
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import AppRequestSubpage from '@/Components/Manager/AppRequestSubpage.vue';
 import ManageStaffSubpage from '@/Components/Manager/ManageStaffSubpage.vue';
-import { useRolesStore } from '@/stores/RolesStore';
-
-import EditRoles from "@/Components/Manager/EditRoles.vue";
 import { ref } from 'vue';
-let rolesStore = useRolesStore();
-const { fetchRolesForStaff } = rolesStore;
 
 const options = [
     { id: 'appRequest', title: 'Application Request'},
@@ -27,24 +23,16 @@ if (props.screenProp !== "default") {
     activeScreen.value = props.screenProp;
 }
 
-
 const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
-let isEditing = ref(false);
-let staffId = ref(null);
-async function handleEditRoles(staffNo) {
-    isEditing.value = true;
-    staffId.value = staffNo;
-    await fetchRolesForStaff(staffNo);
-}
 
 function changeUrl(params) {
     var baseUrl = window.location.origin;
-
     history.pushState(
         null,
         'LeaveOnTime',
         baseUrl + "/manager/" + params
     );
+    window.location.reload();
 }
 
 function handleActiveScreenChanged(screen) {
@@ -55,35 +43,28 @@ function handleActiveScreenChanged(screen) {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
-            <SubpageNavbar
-                class="h-[5%]"
-                :options="options"
-                :activeScreen="activeScreen"
-                @screen-changed="screen => handleActiveScreenChanged(screen)"
-            />
-            <AppRequestSubpage
-                class="p-4 h-[95%]"
-                v-show="activeScreen === 'appRequest'" 
-                :class="subpageClass"
-            />
-            <ManageStaffSubpage
-                v-show="activeScreen === 'manage'" 
-                :class="subpageClass"
-                class="p-4 h-[95%]"
-                @editRoles="(staffId) => handleEditRoles(staffId)"
-            />
-            <Teleport to="body">
-                <EditRoles
-                    v-show="isEditing"
-                    :staffId="staffId"
-                    :subpageClass="subpageClass"
-                    @close="isEditing = false; staffId = false;"
+    <PageLayout>
+        <AuthenticatedLayout>
+            <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+                <SubpageNavbar
+                    class="h-[5%]"
+                    :options="options"
+                    :activeScreen="activeScreen"
+                    @screen-changed="screen => handleActiveScreenChanged(screen)"
                 />
-            </Teleport>
-        </div>
-    </AuthenticatedLayout>
+                <AppRequestSubpage
+                    class="p-4 h-[95%]"
+                    v-show="activeScreen === 'appRequest'" 
+                    :class="subpageClass"
+                />
+                <ManageStaffSubpage
+                    class="p-4 h-[95%]"
+                    v-show="activeScreen === 'manage'" 
+                    :class="subpageClass"
+                />
+            </div>
+        </AuthenticatedLayout>
+    </PageLayout>   
 </template>
 
 <style>

@@ -10,7 +10,6 @@ export let useRolesStore = defineStore('roles', {
             try {
                 const resp = await axios.get('/api/getRolesForStaffs/' + staffNo);
                 this.roles = resp.data;
-                console.log("got enter here")
               }
               catch (error) {
                 alert(error)

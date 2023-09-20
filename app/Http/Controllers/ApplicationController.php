@@ -8,8 +8,6 @@ use App\Models\Nomination;
 use App\Models\Account;
 use App\Models\Message;
 use \DateTime;
-use Illuminate\Support\Facades\Log;
-
 class ApplicationController extends Controller
 {
     /*
@@ -658,7 +656,6 @@ class ApplicationController extends Controller
             "duration" => "{$application->sDate} - {$application->eDate}",
             "nominations" => $nominationsFormatted
         ];
-
         return response()->json($data);
     }
 
@@ -670,27 +667,29 @@ class ApplicationController extends Controller
         $data = $request->all();
         $superiorNo = $data['accountNo'];
         $applicationNo = $data['applicationNo'];
-
         // Check if user exists for given user id
         if (!Account::where('accountNo', $superiorNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-        // Check if application exists for hte given applicationNo
+        // Check if application exists for the given applicationNo
         $application = Application::where('applicationNo', $applicationNo)->first();
         if (!$application) {
+
             return response()->json(['error' => 'Application does not exist.'], 500);
         }
 
         // Check that the application status is Undecided
         if ($application->status != 'U') {
+
             return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
         }
 
-        // Check if the superior is the superior of the applicant
+        // Check if applicant exists
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
+
             return response()->json(['error' => 'Applicant does not exist.'], 500);
         }
 
@@ -700,13 +699,13 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Account is not the superior of applicant.'], 500);
         }
 
-        // Confirm that all nominees agreed
-        $nominations = Nomination::where("applicationNo", $applicationNo)->get();
-        foreach ($nominations as $n) {
-            if ($n->status != "Y") {
-                return response()->json(['error' => 'A nomination was not accepted.'], 500);
-            }
-        }
+        // // Confirm that all nominees agreed
+        // $nominations = Nomination::where("applicationNo", $applicationNo)->get();
+        // foreach ($nominations as $n) {
+        //     if ($n->status != "Y") {
+        //         return response()->json(['error' => 'A nomination was not accepted.'], 500);
+        //     }
+        // }
 
         // set application status to 'Y'
         // set processedBy indicator to superiorNo
@@ -716,7 +715,6 @@ class ApplicationController extends Controller
 
         // Mark Application Awaiting Review message as acknowledged
         $message = Message::where('applicationNo', $applicationNo, "and")
-
         ->where('senderNo', $applicant->accountNo, "and")
         ->where('subject', "Application Awaiting Review")->first();
 
@@ -727,7 +725,7 @@ class ApplicationController extends Controller
 
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, true, null);
-        
+
         return response()->json(['success' => 'success'], 200);
     }
 

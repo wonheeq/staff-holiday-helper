@@ -130,27 +130,22 @@ class DatabaseSeeder extends Seeder
         // create 4 of each type of application status for the test user
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'Y',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'N',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'U',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'P',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'C',
         ]);
 
