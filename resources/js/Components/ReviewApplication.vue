@@ -1,7 +1,8 @@
 <script setup>
 import Modal from '@/Components/Modal.vue';
 import { ref, watch, computed } from 'vue';
-import NomineeDropdown from '@/Components/Bookings/NomineeDropdown.vue';
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import Swal from 'sweetalert2';
@@ -182,10 +183,13 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 Select Reject Reason or Enter Custom Message:
             </p>
             <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2" :class="isDark?'text-white bg-gray-800':''"/>
-            <NomineeDropdown
-                :options="options"
-                class="w-full py-2" 
-                @optionSelected="(selectedOption) => handleSelection(selectedOption)"   
+            <vSelect :options="options" :clearable="false"
+                style="width: 100%; height: 2rem; background-color: white; 
+                border: solid; border-color: #6b7280; border-width: 1px;
+                --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                v-model="multiSelectNominee"
+                @option:selected="(selectedOption) => handleSelection(selectedOption)"
+                :isDisabled="selfNominateAll"
             />
         </div>
         <div class="h-[10%] flex justify-between">
