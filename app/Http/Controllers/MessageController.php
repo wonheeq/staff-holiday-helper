@@ -25,16 +25,15 @@ class MessageController extends Controller
         $messages = Message::orderBy('created_at', 'asc')
             ->where('receiverNo', $accountNo)
             ->get();
-        
-        
+
+
         foreach ($messages as $message) {
             // Add in sendername of each message
             if ($message['senderNo'] != null) {
                 // if sender is not null, then sender is a user
                 $sender = app(UserController::class)->getUser($message["senderNo"]);
                 $message["senderName"] = "{$sender['fName']} {$sender['lName']}";
-            }
-            else {
+            } else {
                 // senderNo is null, therefore sender is the system
                 $message["senderName"] = "SYSTEM";
             }
@@ -46,7 +45,7 @@ class MessageController extends Controller
                 // Get all nominations for the application where the nomineeNo == accountNo
 
                 $nominations = Nomination::where('applicationNo', $message['applicationNo'], 'and')
-                                            ->where('nomineeNo', $accountNo)->get();
+                    ->where('nomineeNo', $accountNo)->get();
 
                 $count = count($nominations);
                 if ($count > 1) {
@@ -63,7 +62,8 @@ class MessageController extends Controller
     /*
     Set the acknowledged status of a message to true
     */
-    public function acknowledgeMessage(Request $request) {
+    public function acknowledgeMessage(Request $request)
+    {
         $data = $request->all();
         $accountNo = $data['accountNo'];
         $messageId = $data['messageId'];
@@ -95,7 +95,8 @@ class MessageController extends Controller
     /*
     Notifies line manager of a new application awaiting review
     */
-    public function notifyManagerApplicationAwaitingReview(String $superiorNo, int $applicationNo) {
+    public function notifyManagerApplicationAwaitingReview(String $superiorNo, int $applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Generate content for message
@@ -117,7 +118,7 @@ class MessageController extends Controller
 
                 // Get nominee data
                 $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
-                
+
                 // Get role name
                 $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
                 array_push(
@@ -152,17 +153,18 @@ class MessageController extends Controller
     /*
     Notifies nominees that they have been nominated for a newly created application
     */
-    public function notifyNomineesApplicationCreated($applicationNo) {
+    public function notifyNomineesApplicationCreated($applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
-        
+
         // List of processed nomineeNo's
         $processed = [
             $application->accountNo // Ignore application accountNo
         ];
         $nominations = Nomination::where('applicationNo', $applicationNo)->get();
-                
+
         // Process each nomination
-        foreach($nominations as $nomination) {
+        foreach ($nominations as $nomination) {
             $nomineeNo = $nomination->nomineeNo;
 
             // Check if nomineeNo is not in processed nomineeNo's
@@ -173,7 +175,7 @@ class MessageController extends Controller
                 $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
                     ->where('nomineeNo', $nomineeNo)->get();
                 $count = count($nominationsForNominee->toArray());
-                
+
                 array_push(
                     $content,
                     "You have been nominated for {$count} roles:"
@@ -211,7 +213,8 @@ class MessageController extends Controller
     /*
     Notifies line manager of an application being cancelled
     */
-    public function notifyManagerApplicationCancelled(String $superiorNo, int $applicationNo) {
+    public function notifyManagerApplicationCancelled(String $superiorNo, int $applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Generate content for message
@@ -233,7 +236,8 @@ class MessageController extends Controller
     /*
     Notifies nominee of an application being cancelled
     */
-    public function notifyNomineeApplicationCancelled(String $nomineeNo, int $applicationNo) {
+    public function notifyNomineeApplicationCancelled(String $nomineeNo, int $applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Generate content for message
@@ -246,7 +250,7 @@ class MessageController extends Controller
             'applicationNo' => $applicationNo,
             'receiverNo' => $nomineeNo,
             'senderNo' => $application->accountNo,
-            'subject' => 'Application Cancelled',
+            'subject' => 'Nomination Cancelled',
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
@@ -256,13 +260,14 @@ class MessageController extends Controller
     Notifies nominees of nomination cancellation
         e.g. a role they were nominated for was changed to a different nominee
     */
-    public function notifyNomineeNominationCancelled(array $removedNominations, String $applicationNo) {
+    public function notifyNomineeNominationCancelled(array $removedNominations, String $applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Iterate through each key (nomineeNo), value (array of accountRoleIds)
         foreach ($removedNominations as $nomineeNo => $accountRoleIds) {
             $content = ["You have been un-nominated for the following roles:"];
-            
+
             // Iterate through accountRoleIds and get roleName and add to content list
             foreach ($accountRoleIds as $accountRoleId) {
                 // Get role name
@@ -291,53 +296,53 @@ class MessageController extends Controller
         }
     }
 
-     /*
+    /*
     Notifies nominees of edited applications that have only the period edited to become a subset
     */
-    public function notifyNomineeApplicationEditedSubsetOnly($applicationNo) {
+    public function notifyNomineeApplicationEditedSubsetOnly($applicationNo)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
 
         // Process only nominations which have been accepted
         $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
-        ->where('status', 'Y')->get();
+            ->where('status', 'Y')->get();
         $nomineesWhoAccepted = [];
-      
+
         foreach ($acceptedNominations as $nomination) {
             if (!in_array($nomination->nomineeNo, $nomineesWhoAccepted)) {
                 // add nomineeNo to array if not added
                 array_push($nomineesWhoAccepted, $nomination->nomineeNo);
 
                 $nominations = Nomination::where('applicationNo',  $applicationNo, 'and')
-                ->where('nomineeNo', $nomination->nomineeNo, 'and')
-                ->where('status', 'Y')->get();
+                    ->where('nomineeNo', $nomination->nomineeNo, 'and')
+                    ->where('status', 'Y')->get();
 
                 $content = [
                     "The applicant has edited their application's leave period to be a subset of the original leave period.",
                 ];
-        
+
                 if ($application->status == "Y") {
                     array_push($content, "You will only need to take over the following roles for the updated, shorter, duration:");
-                }
-                else {
+                } else {
                     array_push($content, "Should, the application get approved, you will only need to take over the following roles for the updated, shorter, duration:");
                 }
-        
+
                 foreach ($nominations as $nom) {
                     // Get role name
                     $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
-        
+
                     array_push(
                         $content,
                         "→{$roleName}",
                     );
                 }
-        
+
                 array_push(
                     $content,
                     "Duration: {$application['sDate']} - {$application['eDate']}"
                 );
-        
+
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
                     'receiverNo' => $nom->nomineeNo,
@@ -353,7 +358,8 @@ class MessageController extends Controller
     /*
     Notifies nominees of edited applications
     */
-    public function notifyNomineeApplicationEdited($applicationNo, $groupedNominations) {
+    public function notifyNomineeApplicationEdited($applicationNo, $groupedNominations)
+    {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Iterate through each key (nomineeNo), value (array of accountRoleIds)
@@ -363,7 +369,7 @@ class MessageController extends Controller
                 "Please accept or reject accordingly to the new details:",
                 "Nomination/s:",
             ];
-            
+
             // Iterate through accountRoleIds and get roleName and add to content list
             foreach ($accountRoleIds as $accountRoleId) {
                 // Get role name
@@ -394,9 +400,10 @@ class MessageController extends Controller
     Creates a message for the applicant of an application, indicating the
     decision on the application
     */
-    public function notifyApplicantApplicationDecision($superiorNo, $applicationNo, $accepted, $rejectReason) {
+    public function notifyApplicantApplicationDecision($superiorNo, $applicationNo, $accepted, $rejectReason)
+    {
         $application = Application::where("applicationNo", $applicationNo)->first();
-        
+
         $subject = "Application Approved";
         $content = [];
         if (!$accepted) {
@@ -409,8 +416,7 @@ class MessageController extends Controller
                 $content,
                 "→{$rejectReason}"
             );
-        }
-        else {
+        } else {
             array_push(
                 $content,
                 "Your leave request was accepted.",
@@ -418,7 +424,7 @@ class MessageController extends Controller
         }
 
         array_push(
-            $content, 
+            $content,
             "Duration: {$application->sDate} - {$application->eDate}"
         );
 
@@ -432,26 +438,55 @@ class MessageController extends Controller
         ]);
     }
 
-     /*
+    /*
     Returns all Messages
      */
     public function getAllMessages(Request $request, String $accountNo)
-    {  
+    {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        }
-        else {
-            // Verify that the account is a system admin account
-            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
-                // User is not a system admin, deny access to full table
-                return response()->json(['error' => 'User not authorized for request.'], 500);
-            }
-
+        } else {
             $messages = Message::get();
-            return response()->json($messages);  
-        }  
+            return response()->json($messages);
+        }
+    }
+
+    // get each account, call the sendMessage function for each.
+    public function sendDailyMessages()
+    {
+        $accounts = Account::get();
+        foreach ($accounts as $account) {
+            $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
+            if ($messages->count() != 0) {
+                $account->sendDailyMessageNotification($messages);
+                sleep(2); // to get around mailtrap emails per second limit
+            }
+        }
+    }
+
+
+    // demo function for manually testing daily message functionality without emailing all accounts.
+    public function demoSendDailyMessages()
+    {
+        $account1 = Account::where('accountNo', '000000a')->first();
+        $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
+        $account2 = Account::where('accountNo', '000002L')->first();
+        $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
+        $account1->sendDailyMessageNotification($messages1);
+        $account2->sendDailyMessageNotification($messages2);
+    }
+
+
+    // function used only by MessageControllerTest to test notification functionality without
+    // sending to all accounts. Do not call in any other context.
+    public function sendDailyMessagesUnitTestFunction($user)
+    {
+        $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
+        if ($messages->count() != 0) {
+            $user->sendDailyMessageNotification($messages);
+            sleep(2);
+        }
     }
 }
- 

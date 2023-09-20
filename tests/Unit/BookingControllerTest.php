@@ -11,11 +11,12 @@ use App\Http\Controllers\RoleController;
 
 class BookingControllerTest extends TestCase
 {
-    private Account $user;
+    private Account $user, $adminUser, $otherUser1, $otherUser2;
     private $otherUsers;
     private $applications;
 
-    protected function setup(): void {
+    protected function setup(): void
+    {
         parent::setup();
 
         // Create test data
@@ -52,38 +53,39 @@ class BookingControllerTest extends TestCase
 
             Nomination::factory()->create([
                 'applicationNo' => $app->applicationNo,
-                'nomineeNo'=> $this->user->accountNo,
+                'nomineeNo' => $this->user->accountNo,
                 'accountRoleId' => $accountRoles[0],
                 'status' => 'Y',
             ]);
             Nomination::factory()->create([
                 'applicationNo' => $app->applicationNo,
-                'nomineeNo'=> $this->user->accountNo,
+                'nomineeNo' => $this->user->accountNo,
                 'accountRoleId' => $accountRoles[1],
                 'status' => 'Y',
             ]);
             Nomination::factory()->create([
                 'applicationNo' => $app->applicationNo,
-                'nomineeNo'=> $this->user->accountNo,
+                'nomineeNo' => $this->user->accountNo,
                 'accountRoleId' => $accountRoles[2],
                 'status' => 'Y',
             ]);
-        } 
+        }
     }
 
-    protected function teardown(): void {      
+    protected function teardown(): void
+    {
         foreach ($this->applications as $application) {
             Nomination::where('applicationNo', $application->applicationNo)->delete();
-        }  
+        }
         foreach ($this->otherUsers as $otherUser) {
             AccountRole::where('accountNo', $otherUser->accountNo)->delete();
-        }  
+        }
         foreach ($this->applications as $application) {
             Application::where('applicationNo', $application->applicationNo)->delete();
         }
         foreach ($this->otherUsers as $otherUser) {
             Account::where('accountNo', $otherUser->accountNo)->delete();
-        }  
+        }
         AccountRole::where('accountNo', $this->user->accountNo)->delete();
 
         $this->user->delete();
@@ -99,25 +101,25 @@ class BookingControllerTest extends TestCase
 
     public function test_getBookingOptions_api_call_is_successful(): void
     {
-        $response = $this->getJson("/api/getBookingOptions/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getBookingOptions/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
     public function test_getBookingOptions_api_call_is_unsuccessful(): void
     {
         $response = $this->getJson("/api/getBookingOptions/badaccountno");
-        $response->assertStatus(500);
+        $response->assertStatus(401);
     }
 
     public function test_getBookingOptions_returned_content_is_json(): void
     {
-        $response = $this->getJson("/api/getBookingOptions/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getBookingOptions/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_getBookingOptions_returned_content_is_valid(): void
     {
-        $response = $this->getJson("/api/getBookingOptions/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getBookingOptions/{$this->user->accountNo}");
         $array = json_decode($response->content());
 
         foreach ($array as $arr) {
@@ -129,25 +131,27 @@ class BookingControllerTest extends TestCase
     }
 
 
-    public function test_getRolesFornominations_api_call_is_successful(): void {
-        $response = $this->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
+    public function test_getRolesFornominations_api_call_is_successful(): void
+    {
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
-    public function test_getRolesFornominations_api_call_is_unsuccessful(): void {
+    public function test_getRolesFornominations_api_call_is_unsuccessful(): void
+    {
         $response = $this->getJson("/api/getRolesForNominations/badaccountno");
-        $response->assertStatus(500);
+        $response->assertStatus(401);
     }
 
     public function test_getRolesFornominations_returned_content_is_json(): void
     {
-        $response = $this->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_getRolesForNominations_returned_structure_is_valid(): void
     {
-        $response = $this->get("/api/getRolesForNominations/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->get("/api/getRolesForNominations/{$this->user->accountNo}");
         $response->assertJsonStructure([
             [
                 'accountRoleId',
@@ -161,12 +165,12 @@ class BookingControllerTest extends TestCase
 
     public function test_getRolesForNominations_returned_content_is_valid(): void
     {
-        $response = $this->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getRolesForNominations/{$this->user->accountNo}");
         $result = json_decode($response->content());
 
         // Get all AccountRoles associated with the accountNo
         $accountRoles = AccountRole::where('accountNo', $this->user->accountNo)->get();
-        
+
         $accountRoleIds = array();
         $roles = array();
 
@@ -187,28 +191,30 @@ class BookingControllerTest extends TestCase
         }
     }
 
-    
 
 
-    public function test_getSubstitutionsForUser_api_call_is_successful(): void {
-        $response = $this->getJson("/api/getSubstitutionsForUser/{$this->user->accountNo}");
+
+    public function test_getSubstitutionsForUser_api_call_is_successful(): void
+    {
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getSubstitutionsForUser/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
-    public function test_getSubstitutionsForUser_api_call_is_unsuccessful(): void {
+    public function test_getSubstitutionsForUser_api_call_is_unsuccessful(): void
+    {
         $response = $this->getJson("/api/getSubstitutionsForUser/badAccountNo");
-        $response->assertStatus(500);
+        $response->assertStatus(401);
     }
 
     public function test_getSubstitutionsForUser_returned_content_is_json(): void
     {
-        $response = $this->getJson("/api/getSubstitutionsForUser/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getSubstitutionsForUser/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
-    
+
     public function test_getSubstitutionsForUser_returned_structure_is_valid(): void
     {
-        $response = $this->get("/api/getSubstitutionsForUser/{$this->user->accountNo}");
+        $response = $this->actingAs($this->adminUser)->get("/api/getSubstitutionsForUser/{$this->user->accountNo}");
         $response->assertJsonStructure([
             [
                 'sDate',

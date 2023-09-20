@@ -26,9 +26,13 @@ class ManagerControllerTest extends TestCase
 
 
     protected function setup(): void {
+    protected function setup(): void
+    {
         parent::setup();
 
-        $this->lineManager = Account::factory()->create();
+        $this->lineManager = Account::factory()->create([
+            'accountType' => "lmanager"
+        ]);
 
         $this->staff = Account::factory()->create([
             'superiorNo' => $this->lineManager->accountNo,
@@ -66,7 +70,7 @@ class ManagerControllerTest extends TestCase
 
         $firstApp = $this->applications[0];
         $this->nominations = array();
-        
+
         // set nominations for first application
         array_push($this->nominations, Nomination::factory()->create([
             'applicationNo' => $firstApp->applicationNo,
@@ -80,10 +84,10 @@ class ManagerControllerTest extends TestCase
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[2]
         ]));
-
     }
 
-    protected function teardown(): void {
+    protected function teardown(): void
+    {
         $arr = Application::where('accountNo', $this->staff->accountNo)->get();
         foreach ($arr as $a) {
             Nomination::where('applicationNo', $a->applicationNo)->delete();
@@ -107,7 +111,7 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_manager_applications_successful(): void
     {
         // Check for valid response
-        $response = $this->getJson("/api/managerApplications/{$this->lineManager->accountNo}");
+        $response = $this->actingAs($this->lineManager)->getJson("/api/managerApplications/{$this->lineManager->accountNo}");
         $response->assertStatus(200);
     }
 
@@ -115,20 +119,20 @@ class ManagerControllerTest extends TestCase
     {
         // Check for invalid response
         $response = $this->getJson('/api/applications/asfasfasfasf');
-        $response->assertStatus(500);
+        $response->assertStatus(401);
     }
 
     public function test_api_request_for_manager_applications_content_is_json(): void
     {
         // Check if response is json
-        $response = $this->getJson("/api/managerApplications/{$this->lineManager->accountNo}");
+        $response = $this->actingAs($this->lineManager)->getJson("/api/managerApplications/{$this->lineManager->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_managerApplications_applications_content_is_valid(): void
     {
         // Check if correct structure
-        $response = $this->get("/api/managerApplications/{$this->lineManager->accountNo}");
+        $response = $this->actingAs($this->lineManager)->get("/api/managerApplications/{$this->lineManager->accountNo}");
         $response->assertJsonStructure([
             0 => [
                 'applicationNo',
@@ -155,9 +159,9 @@ class ManagerControllerTest extends TestCase
     {
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => $this->lineManager->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
         ]);
@@ -167,9 +171,9 @@ class ManagerControllerTest extends TestCase
     {
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => 'asdadsdasads',
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
         ]);
@@ -178,7 +182,7 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_accepted_applications_unsuccessful_no_application(): void
     {
         // Check for valid response
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => $this->staff->accountNo,
             'applicationNo' => 'asfsadfafsd',
             'sDate' => '2030-08-06 20:00:00',
@@ -191,9 +195,9 @@ class ManagerControllerTest extends TestCase
     {        
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => $this->staff->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
         ]);
@@ -203,9 +207,9 @@ class ManagerControllerTest extends TestCase
     {
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/rejectApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/rejectApplication", [
             'accountNo' => $this->lineManager->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
             'rejectReason' => 'No more leaves'
@@ -216,9 +220,9 @@ class ManagerControllerTest extends TestCase
     {
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/rejectApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/rejectApplication", [
             'accountNo' => 'asdadsdasads',
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
             'rejectReason' => 'No more leaves'
@@ -228,7 +232,7 @@ class ManagerControllerTest extends TestCase
     public function test_api_request_for_reject_applications_unsuccessful_no_application(): void
     {
         // Check for valid response
-        $response = $this->postJson("/api/rejectApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/rejectApplication", [
             'accountNo' => $this->lineManager->accountNo,
             'applicationNo' => 'asfsadfafsd',
             'sDate' => '2030-08-06 20:00:00',
@@ -241,9 +245,9 @@ class ManagerControllerTest extends TestCase
     {
         $app = $this->applications[0];
         // Check for valid response
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => $this->staff->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'processedBy' => 'adadsasddas',
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
@@ -251,11 +255,12 @@ class ManagerControllerTest extends TestCase
         $response->assertStatus(500);
     }
 
-    public function test_api_request_for_acceptedApplication_status_correctly(): void {
+    public function test_api_request_for_acceptedApplication_status_correctly(): void
+    {
         $app = $this->applications[0];
-        $response = $this->postJson("/api/acceptApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
             'accountNo' => $this->lineManager->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
         ]);
@@ -264,11 +269,12 @@ class ManagerControllerTest extends TestCase
         $updatedApp = Application::where('applicationNo', $app->applicationNo)->first();
         $this->assertTrue($updatedApp['status'] == 'Y');
     }
-    public function test_api_request_for_rejected_status_correctly(): void {
+    public function test_api_request_for_rejected_status_correctly(): void
+    {
         $app = $this->applications[1];
-        $response = $this->postJson("/api/rejectApplication", [
+        $response = $this->actingAs($this->lineManager)->postJson("/api/rejectApplication", [
             'accountNo' => $this->lineManager->accountNo,
-            'applicationNo' =>$app->applicationNo,
+            'applicationNo' => $app->applicationNo,
             'sDate' => '2030-08-06 20:00:00',
             'eDate' => '2030-08-08 20:00:00',
             'rejectReason' => 'No more leaves.',
@@ -446,5 +452,4 @@ class ManagerControllerTest extends TestCase
         ]);
         $response->assertStatus(200);
     }
-
 }

@@ -11,9 +11,9 @@ class AccountRoleControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
 
-    protected function setup(): void {
+    protected function setup(): void
+    {
         parent::setup();
-
         $this->adminUser = Account::factory()->create([
             'accountType' => "sysadmin"
         ]);
@@ -27,7 +27,8 @@ class AccountRoleControllerTest extends TestCase
         ]);
     }
 
-    protected function teardown(): void {
+    protected function teardown(): void
+    {
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
@@ -41,27 +42,30 @@ class AccountRoleControllerTest extends TestCase
      */
     public function test_api_request_for_all_AccountRoles(): void
     {
-        $response = $this->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        // Acting as Admin
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->getJson("/api/allAccountRoles/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        // Acting as staff, assert forbidden
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allAccountRoles/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->getJson("/api/allAccountRoles/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        // Acting as line manager, assert forbidden
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allAccountRoles/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
     }
 
     public function test_api_request_for_AccountRoles_content_is_json(): void
     {
-        // Check if response is json
-        $response = $this->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        // Act as Admin
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
     public function test_api_request_for_AccountRoles_content_is_valid(): void
     {
-        // Check if correct structure
-        $response = $this->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
+        // Check if correct structure, acting as admin
+        $response = $this->actingAs($this->adminUser)->getJson("/api/allAccountRoles/{$this->adminUser['accountNo']}");
         $response->assertJsonStructure([
             0 => [
                 'accountRoleId',

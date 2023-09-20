@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\ResetPassword;
 use Illuminate\Notifications\Notification;
+use App\Notifications\NewMessages;
 
 
 
@@ -60,6 +61,11 @@ class Account extends Authenticatable
         $this->notify(new ResetPassword($token));
     }
 
+    public function sendDailyMessageNotification($messages)
+    {
+        $this->notify(new NewMessages($messages, $this->isManager()));
+    }
+
     public function routeNotificationFor($driver, $notification = null)
     {
         // $email = $this->accountNo . '@curtin.edu.au';
@@ -69,7 +75,16 @@ class Account extends Authenticatable
 
     public function getName()
     {
-        $name = $this->fName . $this->lName;
+        $name = $this->fName . " " . $this->lName;
         return $name;
+    }
+
+    public function isManager()
+    {
+        $isManager = true;
+        if ($this->accountType == "staff") {
+            $isManager = false;
+        }
+        return $isManager;
     }
 }

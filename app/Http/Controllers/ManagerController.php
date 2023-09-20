@@ -17,7 +17,8 @@ use Illuminate\Http\Request;
 
 class ManagerController extends Controller
 {
-    private function isSelfNominatedAll($nominations, $accountNo) {
+    private function isSelfNominatedAll($nominations, $accountNo)
+    {
         foreach ($nominations as $nomination) {
             if ($nomination['nomineeNo'] != $accountNo) {
                 return false;
@@ -186,9 +187,10 @@ class ManagerController extends Controller
     /**
      * Get all staff members under a particular line manger
      */
-    public function getStaffMembers(Request $request, String $superiorNo){
+    public function getStaffMembers(Request $request, String $superiorNo)
+    {
         $staffMembers = Account::orderBy('fName')->where('superiorNo', $superiorNo)->get();
-        foreach($staffMembers as $staffMember){
+        foreach ($staffMembers as $staffMember) {
             $staffMember['pending'] = 'No'; //initialise to random letter
             $applications = Application::where('status', 'U', "and")
             ->where('accountNo', $staffMember['accountNo'])->get();
@@ -226,13 +228,13 @@ class ManagerController extends Controller
     */
     public function getManagerApplications(Request $request, String $accountNo)
     {
-        $managerApplications=array();
+        $managerApplications = array();
         //Check if there is any applications for the line manager
         $applications = [];
         $users = Account::where('superiorNo', $accountNo)->get();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $userApps = Application::where('accountNo', $user->accountNo)->get();
-            foreach($userApps as $app){
+            foreach ($userApps as $app) {
                 array_push($applications, $app);
             }
         }
@@ -248,11 +250,10 @@ class ManagerController extends Controller
                 // check if is self nominated for all
                 if ($this->isSelfNominatedAll($nominations, $accountNo)) {
                     $application['isSelfNominatedAll'] = true;
-                }
-                else {
+                } else {
                     $application["nominations"] = $nominations;
                 }
-                array_push($managerApplications,$application);
+                array_push($managerApplications, $application);
             }
         }
         return response()->json($managerApplications);

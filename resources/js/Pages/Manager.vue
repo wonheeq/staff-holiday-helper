@@ -2,6 +2,7 @@
 import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AppRequestSubpage from '@/Components/Manager/AppRequestSubpage.vue';
 import ManageStaffSubpage from '@/Components/Manager/ManageStaffSubpage.vue';
 import { ref } from 'vue';

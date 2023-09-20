@@ -50,6 +50,7 @@ function goToLogin() {
 // Show Unit Lookup Window
 function goToLookup() {
     showLogin.value = false;
+    showResult.value = false;
     showLookup.value = true;
 }
 
@@ -60,6 +61,8 @@ function goToResults(response) {
     showLookup.value = false;
     showResult.value = true;
 }
+
+
 
 </script>
 
