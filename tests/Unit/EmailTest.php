@@ -73,7 +73,7 @@ class EmailTest extends TestCase
     {
         $dynamicData = [
             'name' => 'Peter',
-            'token' => 'www.google.com'
+            'url' => 'www.google.com'
         ];
         $mailable = new MJML("Password Reset", "email/passwordResetLink", $dynamicData);
         Mail::fake(); //a method that sends the email without actually sending it
