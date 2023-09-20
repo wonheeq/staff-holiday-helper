@@ -6,7 +6,8 @@ import { usePage } from '@inertiajs/vue3'
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const page = usePage();
-const user = computed(() => page.props.auth.user);import { storeToRefs } from 'pinia';
+const user = computed(() => page.props.auth.user);
+import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
