@@ -1,35 +1,30 @@
 <script setup>
-import EditRolesButton from './EditRolesButton.vue';
 let props = defineProps({ source: Object });
 let emit = defineEmits(['editRoles']);
-
-function handleEditRoles() {
-    emit('editRoles');
-    
-}
 </script>
 <template>
-    <div class="grid grid-cols-6 bg-white mr-4 gap-x-2 mx-6"> 
+    <div class="grid grid-cols-6 bg-white mr-4 mx-6" style="grid-auto-columns: min-content;"> 
         <div>
-            <p style="font-size: 25px;">{{ source.fName }} {{ source.lName }} </p>
+            <p class="staff-text">{{ source.fName }} {{ source.lName }} </p>
+        </div>
+        <div class="shrink-1">
+            <p class="staff-text">{{ source.accountNo }} </p>
         </div>
         <div>
-            <p style="font-size: 25px; padding-left: 5px;">{{ source.accountNo }} </p>
+            <p class="staff-text">{{ source.accountNo }}<br>@curtin.edu.au</p>
         </div>
         <div>
-            <p style="font-size: 25px; padding-left: 10px;">{{ source.accountNo }}@curtin.edu.au</p>
+            <p class="staff-text">{{ source.onLeave }} </p>
         </div>
         <div>
-            <p style="font-size: 25px; padding-left: 20px;">Yes</p>
+            <p class="staff-text">{{ source.pending }}</p>
         </div>
-        <div>
-            <p style="font-size: 25px; padding-left: 25px;">{{ source.pending }}</p>
-        </div>
-        <div class="pl-2">
-            <EditRolesButton
-                :fName="source.fName"
-                @editRoles="handleEditRoles()"
-            />
+        <div class="laptop:pl-5 1080:text-pl-5 1440:pl-5 4k:pl-5">
+            <div >
+                <button @click="emit('editRoles', source.accountNo)" class="roles_button">
+                    <span class="button-text">View/Edit Roles</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -40,7 +35,7 @@ function handleEditRoles() {
   align-items: center; 
   background-color: #ccc; 
   border: none;
-  padding: 12px 50px;
+  padding: 2px 29px;
   border-radius: 4px; 
   cursor: pointer;
   transition: background-color 0.2s;
@@ -51,6 +46,67 @@ function handleEditRoles() {
 .button-text {
     font-weight: bold;
     color: black; 
-    font-size: 20px; 
+    font-size: 15px; 
   }
+
+  /* 1080p */
+@media 
+(min-width: 1920px) {
+    .roles_button {
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+        background-color: #ccc; 
+        border: none;
+        padding: 12px 50px;
+        border-radius: 4px; 
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .button-text {
+        font-weight: bold;
+        color: black; 
+        font-size: 20px; 
+      }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .roles_button {
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+        background-color: #ccc; 
+        border: none;
+        padding: 12px 50px;
+        border-radius: 4px; 
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .button-text {
+        font-weight: bold;
+        color: black; 
+        font-size: 20px; 
+      }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .roles_button {
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+        background-color: #ccc; 
+        border: none;
+        padding: 12px 50px;
+        border-radius: 4px; 
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .button-text {
+        font-weight: bold;
+        color: black; 
+        font-size: 20px; 
+      }
+}
 </style>
