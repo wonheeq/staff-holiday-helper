@@ -8,6 +8,8 @@ use App\Models\AccountRole;
 use App\Models\Nomination;
 use App\Models\Application;
 use App\Http\Controllers\RoleController;
+use DateTime;
+use DateTimeZone;
 
 class BookingControllerTest extends TestCase
 {
@@ -69,7 +71,38 @@ class BookingControllerTest extends TestCase
                 'accountRoleId' => $accountRoles[2],
                 'status' => 'Y',
             ]);
-        }
+        } 
+
+        // create application that is old
+        $selectedUser = $this->otherUsers[0];
+        $accountRoles = AccountRole::where('accountNo', $selectedUser->accountNo)->get();
+
+        $app = Application::factory()->create([
+            'accountNo' => $selectedUser->accountNo,
+            'sDate' => '2023-05-05 12:00:00',
+            'eDate' => '2023-05-06 12:00:00',
+            'status' => 'Y'
+        ]);
+        array_push($this->applications, $app);
+
+        Nomination::factory()->create([
+            'applicationNo' => $app->applicationNo,
+            'nomineeNo'=> $this->user->accountNo,
+            'accountRoleId' => $accountRoles[0],
+            'status' => 'Y',
+        ]);
+        Nomination::factory()->create([
+            'applicationNo' => $app->applicationNo,
+            'nomineeNo'=> $this->user->accountNo,
+            'accountRoleId' => $accountRoles[1],
+            'status' => 'Y',
+        ]);
+        Nomination::factory()->create([
+            'applicationNo' => $app->applicationNo,
+            'nomineeNo'=> $this->user->accountNo,
+            'accountRoleId' => $accountRoles[2],
+            'status' => 'Y',
+        ]);
     }
 
     protected function teardown(): void
@@ -219,9 +252,23 @@ class BookingControllerTest extends TestCase
             [
                 'sDate',
                 'eDate',
-                'task',
+                'tasks',
                 'applicantName',
             ],
         ]);
+    }
+
+    public function test_getSubstitutionsForUser_api_call_does_not_return_old_substitutions(): void {
+        $response = $this->actingAs($this->user)->getJson("/api/getSubstitutionsForUser/{$this->user->accountNo}");
+        $arr = json_decode($response->content(), true);
+
+        $this->assertTrue(count($arr) == count($this->applications) - 1);
+
+        foreach ($arr as $a) {
+            $nowTime = new DateTime();
+            $nowTime->setTimezone(new DateTimeZone("Australia/Perth"));
+            $endTime = new DateTime($a['eDate']);
+            $this->assertTrue($endTime >= $nowTime);
+        }
     }
 }

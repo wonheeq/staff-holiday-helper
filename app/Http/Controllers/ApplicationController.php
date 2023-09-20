@@ -7,7 +7,10 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
 use App\Models\Message;
-use \DateTime;
+use DateTime;
+use DateTimeZone;
+use Illuminate\Support\Facades\Log;
+
 class ApplicationController extends Controller
 {
     /*
@@ -86,7 +89,8 @@ class ApplicationController extends Controller
 
         $startDate = new DateTime($data['sDate']);
         $endDate = new DateTime($data['eDate']);
-        $currentdate = new DateTime();
+        $currentDate = new DateTime();
+        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
 
         // End date is earlier or equal to start date
         if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {
@@ -94,10 +98,8 @@ class ApplicationController extends Controller
         }
 
         // A date is in the past
-        if (
-            $startDate->getTimestamp() - $currentdate->getTimestamp() <= 0
-            || $endDate->getTimestamp() - $currentdate->getTimestamp() <= 0
-        ) {
+        if ($startDate->getTimestamp() - $currentDate->getTimestamp() <= 0
+            || $endDate->getTimestamp() - $currentDate->getTimestamp() <= 0 ) {
             return false;
         }
 
@@ -188,7 +190,7 @@ class ApplicationController extends Controller
                 $status = 'Y';
             }
 
-            Nomination::create([
+            $newNom = Nomination::create([
                 'applicationNo' => $application->applicationNo,
                 'nomineeNo' => $nomination['nomineeNo'],
                 'accountRoleId' => $nomination['accountRoleId'],
@@ -207,7 +209,22 @@ class ApplicationController extends Controller
         // Not all nominations were self-nominations, group together roles and inform all nominees
         app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
 
-        response()->json(['success' => 'success'], 200);
+
+        $result = Application::where('applicationNo', $application->applicationNo)->get();
+        
+        foreach ($result as $val) {
+            // get nominations for application and insert
+            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
+            
+            // check if is self nominated for all
+            if ($this->isSelfNominatedAll($nominations, $data['accountNo'])) {
+                $val['isSelfNominatedAll'] = true;
+            }
+            else {
+                $val["nominations"] = $nominations;
+            }
+        }
+        return response()->json($result[0]);
     }
 
     /*

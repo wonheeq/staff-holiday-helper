@@ -3,6 +3,15 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useMessageStore } from "@/stores/MessageStore";
+const messageStore = useMessageStore();
+const { fetchMessages } = messageStore;
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({
@@ -58,6 +67,9 @@ function handleAcceptAll() {
                 // Set acknowledged status of message to true and update updated_at date
                 props.source.acknowledged = 1;
                 props.source.updated_at = new Date();
+
+                // Call getMessages to update inbox 
+                fetchMessages(user.value.accountNo);
             }
         }).catch(err => {
         console.log(err);
@@ -110,20 +122,12 @@ function handleReject() {
     });
 }
 
-const textSizeClass = "text-xs laptop:text-sm 1440:text-lg";
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+const textSizeClass = "text-xs laptop:text-sm 1440:text-lg 4k:text-2xl";
 </script>
 
 <template>
-<div class="flex flex-col justify-evenly border-l-4 border-white">
-    <div v-if="isMobile()" class="pl-2 h-full">
+<div class="flex flex-col justify-evenly border-l-4" :class="isDark?'border-gray-800':'border-white'">
+    <div v-if="isMobile" class="pl-2 h-full">
         <!--Substitution Request - Not Acknowledged Options-->
         <div v-if="props.source.subject=='Substitution Request' && props.source.acknowledged == 0" class="h-full">
             <!--Substitution Request for a single nomination-->
@@ -169,7 +173,9 @@ function isMobile() {
             <button class="flex flex-col items-center"
                 @click="handleReviewApplication()"
             >
-                <img src="/images/review-app.svg" class="w-full"/>
+                <img src="/images/review-app.svg" class="w-full"
+                    :class="isDark?'darkModeImage':''"
+                />
                 <p :class="textSizeClass">Review</p>
             </button>
         </div>
@@ -248,7 +254,9 @@ function isMobile() {
                 <button class="flex flex-col items-center"
                     @click="handleReviewApplication()"
                 >
-                    <img src="/images/review-app.svg"/>
+                    <img src="/images/review-app.svg" 
+                    :class="isDark?'darkModeImage':''"
+                />
                     <p :class="textSizeClass">Review</p>
                 </button>
             </div>
@@ -268,10 +276,15 @@ function isMobile() {
         </div>
         <!--Any message, message is acknowledged-->
         <div v-show="props.source.acknowledged == 1" :class="element_class">
-            <div class="flex flex-col justify-center ">
+            <div class="flex flex-col justify-center " :class="textSizeClass">
                 Acknowledged at {{ new Date(props.source.updated_at).toLocaleString() }}
             </div>
         </div>
     </div>
 </div>
 </template>
+<style>
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
+</style>

@@ -9,5 +9,5 @@ class School extends Model
 {
     //use HasFactory;
     protected $primaryKey = 'schoolId';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'schoolId'];
 }

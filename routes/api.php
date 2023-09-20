@@ -17,6 +17,8 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\ForeignKeyController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\AdminController;
+
 
 
 /*
@@ -50,6 +52,8 @@ Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
     Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
     Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']); 
     Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
+    Route::post('createSystemNotification', [MessageController::class, 'createSystemNotification']);
+    Route::post('setReminderTimeframe', [AdminController::class, 'setReminderTimeframe']);
 });
 
 
@@ -96,8 +100,8 @@ Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNomi
     Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
 
     Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
+    Route::get('getReminderTimeframe/{accountNo}', [AdminController::class, 'getReminderTimeframe']);
 });
 
 
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);
-

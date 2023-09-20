@@ -4,7 +4,11 @@ import ApplicationNominationData from './ApplicationNominationData.vue';
 import { ref, computed } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { usePage } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({ source: Object });
@@ -69,17 +73,9 @@ async function handleCancelApplication() {
 function handleEditApplication() {
     emit('editApplication');
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
-    <div v-if="isMobile()" class="flex flex-col">
+    <div v-if="isMobile" class="flex flex-col">
         <div class="flex flex-col bg-gray-200 p-2">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">

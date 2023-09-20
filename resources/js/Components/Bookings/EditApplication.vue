@@ -11,6 +11,9 @@ import { useApplicationStore } from '@/stores/ApplicationStore';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useCalendarStore } from '@/stores/CalendarStore';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
@@ -152,20 +155,12 @@ function handleEditApplication(data) {
         });
     }
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
 <Modal>
-    <div class="flex flex-col bg-transparent w-screen px-2 mt-2 mb-2">
-        <div v-if="isMobile()" class="w-full bg-white p-2 rounded-md">
-            <div class="h-[4%] flex justify-between">
+    <div class="flex flex-col laptop:flex-row bg-transparent w-screen px-2 mt-2 mb-2 laptop:px-4 laptop:mt-auto laptop:mb-4">
+        <div v-if="isMobile" class="w-full bg-white p-2 rounded-md">
+            <div class="h-[4%] flex justify-between w-full">
                 <p class="text-xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
                 </p>
@@ -187,7 +182,7 @@ function isMobile() {
             <div class="h-2">
             </div>
         </div>
-        <div v-else class="w-5/6 flex flex-col p-4 mr-4 subpage-height rounded-tl-md" :class="subpageClass">
+        <div v-else class="laptop:w-[80%] flex flex-col p-4 laptop:mr-4 subpage-height rounded-tl-md" :class="subpageClass">
             <div class="h-[8%] flex justify-between">
                 <p class="text-5xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
@@ -209,7 +204,7 @@ function isMobile() {
                 />
             </div>
         </div>
-        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-1/6 flex flex-col laptop:h-full" :disableEnlarge="true"/>
+        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-[20%] flex flex-col" :disableEnlarge="true"/>
     </div>
 </Modal>
 </template>

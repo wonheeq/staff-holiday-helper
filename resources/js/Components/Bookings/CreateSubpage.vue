@@ -1,11 +1,23 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
 import { storeToRefs } from 'pinia';
-import { useNominationStore } from '@/stores/NominationStore';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+import { useNominationStore } from '@/stores/NominationStore'; 
 import Swal from 'sweetalert2';
+import { useCalendarStore } from '@/stores/CalendarStore';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const calendarStore = useCalendarStore();
+const { fetchCalendarData } = calendarStore;
+const applicationStore = useApplicationStore();
+const { addNewApplication } = applicationStore;
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
@@ -104,6 +116,9 @@ function createApplication(data) {
         axios.post('/api/createApplication', data)
             .then(res => {
                 if (res.status == 200) {
+                    let newApp = res.data;
+                    addNewApplication(newApp);
+                    fetchCalendarData(user.value.accountNo);
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully created application.'
@@ -121,19 +136,10 @@ function createApplication(data) {
         });
     }
 }
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 <template>
     <div>
-        <div v-if="isMobile()" class="w-full">
+        <div v-if="isMobile" class="w-full">
             <div class="w-full bg-white rounded-b-md p-2">
                 <p class="text-xl font-bold">
                     Create New Leave Application:
@@ -167,7 +173,7 @@ function isMobile() {
             </div>
             <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
         </div>
-        <div v-if="isMobile()" class="h-2">
+        <div v-if="isMobile" class="h-2">
         </div>
     </div>
     

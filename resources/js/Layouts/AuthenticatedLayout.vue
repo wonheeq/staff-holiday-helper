@@ -1,25 +1,20 @@
 <script setup>
 import Navbar from "@/Components/Navbar.vue";
-import SettingsModal from "@/Components/SettingsModal.vue";
-import axios from "axios";
+import SettingsModal from "@/Components/Settings/SettingsModal.vue";
+import SweetalertEmpty from "./SweetalertEmpty.vue";
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 
 let settingsVisible = ref(false);
-
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 </script>
 
 <template>
+    <SweetalertEmpty/>
     <div class="w-full h-[100vh]">
-        <div v-if="isMobile()">
+        <div v-if="isMobile">
             <div class="margin-fix-mobile"></div>
             <Navbar
             class="h-[7vh] mx-2"

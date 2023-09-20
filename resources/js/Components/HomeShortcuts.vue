@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 import { inject } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const dayJS = inject("dayJS");
 let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
@@ -38,6 +40,7 @@ function formatDate(date) {
                     <input @click="copyEmail"
                         type="image"
                         class="h-5 1440:h-8 4k:h-14 align-middle"
+                        :class="isDark?'darkModeEmail':''"
                         src="/images/mail.svg"
                         title="Copy Email Address to Clipboard"
                         v-title
@@ -45,11 +48,13 @@ function formatDate(date) {
                 </p>
             </div>
         </div>
-        <div class="grid grid-cols-3 bg-white rounded-md p-2 laptop:p-4 1440:p-6 laptop:w-4/5 mt-1 laptop:mt-2 h-full drop-shadow-md">
+        <div class="grid grid-cols-3 rounded-md p-2 laptop:p-4 1440:p-6 laptop:w-4/5 mt-1 laptop:mt-2 h-full drop-shadow-md text-black"
+            :class="isDark ? 'bg-gray-800': 'bg-white'"
+        >
             <Shortcut class="bg-green-200" href="/bookings/apps">
                 Your Leave Applications
                 <template #content>
-                    <ul class="text-left text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                    <ul class="text-left text-xs 1080:text-base 1440:text-lg 4k:text-4xl text-black">
                         <li>{{ applications.filter(app => app.status == 'Y').length }} Approved</li>
                         <li>{{ applications.filter(app => app.status == 'U').length }} Undecided</li>
                         <li>{{ applications.filter(app => app.status == 'P').length }} Pending</li>
@@ -62,7 +67,7 @@ function formatDate(date) {
             </Shortcut>
             <Shortcut class="bg-orange-200" href="/bookings/create">
                 <template #content>
-                    <p class="laptop:mt-4 text-sm 1080:text-xl 1440:text-2xl 4k:text-4xl font-bold">Create New Leave Application</p>
+                    <p class="laptop:mt-4 text-sm 1080:text-xl 1440:text-2xl 4k:text-4xl font-bold text-black">Create New Leave Application</p>
                 </template>
                 <template #strip>
                     <div class="h-2 1440:h-3 mt-auto mb-6 1440:mb-12 bg-orange-400"></div>
@@ -86,3 +91,8 @@ function formatDate(date) {
         </div>
     </div>
 </template>
+<style>
+.darkModeEmail {
+    filter: invert(0%) sepia(0%) saturate(100%) hue-rotate(0deg) brightness(200%) contrast(60%);
+}
+</style>

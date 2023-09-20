@@ -1,14 +1,23 @@
 <script setup>
 import NavLink from '@/Components/NavLink.vue';
 import NavOption from './NavOption.vue';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3'
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const page = usePage();
+const user = computed(() => page.props.auth.user);import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
     left: [
-        { source: "/images/home.svg", caption: "Home" },
-        { source: "/images/booking.svg", caption: "Bookings" },
-        { source: "/images/manager.svg", caption: "Manager" },
-        { source: "/images/admin.svg", caption: "Admin" },
+        { source: "/images/home.svg", caption: "Home", minPerm: "staff" },
+        { source: "/images/booking.svg", caption: "Bookings", minPerm: "staff" },
+        { source: "/images/manager.svg", caption: "Manager", minPerm: "lmanager" },
+        { source: "/images/admin.svg", caption: "Admin", minPerm: "sysadmin" },
     ],
     right: [
         { source: "/images/account.svg", caption: "Settings", noLink: () => {
@@ -34,25 +43,31 @@ async function handleLogout() {
         }
     )
 }
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
+
+function shouldDisplayOption(minPerm) {
+    if (user.value.accountType == minPerm) {
         return true;
     }
-    else {
-        return false;
+    else if (user.value.accountType == "lmanager" && user.value.accountType == "staff") {
+        return true;
     }
+    else if (user.value.accountType == "sysadmin") {
+        return true;
+    }
+    return false;
 }
-</script>
 
+
+</script>
 <template>
-    <div class="flex flex-row justify-between border-2 rounded-md bg-white drop-shadow-md">
+    <div class="flex flex-row justify-between border-2 rounded-md drop-shadow-md" :class="isDark?'bg-gray-800 border-gray-700':'bg-white'">
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
-            <img src="/images/logo.svg" class="logo mr-2"/>
-            <div v-if="!isMobile()" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
+            <img src="/images/logo.svg" class="logo mr-2" :class="isDark ? 'darkModeImage':''"/>
+            <div v-if="!isMobile" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
-                    <NavLink :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
-                        <img :src="option.source"/>
+                    <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
+                        <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
                         <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                     </NavLink>
                 </div>
@@ -61,14 +76,14 @@ function isMobile() {
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
                 <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
-                    <img :src="option.source"/>
-                    <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
+                    <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
+                    {{ option.caption }}
                 </NavLink>
                 <NavOption v-if="option.noLink"
                     class="flex flex-col justify-center items-center"
                     @click="option.noLink()"
                 >
-                    <img :src="option.source"/>
+                    <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
                     <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                 </NavOption>
             </div>
@@ -80,6 +95,9 @@ function isMobile() {
 img{
     height: 16px;
     width: 16px;
+}
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
 }
 .logo{
     height: 30px;

@@ -6,6 +6,11 @@ import { useScreens, useResizeObserver } from 'vue-screen-utils';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3'
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
@@ -29,23 +34,15 @@ const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
 
 onMounted(() => {
     fetchCalendarData(user.value.accountNo);
-})
-
-function isMobile() {
-    if( screen.availWidth <= 760 ) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+});
 </script>
 <template>
-    <div ref="divRef" class="bg-white rounded-md flex flex-col">
+    <div ref="divRef" class="rounded-md flex flex-col" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="flex mx-4 mt-2 1440:mt-4 items-center">
             <button class="absolute">
                 <img src="/images/fullscreen-exit.svg"
                     class="enlarge"
+                    :class="isDark?'darkModeImage':''"
                     @click="emit('shrink-calendar')"
                 />
             </button>
@@ -54,6 +51,7 @@ function isMobile() {
             </p>
         </div>
         <Calendar
+            :is-dark="isDark"
             :rows="rows"
             :columns="columns"
             borderless
@@ -63,7 +61,7 @@ function isMobile() {
         >
         </Calendar>
         <div class="absolute flex items-center bottom-2 1440:bottom-4 px-4 space-x-4">
-            <div v-if="isMobile()">
+            <div v-if="isMobile">
                 <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
                 <div class="grid grid-cols-2">
                     <div>
@@ -123,6 +121,9 @@ function isMobile() {
     display: inline-block;
 }
 
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 .enlarge {
     height: 30px;
     width: auto;
