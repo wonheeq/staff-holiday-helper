@@ -1,5 +1,4 @@
 <script setup>
-import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import PageLayout from "@/Layouts/PageLayout.vue";
