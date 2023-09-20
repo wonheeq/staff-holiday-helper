@@ -29,7 +29,7 @@ class AdminControllerTest extends TestCase
 
         $this->admin = Account::factory()->create([
             'schoolId' => $this->school->schoolId,
-            'accountType' => 'sysAdmin'
+            'accountType' => 'sysadmin'
         ]);
 
         $this->nonAdmin = Account::factory()->create([
@@ -71,7 +71,7 @@ class AdminControllerTest extends TestCase
             'accountNo' => $this->nonAdmin->accountNo,
             'timeframe' => '1 day'
         ]);
-        $response->assertStatus(500); // change to 401 after merge
+        $response->assertStatus(403);
     }
 
     public function test_setReminderTimeframe_is_unsuccessful_invalid_timeframe(): void {

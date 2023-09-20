@@ -247,7 +247,7 @@ class NominationControllerTest extends TestCase
     public function test_acceptNominations_changes_application_status_to_undecided_if_all_nominations_accepted(): void {
         $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'P');
         
-        $response = $this->postJson('/api/acceptNominations', [
+        $response = $this->actingAs($this->adminUser)->postJson('/api/acceptNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => $this->user->accountNo,
             'applicationNo' => $this->message->applicationNo,
@@ -259,7 +259,7 @@ class NominationControllerTest extends TestCase
     }
 
     public function test_acceptNominations_api_call_is_unsuccessful_accountNo_does_not_exist(): void {
-        $response = $this->postJson('/api/acceptNominations', [
+        $response = $this->actingAs($this->adminUser)->postJson('/api/acceptNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => 'asadfadf',
             'applicationNo' => $this->message->applicationNo,
@@ -319,7 +319,7 @@ class NominationControllerTest extends TestCase
     }
 
     public function test_rejectNominations_creates_message_for_applicant(): void {
-        $response = $this->postJson('/api/rejectNominations', [
+        $response = $this->actingAs($this->adminUser)->postJson('/api/rejectNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => $this->user->accountNo,
             'applicationNo' => $this->message->applicationNo,
@@ -333,7 +333,7 @@ class NominationControllerTest extends TestCase
     }
 
     public function test_rejectNominations_api_call_is_unsuccessful_accountNo_does_not_exist(): void {
-        $response = $this->postJson('/api/rejectNominations', [
+        $response = $this->actingAs($this->adminUser)->postJson('/api/rejectNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => 'asadfadf',
             'applicationNo' => $this->message->applicationNo,
@@ -421,7 +421,7 @@ class NominationControllerTest extends TestCase
             ]);
         }
 
-        $response = $this->postJson('/api/acceptSomeNominations', [
+        $response = $this->actingAs($this->user)->postJson('/api/acceptSomeNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => $this->user->accountNo,
             'applicationNo' => $this->message->applicationNo,
@@ -445,7 +445,7 @@ class NominationControllerTest extends TestCase
             ]);
         }
 
-        $response = $this->postJson('/api/acceptSomeNominations', [
+        $response = $this->actingAs($this->user)->postJson('/api/acceptSomeNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => $this->user->accountNo,
             'applicationNo' => $this->message->applicationNo,

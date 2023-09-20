@@ -227,7 +227,7 @@ class MessageController extends Controller
             'applicationNo' => $applicationNo,
             'receiverNo' => $superiorNo,
             'senderNo' => $application->accountNo,
-            'subject' => 'Application Cancelled',
+            'subject' => "Application Cancelled",
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
@@ -250,7 +250,7 @@ class MessageController extends Controller
             'applicationNo' => $applicationNo,
             'receiverNo' => $nomineeNo,
             'senderNo' => $application->accountNo,
-            'subject' => 'Nomination Cancelled',
+            'subject' => "Nomination Cancelled",
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);

@@ -137,6 +137,7 @@ class DatabaseSeeder extends Seeder
         Application::factory()->create([
             'accountNo' => $test_id,
             'status' => 'Y',
+            'processedBy' => '000002L'
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,

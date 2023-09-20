@@ -10,6 +10,7 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Role;
 use App\Models\Message;
+use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationControllerTest extends TestCase
@@ -174,11 +175,11 @@ class ApplicationControllerTest extends TestCase
         $response = $this->actingAs($this->adminUser)->getJson("/api/allApplications/{$this->adminUser['accountNo']}");
         $response->assertStatus(200);
 
-        $response = $this->actingAs($this->adminUser)->getJson("/api/allApplications/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/allApplications/{$this->otherUser1['accountNo']}");
+        $response->assertStatus(403);
 
-        $response = $this->actingAs($this->adminUser)->getJson("/api/allApplications/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(500);
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/allApplications/{$this->otherUser2['accountNo']}");
+        $response->assertStatus(403);
     }
 
     public function test_api_request_for_accounts_content_is_json(): void
@@ -541,9 +542,15 @@ class ApplicationControllerTest extends TestCase
         $response = $this->actingAs($this->adminUser)->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
         $response->assertStatus(200);
 
+        // Get current line manager account number
+        $superiorNo = app(AccountController::class)->getCurrentLineManager($this->user->accountNo)->accountNo;
+
         $message = Message::where('applicationNo', $application->applicationNo, "and")
-            ->where('senderNo', $this->user->accountNo)->first();
-        $this->assertTrue($message->subject == 'Application Cancelled');
+            ->where('senderNo', $this->user->accountNo, 'and')
+            ->where('receiverNo', $superiorNo)->first();
+        
+            // manager may be a nominee too
+        $this->assertTrue($message->subject == "Application Cancelled" || $message->subject == "Nomination Cancelled");
     }
 
     public function test_api_request_for_cancelApplication_is_successful_nominee_is_notified_of_application_cancelleation(): void
@@ -582,8 +589,10 @@ class ApplicationControllerTest extends TestCase
 
         $message = Message::where('applicationNo', $application->applicationNo, "and")
             ->where('receiverNo', $this->otherUser->accountNo, 'and')
-            ->where('senderNo', $this->user->accountNo)->first();
-        $this->assertTrue($message->subject == 'Application Cancelled');
+            ->where('senderNo', $this->user->accountNo, 'and')
+            ->where('subject', "Nomination Cancelled")->first();
+            //dd($message);
+        $this->assertTrue($message->subject == "Nomination Cancelled");
     }
 
 
