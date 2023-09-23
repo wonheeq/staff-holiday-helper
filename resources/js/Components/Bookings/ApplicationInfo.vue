@@ -1,13 +1,16 @@
 <script setup>
 import ApplicationInfoOptions from './ApplicationInfoOptions.vue';
 import ApplicationNominationData from './ApplicationNominationData.vue';
-import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/stores/UserStore';
+import { ref, computed } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-let userStore = useUserStore();
-const { userId } = storeToRefs(userStore);
+import { usePage } from '@inertiajs/vue3';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let props = defineProps({ source: Object });
 let emit = defineEmits(['cancelApplication', 'editApplication']);
 const statusText = {
@@ -50,7 +53,7 @@ async function handleCancelApplication() {
         cancelButtonText: "No, do not cancel it",
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.get("/api/cancelApplication/" + userId.value + "/" + props.source.applicationNo)
+            axios.get("/api/cancelApplication/" + user.value.accountNo + "/" + props.source.applicationNo)
             .then((response) => {
                 if (response.status == 200) {
                     emit('cancelApplication');
@@ -70,10 +73,62 @@ async function handleCancelApplication() {
 function handleEditApplication() {
     emit('editApplication');
 }
-
 </script>
 <template>
-    <div class="flex flex-row bg-white mr-4">
+    <div v-if="isMobile" class="flex flex-col">
+        <div class="flex flex-col bg-gray-200 p-2">
+            <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
+            <p :class="statusColour[source.status]">
+                {{ statusText[source.status] }}
+            </p>
+            <ApplicationNominationData
+                v-show="toggleContent"
+                :nominations="source.nominations"
+                :appStatus="source.status"
+                :rejectReason="source.rejectReason"
+            />
+            <div v-show="toggleContent">
+                <div class="flex flex-row text-sm">
+                    <p class="text-sm font-medium mr-2">Application ID:</p>
+                    {{ source.applicationNo }}
+                </div>                
+                <div>
+                    <p class="text-sm font-medium">Substitute/s:</p>
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
+                        <div class="text-sm" v-if="nomination.nomineeNo != user.accountNo">
+                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]
+                            <p class="ml-5">{{ nomination.task }}</p>
+                        </div>
+                        <div class="text-sm" v-if="nomination.nomineeNo == user.accountNo">
+                            → Self Nominated    {{ nomination.task }}
+                        </div>
+                    </div>
+                    <p class="text-sm" v-if="source.isSelfNominatedAll">
+                        → N/A - Self nominated for all roles
+                    </p>
+                </div>
+                <div class="flex flex-row text-sm">
+                    <p class="text-sm font-medium mr-2">Last Edited:</p>
+                    {{ new Date(source.updated_at).toLocaleString() }}
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-row bg-white space-x-0.5">
+            <button @click="handleCancelApplication()" v-if="source.status!='C'" class="mt-0.5 bg-gray-200">
+                <img class="h-6 w-8" src="/images/delete.svg" />
+            </button>
+            <button
+                class="mt-0.5 bg-gray-200 text-center h-8 w-full"
+                @click="toggleContent=!toggleContent"
+            >
+                <img :src="toggleImage(toggleContent)" class="toggleImageIcon"/>
+            </button>
+            <button @click="handleEditApplication()" class="mt-0.5 bg-gray-200">
+                <img class="h-6 w-8" src="/images/edit.svg" />
+            </button>
+        </div>
+    </div>
+    <div v-else class="flex flex-row bg-white">
         <div class="flex flex-col w-5/6 bg-gray-200 p-2">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
@@ -84,10 +139,10 @@ function handleEditApplication() {
                 <div>
                     <p class="font-medium">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p v-if="nomination.nomineeNo != userId">
-                            → {{ nomination.name }} - [{{ nomination.accountNo }}@curtin.edu.au]    {{ nomination.task }}
+                        <p v-if="nomination.nomineeNo != user.accountNo">
+                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]    {{ nomination.task }}
                         </p>
-                        <p v-if="nomination.nomineeNo == userId">
+                        <p v-if="nomination.nomineeNo == user.accountNo">
                             → Self Nominated    {{ nomination.task }}
                         </p>
                     </div>
@@ -96,8 +151,8 @@ function handleEditApplication() {
                     </p>
                 </div>
                 <div class="flex flex-row">
-                    <p class="font-medium mr-2">Application Submitted:</p>
-                    {{ new Date(source.created_at).toLocaleString() }}
+                    <p class="font-medium mr-2">Last Edited:</p>
+                    {{ new Date(source.updated_at).toLocaleString() }}
                 </div>
             </div>
         </div>
@@ -109,6 +164,7 @@ function handleEditApplication() {
                 v-show="toggleContent"
                 :nominations="source.nominations"
                 :appStatus="source.status"
+                :rejectReason="source.rejectReason"
             />
             <ApplicationInfoOptions
                 class="flex"

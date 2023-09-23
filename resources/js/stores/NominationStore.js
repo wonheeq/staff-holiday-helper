@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { useUserStore } from './UserStore';
 
 export let useNominationStore = defineStore('nominations', {
     state: () => ({
@@ -8,9 +7,9 @@ export let useNominationStore = defineStore('nominations', {
     }),
 
     actions: {
-        async fetchNominations() {
+        async fetchNominations(accountNo) {
             try {
-                const resp = await axios.get('/api/getRolesForNominations/' + useUserStore().userId);
+                const resp = await axios.get('/api/getRolesForNominations/' + accountNo);
                 this.nominations = resp.data;
               }
               catch (error) {
@@ -18,9 +17,9 @@ export let useNominationStore = defineStore('nominations', {
                 console.log(error)
             }
         },
-        async fetchNominationsForApplicationNo(applicationNo)  {
+        async fetchNominationsForApplicationNo(applicationNo, accountNo)  {
             try {
-                const resp = await axios.get('/api/getNominationsForApplication/' + useUserStore().userId + "/" + applicationNo);
+                const resp = await axios.get('/api/getNominationsForApplication/' + accountNo + "/" + applicationNo);
                 this.nominations = resp.data;
                 
                 this.isSelfNominateAll = true;
@@ -41,5 +40,8 @@ export let useNominationStore = defineStore('nominations', {
 
     getters: {
         
-    }
+    },
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });

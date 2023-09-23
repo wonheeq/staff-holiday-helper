@@ -6,6 +6,9 @@ use App\Models\Account;
 use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\AccountRole;
+use App\Models\Unit;
+use App\Models\Major;
+use App\Models\Course;
 use App\Models\Role;
 
 
@@ -14,7 +17,8 @@ use Illuminate\Http\Request;
 
 class ManagerController extends Controller
 {
-    private function isSelfNominatedAll($nominations, $accountNo) {
+    private function isSelfNominatedAll($nominations, $accountNo)
+    {
         foreach ($nominations as $nomination) {
             if ($nomination['nomineeNo'] != $accountNo) {
                 return false;
@@ -22,31 +26,200 @@ class ManagerController extends Controller
         }
         return true;
     }
+    public function addStaffRole(Request $request){
+        $data = $request->all();
+        $staffNo = $data['staffNo'];
+        $unitCode = $data['unitCode'];
+        $roleName = $data['roleName'];
+        $staff = Account::where('accountNo', $staffNo)->first();
+
+        //Unit, Major and Course does not exist, return exception
+        if(!Unit::where('unitId', $unitCode)->first()){
+            if(!Major::where('majorId', $unitCode)->first()){
+                if(!Course::where('courseId', $unitCode)->first()){
+                    return response()->json(['error' => 'Unit does not exist.'], 500);
+                }
+            }
+        }
+
+        //Check if role exists
+        if(!Role::where('name', $roleName)->first()){
+            return response()->json(['error' => 'Role does not exist.'], 500);
+        }
+
+        //Staff already has the unit role, return exception
+        $existRole = Role::where('name', $roleName)->first();
+        if(AccountRole::where('accountNo', $staffNo, "and")
+        ->where('unitId', $unitCode)->get()){
+            //Check all the roles under this unit
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('unitId', $unitCode)->get();
+            foreach($staffRoles as $staffRole){
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    return response()->json(['error' => 'Staff already has this role.'], 500);
+                }
+            }
+        }
+
+        //Staff already has the major role, return exception
+        if(AccountRole::where('accountNo', $staffNo, "and")
+        ->where('majorId', $unitCode)->get()){
+            //Check all the roles under this major
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('majorId', $unitCode)->get();
+            foreach($staffRoles as $staffRole){
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    return response()->json(['error' => 'Staff already has this role.'], 500);
+                }
+            }
+        }
+
+        //Staff already has the course role, return exception
+        if(AccountRole::where('accountNo', $staffNo, "and")
+        ->where('courseId', $unitCode)->get()){
+            //Check all the roles under this course
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('courseId', $unitCode)->get();
+            foreach($staffRoles as $staffRole){
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    return response()->json(['error' => 'Staff already has this role.'], 500);
+                }
+            }
+        }
+
+        // Check if role is for major coordinator
+        if ($roleName == "Major Coordinator") {
+            //Create major role
+            $newRole = Role::where('name', $roleName)->first();
+            AccountRole::create([
+            'accountNo' => $staffNo,
+            'roleId' => $newRole['roleId'],
+            'majorId' => $unitCode,
+            'schoolId' => $staff['schoolId']]);
+            return response()->json(['success' => 'success'], 200);
+        }
+        // Check if role is for course coordinator
+        else if ($roleName == "Course Coordinator") {
+            // Create course role
+            $newRole = Role::where('name', $roleName)->first();
+            AccountRole::create([
+            'accountNo' => $staffNo,
+            'roleId' => $newRole['roleId'],
+            'courseId' => $unitCode,
+            'schoolId' => $staff['schoolId']]);
+            return response()->json(['success' => 'success'], 200);
+        }
+        else if($roleName == "Tutor" || $roleName =="Unit Coordinator" || $roleName == "Lecturer"){
+            $newRole = Role::where('name', $roleName)->first();
+            //Create unit role for the account
+            AccountRole::create([
+                'accountNo' => $staffNo,
+                'roleId' => $newRole['roleId'],
+                'unitId' => $unitCode,
+                'schoolId' => $staff['schoolId']
+            ]);
+            return response()->json(['success' => 'success'], 200);
+        }
+        else{
+            return response()->json(['error' => 'Fail to create role.', 500]);
+        }
+    }
+    public function removeStaffRole(Request $request){
+        $data = $request->all();
+        $staffNo = $data['staffNo'];
+        $unitCode = $data['unitCode'];
+        $roleName = $data['roleName'];
+        //Check if staff exist, return exception
+        if(!Account::where('accountNo', $staffNo)->first()){
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $existRole = Role::where('name', $roleName)->first();
+
+
+
+        //Check if it is a unit, then remove
+        if((AccountRole::where('accountNo', $staffNo, "and")
+        ->where('unitId', $unitCode)->get()) && ($roleName == 'Tutor'|| $roleName == 'Lecturer' || $roleName == 'Unit Coordinator')){
+            //Check all the roles under this unit
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('unitId', $unitCode)->get();
+                foreach($staffRoles as $staffRole){
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    Nomination::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                    AccountRole::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                                        return response()->json(['success' => 'success'], 200);
+                    }
+            }
+        }
+
+        //Check if it is a major, then remove
+        if((AccountRole::where('accountNo', $staffNo, "and")
+        ->where('majorId', $unitCode)->get()) && $roleName == 'Major Coordinator'){
+            //Check all the roles under this major
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('majorId', $unitCode)->get();
+            foreach($staffRoles as $staffRole){
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    Nomination::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                    AccountRole::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                                        return response()->json(['success' => 'success'], 200);
+                    }
+            }
+        } 
+        //Check if it is a course, then remove
+        if((AccountRole::where('accountNo', $staffNo, "and")
+        ->where('courseId', $unitCode)->get()) && $roleName == 'Course Coordinator'){
+            //Check all the roles under this course
+            $staffRoles = AccountRole::where('accountNo', $staffNo, "and")
+            ->where('courseId', $unitCode)->get();
+            foreach($staffRoles as $staffRole){
+
+                if($staffRole['roleId'] == $existRole['roleId']){
+                    Nomination::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                    AccountRole::where('accountRoleId', $staffRole['accountRoleId'])->delete();
+                                        return response()->json(['success' => 'success'], 200);
+                    }
+            }
+        }
+        return response()->json(['error' => 'Role for the unit does not exist.'], 500); 
+    }
     /**
      * Get all staff members under a particular line manger
      */
-    public function getStaffMembers(Request $request, String $superiorNo){
+    public function getStaffMembers(Request $request, String $superiorNo)
+    {
         $staffMembers = Account::orderBy('fName')->where('superiorNo', $superiorNo)->get();
-        foreach($staffMembers as $staffMember){
+        foreach ($staffMembers as $staffMember) {
             $staffMember['pending'] = 'No'; //initialise to random letter
-            $applications = Application::where('status', 'U')->get();
-            if($applications->isNotEmpty())
-            {
+            $applications = Application::where('status', 'U', "and")
+            ->where('accountNo', $staffMember['accountNo'])->get();
+            if($applications->isNotEmpty()){
                 $staffMember['pending'] = 'Yes';
             }
+            $onLeave = app(AccountController::class)->isAccountOnLeave($staffMember['accountNo']);
+            if($onLeave){
+                $staffMember['onLeave'] = 'Yes';
+            }
+            else{
+                $staffMember['onLeave'] = 'No';
+            }
         }
-        // error_log($staffMembers);
         return response()->json($staffMembers);
+    }
+    public function getSpecificStaffMember(Request $request, String $staffNo)
+    {
+        $staff = Account::where('accountNo', $staffNo)->get();
+        return response()->json($staff);
     }
     public function getRolesForStaffs(Request $request, String $staffNo){
         
         $roleList = array();
         $staffRoles = AccountRole::where('accountNo', $staffNo)->get();
         foreach($staffRoles as $staffRole){
-            $task = app(RoleController::class)->getRoleFromAccountRoleId($staffRole->accountRoleId);
+            $task = app(RoleController::class)->getRoleObjectFromAccountRoleId($staffRole->accountRoleId);
             array_push($roleList, $task);
         }
-        // error_log(implode($roleList));
         return response()->json($roleList);
     }
     /*
@@ -55,18 +228,17 @@ class ManagerController extends Controller
     */
     public function getManagerApplications(Request $request, String $accountNo)
     {
-        $managerApplications=array();
+        $managerApplications = array();
         //Check if there is any applications for the line manager
         $applications = [];
         $users = Account::where('superiorNo', $accountNo)->get();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $userApps = Application::where('accountNo', $user->accountNo)->get();
-            foreach($userApps as $app){
+            foreach ($userApps as $app) {
                 array_push($applications, $app);
             }
         }
-        
-
+    
         foreach ($applications as $application) {
             // Add in applicant name for each application
             if ($application['accountNo'] != null && $application['status'] != 'P') {
@@ -78,13 +250,32 @@ class ManagerController extends Controller
                 // check if is self nominated for all
                 if ($this->isSelfNominatedAll($nominations, $accountNo)) {
                     $application['isSelfNominatedAll'] = true;
-                }
-                else {
+                } else {
                     $application["nominations"] = $nominations;
                 }
-                array_push($managerApplications,$application);
+                array_push($managerApplications, $application);
             }
         }
         return response()->json($managerApplications);
+    }
+    public function getUCM(){
+        $allUnits = array();
+        $units = Unit::get();
+        $majors = Major::get();
+        $courses = Course::get();
+
+        foreach($units as $unit)
+        {
+            array_push($allUnits, $unit->unitId);
+        }
+        foreach($majors as $major)
+        {
+            array_push($allUnits, $major->majorId);
+        }
+        foreach($courses as $course)
+        {
+            array_push($allUnits, $course->courseId);
+        }
+        return $allUnits;
     }
 }

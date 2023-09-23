@@ -1,22 +1,18 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 const props = defineProps({
     results: { type: Object, required: true },
 });
-let hasCC = ref(true);
-let hasMC = ref(true);
 let hasUC = ref(true);
 let hasLec = ref(true);
 
 onMounted(() => {
-    if( props.results.data.courseCoord == '') {
-        hasCC.value = false;
-    }
-
-    if( props.results.data.majorCoord == '') {
-        hasMC.value = false;
-    }
-
     if( props.results.data.unitCoord == '') {
         hasUC.value = false;
     }
@@ -43,72 +39,100 @@ function getList()
     return str;
 }
 
+
 </script>
 
 <template>
-<div class="w-screen h-screen flex justify-center items-center ">
-    <!-- Box/Background -->
-    <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] bg-white p-5 drop-shadow-md
-                 laptop:h-fit 1080:h-fit 1440:h-fit 4k:h-fit
-                 laptop:max-h-[80%] 1080:max-h-[80%] 1440:max-h-[60%] 4k:max-h-[60%]
-                 flex flex-col" >
+<div v-if="isMobile">
+    <div class="w-screen h-screen flex justify-center items-center ">
+        <!-- Box/Background -->
+        <div class="w-[80%] p-5 drop-shadow-md rounded-md max-h-[75%] flex flex-col"
+            :class="isDark?'bg-gray-800':'bg-white'"
+        >
 
-        <!-- Results Heading -->
-        <h1 class="font-bold text-2xl 4k:text-3xl mb-1">Showing Results For:</h1>
-        <h2 class="font-bold mb-1 4k:text-2xl">{{ results.data.unitName }} ({{ results.data.unitId }})</h2>
-        <h2 class="font-bold mb-1 4k:text-2xl">Currently Responsible Staff:</h2>
+            <!-- Results Heading -->
+            <h1 class="font-bold text-2xl mb-1">Showing Results For:</h1>
+            <h2 class="font-bold mb-1 ">{{ results.data.unitName }} ({{ results.data.unitId }})</h2>
+            <h2 class="font-bold mb-1 ">Currently Responsible Staff:</h2>
 
-        <!-- Results Display -->
-        <div class="mb-7 overflow-auto  1440:max-h-[37rem] 1080:max-h-[32rem] laptop:max-h-[23rem] 4k:max-h-[50rem]">
+            <!-- Results Display -->
+            <div class="mb-7 overflow-auto ">
 
-            <!-- Course Coordinator -->
-            <div>
-                <h2 class="mt-5 mb-1 font-bold 4k:text-xl">Course Coordinator:</h2>
-                <div v-show="hasCC">
-                    <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.courseCoord[1] }}</h1>
-                    <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.courseCoord[0] }}</h1>
+                <!-- Unit Coordinator -->
+                <div>
+                    <h2 class="mt-3 mb-1 font-bold ">Unit Coordinator:</h2>
+                    <div v-show="hasUC">
+                        <h1 class="mb-1 indent-7" >Name: {{ results.data.unitCoord[1] }}</h1>
+                        <h1 class="mb-1 indent-7" >Email: {{ results.data.unitCoord[0] }}</h1>
+                    </div>
+                    <h1 v-show="!hasUC" class="mb-1 indent-7">None Found</h1>
                 </div>
-                <h1 v-show="!hasCC" class="mb-1 4k:text-xl indent-10">None Found</h1>
-            </div>
 
-
-            <!-- Major Coordinator -->
-            <div>
-                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Major Coordinator:</h2>
-                <div v-show="hasMC">
-                    <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.majorCoord[1] }}</h1>
-                    <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.majorCoord[0] }}</h1>
+                <!-- Lecturers -->
+                <div>
+                    <h2 class="mt-3 mb-1 font-bold ">Lecturers:</h2>
+                    <div v-show="hasLec" class="mb-7 ml-7 whitespace-pre-line">{{  getList() }}</div>
+                    <h1 v-show="!hasLec" class="mb-1 indent-7">None Found</h1>
                 </div>
-                <h1 v-show="!hasMC" class="mb-1 4k:text-xl indent-10">None Found</h1>
+
             </div>
 
-
-            <!-- Unit Coordinator -->
-            <div>
-                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Unit Coordinator:</h2>
-                <div v-show="hasUC">
-                    <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.unitCoord[1] }}</h1>
-                    <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.unitCoord[0] }}</h1>
-                </div>
-                <h1 v-show="!hasUC" class="mb-1 4k:text-xl indent-10">None Found</h1>
-            </div>
-
-            <!-- Lecturers -->
-            <div>
-                <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Lecturers:</h2>
-                <div v-show="hasLec" class="mb-7 ml-10 4k:text-xl whitespace-pre-line">{{  getList() }}</div>
-                <h1 v-show="!hasLec" class="mb-1 4k:text-xl indent-10">None Found</h1>
-            </div>
-
+            <!-- Back/Search Aagain -->
+            <button
+                @click="$emit('resultBack')"
+                class="w-full font-bold text-2xl p-2 mb-2"
+                :class="isDark?'bg-blue-800':'bg-blue-300'"
+            >Back</button>
         </div>
-
-        <!-- Back/Search Aagain -->
-        <button
-            @click="$emit('resultBack')"
-            class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2"
-        >Back</button>
     </div>
 </div>
-</template>
 
+
+<div v-else>
+    <div class="w-screen h-screen flex justify-center items-center ">
+        <!-- Box/Background -->
+        <div class=" laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] p-5 drop-shadow-md
+                     laptop:h-fit 1080:h-fit 1440:h-fit 4k:h-fit
+                     laptop:max-h-[80%] 1080:max-h-[80%] 1440:max-h-[60%] 4k:max-h-[60%]
+                     flex flex-col rounded-md" 
+            :class="isDark?'bg-gray-800':'bg-white'">
+
+            <!-- Results Heading -->
+            <h1 class="font-bold text-2xl 4k:text-3xl mb-1">Showing Results For:</h1>
+            <h2 class="font-bold mb-1 4k:text-2xl">{{ results.data.unitName }} ({{ results.data.unitId }})</h2>
+            <h2 class="font-bold mb-1 4k:text-2xl">Currently Responsible Staff:</h2>
+
+            <!-- Results Display -->
+            <div class="mb-7 overflow-auto  1440:max-h-[37rem] 1080:max-h-[32rem] laptop:max-h-[23rem] 4k:max-h-[50rem]">
+
+                <!-- Unit Coordinator -->
+                <div>
+                    <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Unit Coordinator:</h2>
+                    <div v-show="hasUC">
+                        <h1 class="mb-1 4k:text-xl indent-10" >Name: {{ results.data.unitCoord[1] }}</h1>
+                        <h1 class="mb-1 4k:text-xl indent-10" >Email: {{ results.data.unitCoord[0] }}</h1>
+                    </div>
+                    <h1 v-show="!hasUC" class="mb-1 4k:text-xl indent-10">None Found</h1>
+                </div>
+
+                <!-- Lecturers -->
+                <div>
+                    <h2 class="mt-3 mb-1 font-bold 4k:text-xl">Lecturers:</h2>
+                    <div v-show="hasLec" class="mb-7 ml-10 4k:text-xl whitespace-pre-line">{{  getList() }}</div>
+                    <h1 v-show="!hasLec" class="mb-1 4k:text-xl indent-10">None Found</h1>
+                </div>
+
+            </div>
+
+            <!-- Back/Search Aagain -->
+            <button
+                @click="$emit('resultBack')"
+                class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2"
+                :class="isDark?'bg-blue-800':'bg-blue-300'"
+            >Back</button>
+        </div>
+    </div>
+</div>
+
+</template>
 

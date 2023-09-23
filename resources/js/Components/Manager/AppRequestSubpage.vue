@@ -12,7 +12,7 @@ const user = computed(() => page.props.auth.user);
 
 
 let applicationStore = useApplicationStore();
-const { filteredApplications, viewing, applications } = storeToRefs(applicationStore);
+const { filteredApplications, viewing } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
 
 onMounted(() => {
@@ -24,11 +24,11 @@ let deadAreaColor = "#FFFFFF";
 <template>
     <div class="subpage-height w-full">
         <div class="h-[7%]">
-            <p class="font-bold text-5xl">
+            <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Leave Applications:
             </p>
         </div>
-        <div class="h-[5%] mx-5">
+        <div class="h-[5%] mx-1 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-5xl laptop:mx-2 1080:mx-2 1440:mx-5 4k:mx-5">
             <input 
                 type="radio" 
                 id="allApplications" 
@@ -37,7 +37,7 @@ let deadAreaColor = "#FFFFFF";
                 value="all"
                 v-model="viewing"
                 checked>
-            <label for="allApplications" class="filter-label pr-4">All Applications</label>
+            <label for="allApplications" class="filter-text ">All Applications</label>
         
             <input 
                 type="radio" 
@@ -47,7 +47,7 @@ let deadAreaColor = "#FFFFFF";
                 value="unAcknowledged"
                 v-model="viewing"
                 >
-            <label for="unAcknowledged" class="filter-label pr-4">Unacknowledged Applications</label>
+            <label for="unAcknowledged" class="filter-text">Unacknowledged Applications</label>
 
             <input 
                 type="radio" 
@@ -57,7 +57,7 @@ let deadAreaColor = "#FFFFFF";
                 value="accepted"
                 v-model="viewing"
                 >
-            <label for="accepted" class="filter-label pr-4">Accepted Applications</label>
+            <label for="accepted" class="filter-text">Accepted Applications</label>
 
             <input 
                 type="radio" 
@@ -67,7 +67,7 @@ let deadAreaColor = "#FFFFFF";
                 value="rejected"
                 v-model="viewing"
                 >
-            <label for="rejected" class="filter-label pr-4">Rejected Applications</label>
+            <label for="rejected" class="filter-text">Rejected Applications</label>
         </div>
         <div class="bg-white mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
             <VueScrollingTable
@@ -95,11 +95,44 @@ let deadAreaColor = "#FFFFFF";
     height: 88%;
   }
 .filter-radio {
-    transform: scale(1.5);
-    margin-right: 10px;
+    transform: scale(0.6);
+    margin-right: 2px;
 }
-.filter-label {
-    font-size: 18px; 
+.filter-text{
+    padding-right: 1px;
+}
+/* 1080p */
+@media 
+(min-width: 1920px) {
+    .filter-radio {
+        transform: scale(1.0);
+        margin-right: 10px;
+    }
+    .filter-text{
+        padding-right: 10px;
+    }
+}
+/* 1440p */
+@media 
+(min-width: 2560px) {
+    .filter-radio {
+        transform: scale(1.5);
+        margin-right: 10px;
+    }
+    .filter-text{
+        padding-right: 20px;
+    }
+}
+/* 2160p */
+@media 
+(min-width: 3840px) {
+    .filter-radio {
+        transform: scale(2.0);
+        margin-right: 10px;
+    }
+    .filter-text{
+        padding-right: 4;
+    }
 }
 .hide {
     display: none;

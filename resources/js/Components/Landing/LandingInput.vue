@@ -2,12 +2,20 @@
     <!-- Text Input -->
     <div v-if="inType === 'textType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-3xl">{{ title }}</h1>
-        <input
+        <input v-if="title =='Staff ID'"
+            autocomplete="username"
             type="text"
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
             class="border-black w-full 4k:text-xl"
+            :class="isDark?'bg-gray-800 border-white':''"
         />
+        <input v-else
+            type="text"
+            :value="modelValue"
+            @input="$emit('update:modelValue', $event.target.value)"
+            class="border-black w-full 4k:text-xl"
+            :class="isDark?'bg-gray-800 border-white':''" />
     </div>
 
     <!-- Password Input -->
@@ -18,11 +26,12 @@
                 class="border-none w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
+                :class="isDark?'bg-gray-800 border-white':''"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
             <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
-                <img :src="fieldType.image" class="">
+                <img :src="fieldType.image" :class="isDark?'darkModeImage':''">
             </button>
         </div>
 
@@ -32,6 +41,8 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
 
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 defineProps({
 title: { type: String, default: "", },
 inType: { type: String, default: "textType", },
@@ -54,3 +65,6 @@ let switchVis = () => {
     }
 };
 </script>
+
+
+

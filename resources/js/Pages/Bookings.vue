@@ -1,23 +1,30 @@
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SubpageNavbar from "@/Components/SubpageNavbar.vue";
 import ApplicationsSubpage from '@/Components/Bookings/ApplicationsSubpage.vue';
 import CreateSubpage from '@/Components/Bookings/CreateSubpage.vue';
 import SubstitutionsSubpage from '@/Components/Bookings/SubstitutionsSubpage.vue';
 import EditApplication from "@/Components/Bookings/EditApplication.vue";
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from "@/stores/ApplicationStore";
+import { usePage } from '@inertiajs/vue3';
 import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+const page = usePage();
+const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
 const { fetchNominationsForApplicationNo } = nominationStore;
 let applicationStore = useApplicationStore();
 const { applications } = storeToRefs(applicationStore);
 
 const options = [
-    { id: 'apps', title: 'Applications'},
-    { id: 'create', title: 'Create New Application'},
-    { id: 'subs', title: 'Your Substitutions'},
+    { id: 'apps', title: 'Applications', mobileTitle: 'Applications'},
+    { id: 'create', title: 'Create New Application', mobileTitle: 'Create'},
+    { id: 'subs', title: 'Your Substitutions', mobileTitle: 'Substitutions'},
 ];
 let props = defineProps({
     screenProp: {
@@ -36,7 +43,7 @@ let period = reactive({
     end: null
 })
 
-const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
+const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md bg-white";
 let isEditing = ref(false);
 let applicationNo = ref(null);
 async function handleEditApplication(appNo) {
@@ -52,7 +59,7 @@ async function handleEditApplication(appNo) {
         }
     }
 
-    await fetchNominationsForApplicationNo(appNo);
+    await fetchNominationsForApplicationNo(appNo, user.value.accountNo);
 }
 
 function changeUrl(params) {
@@ -73,10 +80,36 @@ function handleActiveScreenChanged(screen) {
 </script>
 
 <template>
+<PageLayout>
     <AuthenticatedLayout>
-        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+        <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
+            <SubpageNavbar
+                class=""
+                :options="options"
+                :activeScreen="activeScreen"
+                @screen-changed="screen => handleActiveScreenChanged(screen)"
+            />
+            <ApplicationsSubpage
+                v-show="activeScreen === 'apps'" 
+                :class="subpageClass"
+                class="p-2 h-[95%]"
+                @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
+            />
+            <CreateSubpage
+                class="h-[95%]"
+                v-show="activeScreen === 'create'" 
+                :subpageClass="subpageClass"
+            />
+            <SubstitutionsSubpage
+                v-show="activeScreen === 'subs'" 
+                :class="subpageClass"
+                class="p-2"
+            />
+        </div>
+        <div v-else class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
             <SubpageNavbar
                 class="h-[5%]"
+                :class="activeScreen === 'create' ? 'w-4/5 1080:w-[85%] 1440:w-5/6 pr-4 ': ''"
                 :options="options"
                 :activeScreen="activeScreen"
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
@@ -97,21 +130,25 @@ function handleActiveScreenChanged(screen) {
                 :class="subpageClass"
                 class="p-4 h-[95%]"
             />
-            <Teleport to="body">
-                <EditApplication
-                    v-show="isEditing"
-                    :applicationNo="applicationNo"
-                    :subpageClass="subpageClass"
-                    :period="period"
-                    @close="isEditing = false; applicationNo = false;"
-                />
-            </Teleport>
         </div>
+        <Teleport to="body">
+            <EditApplication
+                v-show="isEditing"
+                :applicationNo="applicationNo"
+                :subpageClass="subpageClass"
+                :period="period"
+                @close="isEditing = false; applicationNo = null;"
+            />
+        </Teleport>
     </AuthenticatedLayout>
+</PageLayout>
 </template>
 
 <style>
 .screen {
     height: calc(93vh - 3rem);
+}
+.screen-mobile {
+    height: calc(93vh - 1.5rem);
 }
 </style>

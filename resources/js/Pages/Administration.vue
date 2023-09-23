@@ -1,4 +1,5 @@
 <script setup>
+    import PageLayout from "@/Layouts/PageLayout.vue";
     import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
     import AdminTabs from '@/Components/Admin/AdminTabs.vue';
 
@@ -11,20 +12,14 @@
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
-            <div class="tabarea">
-                <AdminTabs :screenProp="props.screenProp"/>  
-            </div> 
-        </div> 
+<PageLayout>
+    <AuthenticatedLayout>       
+            <AdminTabs :screenProp="props.screenProp"/>     
     </AuthenticatedLayout>
+</PageLayout>
 </template>
 
 <style>
-    .margin-fix{
-    height: 1rem;
-    }
-
     body, html {
     padding: 0;
     margin: 0;

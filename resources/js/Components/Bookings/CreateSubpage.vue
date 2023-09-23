@@ -1,11 +1,23 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
 import { storeToRefs } from 'pinia';
-import { useNominationStore } from '@/stores/NominationStore';
+import { useApplicationStore } from '@/stores/ApplicationStore';
+import { useNominationStore } from '@/stores/NominationStore'; 
 import Swal from 'sweetalert2';
+import { useCalendarStore } from '@/stores/CalendarStore';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const calendarStore = useCalendarStore();
+const { fetchCalendarData } = calendarStore;
+const applicationStore = useApplicationStore();
+const { addNewApplication } = applicationStore;
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
@@ -69,9 +81,9 @@ function validateApplication(data) {
     return errors.length == 0;
 }
 
-function formatNomineeNo(nominee) {
+function formatNomineeNo(nominee, accountNo) {
     if (nominee == "Self Nomination") {
-        return nominee;
+        return accountNo;
     }
 
     // Should be formatted as "(XXXXXXX) - ZZZZZZZZZZZZ"
@@ -79,13 +91,13 @@ function formatNomineeNo(nominee) {
     return nominee.substr(1, 7);
 }
 
-function formatNominations() {
+function formatNominations(accountNo) {
     let result = [];
 
     for (let nomination of nominations.value) {
         result.push({
             accountRoleId: nomination.accountRoleId,
-            nomineeNo: formatNomineeNo(nomination.nomination),
+            nomineeNo: formatNomineeNo(nomination.nomination, accountNo),
         });
     }
 
@@ -95,7 +107,7 @@ function formatNominations() {
 function createApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
-        data.nominations = formatNominations();
+        data.nominations = formatNominations(data.accountNo);
         data.sDate = period.start;
         data.eDate = period.end;
 
@@ -104,6 +116,9 @@ function createApplication(data) {
         axios.post('/api/createApplication', data)
             .then(res => {
                 if (res.status == 200) {
+                    let newApp = res.data;
+                    addNewApplication(newApp);
+                    fetchCalendarData(user.value.accountNo);
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully created application.'
@@ -123,25 +138,48 @@ function createApplication(data) {
 }
 </script>
 <template>
-    <div class="flex bg-transparent subpage-height">
-        <div class="w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
-            <p class="text-5xl h-[8%] font-bold">
-                Create New Leave Application:
-            </p>
-            <div class="grid grid-cols-3 h-[92%]">
-                <CreateSubpagePeriod :period="period" class="h-full" />
-                <CreateSubpageNominations
-                    class="col-span-2"
-                    @resetFields="resetFields()"
-                    @submitApplication="(data) => createApplication(data)"
-                    />
+    <div>
+        <div v-if="isMobile" class="w-full">
+            <div class="w-full bg-white rounded-b-md p-2">
+                <p class="text-xl font-bold">
+                    Create New Leave Application:
+                </p>
+                <div class="">
+                    <CreateSubpagePeriod :period="period" />
+                    <CreateSubpageNominations
+                        @resetFields="resetFields()"
+                        @submitApplication="(data) => createApplication(data)"
+                        />
+                </div>
             </div>
+            <CalendarSmall
+                class="flex drop-shadow-md mt-2"
+                :disableEnlarge="true" 
+            />
         </div>
-        <CalendarSmall class="w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+        <div v-else class="flex bg-transparent subpage-height">
+            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
+                <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
+                    Create New Leave Application:
+                </p>
+                <div class="grid grid-cols-3 h-[92%]">
+                    <CreateSubpagePeriod :period="period" class="h-full" />
+                    <CreateSubpageNominations
+                        class="col-span-2"
+                        @resetFields="resetFields()"
+                        @submitApplication="(data) => createApplication(data)"
+                        />
+                </div>
+            </div>
+            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+        </div>
+        <div v-if="isMobile" class="h-2">
+        </div>
     </div>
+    
 </template>
 <style>
 .subpage-height {
-    height: calc(0.95 * (93vh - 3rem));
+    height: calc(0.95 * 93vh - 3rem);
 }
 </style>

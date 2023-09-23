@@ -26,6 +26,7 @@ class CalendarControllerTest extends TestCase
         AccountRole::factory(3)->create([
             'accountNo' => $this->user->accountNo,
         ]);
+
         // Do not create application with Cancelled status since it does not get returned with getCalendarData
         $statuses = ["Y", "N", "P", "U"];
         $this->applications = array();
@@ -92,25 +93,25 @@ class CalendarControllerTest extends TestCase
 
     public function test_getCalendarData_api_call_is_successful(): void
     {
-        $response = $this->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $response->assertStatus(200);
     }
 
     public function test_getCalendarData_api_call_is_unsuccessful(): void
     {
         $response = $this->getJson("/api/calendar/aarhgawerhaer");
-        $response->assertStatus(500);
+        $response->assertStatus(401);
     }
 
     public function test_getCalendarData_api_call_returns_json(): void
     {
-        $response = $this->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $this->assertJson($response->content());
     }
 
     public function test_getCalendarData_api_returns_valid_content(): void
     {
-        $response = $this->getJson("/api/calendar/{$this->user->accountNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/calendar/{$this->user->accountNo}");
         $array = json_decode($response->content());
 
         // 4 applications created for test user + 1 substitution from the other User

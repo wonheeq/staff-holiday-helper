@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <PageLayout>
         <div>
             <!-- Login Window -->
             <login-form v-if="showLogin" @forgotPass="goToReset" @unitLookup="goToLookup"></login-form>
@@ -14,10 +14,11 @@
             <unit-result v-if="showResult" @resultBack="goToLookup" :results="searchResults"></unit-result>
 
         </div>
-    </main>
+    </PageLayout>
 </template>
 
 <script setup>
+import PageLayout from "@/Layouts/PageLayout.vue";
 import LoginForm from "@/Components/Landing/LoginForm.vue";
 import ResetForm from "@/Components/Landing/ResetForm.vue";
 import UnitLookup from "@/Components/Landing/UnitLookup.vue";
@@ -49,6 +50,7 @@ function goToLogin() {
 // Show Unit Lookup Window
 function goToLookup() {
     showLogin.value = false;
+    showResult.value = false;
     showLookup.value = true;
 }
 
@@ -59,6 +61,8 @@ function goToResults(response) {
     showLookup.value = false;
     showResult.value = true;
 }
+
+
 
 </script>
 

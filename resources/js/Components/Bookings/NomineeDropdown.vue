@@ -2,7 +2,7 @@
 import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { ref } from 'vue';
-import NomineeDropdownOption from "./NomineeDropdownOption.vue";
+import NomineeDropdownOption from "./NomineeDropdownOptions.vue";
 
 let emit = defineEmits(['optionSelected']);
 let props = defineProps({
@@ -29,16 +29,16 @@ function handleSelection(label) {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full">
         <div class="flex flex-row">
             <input type="text"
                 :class="isDisabled ? disabledClass : ''"
-                class="h-8 w-full"
+                class="h-4 1080:h-6 1440:h-8 4k:h-12 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                 v-model="dropdownSearch"
                 @focusin="displayOptions=true"
                 :disabled="isDisabled"
             />
-            <button class="w-8"
+            <button class="w-4 1080:w-6 1440:w-8 4k:w-12"
                 :class="isDisabled ? disabledClass : ''"
                 @click="displayOptions = !displayOptions"
                 :disabled="isDisabled"

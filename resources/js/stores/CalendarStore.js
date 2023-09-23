@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { useUserStore } from './UserStore';
 import axios from "axios";
 
 export let useCalendarStore = defineStore('calendar', {
@@ -8,9 +7,9 @@ export let useCalendarStore = defineStore('calendar', {
     }),
 
     actions: {
-        async fetchCalendarData() {
+        async fetchCalendarData(accountNo) {
             try {
-                const resp = await axios.get('/api/calendar/' + useUserStore().userId);
+                const resp = await axios.get('/api/calendar/' + accountNo);
                 this.calendarData = resp.data;
 
                 // Use unshift to push to front
@@ -25,5 +24,8 @@ export let useCalendarStore = defineStore('calendar', {
                 console.log(error)
             }
         }
+    },
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
     },
 });

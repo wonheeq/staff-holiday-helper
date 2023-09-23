@@ -1,5 +1,10 @@
 <script setup>
-import NomineeDropdown from '@/Components/Bookings/NomineeDropdown.vue';
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 let props = defineProps({
     nomination: Object,
     options: Object,
@@ -11,30 +16,30 @@ let emit = defineEmits(['nominationSelected']);
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex mb-2.5 ml-2.5 mt-2.5 w-full justify-between">
-        <div class="flex space-x-7">
-            <input type="checkbox"
-                class="h-8 w-8"
-                :class="isDisabled ? disabledClass : ''"
-                v-model="nomination.selected"
-                :disabled="isDisabled"   
-                @click="emit('nominationSelected', nomination.selected)" 
+    <div class="flex mb-2.5 mt-2.5 w-full">
+        <div class="flex space-x-6 mx-2 w-full justify-between">
+            <div class="w-[60%]">
+                <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
+                    <input type="checkbox"
+                        class="w-8 h-8"
+                        :class="isDisabled ? disabledClass : ''"
+                        v-model="nomination.selected"
+                        :disabled="isDisabled"   
+                        @click="emit('nominationSelected', nomination.selected)" 
+                    />
+                    <p class="text-xs 1080:text-lg 1440:text-xl 4k:text-2xl h-full w-full 4k:pl-3">
+                        {{ nomination.role }}
+                    </p>
+                </div>
+            </div>
+            <vSelect :options="props.options" :clearable="true"
+                style="width: 40%; height: 2rem; background-color: white; 
+                border: solid; border-color: #6b7280; border-width: 1px;
+                --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                v-model="props.nomination.nomination"
+                @option:selected="(selection) => nomination.nomination = selection"
+                :disabled="isDisabled"
             />
-            <p class="text-xl">
-                {{ nomination.role }}
-            </p>
         </div>
-        <div class="flex">
-            <p class="text-xl mr-8">
-                {{ nomination.nomination }}
-            </p>
-            <NomineeDropdown
-                class="w-96 mr-[1.125rem]"
-                :options="options"
-                @optionSelected="(selection) => nomination.nomination = selection"
-                :isDisabled="isDisabled"
-            />
-        </div>
-        
     </div>
 </template>

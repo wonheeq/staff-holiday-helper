@@ -23,7 +23,7 @@ class EmailController extends Controller
     {
         $dynamicData = [
             'name' => 'Chris',
-            'token' => 'www.google.com'
+            'url' => 'www.google.com'
         ];
         Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Password Reset", "email/passwordResetLink", $dynamicData));
     }
@@ -117,6 +117,15 @@ class EmailController extends Controller
             'nomineesArray' => $nomineesArray,
         ];
         Mail::to("tvxqbenjamin0123@gmail.com")->send(new MJML("Booking Edited", "email/bookingEdited", $dynamicData));
+    }
+
+    public function nominationReminder($dynamicData, $accountNo): void {
+        Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+        Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+        Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+        Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+
+        // Mail::to("{$accountNo}@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
     }
 }
 class Nominees

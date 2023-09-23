@@ -11,6 +11,7 @@ use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Message;
+use App\Models\ReminderTimeframe;
 use Illuminate\Support\Facades\Hash;
 
 //use Illuminate\Support\Facades\Log;
@@ -59,6 +60,11 @@ class DatabaseSeeder extends Seeder
                 'schoolId' => $school['schoolId'],
                 'name' => $school['name'],
             ]);
+
+            ReminderTimeframe::create([
+                'schoolId' => $school['schoolId'],
+                'timeframe' => '2 days',
+            ]);
         }
 
 
@@ -66,10 +72,10 @@ class DatabaseSeeder extends Seeder
         $lineManagerNo = '000002L';
         Account::factory()->create([
             'accountNo' =>  $lineManagerNo,
-            'accountType' => 'lmanager',
+            'accountType' => 'sysadmin',
             'superiorNo' => null,
-            'fName' => 'Static',
-            'lName' => 'Test Manager',
+            'fName' => 'TEST',
+            'lName' => 'DEFAULT ADMIN',
             'password' => Hash::make('testPassword1'),
         ]);
 
@@ -98,12 +104,69 @@ class DatabaseSeeder extends Seeder
             'superiorNo' => $lineManagerNo,
         ]);
 
+        // Create test users for Hannes and co
+        $hannesAdmin = Account::factory()->create([
+            'accountNo' => '000000X',
+            'accountType' => 'sysadmin',
+            'fName' => '(Admin) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => '000002L',
+        ]);
+       
+        $hannesManager = Account::factory()->create([
+            'accountNo' => '000000Y',
+            'accountType' => 'lmanager',
+            'fName' => '(Manager) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $hannesAdmin->accountNo,
+        ]);
+
+        $hannesStaff = Account::factory()->create([
+            'accountNo' => '000000Z',
+            'accountType' => 'staff',
+            'fName' => '(Staff) Hannes',
+            'lName' => 'Herrmann',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $hannesManager->accountNo,
+        ]);
+
+
+         // Create test users for Hannes and co
+        $ianAdmin = Account::factory()->create([
+            'accountNo' => '000000U',
+            'accountType' => 'sysadmin',
+            'fName' => '(Admin) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => '000002L',
+        ]);
+       
+        $ianManager = Account::factory()->create([
+            'accountNo' => '000000V',
+            'accountType' => 'lmanager',
+            'fName' => '(Manager) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $ianAdmin->accountNo,
+        ]);
+
+        $ianStaff = Account::factory()->create([
+            'accountNo' => '000000W',
+            'accountType' => 'staff',
+            'fName' => '(Staff) Ian',
+            'lName' => 'van Loosen?',
+            'password' => Hash::make('testPassword1'),
+            'superiorNo' => $ianManager->accountNo,
+        ]);
 
         // TEST USER
         $test_id = '000000a';
 
         Account::factory()->create([
             'accountNo' => $test_id,
+            'accountType' => 'staff',
             'fName' => 'Static',
             'lName' => 'Test User',
             'password' => Hash::make('testPassword1'),
@@ -128,27 +191,23 @@ class DatabaseSeeder extends Seeder
         // create 4 of each type of application status for the test user
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'Y',
+            'processedBy' => '000002L'
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'N',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'U',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'P',
         ]);
         Application::factory()->create([
             'accountNo' => $test_id,
-            'processedBy' => $lineManagerNo,
             'status' => 'C',
         ]);
 
@@ -166,9 +225,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Each account gets 4 applications
+        $count = 0;
+        // 4 accounts gets 1 applications
         foreach ($accounts as $account) {
-            Application::factory(4)->create([
+            if ($count >= 4) {break;} 
+            Application::factory(1)->create([
                 'accountNo' => $account['accountNo'],
                 'processedBy' => $lineManagerNo,
             ]);
@@ -208,16 +269,28 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        /*
         // Generate 10 messages for each account
         foreach ($accounts as $account) {
             // ignore test id because we will generate actually working messages later
+            // Generate simple messages that only have the option of acknowledge
+            // Messages of subject type Substitution Request, Application Awaiting Review and etc...
+            // will not work if they do not have the corresponding Nominations, Applications, and etc created
             if ($account->accountNo != $test_id) {
                 Message::factory(10)->create([
                     'receiverNo' => $account['accountNo'],
+                    'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
                 ]);
             }
         }
+        */
 
+
+        // CREATE messages for 000002L for DBSeederTest
+        Message::factory(1)->create([
+            'receiverNo' => "000002L",
+            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
+        ]);
 
 
 
@@ -324,5 +397,27 @@ class DatabaseSeeder extends Seeder
             ]),
             'acknowledged' => false
         ]);
+
+
+        //Applicaiton Awaiting Review
+
+
+        //Application Cancelled
+
+        //Application Approved
+
+        //Application Denied
+
+        //Nomination/s Rejected
+
+        //Substituion Request
+
+        // Nomination Cancelled
+
+        // Nomionation's cancelled
+
+        // Substituion period edited (subset)
+
+        // editec substitution request
     }
 }
