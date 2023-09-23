@@ -83,7 +83,10 @@
                     { message: 'Courses', table: 'coursesTable' },
                     { message: 'Schools', table: 'schoolsTable' },
                     { message: 'Messages', table: 'messagesTable' }
-                ]
+                ],
+
+                csvActivated: false,
+                csvFileName: ""
             }
         },
         components:{

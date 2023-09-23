@@ -234,6 +234,33 @@ class DatabaseController extends Controller
         return response()->json(['success' => 'success'], 200);
     }
 
+
+    /**
+     * Send requested file to user
+    */
+    public function sendCSVTemplate(Request $request, String $accountNo, String $fileName)
+    {  
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            //if (Storage::disk('public')->exists("csv_templates/$fileName")) {
+                return response()->download(public_path().'/csv_templates/'. $fileName);
+            //} else {
+               // return response()->json(['error' => 'File not found'], 500);
+           // }  
+        }
+    }
+
+
     /**
      * Send requested file to user
     */
