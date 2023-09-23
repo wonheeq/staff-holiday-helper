@@ -233,4 +233,31 @@ class DatabaseController extends Controller
 
         return response()->json(['success' => 'success'], 200);
     }
+
+    /**
+     * Send requested file to user
+    */
+    public function addEntriesFromCSV(Request $request, String $accountNo)
+    {  
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            Log::info($request->all());
+            //dd($request); // See if it works in a unit test, if not then give up on it.
+
+            $jsonEntries = $request->all(['entries']);
+            Log::info($jsonEntries);
+
+            return response()->json(['success' => 'success'], 200);
+        }
+    }
 }

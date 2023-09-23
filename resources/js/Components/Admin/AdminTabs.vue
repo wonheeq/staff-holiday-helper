@@ -54,6 +54,7 @@
 </script>
 
 <script>
+    import AddCSVData from "@/Components/Admin/AddCSVData.vue";
 
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
@@ -101,7 +102,11 @@
             activate: function(message, table) {
                 this.content = message;
                 this.currentTable = table;
-            }
+            },
+            activateCSV: function(csvFileName) {
+                this.csvFileName = csvFileName;
+                this.csvActivated = !this.csvActivated;
+            },
         }
     }
 </script>
@@ -146,6 +151,9 @@
             class="p-4 h-[95%]"
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
+        </div>
+            <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
@@ -155,6 +163,8 @@
 <!---->
 
     </div>
+    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :user="user.accountNo" @close="activateCSV()">
+    </AddCSVData>
 </template>
 
 <style>
