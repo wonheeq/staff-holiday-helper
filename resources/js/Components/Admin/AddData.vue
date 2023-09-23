@@ -66,13 +66,18 @@ import "vue-select/dist/vue-select.css";
             }
         },
         methods: {
-            activate: function(message, fArray) {
+            activate: function(message, fArray, csvFileName) {
                 this.content = message;
                 this.currentFields = fArray;
+                this.currentCSV = csvFileName;
 
                 // Clear Fields if needed
                 this.attributeEntries = [];   
             },
+            activateCSV: function() {
+                this.$emit('toggleCSV', this.currentCSV);      
+            },
+            // Add single entry to selected table
             addToDB: function() {
                 console.log(this.attributeEntries)
                 this.warning = false;

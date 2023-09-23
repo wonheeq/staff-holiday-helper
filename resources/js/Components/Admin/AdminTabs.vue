@@ -153,9 +153,6 @@
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
-            <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
-            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" />
-        </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="subpageClass"
             class="p-4 h-[95%]"
