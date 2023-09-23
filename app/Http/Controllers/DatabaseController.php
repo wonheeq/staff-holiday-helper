@@ -278,13 +278,113 @@ class DatabaseController extends Controller
                 return response()->json(['error' => 'User not authorized for request.'], 500);
             }
 
-            Log::info($request->all());
-            //dd($request); // See if it works in a unit test, if not then give up on it.
+            $data = $request->all();
 
-            $jsonEntries = $request->all(['entries']);
-            Log::info($jsonEntries);
+            // Use 'fields' to work out which model the entry applies to.
+            switch ($data['table']) {
+                case 'add_staffaccounts.csv':
+                    $response = $this->csvAddAccounts($data['entries']);
+                break;
+                case 'add_accountroles.csv':
+                    $response = $this->csvAddAccountRoles($data['entries']);
+                break;
+                case 'add_roles.csv':
+                    $response = $this->csvAddRoles($data['entries']);
+                break;
+                case 'add_units.csv':
+                    $response = $this->csvAddUnits($data['entries']);
+                break;
+                case 'add_majors.csv':
+                    $response = $this->csvAddMajors($data['entries']);
+                break;
+                case 'add_courses.csv':
+                    $response = $this->csvAddCourses($data['entries']);
+                break;
+                case 'add_schools.csv':
+                    $response = $this->csvAddSchools($data['entries']);
+                break;
+                default:
+                    return response()->json(['error' => 'Could not determine db table'], 500);
+            }
 
-            return response()->json(['success' => 'success'], 200);
+            return $response;
         }
     }
+
+    /**
+     * Adds new Accounts to database from array
+     */
+    private function csvAddAccounts(array $entries) {
+        //Log::info($attributes);
+        //Log::info($attributes[1]['db_name']);
+
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            // checking new primary keys
+            $curID = $entries[$i]['Account Number (Staff ID)'];
+            if (Account::where('accountNo', $curID)->exists())
+            {
+                return response()->json(['error' => 'Account ID ' . $curID . ' already in use.'], 500);
+            }
+
+            // accountNo
+            if (strlen($curID) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $curID)) {
+                return response()->json(['error' => $curID . ' Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces.'], 500);
+            }
+
+
+            // accountType
+            $curAttr = $entries[$i]['Account Type'];
+            if ($curAttr != 'staff' && $curAttr != 'lmanager' && $curAttr != 'sysadmin') {
+                return response()->json(['error' => $curID . ' Invalid: Account Type must be one of \'staff\', \'lmanager\', or \'sysadmin\'.'], 500);
+            }
+
+            // Surname & First/Other Names
+            $curAttr = $entries[$i]['Surname'];
+            if (strlen($curAttr) > 20) {
+                return response()->json(['error' => $curID . ' Invalid: Surname must be 20 characters or less (If surname has multiple parts add some to \'First/Other Names\' column).'], 500);
+            }
+
+            $curAttr = $entries[$i]['First/Other Names'];
+            if (strlen($curAttr) > 30) {
+                return response()->json(['error' => $curID . ' Invalid: First/Other Names must be 30 characters or less.'], 500);
+            }
+
+            // School Code
+            $curAttr = $entries[$i]['School Code'];
+            if (School::where('schoolId', $curAttr)->doesntExist()) {
+                return response()->json(['error' => $curID . ' Invalid: School Code does not exist in database.'], 500);
+            }
+
+            // Line Manager's ID
+            $curAttr = $entries[$i]['Line Manager\'s ID'];
+            if (Account::where('accountNo', $curAttr)->where('accountType', '!=', 'lmanager')->doesntExist()) {
+                if ($curAttr != 'none') {
+                    return response()->json(['error' => $curID . ' Invalid: Line Manager \'' . $curAttr . '\' does not exist in database.'], 500);
+                }
+            }
+        }
+        
+        // Adding verifies entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            if ($entries[$i]['Line Manager\'s ID'] == 'none') {
+                $entries[$i]['Line Manager\'s ID'] = NULL;
+            }
+
+            Account::create([
+                'accountNo' => $entries[$i]['Account Number (Staff ID)'],
+                'accountType' =>  $entries[$i]['Account Type'],
+                'lname' => $entries[$i]['Surname'],
+                'fname' => $entries[$i]['First/Other Names'],
+                'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')), // Password created randomly
+                'superiorNo' => $entries[$i]['Line Manager\'s ID'],
+                'schoolId' => $entries[$i]['School Code']
+            ]);
+        }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
+    }
+
 }

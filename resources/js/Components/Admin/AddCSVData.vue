@@ -13,8 +13,6 @@
         errorMsg: "default"
     }); 
 
-    let jsonEntries = [];
-
     let props = defineProps({
         csvFileName: String,
         user: String,
@@ -97,12 +95,13 @@
                     }
                     //jsonEntries.push(obj);
                     jsonEntries[jsonEntries.length] = obj;
-                    console.log(jsonEntries.length);
                 }
-                //jsonEntries = JSON.stringify(jsonEntries);  // Okay, try changing stuff in 'onload', change the way the array is filled.
-                let data ={ 
+                
+                let data = { 
+                'table': props.csvFileName,
                 'entries': jsonEntries
                 }
+
                 // Send .csv file to backend.
                 //console.log(data);
                 axios.post("/api/addEntriesFromCSV/" + props.user, data)
