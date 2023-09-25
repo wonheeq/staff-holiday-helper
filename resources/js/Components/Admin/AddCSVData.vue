@@ -164,6 +164,7 @@
                     <div class="flex">
                         <input type="file" class="bg-[#e3e3e3] pl-2 py-2 ml-4 text-center text-lg"
                                @change="csvSubmitted"
+                               accept=".csv"
                                :key="fileInputKey">
                         
                         <button class="bg-[#e3e3e3] px-6 py-2 ml-4 text-center text-lg"
