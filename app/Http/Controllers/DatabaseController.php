@@ -367,7 +367,7 @@ class DatabaseController extends Controller
             }
         }
         
-        // Adding verifies entries to db
+        // Adding verified entries to db
         for ($i = 0; $i < $numEntries; $i++) {
             if ($entries[$i]['Line Manager\'s ID'] == 'none') {
                 $entries[$i]['Line Manager\'s ID'] = NULL;
@@ -385,6 +385,33 @@ class DatabaseController extends Controller
         }
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);
+    }
+
+
+    /**
+     * Adds new Accounts to database from array
+     */
+    private function csvAddSchools(array $entries) {
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Primary Key automatically created
+
+            // School Name
+            $curAttr = $entries[$i]['School Name'];
+            if (strlen($curAttr) > 70) {
+                return response()->json(['error' => $curAttr . ' Invalid: School Name should be under 70 characters'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            School::create([
+                'name' =>  $entries[$i]['School Name']      
+            ]);
+        }
     }
 
 }
