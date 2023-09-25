@@ -73,6 +73,7 @@
                 lines = csv.split("\r" + "\n");
                 headers = lines[1].split(",");
                 //console.log(headers.length);
+                //console.log(headers);
 
                 for (var i = 2; i < lines.length; i++) {
                     if (!lines[i]) 
@@ -88,7 +89,7 @@
                         break;
                     }
 
-                    for (var j = 0; j < headers.length-3; j++) {                        
+                    for (var j = 0; j < headers.length-2; j++) {                        
                         let head = headers[j].trim();
                         let value = currentLine[j].trim();
                         obj[head] = value;                        
@@ -118,7 +119,15 @@
                     console.log(err)
                     // Something went wrong
                     msg.warning = true;
-                    msg.errorMsg = err.response.data.error;
+
+                    if (err.response.data.error == null)
+                    {
+                        msg.errorMsg = "The submitted CSV was not valid, ensure you filled in the correct template.";
+                    }
+                    else 
+                    {
+                        msg.errorMsg = err.response.data.error;
+                    } 
                 });
 
                 uploadedFile = null;

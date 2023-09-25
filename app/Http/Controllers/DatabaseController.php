@@ -280,6 +280,10 @@ class DatabaseController extends Controller
 
             $data = $request->all();
 
+            if (count($data['entries']) == 0) {
+                return response()->json(['error' => 'Invalid: No rows filled.'], 500);
+            }
+
             // Use 'fields' to work out which model the entry applies to.
             switch ($data['table']) {
                 case 'add_staffaccounts.csv':
@@ -315,9 +319,7 @@ class DatabaseController extends Controller
      * Adds new Accounts to database from array
      */
     private function csvAddAccounts(array $entries) {
-        //Log::info($attributes);
-        //Log::info($attributes[1]['db_name']);
-
+       
         // Check that all attributes are valid (input is entirely unrestricted)
         $numEntries = count($entries);
 
@@ -389,7 +391,227 @@ class DatabaseController extends Controller
 
 
     /**
-     * Adds new Accounts to database from array
+     * Adds new AccountRoles to database from array
+     */
+    private function csvAddAccountRoles(array $entries) {
+        //Log::info($entries);
+
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Primary Key automatically created
+
+            // accountNo
+            $curAttr = $entries[$i]['Account Number'];
+            if (Account::where('accountNo', $curAttr)->doesntExist()) {
+                return response()->json(['error' => $curAttr . ' Invalid: Account Number does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+
+            // Role ID
+            $curAttr = $entries[$i]['Role ID'];
+            if (Role::where('roleId', $curAttr)->doesntExist()) {
+                return response()->json(['error' => $curAttr . ' Invalid: Role ID does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+
+            // Unit Code
+            $curAttr = $entries[$i]['Unit Code'];
+            if (Unit::where('unitId', $curAttr)->doesntExist()) {
+                if ($curAttr != 'none') {
+                    return response()->json(['error' => $curAttr . ' Invalid: Unit Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+                }
+            }
+
+            // Major Code
+            $curAttr = $entries[$i]['Major Code'];
+            if (Major::where('majorId', $curAttr)->doesntExist()) {
+                if ($curAttr != 'none') {
+                    return response()->json(['error' => $curAttr . ' Invalid: Major Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+                }
+            }
+
+            // Course Code
+            $curAttr = $entries[$i]['Course Code'];
+            if (Course::where('courseId', $curAttr)->doesntExist()) {
+                if ($curAttr != 'none') {
+                    return response()->json(['error' => $curAttr . ' Invalid: Course Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+                }
+            }
+
+            // School Code
+            $curAttr = $entries[$i]['School Code'];
+            if (School::where('schoolId', $curAttr)->doesntExist()) {
+                return response()->json(['error' => $curAttr . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            if ($entries[$i]['Unit Code'] == 'none') {
+                $entries[$i]['Unit Code'] = NULL;
+            }
+            if ($entries[$i]['Major Code'] == 'none') {
+                $entries[$i]['Major Code'] = NULL;
+            }
+            if ($entries[$i]['Course Code'] == 'none') {
+                $entries[$i]['Course Code'] = NULL;
+            }
+
+            AccountRole::create([
+                'accountNo' =>  $entries[$i]['Account Number'],   
+                'roleId' =>  $entries[$i]['Role ID'], 
+                'unitId' =>  $entries[$i]['Unit Code'], 
+                'majorId' =>  $entries[$i]['Major Code'], 
+                'courseId' =>  $entries[$i]['Course Code'], 
+                'schoolId' =>  $entries[$i]['School Code']   
+            ]);
+        }
+    }
+
+    /**
+     * Adds new Roles to database from array
+     */
+    private function csvAddRoles(array $entries) {
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Primary Key automatically created
+
+            // Role Name
+            $curAttr = $entries[$i]['Role Name'];
+            if (strlen($curAttr) > 40) {
+                return response()->json(['error' => $curAttr . ' Invalid: Role Name should be under 40 characters'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            Role::create([
+                'name' =>  $entries[$i]['Role Name']      
+            ]);
+        }
+    }
+
+
+    /**
+     * Adds new Units to database from array
+     */
+    private function csvAddUnits(array $entries) {
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Checking new Primary keys
+            $curID = $entries[$i]['Unit Code'];
+            if (Unit::where('unitId', $curID)->exists())
+            {
+                return response()->json(['error' => 'Unit Code ' . $curID . ' already in use.'], 500);
+            }
+
+            // unitId
+            if (strlen($curID) != 8 || !preg_match("/\A[A-Z]{4}[0-9]{4}/", $curID)) {
+                return response()->json(['error' => $curID . ' Invalid: Unit Code needs syntax of 4 capital letters followed by 4 numbers with no spaces.'], 500);
+            }
+
+            // Unit Name
+            $curAttr = $entries[$i]['Unit Name'];
+            if (strlen($curAttr) > 60) {
+                return response()->json(['error' => $curID . ' Invalid: Unit Name should be under 60 characters. Check name or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            Unit::create([
+                'unitId' => $entries[$i]['Unit Code'],
+                'name' =>  $entries[$i]['Unit Name']      
+            ]);
+        }
+    }
+
+
+    /**
+     * Adds new Majors to database from array
+     */
+    private function csvAddMajors(array $entries) {
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Checking new Primary keys
+            $curID = $entries[$i]['Major Code'];
+            if (Major::where('majorId', $curID)->exists())
+            {
+                return response()->json(['error' => 'Major Code ' . $curID . ' already in use.'], 500);
+            }
+
+            // majorId
+            if (strlen($curID) != 10 || !preg_match("/\AMJ[A-Z]{2}-[A-Z]{5}/", $curID)) {
+                return response()->json(['error' => $curID . ' Invalid: Major Code needs syntax of "MJ" followed by 2 capital letters, then a "-" followed by 5 capital letters.'], 500);
+            }
+
+            // Major Name
+            $curAttr = $entries[$i]['Major Name'];
+            if (strlen($curAttr) > 60) {
+                return response()->json(['error' => $curID . ' Invalid: Major Name should be under 60 characters. Check name or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            Major::create([
+                'majorId' => $entries[$i]['Major Code'],
+                'name' =>  $entries[$i]['Major Name']      
+            ]);
+        }
+    }
+
+
+    /**
+     * Adds new Courses to database from array
+     */
+    private function csvAddCourses(array $entries) {
+        // Check that all attributes are valid (input is entirely unrestricted)
+        $numEntries = count($entries);
+
+        for ($i = 0; $i < $numEntries; $i++) {
+            
+            // Checking new Primary keys
+            $curID = $entries[$i]['Course Code'];
+            if (Course::where('courseId', $curID)->exists())
+            {
+                return response()->json(['error' => 'Course Code ' . $curID . ' already in use.'], 500);
+            }
+
+            // courseId
+            if (strlen($curID) > 10 || !preg_match("/\A[A-Z]{1,2}-[A-Z]{4,7}/", $curID)) {
+                return response()->json(['error' => $curID . ' Invalid: Course Code needs syntax of 1 to 2 capital letters, then a "-" followed by 4 to 7 capital letters'], 500);
+            }
+
+            // Course Name
+            $curAttr = $entries[$i]['Course Name'];
+            if (strlen($curAttr) > 60) {
+                return response()->json(['error' => $curID . ' Invalid: Course Name should be under 60 characters. Check name or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
+            Course::create([
+                'courseId' => $entries[$i]['Course Code'],
+                'name' =>  $entries[$i]['Course Name']      
+            ]);
+        }
+    }
+
+
+    /**
+     * Adds new Schools to database from array
      */
     private function csvAddSchools(array $entries) {
         // Check that all attributes are valid (input is entirely unrestricted)
@@ -413,5 +635,4 @@ class DatabaseController extends Controller
             ]);
         }
     }
-
 }
