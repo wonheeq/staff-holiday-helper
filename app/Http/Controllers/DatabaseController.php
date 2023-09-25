@@ -331,38 +331,38 @@ class DatabaseController extends Controller
 
             // accountNo
             if (strlen($curID) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $curID)) {
-                return response()->json(['error' => $curID . ' Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces.'], 500);
+                return response()->json(['error' => $curID . ' Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
 
             // accountType
             $curAttr = $entries[$i]['Account Type'];
             if ($curAttr != 'staff' && $curAttr != 'lmanager' && $curAttr != 'sysadmin') {
-                return response()->json(['error' => $curID . ' Invalid: Account Type must be one of \'staff\', \'lmanager\', or \'sysadmin\'.'], 500);
+                return response()->json(['error' => $curID . ' Invalid: Account Type must be one of \'staff\', \'lmanager\', or \'sysadmin\'. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
             // Surname & First/Other Names
             $curAttr = $entries[$i]['Surname'];
             if (strlen($curAttr) > 20) {
-                return response()->json(['error' => $curID . ' Invalid: Surname must be 20 characters or less (If surname has multiple parts add some to \'First/Other Names\' column).'], 500);
+                return response()->json(['error' => $curID . ' Invalid: Surname must be 20 characters or less (If surname has multiple parts add some to \'First/Other Names\' column). Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
             $curAttr = $entries[$i]['First/Other Names'];
             if (strlen($curAttr) > 30) {
-                return response()->json(['error' => $curID . ' Invalid: First/Other Names must be 30 characters or less.'], 500);
+                return response()->json(['error' => $curID . ' Invalid: First/Other Names must be 30 characters or less. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
             // School Code
             $curAttr = $entries[$i]['School Code'];
             if (School::where('schoolId', $curAttr)->doesntExist()) {
-                return response()->json(['error' => $curID . ' Invalid: School Code does not exist in database.'], 500);
+                return response()->json(['error' => $curID . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
             // Line Manager's ID
             $curAttr = $entries[$i]['Line Manager\'s ID'];
             if (Account::where('accountNo', $curAttr)->where('accountType', '!=', 'lmanager')->doesntExist()) {
                 if ($curAttr != 'none') {
-                    return response()->json(['error' => $curID . ' Invalid: Line Manager \'' . $curAttr . '\' does not exist in database.'], 500);
+                    return response()->json(['error' => $curID . ' Invalid: Line Manager \'' . $curAttr . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
                 }
             }
         }
