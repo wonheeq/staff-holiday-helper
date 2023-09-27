@@ -30,7 +30,7 @@
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button @click.prevent="switchVis" tabindex="-1" class="fixed right-7">
+            <button @click.prevent="switchVis" tabindex="-1" type="button" class="fixed right-7">
                 <img :src="fieldType.image" :class="isDark?'darkModeImage':''">
             </button>
         </div>

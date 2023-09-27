@@ -51,7 +51,7 @@ const hasDigit = new RegExp("\\d");
 let validatePasswords = () => {
     errors.length = 0;
 
-
+    buttonActive = false;
     if (!hasUppercase.test(password.password)) {
         errors.push("Password must contain at least one uppercase letter.");
     }
@@ -162,7 +162,7 @@ function back() {
                         :class="isDark?'bg-black':''"
                         :type="fieldType.current.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.current)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.current)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.current.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -178,7 +178,7 @@ function back() {
                         :class="isDark?'bg-black':''"
                         :type="fieldType.password.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.password)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.password.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -194,7 +194,7 @@ function back() {
                         :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.confirm)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.confirm)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.confirm.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
