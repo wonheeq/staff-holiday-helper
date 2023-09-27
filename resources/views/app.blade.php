@@ -62,4 +62,7 @@ height:100%;
     }
 }
 
+.darkModeImage {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
 </style>

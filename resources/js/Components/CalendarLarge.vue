@@ -121,9 +121,7 @@ onMounted(() => {
     display: inline-block;
 }
 
-.darkModeImage {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
-}
+
 .enlarge {
     height: 30px;
     width: auto;

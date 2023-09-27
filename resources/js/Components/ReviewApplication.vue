@@ -205,9 +205,7 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
 </template>
 
 <style>
-.darkModeImage {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
-}
+
 .close-button {
     height: 70px;
     width: auto;
