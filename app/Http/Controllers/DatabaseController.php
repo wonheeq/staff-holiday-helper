@@ -283,7 +283,8 @@ class DatabaseController extends Controller
             }
 
             $data = $request->all();
-
+            //Log::info($data);
+            
             if (count($data['entries']) == 0) {
                 return response()->json(['error' => 'Invalid: No rows filled.'], 500);
             }
@@ -291,6 +292,7 @@ class DatabaseController extends Controller
             // Use 'fields' to work out which model the entry applies to.
             switch ($data['table']) {
                 case 'add_staffaccounts.csv':
+                    
                     $response = $this->csvAddAccounts($data['entries']);
                 break;
                 case 'add_accountroles.csv':
@@ -326,6 +328,7 @@ class DatabaseController extends Controller
        
         // Check that all attributes are valid (input is entirely unrestricted)
         $numEntries = count($entries);
+        //Log::info($numEntries);
 
         for ($i = 0; $i < $numEntries; $i++) {
             // checking new primary keys
@@ -366,7 +369,7 @@ class DatabaseController extends Controller
 
             // Line Manager's ID
             $curAttr = $entries[$i]['Line Manager\'s ID'];
-            if (Account::where('accountNo', $curAttr)->where('accountType', '!=', 'lmanager')->doesntExist()) {
+            if (Account::where('accountNo', $curAttr)->where('accountType', '!=', 'staff')->doesntExist()) {
                 if ($curAttr != 'none') {
                     return response()->json(['error' => $curID . ' Invalid: Line Manager \'' . $curAttr . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
                 }

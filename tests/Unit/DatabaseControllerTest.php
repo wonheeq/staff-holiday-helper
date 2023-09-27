@@ -486,16 +486,75 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_valid_accounts_via_csv_entries(): void
     {
-        $account1 = 
+        $tempSchool = School::create(['name' => 'test school']);
+        $testSuperiorNo = $this->otherUser2->accountNo;
+
+        $account1 = array(
+            'Account Number (Staff ID)' => '123456f',
+            'Account Type' => 'staff',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $account2 = array(
+            'Account Number (Staff ID)' => '123456g',
+            'Account Type' => 'lmanager',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $account3 = array(
+            'Account Number (Staff ID)' => '123456h',
+            'Account Type' => 'sysadmin',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
 
         $testCSVEntry = array('table' => 'add_staffaccounts.csv', 'entries' => array(
             0 => $account1,
             1 => $account2,
-            2 => array('Role Name' => 'testRole')
+            2 => $account3
         ));
     
-
         // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $this->validCSVEntry);
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        Log::info($response->getContent());
         $response->assertStatus(200);
-}
+
+        // Check entries have been added
+        // Checking new account added
+        $this->assertTrue(
+            Account::where('accountNo', '123456f')
+                ->where('accountType', 'staff')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+        $this->assertTrue(
+            Account::where('accountNo', '123456g')
+                ->where('accountType', 'lmanager')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+        $this->assertTrue(
+            Account::where('accountNo', '123456h')
+                ->where('accountType', 'sysadmin')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        );
+
+        Account::where('accountNo', '123456f')->delete();
+        Account::where('accountNo', '123456g')->delete();
+        Account::where('accountNo', '123456h')->delete();
+        School::where('schoolId', $tempSchool->schoolId)->delete();
+    }
+}   
