@@ -48,7 +48,7 @@ let period = reactive({
         time: null,
     },
 });
-const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md bg-white";
+const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md";
 let isEditing = ref(false);
 let applicationNo = ref(null);
 async function handleEditApplication(appNo) {

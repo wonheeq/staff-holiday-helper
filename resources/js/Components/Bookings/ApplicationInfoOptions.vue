@@ -1,4 +1,6 @@
 <script setup>
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 let props = defineProps({
     status: String
 });
@@ -15,10 +17,10 @@ function handleEditApplication() {
 <template>
     <div class="mt-auto">
         <button @click="handleCancelApplication()" v-show="status!='C'">
-            <img class="option" src="/images/delete.svg" />
+            <img class="option" src="/images/delete.svg" :class="isDark?'darkModeImage':''"/>
         </button>
         <button @click="handleEditApplication()" class="ml-auto">
-            <img class="option" src="/images/edit.svg" />
+            <img class="option" src="/images/edit.svg" :class="isDark?'darkModeImage':''"/>
         </button>
     </div>
 </template>
