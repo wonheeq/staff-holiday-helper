@@ -152,12 +152,14 @@ function back() {
             />
         </button>
     </div>
-    <form action="#" @submit.prevent="handleChangePassword">
+    <form @submit.prevent="">
         <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
             <div class="w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Current Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.current"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.current.type"
@@ -174,6 +176,8 @@ function back() {
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.password"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.password.type"
@@ -190,6 +194,8 @@ function back() {
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.confirm"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
@@ -224,7 +230,7 @@ function back() {
                     'bg-gray-900 text-white': !buttonActive && isDark,
                 }"
                 :disabled="!buttonActive"
-                type="submit"
+                @click="handleChangePassword"
             >
                 Change Password
             </button>
