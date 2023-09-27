@@ -13,6 +13,17 @@ function resetView() {
     emit('close-settings');
 }
 
+function changeSweetalertTheme() {
+    if (isDark.value) {
+        document.head.querySelector('#swal2-theme').setAttribute('href', "http://" + document.location.host + "/@sweetalert2/theme-dark/dark.css");
+    }
+    else {
+        document.head.querySelector('#swal2-theme').setAttribute('href', "http://" + document.location.host + "/@sweetalert2/theme-default/default.css");
+    }
+}
+
+changeSweetalertTheme();
+
 const options = [
     {
         screen: 'changePassword',
@@ -23,6 +34,7 @@ const options = [
         label: "Toggle Theme",
         click: function() {
             toggleDark();
+            changeSweetalertTheme();
         },
     },
 ];
