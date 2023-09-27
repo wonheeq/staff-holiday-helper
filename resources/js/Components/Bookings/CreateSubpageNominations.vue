@@ -26,8 +26,9 @@ let props = defineProps({
     applicationNo: Number
 });
 let emit = defineEmits(['resetFields', 'submitApplication']);
-
-let deadAreaColor = "#FFFFFF";
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 
 let selfNominateAll = isSelfNominateAll;
 let allSelected = ref(false);
@@ -185,7 +186,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
 <template>
     <div class="flex flex-col w-full justify-between pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%] 1080:h-[15%] 1440:h-[10%] pb-2 laptop:pb-0">
-            <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
+            <p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
             <div class="flex w-full justify-between 4k:py-6 space-x-7 pr-2">
@@ -196,7 +197,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="checkbox"
                             class="w-8 h-8 ml-2 border-gray-300"
-                            :class="selfNominateAll ? disabledClass : ''"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
@@ -208,8 +209,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="text"
                             class="h-8 w-full border-gray-300 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
-                            :class="selfNominateAll ? disabledClass : ''"
-                            v-model="roleFilter"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
@@ -250,6 +250,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
             <div class="flex items-center space-x-2 py-2">
                 <input type="checkbox"
                     class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                    :class="isDark?'bg-gray-800 border-white':''"
                     v-model="selfNominateAll"
                     @click="handleSelfNominateAll()"    
                 />
