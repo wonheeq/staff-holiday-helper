@@ -39,6 +39,9 @@
 .dropdown-dark .vs__open-indicator {
   fill: #FFFFFF;
 }
+:root {
+    --vs-disabled-bg:;
+}
 html,body{
 height:100%;
 }

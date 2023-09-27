@@ -79,7 +79,7 @@ function handleActiveScreenChanged(screen) {
 </script>
 
 <template>
-<PageLayout>
+<PageLayout id="layout">
     <AuthenticatedLayout>
         <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
             <SubpageNavbar
@@ -130,7 +130,7 @@ function handleActiveScreenChanged(screen) {
                 class="p-4 h-[95%]"
             />
         </div>
-        <Teleport to="body">
+        <Teleport to="#layout">
             <EditApplication
                 v-show="isEditing"
                 :applicationNo="applicationNo"
