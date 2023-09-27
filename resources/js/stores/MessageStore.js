@@ -21,14 +21,6 @@ export let useMessageStore = defineStore('messages', {
     },
 
     getters: {
-        filteredMessages() {
-            if (this.viewing === 'unread') {
-                return this.messages.filter(message => message.acknowledged === 0);
-            }
-            else {
-                return this.messages;
-            }
-        },
         unreadMessages() {
             return this.messages.filter(message => message.acknowledged === 0);
         }

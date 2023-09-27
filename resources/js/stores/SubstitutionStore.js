@@ -18,13 +18,6 @@ export let useSubstitutionStore = defineStore('substitutions', {
             }
         }
     },
-/*
-    getters: {
-        filteredMessages(viewing) {
-            return this.messages.filter(message => message.acknowledged === 0);
-        }
-    }
-*/
     persist: {
         storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
     },
