@@ -21,7 +21,7 @@ let options = {
         { source: "/images/admin.svg", caption: "Admin", minPerm: "sysadmin" },
     ],
     right: [
-        { source: "/images/account.svg", caption: "Settings", noLink: () => {
+        { source: "/images/settings.svg", caption: "Settings", noLink: () => {
             emit('open-settings');
         } },
         { source: "/images/logout.svg", caption: "Logout", noLink: () => {
