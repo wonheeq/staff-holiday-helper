@@ -3,15 +3,20 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { useSubstitutionStore } from '@/stores/SubstitutionStore';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const substitutionStore = useSubstitutionStore();
 const { substitutions } = storeToRefs(substitutionStore);
-let deadAreaColor = "#FFFFFF";
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 </script>
 <template>
-    <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full mb-2">
+    <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full mb-2" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
             <p class="font-bold text-3xl laptop:text-5xl">
                 Your Substitutions
@@ -28,14 +33,18 @@ let deadAreaColor = "#FFFFFF";
             >
                 <template #tbody>
                     <div v-for="item in substitutions" :key="item.id"
-                        class=" bg-gray-200 border-b-8 border-white"
+                    class="border-b-8"
+                        :class="isDark?'bg-gray-700 border-gray-800':'bg-gray-200 border-white'"
                     >
                         <div class="px-2 py-2">
-                            <p class="text-lg laptop:text-xl ">
-                                {{ item.task }} for {{  item.applicantName }}
+                            <p class="text-lg">
+                                {{  item.applicantName }}
                             </p>
-                            <p>
-                                {{ item.sDate }} - {{ item.eDate }}
+                            <p class="">
+                                Duration: {{ item.sDate }} - {{ item.eDate }}
+                            </p>
+                            <p class="" v-for="task in item.tasks">
+                                →{{ task }} 
                             </p>
                         </div>
                     </div>
@@ -44,7 +53,7 @@ let deadAreaColor = "#FFFFFF";
         </div>
         <p class="text-transparent h-2 text-sm">e</p>
     </div>
-    <div v-else class="subpage-height w-full">
+    <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[15%] 1080:h-[12%] 1440:h-[9%] 4k:h-[6%]">
             <p class="font-bold laptop:text-3xl 1080:text-5xl">
                 Your Substitutions
@@ -61,7 +70,8 @@ let deadAreaColor = "#FFFFFF";
             >
                 <template #tbody>
                     <div v-for="item in substitutions" :key="item.id"
-                        class=" bg-gray-200 border-b-8 border-white"
+                        class="border-b-8"
+                        :class="isDark?'bg-gray-700 border-gray-800':'bg-gray-200 border-white'"
                     >
                         <div class="px-2 py-2">
                             <p class="text-xl 1080:text-2xl 1440:text-3xl 4k:text-4xl">
