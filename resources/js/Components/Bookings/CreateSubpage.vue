@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, inject } from 'vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { usePage } from '@inertiajs/vue3'
+const dayJS = inject("dayJS");
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const calendarStore = useCalendarStore();
@@ -23,13 +24,13 @@ const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
 
 let period = reactive({
-    start: null,
-    end: null,
+    start: new Date(),
+    end: new Date(),
 });
 
 function resetFields() {
-    period.start = null;
-    period.end = null;
+    period.start = new Date();
+    period.end = new Date();
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -104,13 +105,18 @@ function formatNominations(accountNo) {
     return result;
 }
 
+function formatDate(date) {
+    return dayJS(date).format('YYYY-MM-DDTHH:mm');
+}
+
 function createApplication(data) {
+    period.end = formatDate(period.end);
+    period.start = formatDate(period.start);
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);
         data.sDate = period.start;
         data.eDate = period.end;
-
         resetFields();
         
         axios.post('/api/createApplication', data)

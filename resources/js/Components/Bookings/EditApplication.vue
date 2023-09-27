@@ -8,10 +8,11 @@ import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const dayJS = inject("dayJS");
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
@@ -31,8 +32,8 @@ let props = defineProps({
 });
 
 function resetFields() {
-    props.period.start = null;
-    props.period.end = null;
+    props.period.start = new Date();
+    props.period.end = new Date();
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -107,8 +108,14 @@ function formatNominations(accountNo) {
 
     return result;
 }
+function formatDate(date) {
+    return dayJS(date).format('YYYY-MM-DDTHH:mm');
+}
 
 function handleEditApplication(data) {
+    props.period.end = formatDate(props.period.end);
+    props.period.start = formatDate(props.period.start);
+
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);

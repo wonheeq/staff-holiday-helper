@@ -10,6 +10,8 @@ import Nomination from "./Nomination.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { usePage } from '@inertiajs/vue3';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
@@ -39,7 +41,6 @@ let fetchStaffMembers = async() => {
         const resp = await axios.get('/api/getBookingOptions/' + user.value.accountNo);
         staffMembers = resp.data;
     } catch (error) {
-        alert("Failed to load data: Please try again");
         console.log(error);
     }
 }; 
