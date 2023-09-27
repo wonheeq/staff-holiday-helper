@@ -14,8 +14,6 @@ let props = defineProps({
 });
 
 let emit = defineEmits(['nominationSelected']);
-
-const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div class="flex mb-2.5 mt-2.5 w-full">
@@ -24,8 +22,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
                     <input type="checkbox"
                         class="w-8 h-8"
-                        :class="isDisabled ? disabledClass : ''"
-                        v-model="nomination.selected"
+                        :class="isDisabled ? isDark?'bg-gray-700 border-gray-600':'bg-gray-300 border-gray-100' : isDark?'bg-gray-800':''"                        v-model="nomination.selected"
                         :disabled="isDisabled"   
                         @click="emit('nominationSelected', nomination.selected)" 
                     />
