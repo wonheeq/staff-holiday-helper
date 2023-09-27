@@ -150,11 +150,11 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
             <div class="flex ">
                 <div>
                     <p style="font-size:20px;"><b>Unit Code: </b></p>
-                    <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown"></v-select>
+                    <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="pl-5">
                     <p style="font-size:20px;"><b>Role Name: </b></p>
-                    <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown"></v-select>
+                    <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="ml-auto pt-2 pr-5">
                     <button
