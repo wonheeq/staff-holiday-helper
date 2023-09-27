@@ -35,8 +35,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </div>
             </div>
             <vSelect :options="props.options" :clearable="true" :class="isDark ? 'dropdown-dark':''"
-                style="width: 40%; height: 2rem; background-color: inherit; 
-                border: solid; border-width: 1px;"                                 
+                style="width: 40%; height: 2rem; background-color: inherit;"       
                 v-model="props.nomination.nomination"
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"

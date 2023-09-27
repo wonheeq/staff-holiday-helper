@@ -39,10 +39,15 @@ if (props.screenProp !== "default") {
 }
 
 let period = reactive({
-    start: null,
-    end: null
-})
-
+    start: {
+        date: null,
+        time: null,
+    },
+    end: {
+        date: null,
+        time: null,
+    },
+});
 const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md bg-white";
 let isEditing = ref(false);
 let applicationNo = ref(null);
@@ -53,8 +58,12 @@ async function handleEditApplication(appNo) {
 
     for (let app of applications.value) {
         if (app.applicationNo == appNo) {
-            period.start = app.sDate.replace(" ", "T");
-            period.end = app.eDate.replace(" ", "T");
+            let sDatetime = app.sDate.split(" ");
+            let eDatetime = app.eDate.split(" ");
+            period.start.date = sDatetime[0];
+            period.start.time = sDatetime[1];
+            period.end.date = eDatetime[0];
+            period.end.time = eDatetime[1];
             break;
         }
     }

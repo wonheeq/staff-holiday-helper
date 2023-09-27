@@ -233,8 +233,7 @@ import "vue-select/dist/vue-select.css";
                         </v-select>-->
                         <form  autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr"  :class="isDark ? 'dropdown-dark':''"
-                                     style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: inherit; 
-                                     border: solid; border-width: 1px;"                                 
+                                     style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: inherit;"                                 
                                      :placeholder="field.plhldr"
                                      v-model="attributeEntries[index]" >
                             </vSelect>

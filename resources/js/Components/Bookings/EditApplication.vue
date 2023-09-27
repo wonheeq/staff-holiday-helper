@@ -31,8 +31,10 @@ let props = defineProps({
 });
 
 function resetFields() {
-    props.period.start = null;
-    props.period.end = null;
+    props.period.start.time = null;
+    props.period.start.date = null;
+    props.period.end.time = null;
+    props.period.end.date = null;
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -51,24 +53,35 @@ function validateApplication(data) {
     errors = [];
 
     // Date is empty
-    if (props.period.end == null || props.period.start == null) {
+    if (props.period.end.date == null || props.period.start.date == null) {
         errors.push("Dates cannot be empty")
     }
 
+    // Time is empty
+    if (props.period.end.time == null || props.period.start.time == null) {
+        errors.push("Times cannot be empty")
+    }
+
     // End date is earlier than start date
-    if (props.period.end != null && props.period.start != null && calcDateDiff(props.period.end, props.period.start) < 0) {
+    if (props.period.end.date != null && props.period.start.date != null
+        && props.period.end.time != null && props.period.start.time != null
+        && calcDateDiff(props.period.end.date + 'T' + props.period.end.time, props.period.start.date + 'T' + props.period.start.time) < 0) {
         errors.push("End date/time cannot be earlier than start date/time");
     }
 
     // End date is equal to start date
-    if (props.period.end != null && props.period.start != null && props.period.end == props.period.start) {
+    if (props.period.end.date != null && props.period.start.date != null
+        && props.period.end.time != null && props.period.start.time != null 
+        && props.period.end.date == props.period.start.date
+        && props.period.end.time == props.period.start.time) {
         errors.push("End date/time cannot be the same as the start date/time");
     }
 
     // A date is in the past
     let currentDate = new Date();
-    if (props.period.end != null && props.period.start != null &&
-        (calcDateDiff(props.period.start, currentDate) <= 0 || calcDateDiff(props.period.end, currentDate) <= 0)) {
+    if (props.period.end.date != null && props.period.start.date != null
+        && props.period.end.time != null && props.period.start.time != null 
+        && (calcDateDiff(props.period.start.date + 'T' + props.period.start.time, currentDate) <= 0 || calcDateDiff(props.period.end.date + 'T' + props.period.end.time, currentDate) <= 0)) {
         errors.push("Dates cannot be in the past");
     }
 
@@ -84,6 +97,7 @@ function validateApplication(data) {
 
     return errors.length == 0;
 }
+
 
 function formatNomineeNo(nominee, accountNo) {
     if (nominee == "Self Nomination") {
@@ -112,8 +126,8 @@ function handleEditApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);
-        data.sDate = props.period.start;
-        data.eDate = props.period.end;
+        data.sDate = props.period.start.date + 'T' + props.period.start.time;
+        data.eDate = props.period.end.date + 'T' + props.period.end.time;
         data.applicationNo = props.applicationNo;
 
         resetFields();

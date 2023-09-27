@@ -134,8 +134,7 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
                     Reminder Timeframe:
                 </p>
                 <vSelect :options="options.all" :clearable="false" :class="isDark ? 'dropdown-dark':''"
-                    style="width: 33rem; height: 2rem; background-color: inherit; 
-                    border: solid; border-width: 1px;"                              
+                    style="width: 33rem; height: 2rem; background-color: inherit;"                              
                     v-model="reminderTimeframe"
                 />
                 <button v-show="showReminderApplyButton" :class="buttonClass"

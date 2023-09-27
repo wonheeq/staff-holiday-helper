@@ -196,7 +196,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-8 h-8 ml-2"
+                            class="w-8 h-8 ml-2 border-gray-300"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
@@ -208,7 +208,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-8 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            class="h-8 w-full border-gray-300 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                             :class="selfNominateAll ? disabledClass : ''"
                             v-model="roleFilter"
                             :disabled="selfNominateAll"
@@ -220,8 +220,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
                     <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
-                        style="width: 100%; height: 2rem; background-color: inherit;
-                        border: solid; border-width: 1px;"                                     
+                        style="width: 100%; height: 2rem; background-color: inherit;"                                     
                         v-model="multiSelectNominee"
                         @option:selected="(selection) => handleDropdownStaffSelection(selection)"
                         :disabled="selfNominateAll"
