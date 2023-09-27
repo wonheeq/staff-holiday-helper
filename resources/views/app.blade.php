@@ -42,4 +42,24 @@
 html,body{
 height:100%;
 }
+
+
+@media 
+(min-width: 768px) {
+    .scrollbar-dark ::-webkit-scrollbar {
+        height: 12px;
+        width: 12px;
+        background: #1f2937;
+    }
+
+    .scrollbar-dark ::-webkit-scrollbar-thumb {
+        background: #6b7280;
+        -webkit-border-radius: 1ex;
+    }
+
+    .scrollbar-dark ::-webkit-scrollbar-corner {
+        background: #6b7280;
+    }
+}
+
 </style>
