@@ -517,6 +517,10 @@ class ApplicationController extends Controller
 
         // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
         $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations'], $applicationNo);
+
+        // Get Old Nominations
+        $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
+
         // Handle nonedited, edited nominations and creation of new nominations
         $this->handleEditApplicationNonCancelledNominations($oldNominations, $data['nominations'], $applicationNo, $oldDates);
 
