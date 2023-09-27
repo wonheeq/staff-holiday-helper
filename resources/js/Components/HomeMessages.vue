@@ -69,7 +69,7 @@ const deadAreaColor = computed(() => {
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="item in messages" :key="item.id">
+                        <div v-for="item in messages" :key="item.id" class="mb-1">
                             <Message :source="item"
                                 v-show="(item.acknowledged == 0 && viewing == 'unread') || viewing == 'all'"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
