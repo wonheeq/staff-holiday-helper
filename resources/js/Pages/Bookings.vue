@@ -39,36 +39,26 @@ if (props.screenProp !== "default") {
 }
 
 let period = reactive({
-    start: {
-        date: null,
-        time: null,
-    },
-    end: {
-        date: null,
-        time: null,
-    },
+    start: null,
+    end: null,
 });
 const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md";
 let isEditing = ref(false);
 let applicationNo = ref(null);
 async function handleEditApplication(appNo) {
     appNo = parseInt(appNo);
-    isEditing.value = true;
     applicationNo.value = appNo;
 
     for (let app of applications.value) {
         if (app.applicationNo == appNo) {
-            let sDatetime = app.sDate.split(" ");
-            let eDatetime = app.eDate.split(" ");
-            period.start.date = sDatetime[0];
-            period.start.time = sDatetime[1];
-            period.end.date = eDatetime[0];
-            period.end.time = eDatetime[1];
+            period.start = app.sDate;
+            period.end = app.eDate;
             break;
         }
     }
 
     await fetchNominationsForApplicationNo(appNo, user.value.accountNo);
+    isEditing.value = true;
 }
 
 function changeUrl(params) {

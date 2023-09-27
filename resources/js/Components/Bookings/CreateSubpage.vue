@@ -23,21 +23,13 @@ const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
 
 let period = reactive({
-    start: {
-        date: null,
-        time: null,
-    },
-    end: {
-        date: null,
-        time: null,
-    },
+    start: null,
+    end: null,
 });
 
 function resetFields() {
-    period.start.date = null;
-    period.start.time = null;
-    period.end.date = null;
-    period.end.time = null;
+    period.start = null;
+    period.end = null;
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -55,35 +47,24 @@ function validateApplication(data) {
     errors = [];
 
     // Date is empty
-    if (period.end.date == null || period.start.date == null) {
+    if (period.end == null || period.start == null) {
         errors.push("Dates cannot be empty")
     }
 
-    // Time is empty
-    if (period.end.time == null || period.start.time == null) {
-        errors.push("Times cannot be empty")
-    }
-
-     // End date is earlier than start date
-     if (period.end.date != null && period.start.date != null
-        && period.end.time != null && period.start.time != null
-        && calcDateDiff(period.end.date + 'T' + period.end.time, period.start.date + 'T' + period.start.time) < 0) {
+    // End date is earlier than start date
+    if (period.end != null && period.start != null && calcDateDiff(period.end, period.start) < 0) {
         errors.push("End date/time cannot be earlier than start date/time");
     }
 
     // End date is equal to start date
-    if (period.end.date != null && period.start.date != null
-        && period.end.time != null && period.start.time != null 
-        && period.end.date == period.start.date
-        && period.end.time == period.start.time) {
+    if (period.end != null && period.start != null && period.end == period.start) {
         errors.push("End date/time cannot be the same as the start date/time");
     }
 
     // A date is in the past
     let currentDate = new Date();
-    if (period.end.date != null && period.start.date != null
-        && period.end.time != null && period.start.time != null 
-        && (calcDateDiff(period.start.date + 'T' + period.start.time, currentDate) <= 0 || calcDateDiff(period.end.date + 'T' + period.end.time, currentDate) <= 0)) {
+    if (period.end != null && period.start != null &&
+        (calcDateDiff(period.start, currentDate) <= 0 || calcDateDiff(period.end, currentDate) <= 0)) {
         errors.push("Dates cannot be in the past");
     }
 
@@ -127,8 +108,10 @@ function createApplication(data) {
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);
-        data.sDate = period.start.date + 'T' + period.start.time;
-        data.eDate = period.end.date + 'T' + period.end.time;
+        data.sDate = period.start;
+        data.eDate = period.end;
+
+        resetFields();
         
         axios.post('/api/createApplication', data)
             .then(res => {
@@ -140,7 +123,6 @@ function createApplication(data) {
                         icon: "success",
                         title: 'Successfully created application.'
                     });
-                    resetFields();
                 }
             }).catch(err => {
             console.log(err)
