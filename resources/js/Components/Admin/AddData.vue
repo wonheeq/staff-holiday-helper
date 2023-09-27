@@ -232,10 +232,9 @@ import "vue-select/dist/vue-select.css";
                             <option v-for="item in schools" :key="item.name" :value="item.name">{{ item.name }}</option>
                         </v-select>-->
                         <form  autocomplete="off" v-else >
-                            <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
-                                     style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: white; 
-                                     border: solid; border-color: #6b7280; border-width: 1px;
-                                     --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                            <vSelect :options="getArray(field.fk)" :label="field.fkAttr"  :class="isDark ? 'dropdown-dark':''"
+                                     style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: inherit; 
+                                     border: solid; border-width: 1px;"                                 
                                      :placeholder="field.plhldr"
                                      v-model="attributeEntries[index]" >
                             </vSelect>

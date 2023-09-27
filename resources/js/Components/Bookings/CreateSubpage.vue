@@ -132,7 +132,7 @@ function createApplication(data) {
         Swal.fire({
            icon: "error",
            title: "Error",
-           text:  errors
+           text:  errors.join(", ")
         });
     }
 }

@@ -178,18 +178,16 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 </template>
             </VueScrollingTable>
         </div>
-        <div class="h-[29%] py-4">
+        <div class="h-[29%] py-4 space-y-2">
             <p class="h-[20%] text-lg 1080:text-xl 4k:text-2xl" :class="isDark?'text-white':''">
                 Select Reject Reason or Enter Custom Message:
             </p>
             <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2" :class="isDark?'text-white bg-gray-800':''"/>
-            <vSelect :options="options" :clearable="false"
-                style="width: 100%; height: 2rem; background-color: white; 
-                border: solid; border-color: #6b7280; border-width: 1px;
-                --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
-                v-model="multiSelectNominee"
+            <vSelect :options="options" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                style="width: 100%; height: 2rem; background-color: inherit;
+                border: solid; border-width: 1px;"                 
+                v-model="rejectReason"
                 @option:selected="(selectedOption) => handleSelection(selectedOption)"
-                :isDisabled="selfNominateAll"
             />
         </div>
         <div class="h-[10%] flex justify-between">

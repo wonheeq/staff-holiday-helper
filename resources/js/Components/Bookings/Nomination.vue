@@ -3,6 +3,8 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 let props = defineProps({
@@ -32,10 +34,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     </p>
                 </div>
             </div>
-            <vSelect :options="props.options" :clearable="true"
-                style="width: 40%; height: 2rem; background-color: white; 
-                border: solid; border-color: #6b7280; border-width: 1px;
-                --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+            <vSelect :options="props.options" :clearable="true" :class="isDark ? 'dropdown-dark':''"
+                style="width: 40%; height: 2rem; background-color: inherit; 
+                border: solid; border-width: 1px;"                                 
                 v-model="props.nomination.nomination"
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"

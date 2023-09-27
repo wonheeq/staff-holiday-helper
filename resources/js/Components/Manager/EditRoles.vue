@@ -9,6 +9,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useManagerStore } from '@/stores/ManagerStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const managerStore = useManagerStore();
 const { staffRoles, staffInfo, allUnits } = storeToRefs(managerStore);
 const { fetchRolesForStaff } = managerStore;

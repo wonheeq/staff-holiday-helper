@@ -5,6 +5,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { ref, watch, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const MAX_SYSTEM_NOTIFICATION_LENGTH = 300;
@@ -131,10 +133,9 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
                 <p class="text-2xl h-full">
                     Reminder Timeframe:
                 </p>
-                <vSelect :options="options.all" :clearable="false"
-                    style="width: 33rem; height: 2rem; background-color: white; 
-                    border: solid; border-color: #6b7280; border-width: 1px;
-                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                <vSelect :options="options.all" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                    style="width: 33rem; height: 2rem; background-color: inherit; 
+                    border: solid; border-width: 1px;"                              
                     v-model="reminderTimeframe"
                 />
                 <button v-show="showReminderApplyButton" :class="buttonClass"

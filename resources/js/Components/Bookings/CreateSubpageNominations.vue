@@ -10,6 +10,8 @@ import Nomination from "./Nomination.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { usePage } from '@inertiajs/vue3';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
@@ -217,10 +219,9 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
-                    <vSelect :options="staffMembers" :clearable="false"
-                        style="width: 100%; height: 2rem; background-color: white; 
-                        border: solid; border-color: #6b7280; border-width: 1px;
-                        --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                    <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                        style="width: 100%; height: 2rem; background-color: inherit;
+                        border: solid; border-width: 1px;"                                     
                         v-model="multiSelectNominee"
                         @option:selected="(selection) => handleDropdownStaffSelection(selection)"
                         :disabled="selfNominateAll"
@@ -288,6 +289,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
     </div>
 </template>
 <style>
+
 .scrollTable{
     overflow-y: auto;
 }
