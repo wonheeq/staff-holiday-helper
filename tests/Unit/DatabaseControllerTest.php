@@ -11,12 +11,14 @@ use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
-    private Array $validEntry;
+    private Array $validEntry, $validCSVEntry;
 
     protected function setup(): void {
         parent::setup();
@@ -36,6 +38,12 @@ class DatabaseControllerTest extends TestCase
         // Mock valid entry to be added to db
         $this->validEntry = array('fields' => 'roleFields', 'newEntry' => array(0 => 'testRole'));
         //Log::info($this->validEntry);
+
+        $this->validCSVEntry = array('table' => 'add_roles.csv', 'entries' => array(
+            0 => array('Role Name' => 'testRole'),
+            1 => array('Role Name' => 'testRole'),
+            2 => array('Role Name' => 'testRole')
+        ));
     }
 
     protected function teardown(): void {
@@ -370,4 +378,124 @@ class DatabaseControllerTest extends TestCase
 
         School::where('name', $testName)->delete();
     }
+
+
+    /**
+     * Unit Tests for adding data through CSV files
+     */
+    public function test_api_request_for_getting_csv_templates_is_protected(): void
+    {
+        $validFileName = 'add_staffaccounts.csv';
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}");
+        $response->assertStatus(200);
+
+        $response = $this->actingAs($this->otherUser1)->getJson("/api/getCSVTemplate/{$this->otherUser1['accountNo']}/{$validFileName}");
+        $response->assertStatus(403);
+
+        $response = $this->actingAs($this->otherUser2)->getJson("/api/getCSVTemplate/{$this->otherUser2['accountNo']}/{$validFileName}");
+        $response->assertStatus(403);
+    }
+
+    public function test_api_request_for_getting_csv_templates_returns_correct_files(): void
+    {
+        $validFileName = 'add_staffaccounts.csv';
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        //Log::info($response->getFile()->getContent());
+        
+        
+        //Log::info(Storage::disk('public')->exists("csv_templates/$validFileName"));
+        //Log::info(file_get_contents(public_path().'/csv_templates/'. $validFileName));
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+        $this->assertEquals($expected, $contents);
+
+        $validFileName = 'add_accountroles.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+
+        $validFileName = 'add_roles.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+
+        $validFileName = 'add_units.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+
+        $validFileName = 'add_majors.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+
+        $validFileName = 'add_courses.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+
+
+        $validFileName = 'add_schools.csv';
+
+        $response = $this->actingAs($this->adminUser)->getJson("/api/getCSVTemplate/{$this->adminUser['accountNo']}/{$validFileName}"); 
+        $response->assertDownload($validFileName);
+        $response->assertStatus(Response::HTTP_OK); 
+        $contents = $response->getFile()->getContent();
+        $expected = file_get_contents(public_path().'/csv_templates/'. $validFileName);
+    }
+
+
+    public function test_api_request_for_adding_csv_entries_is_protected(): void
+    {
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $this->validCSVEntry);
+        $response->assertStatus(200);
+
+        $response = $this->actingAs($this->otherUser1)->postJson("/api/addEntriesFromCSV/{$this->otherUser1['accountNo']}", $this->validCSVEntry);
+        $response->assertStatus(403);
+
+        $response = $this->actingAs($this->otherUser2)->postJson("/api/addEntriesFromCSV/{$this->otherUser2['accountNo']}", $this->validCSVEntry);
+        $response->assertStatus(403);
+    }
+
+    public function test_api_request_for_adding_valid_accounts_via_csv_entries(): void
+    {
+        $account1 = 
+
+        $testCSVEntry = array('table' => 'add_staffaccounts.csv', 'entries' => array(
+            0 => $account1,
+            1 => $account2,
+            2 => array('Role Name' => 'testRole')
+        ));
+    
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $this->validCSVEntry);
+        $response->assertStatus(200);
 }

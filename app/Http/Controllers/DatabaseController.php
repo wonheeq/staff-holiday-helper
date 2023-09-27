@@ -253,7 +253,11 @@ class DatabaseController extends Controller
             }
 
             //if (Storage::disk('public')->exists("csv_templates/$fileName")) {
-                return response()->download(public_path().'/csv_templates/'. $fileName);
+                //Log::info(public_path().'/csv_templates/'. $fileName);
+
+                $response = response()->download(public_path().'/csv_templates/'. $fileName, $fileName, ['Content-type' => 'file/csv']);
+                //Log::info($response);
+                return $response;
             //} else {
                // return response()->json(['error' => 'File not found'], 500);
            // }  
@@ -262,10 +266,10 @@ class DatabaseController extends Controller
 
 
     /**
-     * Send requested file to user
+     * Send add entries to db
     */
     public function addEntriesFromCSV(Request $request, String $accountNo)
-    {  
+    {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception

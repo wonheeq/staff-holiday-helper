@@ -29,8 +29,8 @@
         // Upload appropriate .csv file to user
         axios.get("/api/getCSVTemplate/" + props.user + "/" + file, { responseType: 'blob'})
         .then((response) => {
-            console.log(response);
-            console.log(response.data);
+            //console.log(response);
+            //console.log(response.data);
 
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(
