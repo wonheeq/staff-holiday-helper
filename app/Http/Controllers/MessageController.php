@@ -304,7 +304,8 @@ class MessageController extends Controller
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
-        // Set all messages related to the applicat
+        // Resend Substitution Request messages
+        $this->notifyNomineeApplicationEdited($applicationNo, $nomineeNos);
 
         // Process nominations
         $nominations = Nomination::where('applicationNo',  $applicationNo)

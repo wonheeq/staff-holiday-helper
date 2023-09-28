@@ -412,7 +412,7 @@ class ApplicationController extends Controller
                 // Application period has been edited out of range, will need to confirm/reject via EditedSubstitionRequest
                 if ($isOutOfRange) {
                     // Find existing nomination and edit status 
-                    $nom = Nomination::where('applicationNo', $applicationNo)
+                     Nomination::where('applicationNo', $applicationNo)
                     ->where('accountRoleId', $new['accountRoleId'])->update([
                         'nomineeNo' => $new['nomineeNo'],
                         // status = 'Y' if self nominated, otherwise = 'U'
@@ -428,6 +428,13 @@ class ApplicationController extends Controller
                     }
                 }
                 else if ($isSubset) {
+                    // Find existing nomination and edit status 
+                    Nomination::where('applicationNo', $applicationNo)
+                    ->where('accountRoleId', $new['accountRoleId'])->update([
+                        'nomineeNo' => $new['nomineeNo'],
+                        // status = 'Y' if self nominated, otherwise = 'U'
+                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                    ]);
                     //Log::debug("Potential Subset Message for : {$new['nomineeNo']}");
                 }
                 else {
@@ -605,6 +612,16 @@ class ApplicationController extends Controller
                 ->delete();
                 break;
             }
+        }
+
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Inform line manager of new application to review (if self-nominated all)
+        if ($application->status == 'U') {
+            // Get current line manager account number
+            $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
+            // Notify line manager of new application to review
+            app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $application->applicationNo);
         }
 
         return response()->json(['success' => 'success'], 200);
