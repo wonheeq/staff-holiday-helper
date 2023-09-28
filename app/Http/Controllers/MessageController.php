@@ -366,8 +366,7 @@ class MessageController extends Controller
         foreach ($groupedNominations as $nomineeNo => $accountRoleIds) {
             $content = [
                 "This application has been edited.",
-                "Please accept or reject accordingly to the new details:",
-                "Nomination/s:",
+                "You have been nominated for the following roles:",
             ];
 
             // Iterate through accountRoleIds and get roleName and add to content list
