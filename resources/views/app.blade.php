@@ -35,6 +35,18 @@
   background: #1f2937;
   color: #FFFFFF;
 }
+.dropdown-dark .vs__dropdown-toggle {
+    border-color: #FFFFFF;
+}
+
+.vs__dropdown-toggle {
+    background: white;
+    border-color: gray;
+}
+.vs__search {
+    color: gray;
+}
+
 .dropdown-dark .vs__clear,
 .dropdown-dark .vs__open-indicator {
   fill: #FFFFFF;
@@ -67,5 +79,18 @@ height:100%;
 
 .darkModeImage {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
+}
+
+.vs__selected-options {
+    flex-wrap: nowrap;
+    max-width: calc(100% - 40px);
+}
+
+.vs__selected {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    overflow: hidden;
 }
 </style>
