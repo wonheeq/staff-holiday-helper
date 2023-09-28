@@ -37,6 +37,14 @@ class ApplicationController extends Controller
             } else {
                 $val["nominations"] = $nominations;
             }
+            // get name of user who processed the application
+            if ($val["processedBy"] != null) {
+                $acc = Account::where('accountNo', $val['processedBy'])->first();
+                $val["processedBy"] = "{$acc['fName']} {$acc['lName']}";
+            }
+            else {
+                $val["processedBy"] = "System";
+            }
         }
 
         return response()->json($applications);
@@ -235,7 +243,7 @@ class ApplicationController extends Controller
         $application = Application::where('applicationNo', $data['applicationNo'])->first();
 
         // If self nominated for all, application status should be Undecided
-        if ($data['selfNominateAll']) {
+        if (!$data['selfNominateAll']) {
             $application->status = 'U';
         } else {
             $application->status = 'P';
@@ -285,13 +293,21 @@ class ApplicationController extends Controller
                     ->where('receiverNo', $old->nomineeNo, "and")
                     ->where('subject', "Substitution Request")->delete();
 
-                // create new array with nomineeNo as key inside removedNominations if it doesn't exist
-                if (!array_key_exists($old->nomineeNo, $removedNominations)) {
-                    $removedNominations[$old->nomineeNo] = array();
-                }
+                // delete message associated with old nomination/s
+                $message = Message::where('applicationNo', $applicationNo, "and")
+                ->where('receiverNo', $old->nomineeNo, "and")
+                ->where('subject', "Edited Substitution Request")->delete();
 
-                // Add to list of accountRoleIds the nominee was removed as a nominee for
-                array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
+                // create new array with nomineeNo as key inside removedNominations if it doesn't exist
+                // make sure not to add applicant to this array
+                if ($old->nomineeNo != Application::where('applicationNo', $applicationNo)->first()->accountNo) {
+                    if (!array_key_exists($old->nomineeNo, $removedNominations)) {
+                        $removedNominations[$old->nomineeNo] = array();
+                    }
+    
+                    // Add to list of accountRoleIds the nominee was removed as a nominee for
+                    array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
+                }
             }
         }
         // call method to create new messages
@@ -299,93 +315,134 @@ class ApplicationController extends Controller
     }
 
     // Handle nonedited, edited nominations and creation of new nominations
-    public function handleEditApplicationNonCancelledNominations($oldNominations, $newNominations, $applicationNo, $oldDates)
+    /*
+    $remainingOldNominations - Array of Nominations from the database after any Nominations were deleted
+    $oldNominations - Array of Nominations
+    $newNominations - JSON Array of Nominations {
+        'nomineeNo' => x,
+        'accountRoleId' => x,
+    }
+    */
+    public function handleEditApplicationNonCancelledNominations($remainingOldNominations, $oldNominations, $newNominations, $applicationNo, $oldDates)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
-        $nonEditedNominations = [];
-        $editedNominations = [];
-        $toNewlyCreateNominations = [];
-        $isSubset = true;
+        // Store nominee numbers of nominees that
+        // should receive an 'edited subset' type message
+        // rather than the other type
+        $shouldSendToNomineeAs_EditedSubsetOnly = [];
 
-        // Check if it is possibly a subset AKA in original range at least
-        if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
-            // check that the period is not exactly the same
-            if ($application->sDate == $oldDates['start'] && $application->eDate == $oldDates['end']) {
-                $isSubset = false;
+        $isSubset = false;
+        $isOutOfRange = false;
+
+        $newStartDate = new DateTime($application->sDate);
+        $newEndDate = new DateTime($application->eDate);
+        $oldStartDate = new DateTime($oldDates['start']);
+        $oldEndDate = new DateTime($oldDates['end']);
+        Log::debug("Dates: old, new");
+        Log::debug($oldStartDate->format('Y-m-d H:i:s'));
+        Log::debug($oldEndDate->format('Y-m-d H:i:s'));
+        Log::debug($newStartDate->format('Y-m-d H:i:s'));
+        Log::debug($newEndDate->format('Y-m-d H:i:s'));
+
+        Log::debug((($newStartDate >= $oldStartDate && $newEndDate <= $oldEndDate)
+            && !($newStartDate == $oldStartDate && $newEndDate == $oldEndDate))
+                ?"Is a subset"
+                :(($newStartDate == $oldStartDate && $newEndDate == $oldEndDate)
+                    ?"Period unchanged."
+                    :"Period out of original range."));
+
+        // Check if the period has been altered and if so if it is a subset or out of range
+        if (($newStartDate >= $oldStartDate && $newEndDate <= $oldEndDate)
+        && !($newStartDate == $oldStartDate && $newEndDate == $oldEndDate)) {
+            // The new date range is within but not equal to the old date range
+            // Therefore it is a subset
+            $isSubset = true;
+
+            // init shouldSendToNomineeAs_EditedSubsetOnly array
+            foreach ($newNominations as $new) {
+                // assume that nominees in new nominations should receive as editedsubset
+                // unless they were a part of the deleted nominations in
+                // handleEditApplicationCancelledNominations
+                
+                // Check if nomineeNo can be found in $remainingOldNominations
+                foreach ($remainingOldNominations as $old) {
+                    if ($new['nomineeNo'] == $old->nomineeNo && $new['nomineeNo'] != $application->accountNo) {
+                        if (!in_array($new['nomineeNo'], $shouldSendToNomineeAs_EditedSubsetOnly)) {
+                            array_push($shouldSendToNomineeAs_EditedSubsetOnly, $new['nomineeNo']);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            if (!($newStartDate == $oldStartDate && $newEndDate == $oldEndDate)) {
+                // The new date range is not exactly equal to the old date range
+                // Therefore it is out of range
+                $isOutOfRange = true;
             }
         }
 
+        Log::debug("isSubset = ".($isSubset?'true':'false'));
+        Log::debug("isOutOfRange = ".($isOutOfRange?'true':'false'));
+
+        $nomineesToSendAs_SubstitutionRequest = [];
+        $nomineesToSendAs_EditedSubstitutionRequest = [];
+        
         // Iterate through new nomination data
         foreach ($newNominations as $new) {
             $newInOld = false;
-            // Iterate through old nominations
-            foreach ($oldNominations as $old) {
-                // Check if we can find entry that matches the accountRoleId of new
-                if ($old->accountRoleId == $new['accountRoleId']) {
+            // Iterate through remaining old nominations
+            foreach ($remainingOldNominations as $old) {
+                // Check if we can find entry that matches the accountRoleId AND nomineeNo of new
+                // If so, then we need to update the existing entry
+                if ($old->accountRoleId == $new['accountRoleId'] && $old->nomineeNo == $new['nomineeNo']) {
                     $newInOld = true;
-                    // Keep old status if period not out of range
-                    $status = $old->status;
-
-
-                    // Set isSubset to false since at least one nomination was rejected
-                    // But the nominee was again nominated for the nomination, in the new edited application
-                    // Therefore, we will delete the old message to approve or reject the old nominations
-                    // And resend a new message for the new nominations
-                    if ($status == 'N') {
-                        $isSubset = false;
-                    }
-
-                    // If it changed then it can't be solely a subset
-                    if ($old->nomineeNo != $new['nomineeNo']) {
-                        $isSubset = false;
-                    }
-
-                    // Edit status IF period has been altered to be out of range.
-                    if ($application->sDate >= $oldDates['start'] && $application->eDate <= $oldDates['end']) {
-                        // Empty on purpose
-                    } else {
-                        //out of range, set status to Undecided
-                        $status = 'U';
-                        $isSubset = false;
-                    }
-
-                    // Update Nomination if status or nomineeNo has changed
-                    if ($status != $old->status || $old->nomineeNo != $new['nomineeNo']) {
-                        // Delete old Substitution Request message for this application and receiver (nomineeNo)
-                        Message::where('applicationNo', $applicationNo, "and")
-                            ->where('subject', 'Substitution Request', 'and')
-                            ->where('receiverNo', $old->nomineeNo)->delete();
-
-                        Nomination::where('applicationNo', $applicationNo, "and")
-                            ->where('nomineeNo', $old->nomineeNo, "and")
-                            ->where('accountRoleId', $old->accountRoleId)
-                            ->update([
-                                "status" => $status,
-                                "nomineeNo" => $new['nomineeNo']
-                            ]);
-
-                        // add to editedNominations
-                        if (!array_key_exists($new['nomineeNo'], $editedNominations)) {
-                            $editedNominations[$new['nomineeNo']] = [];
-                        }
-
-                        array_push($editedNominations[$new['nomineeNo']], $old->accountRoleId);
-                    } else {
-                        // add to nonEditedNominations
-                        if (!array_key_exists($old['nomineeNo'], $nonEditedNominations)) {
-                            $nonEditedNominations[$old['nomineeNo']] = [];
-                        }
-
-                        array_push($nonEditedNominations[$old['nomineeNo']], $old->accountRoleId);
-                    }
                     break;
                 }
             }
 
-            if (!$newInOld) {
-                $isSubset = false;
-                // new not found in old data, therefore a nomination was created for an accountRoleId that previously was not assigned to the user
+            if ($newInOld) {
+                // accountRoleId found in both new nomination data AND old remaining nominations
+                // see if we need to update the status
+
+                // Application period has been edited out of range, will need to confirm/reject via EditedSubstitionRequest
+                if ($isOutOfRange) {
+                    // Find existing nomination and edit status 
+                    $nom = Nomination::where('applicationNo', $applicationNo)
+                    ->where('accountRoleId', $new['accountRoleId'])->update([
+                        'nomineeNo' => $new['nomineeNo'],
+                        // status = 'Y' if self nominated, otherwise = 'U'
+                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                    ]);
+
+                    // Ensure applicant is not added to this array
+                    if ($new['nomineeNo'] != $application->accountNo) {
+                        // Group under the edited substiton request array
+                        if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                            array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
+                        }
+                    }
+                }
+                else if ($isSubset) {
+                    Log::debug("Potential Subset Message for : {$new['nomineeNo']}");
+                }
+            }
+            else {
+                // new NOT found in old remaining data, therefore nominated for an
+                // accountRoleId that previously was not assigned to a user or
+                // the old nomination was deleted
+
+                // Check if the nominee was previously nominated for the application
+                $wasPreviouslyNominated = false;
+                foreach($oldNominations as $old) {
+                    if ($old->nomineeNo == $new['nomineeNo']) {
+                        $wasPreviouslyNominated = true;
+                        break;
+                    }
+                }
+
                 // Create new nomination
                 Nomination::create([
                     'applicationNo' => $applicationNo,
@@ -395,92 +452,84 @@ class ApplicationController extends Controller
                     'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                 ]);
 
-                // add to toNewlyCreateNominations
-                if (!array_key_exists($new['nomineeNo'], $toNewlyCreateNominations)) {
-                    $toNewlyCreateNominations[$new['nomineeNo']] = [];
+                // Ensure applicant is not added to these arrays
+                if ($new['nomineeNo'] != $application->accountNo) {
+                    // Was previously nominated so send message of type "Edited Substitution Request"
+                    if ($wasPreviouslyNominated)
+                    {
+                        // Group under the edited substiton request array
+                        if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                            array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
+                        }
+                    }
+                    // Was not previously nominated so send message of type "Substition Request"
+                    else {
+                        // Group under the edited substiton request array
+                        if (!in_array($new['nomineeNo'], $nomineesToSendAs_SubstitutionRequest)) {
+                            array_push($nomineesToSendAs_SubstitutionRequest, $new['nomineeNo']);
+                        }
+                    }
                 }
-
-                array_push($toNewlyCreateNominations[$new['nomineeNo']], $new['accountRoleId']);
             }
         }
 
-        // group together nominations and generate messages
-        $groupedNominations = [];
-
-        foreach ($editedNominations as $nomineeNo => $accountRoleIds) {
-            if (!array_key_exists($nomineeNo, $groupedNominations)) {
-                $groupedNominations[$nomineeNo] = $accountRoleIds;
-            } else {
-                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+        // Remove any nomineeNos that appear in EditedSubsetOnly that appear in any of the other arrays
+        foreach ($nomineesToSendAs_EditedSubstitutionRequest as $nomineeNo) {
+            Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
+            if (array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly)) {
+                Log::debug("Removing {$nomineeNo}");
+                $arrayIndex = array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly);
+                array_splice($shouldSendToNomineeAs_EditedSubsetOnly, $arrayIndex);
             }
         }
+        foreach ($nomineesToSendAs_SubstitutionRequest as $nomineeNo) {
+            Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
 
-        foreach ($toNewlyCreateNominations as $nomineeNo => $accountRoleIds) {
-            if (!array_key_exists($nomineeNo, $groupedNominations)) {
-                $groupedNominations[$nomineeNo] = $accountRoleIds;
-            } else {
-                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
+            if (array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly)) {
+                Log::debug("Removing {$nomineeNo}");
+                $arrayIndex = array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly);
+                array_splice($shouldSendToNomineeAs_EditedSubsetOnly, $arrayIndex);
             }
         }
+        Log::debug("Final Subset Array:");
+        Log::debug($shouldSendToNomineeAs_EditedSubsetOnly);
 
-        foreach ($nonEditedNominations as $nomineeNo => $accountRoleIds) {
-            $shouldSendEditedMessageForNominee = false;
-
-            // Check foreach nomination if the status was not previously accepted
-            foreach ($accountRoleIds as $accountRoleId) {
-                $theNomination = Nomination::where('applicationNo', $applicationNo, "and")
-                    ->where('nomineeNo', $nomineeNo, "and")
-                    ->where("accountRoleId", $accountRoleId)->first();
-
-                if ($theNomination->status != 'Y') {
-                    // One of the nominations for the nominee was previously rejected or just not responded to
-                    // So we exit this for loop
-                    // and set a flag to handle this outside of this loop
-                    $shouldSendEditedMessageForNominee = true;
+        // Remove any nomineeNos that appear in EditedSubstitionRequest and SubstitutionRequest from SubstitutionRequest
+        foreach ($nomineesToSendAs_EditedSubstitutionRequest as $ESR) {
+            foreach ($nomineesToSendAs_SubstitutionRequest as $SR) {
+                if ($ESR == $SR) {
+                    //Remove SR from it's array
+                    $arrayIndex = array_search($SR, $nomineesToSendAs_SubstitutionRequest);
+                    array_splice($nomineesToSendAs_SubstitutionRequest, $arrayIndex);
                     break;
                 }
             }
-
-            if ($shouldSendEditedMessageForNominee) {
-                // One of the nominations for the nominee was previously rejected, or just not responded to
-                // Now we delete all old nominations for the nominee and recreate them with status 'U'
-
-                Nomination::where('applicationNo', $applicationNo, "and")
-                    ->where('nomineeNo', $nomineeNo)->delete();
-
-                // For each accountRoleId, create new nomination
-                foreach ($accountRoleIds as $accountRoleId) {
-                    Nomination::create([
-                        'applicationNo' => $applicationNo,
-                        'nomineeNo' => $nomineeNo,
-                        'accountRoleId' => $accountRoleId,
-                        'status' => 'U'
-                    ]);
-                }
-
-                // Check if groupedNominations contains the nomineeNo
-                if (!array_key_exists($nomineeNo, $groupedNominations)) {
-                    // set the subarray as accountRoleId if it doesn't exist already
-                    $groupedNominations[$nomineeNo] = $accountRoleIds;
-                } else {
-                    // Merge the accountRoleIds in
-                    $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
-                }
-
-                // just in case, set isSubset to false again
-                $isSubset = false;
-            } else if (!array_key_exists($nomineeNo, $groupedNominations)) {
-                // DO NOTHING, do not group non edited nominations if not existing already due to edited or new nominations
-                // We do not need to resend the Substitution Request message for nominations that have not been edited or whenever the period has not changed or is a subset
-            } else {
-                $groupedNominations[$nomineeNo] = array_merge($groupedNominations[$nomineeNo], $accountRoleIds);
-            }
         }
 
-        if ($isSubset) {
-            app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo);
-        } else {
-            app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $groupedNominations);
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        $application->status = "U";
+        $application->processedBy = null;
+        $application->rejectReason = null;
+        $noms = Nomination::where('applicationNo', $applicationNo)->get();
+        foreach ($noms as $n) {
+            if ($n->status != 'Y') {
+                $application->status = "P";
+                break;
+            }
+        }
+        $application->save();
+
+        if (count($nomineesToSendAs_EditedSubstitutionRequest) > 0) {
+            Log::debug("SENT Edited Substition Request messages");
+            app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $nomineesToSendAs_EditedSubstitutionRequest);
+        }
+        if (count($shouldSendToNomineeAs_EditedSubsetOnly) > 0) {
+            Log::debug("SENT Application Period Edited (Subset) messages");
+            app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo, $shouldSendToNomineeAs_EditedSubsetOnly);
+        }
+        if (count($nomineesToSendAs_SubstitutionRequest) > 0) {
+            Log::debug("SENT Substition Request messages");
+            app(MessageController::class)->notifyNomineeApplicationEdited_NewNominee($applicationNo, $nomineesToSendAs_SubstitutionRequest);
         }
     }
 
@@ -518,11 +567,25 @@ class ApplicationController extends Controller
         // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
         $this->handleEditApplicationCancelledNominations($oldNominations, $data['nominations'], $applicationNo);
 
-        // Get Old Nominations
-        $oldNominations = Nomination::where('applicationNo', $data['applicationNo'])->get();
+        // Get Remaining Old (Non deleted) Nominations
+        $remainingOldNominations = Nomination::where('applicationNo', $applicationNo)->get();
 
         // Handle nonedited, edited nominations and creation of new nominations
-        $this->handleEditApplicationNonCancelledNominations($oldNominations, $data['nominations'], $applicationNo, $oldDates);
+        $this->handleEditApplicationNonCancelledNominations($remainingOldNominations, $oldNominations, $data['nominations'], $applicationNo, $oldDates);
+
+        // Check if any nominations are of status U or N
+        // If so, delete Application Awaiting Review message
+        $noms = Nomination::where('applicationNo', $applicationNo)->get();
+        foreach ($noms as $n) {
+            if ($n->status != 'Y') {
+                // A nomination's status is not 'Y' therefore the application should not get reviewed yet
+                Message::where('applicationNo', $applicationNo)
+                ->where('senderNo', $accountNo)
+                ->where('subject', "Application Awaiting Review")
+                ->delete();
+                break;
+            }
+        }
 
         return response()->json(['success' => 'success'], 200);
     }
@@ -585,8 +648,12 @@ class ApplicationController extends Controller
         Message::where('applicationNo', $applicationNo, "and")
             ->where('subject', "Substitution Request")->delete();
 
+        // Delete each 'Edited Substitution Request' Message for the application
+        Message::where('applicationNo', $applicationNo, "and")
+        ->where('subject', "Edited Substitution Request")->delete();
+
         // Delete each nomination associated with the application
-        Nomination::where('applicationNo', $applicationNo)->delete();
+        //Nomination::where('applicationNo', $applicationNo)->delete();
         return response()->json(['success'], 200);
     }
 

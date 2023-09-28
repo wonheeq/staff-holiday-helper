@@ -1,7 +1,7 @@
 <script setup>
-let props = defineProps({ nominations: Object, appStatus: String, rejectReason: String });
+let props = defineProps({ nominations: Object, appStatus: String, rejectReason: String, processedBy: String });
 
-const pClass = "text-sm";
+const pClass = "text-sm laptop:text-sm 1080:text-base 1440:text-lg 4k:text-xl";
 </script>
 <template>
 <div>
@@ -18,14 +18,12 @@ const pClass = "text-sm";
         <p v-if="appStatus === 'U'" :class="pClass">
             Awaiting Line Manager Decision
         </p>
-        <div v-if="appStatus === 'N'">
-            <p class="text-sm">
-                Reason: 
-            </p>
-            <p class="text-sm ml-6">
-                {{ rejectReason }}
-            </p>
-        </div>
+        <p v-if="appStatus === 'N'" :class="pClass">
+            Reason: {{ rejectReason }}
+        </p>
+        <p v-if="processedBy != null" :class="pClass">
+            Processed by: {{ processedBy }}
+        </p>
     </div>
     <div v-if="nominations == null">
         <p v-if="appStatus === 'U'" :class="pClass">
