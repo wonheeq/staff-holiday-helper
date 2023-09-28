@@ -445,7 +445,7 @@ class ApplicationController extends Controller
 
                     foreach ($remainingOldNominations as $rem) {
                         if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
-                            if ($rem->status == 'U') {
+                            if ($rem->status == 'U' || $rem->status == 'N') {
                                 if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
                                     array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                 }
@@ -453,7 +453,13 @@ class ApplicationController extends Controller
                             break;
                         }
                     }
-                   
+
+                    Nomination::where('applicationNo', $applicationNo)
+                    ->where('accountRoleId', $new['accountRoleId'])->update([
+                        'nomineeNo' => $new['nomineeNo'],
+                        // status = 'Y' if self nominated, otherwise = 'U'
+                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                    ]);
                 }
             }
             else {
