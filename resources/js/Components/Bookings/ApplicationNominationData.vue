@@ -21,7 +21,7 @@ const pClass = "text-sm laptop:text-sm 1080:text-base 1440:text-lg 4k:text-xl";
         <p v-if="appStatus === 'N'" :class="pClass">
             Reason: {{ rejectReason }}
         </p>
-        <p v-if="processedBy != null" :class="pClass">
+        <p v-if="processedBy != null && appStatus !== 'U' && appStatus !== 'P'" :class="pClass">
             Processed by: {{ processedBy }}
         </p>
     </div>

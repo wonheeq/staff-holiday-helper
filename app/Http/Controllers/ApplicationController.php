@@ -288,16 +288,6 @@ class ApplicationController extends Controller
                     ->where('nomineeNo', $old->nomineeNo, "and")
                     ->where('accountRoleId', $old->accountRoleId)->delete();
 
-                // delete message associated with old nomination/s
-                $message = Message::where('applicationNo', $applicationNo, "and")
-                    ->where('receiverNo', $old->nomineeNo, "and")
-                    ->where('subject', "Substitution Request")->delete();
-
-                // delete message associated with old nomination/s
-                $message = Message::where('applicationNo', $applicationNo, "and")
-                ->where('receiverNo', $old->nomineeNo, "and")
-                ->where('subject', "Edited Substitution Request")->delete();
-
                 // create new array with nomineeNo as key inside removedNominations if it doesn't exist
                 // make sure not to add applicant to this array
                 if ($old->nomineeNo != Application::where('applicationNo', $applicationNo)->first()->accountNo) {
@@ -309,6 +299,17 @@ class ApplicationController extends Controller
                     array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
                 }
             }
+
+            // delete message associated with old nomination/s
+            $message = Message::where('applicationNo', $applicationNo, "and")
+            ->where('receiverNo', $old->nomineeNo, "and")
+            ->where('subject', "Substitution Request")->delete();
+
+            // delete message associated with old nomination/s
+            $message = Message::where('applicationNo', $applicationNo, "and")
+            ->where('receiverNo', $old->nomineeNo, "and")
+            ->where('subject', "Edited Substitution Request")->delete();
+
         }
         // call method to create new messages
         app(MessageController::class)->notifyNomineeNominationCancelled($removedNominations, $applicationNo);
@@ -339,18 +340,19 @@ class ApplicationController extends Controller
         $newEndDate = new DateTime($application->eDate);
         $oldStartDate = new DateTime($oldDates['start']);
         $oldEndDate = new DateTime($oldDates['end']);
-        Log::debug("Dates: old, new");
-        Log::debug($oldStartDate->format('Y-m-d H:i:s'));
-        Log::debug($oldEndDate->format('Y-m-d H:i:s'));
-        Log::debug($newStartDate->format('Y-m-d H:i:s'));
-        Log::debug($newEndDate->format('Y-m-d H:i:s'));
+        //Log::debug("Dates: old, new");
+        //Log::debug($oldStartDate->format('Y-m-d H:i:s'));
+        //Log::debug($oldEndDate->format('Y-m-d H:i:s'));
+        //Log::debug($newStartDate->format('Y-m-d H:i:s'));
+        //Log::debug($newEndDate->format('Y-m-d H:i:s'));
 
-        Log::debug((($newStartDate >= $oldStartDate && $newEndDate <= $oldEndDate)
+        /*Log::debug((($newStartDate >= $oldStartDate && $newEndDate <= $oldEndDate)
             && !($newStartDate == $oldStartDate && $newEndDate == $oldEndDate))
                 ?"Is a subset"
                 :(($newStartDate == $oldStartDate && $newEndDate == $oldEndDate)
                     ?"Period unchanged."
                     :"Period out of original range."));
+                    */
 
         // Check if the period has been altered and if so if it is a subset or out of range
         if (($newStartDate >= $oldStartDate && $newEndDate <= $oldEndDate)
@@ -384,8 +386,8 @@ class ApplicationController extends Controller
             }
         }
 
-        Log::debug("isSubset = ".($isSubset?'true':'false'));
-        Log::debug("isOutOfRange = ".($isOutOfRange?'true':'false'));
+        //Log::debug("isSubset = ".($isSubset?'true':'false'));
+        //Log::debug("isOutOfRange = ".($isOutOfRange?'true':'false'));
 
         $nomineesToSendAs_SubstitutionRequest = [];
         $nomineesToSendAs_EditedSubstitutionRequest = [];
@@ -426,7 +428,25 @@ class ApplicationController extends Controller
                     }
                 }
                 else if ($isSubset) {
-                    Log::debug("Potential Subset Message for : {$new['nomineeNo']}");
+                    //Log::debug("Potential Subset Message for : {$new['nomineeNo']}");
+                }
+                else {
+                    // leftovers
+
+                    //  Log::debug("Leftovers");
+                    // Group under the eidted substiton request array IF all remaining old nominations not responded to 
+
+                    foreach ($remainingOldNominations as $rem) {
+                        if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
+                            if ($rem->status == 'U') {
+                                if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                                    array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                   
                 }
             }
             else {
@@ -475,24 +495,24 @@ class ApplicationController extends Controller
 
         // Remove any nomineeNos that appear in EditedSubsetOnly that appear in any of the other arrays
         foreach ($nomineesToSendAs_EditedSubstitutionRequest as $nomineeNo) {
-            Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
+            //Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
             if (array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly)) {
-                Log::debug("Removing {$nomineeNo}");
+                //Log::debug("Removing {$nomineeNo}");
                 $arrayIndex = array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly);
                 array_splice($shouldSendToNomineeAs_EditedSubsetOnly, $arrayIndex);
             }
         }
         foreach ($nomineesToSendAs_SubstitutionRequest as $nomineeNo) {
-            Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
+            //Log::debug(array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly));
 
             if (array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly)) {
-                Log::debug("Removing {$nomineeNo}");
+                //Log::debug("Removing {$nomineeNo}");
                 $arrayIndex = array_search($nomineeNo, $shouldSendToNomineeAs_EditedSubsetOnly);
                 array_splice($shouldSendToNomineeAs_EditedSubsetOnly, $arrayIndex);
             }
         }
-        Log::debug("Final Subset Array:");
-        Log::debug($shouldSendToNomineeAs_EditedSubsetOnly);
+        //Log::debug("Final Subset Array:");
+        //Log::debug($shouldSendToNomineeAs_EditedSubsetOnly);
 
         // Remove any nomineeNos that appear in EditedSubstitionRequest and SubstitutionRequest from SubstitutionRequest
         foreach ($nomineesToSendAs_EditedSubstitutionRequest as $ESR) {
@@ -520,15 +540,15 @@ class ApplicationController extends Controller
         $application->save();
 
         if (count($nomineesToSendAs_EditedSubstitutionRequest) > 0) {
-            Log::debug("SENT Edited Substition Request messages");
+            //Log::debug("SENT Edited Substition Request messages");
             app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $nomineesToSendAs_EditedSubstitutionRequest);
         }
         if (count($shouldSendToNomineeAs_EditedSubsetOnly) > 0) {
-            Log::debug("SENT Application Period Edited (Subset) messages");
+            //Log::debug("SENT Application Period Edited (Subset) messages");
             app(MessageController::class)->notifyNomineeApplicationEditedSubsetOnly($applicationNo, $shouldSendToNomineeAs_EditedSubsetOnly);
         }
         if (count($nomineesToSendAs_SubstitutionRequest) > 0) {
-            Log::debug("SENT Substition Request messages");
+            //Log::debug("SENT Substition Request messages");
             app(MessageController::class)->notifyNomineeApplicationEdited_NewNominee($applicationNo, $nomineesToSendAs_SubstitutionRequest);
         }
     }
