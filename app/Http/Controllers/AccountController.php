@@ -143,7 +143,7 @@ class AccountController extends Controller
             }
 
             $lmAccounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))
-                ->where('accountType', 'lmanager')->get();
+                ->where('accountType','!=', 'staff')->get();
 
             $accounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))->get();
 
