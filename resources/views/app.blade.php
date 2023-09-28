@@ -39,14 +39,24 @@
     border-color: #FFFFFF;
 }
 
+.dropdown-dark .vs__dropdown-toggle {
+    background: #1f2937;
+    border: solid;
+    border-color: #ffffff;
+    border-width: 1px;
+    border-radius: 0px;
+}
+
 .vs__dropdown-toggle {
     background: white;
-    border-color: gray;
+    border: solid;
+    border-color: #6b7280;
+    border-width: 1px;
+    border-radius: 0px;
 }
 .vs__search {
     color: gray;
 }
-
 .dropdown-dark .vs__clear,
 .dropdown-dark .vs__open-indicator {
   fill: #FFFFFF;
