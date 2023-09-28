@@ -653,4 +653,83 @@ class DatabaseControllerTest extends TestCase
         Account::where('accountNo', '123456h')->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();
     }
+
+
+    public function test_api_request_for_adding_valid_accountroles_via_csv_entries(): void
+    {
+        $tempSchool = School::create(['name' => 'test school']);
+        $tempRole = Role::create(['name' => 'test role']);
+        $tempUnit = Unit::create(['unitId' => 'ABCD1234','name' => 'test unit']);
+        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE','name' => 'test major']);
+        $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG','name' => 'test course']);
+        $accountNo = $this->otherUser1->accountNo;
+
+        $accountRole1 = array(
+            'Account Number (Staff ID)' => '123456f',
+            'Account Type' => 'staff',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $accountRole2 = array(
+            'Account Number (Staff ID)' => '123456g',
+            'Account Type' => 'lmanager',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $accountRole3 = array(
+            'Account Number (Staff ID)' => '123456h',
+            'Account Type' => 'sysadmin',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => 'none', // 'none' should be a valid input
+        );
+
+        $testCSVEntry = array('table' => 'add_accountroles.csv', 'entries' => array(
+            0 => $accountRole1,
+            1 => $accountRole2,
+            2 => $accountRole3
+        ));
+    
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        //Log::info($response->getContent());
+        $response->assertStatus(200);
+
+        // Check entries have been added
+        // Checking new account added
+        $this->assertTrue(
+            Account::where('accountNo', '123456f')
+                ->where('accountType', 'staff')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+        $this->assertTrue(
+            Account::where('accountNo', '123456g')
+                ->where('accountType', 'lmanager')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+        $this->assertTrue(
+            Account::where('accountNo', '123456h')
+                ->where('accountType', 'sysadmin')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', null)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        );
+
+        Account::where('accountNo', '123456f')->delete();
+        Account::where('accountNo', '123456g')->delete();
+        Account::where('accountNo', '123456h')->delete();
+        School::where('schoolId', $tempSchool->schoolId)->delete();
+    }
 }   
