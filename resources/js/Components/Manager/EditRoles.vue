@@ -204,7 +204,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
     border: solid; 
     border-color: #6b7280; 
     border-width: 1px;
-    --vs-border-style: none; 
+     
     --vs-search-input-placeholder-color: #6b7280;
     max-height: 60px;
   }
@@ -220,7 +220,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }
@@ -237,7 +237,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }
@@ -254,7 +254,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }

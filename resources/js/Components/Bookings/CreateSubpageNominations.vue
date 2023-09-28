@@ -222,7 +222,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
                     <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
-                        style="width: 100%; height: 2rem; background-color: inherit;  font-size: 0.75rem;--vs-border-style: none;"                            
+                        style="width: 100%; height: 2rem; background-color: inherit;  font-size: 0.75rem;"                            
                         v-model="multiSelectNominee"
                         @option:selected="(selection) => handleDropdownStaffSelection(selection)"
                         :disabled="selfNominateAll"
@@ -324,7 +324,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
                     <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
-                        style="width: 100%; height: 2rem; background-color: inherit;--vs-border-style: none;"                            
+                        style="width: 100%; height: 2rem; background-color: inherit;"                            
                         v-model="multiSelectNominee"
                         @option:selected="(selection) => handleDropdownStaffSelection(selection)"
                         :disabled="selfNominateAll"

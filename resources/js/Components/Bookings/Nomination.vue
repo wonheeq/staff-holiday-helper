@@ -32,7 +32,7 @@ let emit = defineEmits(['nominationSelected']);
                 </div>
             </div>
             <vSelect :options="props.options" :clearable="true" :class="isDark ? 'dropdown-dark':''" class="my-1"
-                style="width: 100%; height: 2rem; background-color: inherit; font-size: 0.75rem; --vs-border-style: none;"     
+                style="width: 100%; height: 2rem; background-color: inherit; font-size: 0.75rem; "     
                 v-model="props.nomination.nomination"
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"
@@ -55,7 +55,7 @@ let emit = defineEmits(['nominationSelected']);
                 </div>
             </div>
             <vSelect :options="props.options" :clearable="true" :class="isDark ? 'dropdown-dark':''"
-                style="width: 40%; height: 2rem; background-color: inherit; --vs-border-style: none;"       
+                style="width: 40%; height: 2rem; background-color: inherit; "       
                 v-model="props.nomination.nomination"
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"
