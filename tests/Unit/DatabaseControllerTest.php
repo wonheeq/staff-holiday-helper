@@ -511,7 +511,7 @@ class DatabaseControllerTest extends TestCase
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
             'School Code' => $tempSchool->schoolId,
-            'Line Manager\'s ID' => $testSuperiorNo,
+            'Line Manager\'s ID' => 'none', // 'none' should be a valid input
         );
 
         $testCSVEntry = array('table' => 'add_staffaccounts.csv', 'entries' => array(
@@ -522,7 +522,7 @@ class DatabaseControllerTest extends TestCase
     
         // Check for valid response
         $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
-        Log::info($response->getContent());
+        //Log::info($response->getContent());
         $response->assertStatus(200);
 
         // Check entries have been added
@@ -548,11 +548,107 @@ class DatabaseControllerTest extends TestCase
                 ->where('accountType', 'sysadmin')
                 ->where('lName', 'testlast')
                 ->where('fName', 'test fore')
-                ->where('superiorNo', $testSuperiorNo)
+                ->where('superiorNo', null)
                 ->where('schoolId', $tempSchool->schoolId)->exists()     
         );
 
         Account::where('accountNo', '123456f')->delete();
+        Account::where('accountNo', '123456g')->delete();
+        Account::where('accountNo', '123456h')->delete();
+        School::where('schoolId', $tempSchool->schoolId)->delete();
+    }
+
+    public function test_api_request_for_adding_invalid_accounts_via_csv_entries(): void
+    {
+        $tempSchool = School::create(['name' => 'test school']);
+        $testSuperiorNo = $this->otherUser2->accountNo;
+        $existingStaffAccountNo = $this->otherUser1->accountNo;
+
+        // Each account invalid in a different way.
+        $account1 = array(
+            'Account Number (Staff ID)' => $existingStaffAccountNo, // Account number already in use
+            'Account Type' => 'staff',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $account2 = array(
+            'Account Number (Staff ID)' => '123456g',
+            'Account Type' => 'invalidtype', // Invalid account type
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $testSuperiorNo,
+        );
+        $account3 = array(
+            'Account Number (Staff ID)' => '123456h',
+            'Account Type' => 'sysadmin',
+            'Surname' => 'testlast',
+            'First/Other Names' => 'test fore',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager\'s ID' => $existingStaffAccountNo, // Account is not a line manager
+        );
+
+        $testCSVEntry = array('table' => 'add_staffaccounts.csv', 'entries' => array(
+            0 => $account1
+        ));
+    
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        //Log::info($response->getContent());
+        $response->assertStatus(500);
+
+        // Checking new account wasn't added
+        $this->assertFalse(
+            Account::where('accountNo', $existingStaffAccountNo)
+                ->where('accountType', 'staff')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+
+        $testCSVEntry['entries'] = array(
+            0 => $account2
+        );
+    
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        //Log::info($response->getContent());
+        $response->assertStatus(500);
+
+        // Checking new account wasn't added
+        $this->assertFalse(
+            Account::where('accountNo', '123456g')
+                ->where('accountType', 'invalidtype')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $testSuperiorNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+
+
+        $testCSVEntry['entries'] = array(
+            0 => $account3
+        );
+    
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        //Log::info($response->getContent());
+        $response->assertStatus(500);
+
+        // Checking new account wasn't added
+        $this->assertFalse(
+            Account::where('accountNo', '123456h')
+                ->where('accountType', 'sysadmin')
+                ->where('lName', 'testlast')
+                ->where('fName', 'test fore')
+                ->where('superiorNo', $existingStaffAccountNo)
+                ->where('schoolId', $tempSchool->schoolId)->exists()     
+        ); 
+
+        Account::where('accountNo', $existingStaffAccountNo)->where('lname', 'testlast')->delete();
         Account::where('accountNo', '123456g')->delete();
         Account::where('accountNo', '123456h')->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();

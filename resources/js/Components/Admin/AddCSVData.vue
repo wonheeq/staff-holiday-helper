@@ -108,10 +108,10 @@
                 axios.post("/api/addEntriesFromCSV/" + props.user, data)
                 .then(res => {
                     if (res.status == 200) {
-                    Swal.fire({
-                        icon: "success",
-                        title: 'Successfully added entries.'
-                    });
+                        Swal.fire({
+                            icon: "success",
+                            title: res.data.success
+                        });
                         
                         msg.warning = false;
                     }
