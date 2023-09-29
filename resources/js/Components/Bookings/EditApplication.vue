@@ -124,8 +124,6 @@ function handleEditApplication(data) {
         data.sDate = props.period.start;
         data.eDate = props.period.end;
         data.applicationNo = props.applicationNo;
-
-        resetFields();
         
         axios.post('/api/editApplication', data)
             .then(res => {
@@ -152,7 +150,7 @@ function handleEditApplication(data) {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text:  err
+                    text:  err.response.data
                 });
         });
     }
