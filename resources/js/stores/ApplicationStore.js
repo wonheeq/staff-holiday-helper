@@ -26,13 +26,12 @@ export let useApplicationStore = defineStore('applications', {
                 this.managerApplications = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         },
 
         addNewApplication(app) {
-            this.applications.push(app);
+            this.applications.unshift(app);
         }
     },
     getters: {

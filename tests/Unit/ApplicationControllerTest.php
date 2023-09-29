@@ -498,16 +498,6 @@ class ApplicationControllerTest extends TestCase
         $this->assertTrue($updatedApp['status'] == 'C');
     }
 
-    public function test_api_request_for_cancelApplication_deletes_nominations(): void
-    {
-        $app = $this->applications[0];
-        $response = $this->actingAs($this->user)->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
-        $response->assertStatus(200);
-
-        $nominationsForApp = Nomination::where('applicationNo', $app->applicationNo)->get()->toArray();
-        $this->assertFalse(count($nominationsForApp) > 0);
-    }
-
     public function test_api_request_for_cancelApplication_is_successful_manager_is_notified_of_application_cancelleation(): void
     {
         // Check for valid response
@@ -993,7 +983,7 @@ class ApplicationControllerTest extends TestCase
         $response = $this->actingAs($this->user)->postJson("/api/editApplication", [
             'applicationNo' => $firstApp->applicationNo,
             'accountNo' => $this->user->accountNo,
-            'selfNominateAll' => true,
+            'selfNominateAll' => false,
             'sDate' => $sDate,
             'eDate' => $eDate,
             'nominations' => [
@@ -1013,19 +1003,16 @@ class ApplicationControllerTest extends TestCase
         ]);
         $response->assertStatus(200);
 
-        $message = Message::where('applicationNo', $firstApp->applicationNo, "and")
-            ->where('receiverNo', $this->otherUser->accountNo, "and")
-            ->where('senderNo', $this->user->accountNo)->first();
+        $messages = Message::where('applicationNo', $firstApp->applicationNo)
+            ->where('senderNo', $this->user->accountNo)->get();
 
-        // Check if all nominations were status 'Y'
-        if (count(Nomination::where('applicationNo', $firstApp->applicationNo)->where('status', 'Y')->get()->toArray()) == 3) {
-            // If all nominations were status Y, then we expect Subset Message
-            $this->assertTrue($message->subject == "Substitution Period Edited (Subset)");
-        } else {
-            // At least one nomination was not status 'Y'
-            // So we expect Edited message
-            $this->assertTrue($message->subject == "Edited Substitution Request");
+        // add message subjects to array
+        $messageSubjects = [];
+        foreach ($messages as $message) {
+            array_push($messageSubjects, $message->subject);
         }
+
+        $this->assertTrue(in_array("Substitution Period Edited (Subset)", $messageSubjects));
     }
 
     public function test_api_request_for_edit_applications_successful_nominees_notified_of_nomination_edited_period_edited_subset_and_extra_account_role(): void

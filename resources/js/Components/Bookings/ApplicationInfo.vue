@@ -86,6 +86,7 @@ function handleEditApplication() {
                 :nominations="source.nominations"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
+                :processedBy="source.processedBy"
             />
             <div v-show="toggleContent">
                 <div class="flex flex-row text-sm">
@@ -165,6 +166,7 @@ function handleEditApplication() {
                 :nominations="source.nominations"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
+                :processedBy="source.processedBy"
             />
             <ApplicationInfoOptions
                 class="flex"

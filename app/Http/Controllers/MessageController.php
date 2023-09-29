@@ -39,8 +39,9 @@ class MessageController extends Controller
             }
 
 
-            // get nominations if subject is Substitution Request
-            if ($message['subject'] == "Substitution Request") {
+            // get nominations if subject is Substitution Request or Edited Substitution Request
+            if ($message['subject'] == "Substitution Request"
+                || $message['subject'] == "Edited Substitution Request") {
                 // applicationNo SHOULD exist
                 // Get all nominations for the application where the nomineeNo == accountNo
 
@@ -279,7 +280,7 @@ class MessageController extends Controller
                 );
             }
 
-            array_push($content, "You no longer need to takeover these roles if you have previously accepted them for this period of time:");
+            array_push($content, "You no longer need to takeover these roles if you have previously accepted them for this period of time.");
             array_push(
                 $content,
                 "Duration: {$application['sDate']} - {$application['eDate']}"
@@ -299,33 +300,34 @@ class MessageController extends Controller
     /*
     Notifies nominees of edited applications that have only the period edited to become a subset
     */
-    public function notifyNomineeApplicationEditedSubsetOnly($applicationNo)
+    public function notifyNomineeApplicationEditedSubsetOnly($applicationNo, $nomineeNos)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
+        // Resend Substitution Request messages
+        $this->notifyNomineeApplicationEdited($applicationNo, $nomineeNos);
 
-        // Process only nominations which have been accepted
-        $acceptedNominations = Nomination::where('applicationNo',  $applicationNo, 'and')
-            ->where('status', 'Y')->get();
-        $nomineesWhoAccepted = [];
+        // Process nominations
+        $nominations = Nomination::where('applicationNo',  $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $processedNominees = [];
 
-        foreach ($acceptedNominations as $nomination) {
-            if (!in_array($nomination->nomineeNo, $nomineesWhoAccepted)) {
+        foreach ($nominations as $nomination) {
+            if (!in_array($nomination->nomineeNo, $processedNominees)) {
                 // add nomineeNo to array if not added
-                array_push($nomineesWhoAccepted, $nomination->nomineeNo);
+                array_push($processedNominees, $nomination->nomineeNo);
 
-                $nominations = Nomination::where('applicationNo',  $applicationNo, 'and')
-                    ->where('nomineeNo', $nomination->nomineeNo, 'and')
-                    ->where('status', 'Y')->get();
+                $nominations = Nomination::where('applicationNo',  $applicationNo)
+                    ->where('nomineeNo', $nomination->nomineeNo)->get();
 
                 $content = [
                     "The applicant has edited their application's leave period to be a subset of the original leave period.",
                 ];
 
                 if ($application->status == "Y") {
-                    array_push($content, "You will only need to take over the following roles for the updated, shorter, duration:");
+                    array_push($content, "You will only need to take over the following roles for the updated shorter duration if you have accepted to become a substitute:");
                 } else {
-                    array_push($content, "Should, the application get approved, you will only need to take over the following roles for the updated, shorter, duration:");
+                    array_push($content, "Should the application get approved, you will only need to take over the following roles for the updated shorter duration if you have accepted to become a substitute:");
                 }
 
                 foreach ($nominations as $nom) {
@@ -356,23 +358,73 @@ class MessageController extends Controller
     }
 
     /*
-    Notifies nominees of edited applications
+    Notifies nominees of edited applications where they have been newly nominated
     */
-    public function notifyNomineeApplicationEdited($applicationNo, $groupedNominations)
+    public function notifyNomineeApplicationEdited_NewNominee($applicationNo, $nomineeNos)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
 
-        // Iterate through each key (nomineeNo), value (array of accountRoleIds)
-        foreach ($groupedNominations as $nomineeNo => $accountRoleIds) {
+        foreach ($nomineeNos as $nomineeNo) {
+            $content = [];
+
+            $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->get();
+            $count = count($nominationsForNominee->toArray());
+
+            array_push(
+                $content,
+                "You have been nominated for {$count} roles:"
+            );
+
+            // Add nominated roles of all nominations for nominee to content
+            foreach ($nominationsForNominee as $nom) {
+                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                array_push(
+                    $content,
+                    "→{$roleName}"
+                );
+            }
+
+            array_push(
+                $content,
+                "Duration: {$application['sDate']} - {$application['eDate']}"
+            );
+
+            // Create message for nominee
+            Message::create([
+                'applicationNo' => $applicationNo,
+                'receiverNo' => $nomineeNo,
+                'senderNo' => $application->accountNo,
+                'subject' => 'Substitution Request',
+                'content' => json_encode($content),
+                'acknowledged' => false,
+            ]);
+        }
+    }
+
+
+    /*
+    Notifies nominees of edited applications
+    */
+    public function notifyNomineeApplicationEdited($applicationNo, $nomineeNos)
+    {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        foreach ($nomineeNos as $nomineeNo) {
             $content = [
                 "This application has been edited.",
-                "Please accept or reject accordingly to the new details:",
-                "Nomination/s:",
+                "Please accept/reject based on the new details.",
+                "You have been nominated for the following roles:",
             ];
 
-            // Iterate through accountRoleIds and get roleName and add to content list
-            foreach ($accountRoleIds as $accountRoleId) {
+            $nominations = Nomination::where('nomineeNo', $nomineeNo)
+            ->where('applicationNo', $applicationNo)->get();
+
+            // Iterate through nominations and get roleName based on accountRoleId and add to content list
+            foreach ($nominations as $nomination) {
                 // Get role name
+                $accountRoleId = $nomination->accountRoleId;
                 $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
 
                 array_push(

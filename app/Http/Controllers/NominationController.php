@@ -125,6 +125,7 @@ class NominationController extends Controller
         // Set application status to denied by system
         $application->status = 'N';
         $application->processedBy = null;
+        $application->rejectReason = "At least one nomination was rejected.";
         $application->save();
 
         return response()->json(['success'], 200);
@@ -302,6 +303,7 @@ class NominationController extends Controller
             // Set application status to denied by system
             $application->status = 'N';
             $application->processedBy = null;
+            $application->rejectReason = "At least one nomination was rejected.";
             $application->save();
         }
         
