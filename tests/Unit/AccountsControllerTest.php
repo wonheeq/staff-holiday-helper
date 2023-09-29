@@ -165,9 +165,9 @@ class AccountsControllerTest extends TestCase
             // Get manager's accountId
             $lmId = $lm['accountNo'];
 
-            // Check id matched id of lmanager in database
+            // Check id matched id of lmanager or sysadmin in database
             $this->assertTrue(
-                Account::where('accountNo', $lmId)->where('accountType', 'lmanager')->exists()     
+                Account::where('accountNo', $lmId)->where('accountType', '!=', 'staff')->exists()     
             );        
         }
     }
@@ -179,7 +179,7 @@ class AccountsControllerTest extends TestCase
 
         $lmArray = json_decode($response->content(), true);
 
-        $this->assertTrue(count($lmArray[0]) == Account::where('accountType', 'lmanager')->count());        
+        $this->assertTrue(count($lmArray[0]) == Account::where('accountType', '!=', 'staff')->count());        
     }
 
 
