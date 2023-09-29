@@ -316,24 +316,37 @@ class MessageController extends Controller
     public function notifyNomineeNominationCancelled(array $removedNominations, array $removedManagerNominations, String $applicationNo)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
+ 
+        //combine into array of nomineeNos
+        $nomineeNos = array();
 
-        // Iterate through each key (nomineeNo), value (array of accountRoleIds)
         foreach ($removedNominations as $nomineeNo => $accountRoleIds) {
+            array_push($nomineeNos, $nomineeNo);
+        }
+        foreach ($removedManagerNominations as $nomineeNo => $accountRoleIds) {
+            array_push($nomineeNos, $nomineeNo);
+        }
+
+        // Iterate through each nomineeNo
+        foreach ($nomineeNos as $nomineeNo) {
             $content = ["You have been un-nominated for the following roles:"];
 
-            // Iterate through accountRoleIds and get roleName and add to content list
-            foreach ($accountRoleIds as $accountRoleId) {
-                // Get role name
-                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
- 
-                array_push(
-                    $content,
-                    "→{$roleName}",
-                );
+            // process if nomineeNo is a key in removedNominations
+            if (array_key_exists($nomineeNo, $removedNominations)) {
+                // Iterate through accountRoleIds and get roleName and add to content list
+                foreach ($removedNominations[$nomineeNo] as $accountRoleId) {
+                    // Get role name
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
+    
+                    array_push(
+                        $content,
+                        "→{$roleName}",
+                    );
+                }
             }
-
-            // Iterate through subordinateNos and add to content list
-            if ($removedManagerNominations[$nomineeNo] != null) {
+            // process if nomineeNo is a key in removedManagerNominations
+            if (array_key_exists($nomineeNo, $removedManagerNominations)) {
+                // Iterate through subordinateNos and add to content list
                 foreach ($removedManagerNominations[$nomineeNo] as $subordinateNo) {
                     $sub = Account::where('accountNo', $subordinateNo)->first();
                     $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
@@ -523,7 +536,7 @@ class MessageController extends Controller
 
             $nominations = Nomination::where('applicationNo', $applicationNo, "and")
                 ->where('nomineeNo', $nomineeNo)->get();
-            $managerNominations = ManagerNominations::where('applicationNo', $applicationNo)
+            $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
             ->where('nomineeNo', $nomineeNo)->get();
             $count = count($nominations->toArray()) + count($managerNominations->toArray());
 

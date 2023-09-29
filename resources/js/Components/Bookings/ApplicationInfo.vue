@@ -85,7 +85,7 @@ function handleEditApplication() {
             </p>
             <ApplicationNominationData
                 v-show="toggleContent"
-                :nominations="source.nominations"
+                :nominations="source.nominationsToDisplay"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
                 :processedBy="source.processedBy"
@@ -97,17 +97,21 @@ function handleEditApplication() {
                 </div>                
                 <div>
                     <p class="text-sm font-medium">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <div class="text-sm" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]
-                            <p class="ml-5">{{ nomination.task }}</p>
-                        </div>
-                        <div class="text-sm" v-if="nomination.nomineeNo == user.accountNo">
-                            → Self Nominated    {{ nomination.task }}
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                        <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
+                            {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
+                        </p>
+                        <p v-else class="text-xs laptop:text-base">
+                            Self Nomination
+                        </p>
+                        <div v-for="task in nomineeArray.tasks">
+                            <p class="text-xs laptop:text-base">
+                                →{{ task }}
+                            </p>
                         </div>
                     </div>
-                    <p class="text-sm" v-if="source.isSelfNominatedAll">
-                        → N/A - Self nominated for all roles
+                    <p v-else>
+                        → Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row text-sm">
@@ -135,22 +139,27 @@ function handleEditApplication() {
         <div class="flex flex-col w-5/6 p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
-                <div class="flex flex-row">
-                    <p class="font-medium mr-2">Application ID:</p>
+                <div class="flex flex-row text-lg">
+                    <p class="font-medium mr-2 text-lg">Application ID:</p>
                     {{ source.applicationNo }}
                 </div>
                 <div>
-                    <p class="font-medium">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]    {{ nomination.task }}
+                    <p class="font-medium text-lg">Substitute/s:</p>
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                        <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
+                            {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
-                        <p v-if="nomination.nomineeNo == user.accountNo">
-                            → Self Nominated    {{ nomination.task }}
+                        <p v-else class="text-xs laptop:text-base">
+                            Self Nomination
                         </p>
+                        <div v-for="task in nomineeArray.tasks">
+                            <p class="text-xs laptop:text-base">
+                                →{{ task }}
+                            </p>
+                        </div>
                     </div>
-                    <p v-if="source.isSelfNominatedAll">
-                        → N/A - Self nominated for all roles
+                    <p v-else>
+                        → Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row">
@@ -165,7 +174,7 @@ function handleEditApplication() {
             </p>
             <ApplicationNominationData
                 v-show="toggleContent"
-                :nominations="source.nominations"
+                :nominations="source.nominationsToDisplay"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
                 :processedBy="source.processedBy"

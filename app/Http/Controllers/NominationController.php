@@ -16,6 +16,94 @@ class NominationController extends Controller
 {
     /*
     Returns all nominations, formatted, for the given application number
+    FOR display on frontend
+    */
+    public function getNominationsToDisplay($appNo)
+    {
+        $nominations = Nomination::where('applicationNo', $appNo)->get();
+        $managerNominations = ManagerNomination::where('applicationNo', $appNo)->get();
+        $result = [];
+        $processedNomineeNos = [];
+        $processedManagerNomineeNos = [];
+
+        // iteration through each nomination
+        foreach ($nominations as $all) {
+            // get nominee id from nomination
+            $nomineeNo = $all['nomineeNo'];
+
+            if (in_array($nomineeNo, $processedNomineeNos)) { continue; }
+            array_push($processedNomineeNos, $nomineeNo);
+
+            // get name of nominee from user controller
+            $nominee_user = app(UserController::class)->getUser($nomineeNo);
+            $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
+
+            $noms = Nomination::where('applicationNo', $appNo)
+            ->where('nomineeNo', $nomineeNo)->get();
+
+            foreach($noms as $n) {
+                // Get name of role associated with the account role
+                $task = app(RoleController::class)->getRoleFromAccountRoleId($n['accountRoleId']);
+
+                if (!array_key_exists($nomineeNo, $result)) {
+                    $result[$nomineeNo] = array(
+                        'nomineeName' => $name,
+                        'nomineeNo' => $nomineeNo,
+                        'tasks' => array()
+                    );
+                }
+                array_push(
+                    $result[$nomineeNo]['tasks'],
+                    $task
+                );
+            }
+        }
+
+         // iteration through each manager nomination
+         foreach ($managerNominations as $nomination) {
+            // get nominee id from nomination
+            $nomineeNo = $nomination['nomineeNo'];
+
+            if (in_array($nomineeNo, $processedManagerNomineeNos)) { continue; }
+            array_push($processedManagerNomineeNos, $nomineeNo);
+
+            // get name of nominee from user controller
+            $nominee_user = app(UserController::class)->getUser($nomineeNo);
+            $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
+            
+            $noms = ManagerNomination::where('applicationNo', $appNo)
+            ->where('nomineeNo', $nomineeNo)->get();
+
+            foreach($noms as $n) {
+                $sub = Account::where('accountNo', $n['subordinateNo'])->first();
+                $task = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+
+                if (!array_key_exists($nomineeNo, $result)) {
+                    $result[$nomineeNo] = array(
+                        'nomineeName' => $name,
+                        'nomineeNo' => $nomineeNo,
+                        'tasks' => array()
+                    );
+                }
+                array_push(
+                    $result[$nomineeNo]['tasks'],
+                    $task
+                );
+            }
+        }
+
+        // send without string index
+        $finalResult = array();
+        foreach ($result as $key => $value) {
+            array_push($finalResult, $value);
+        }
+
+        return $finalResult;
+    }
+
+
+    /*
+    Returns all nominations, formatted, for the given application number
     */
     public function getNominations($appNo)
     {

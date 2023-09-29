@@ -31,12 +31,14 @@ class ApplicationController extends Controller
         foreach ($applications as $val) {
             // get nominations for application and insert
             $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
+            $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($val["applicationNo"]);
 
             // check if is self nominated for all
             if ($this->isSelfNominatedAll($nominations, $accountNo)) {
                 $val['isSelfNominatedAll'] = true;
             } else {
                 $val["nominations"] = $nominations;
+                $val["nominationsToDisplay"] = $nominationsToDisplay;
             }
             // get name of user who processed the application
             if ($val["processedBy"] != null) {
@@ -170,6 +172,7 @@ class ApplicationController extends Controller
 
             // Nomination for Line Manager for USER is the USER
             if ($nomination['accountRoleId'] == "MANAGER"
+            && array_key_exists("subordinateNo", $nomination)
             && $nomination['nomineeNo'] == $nomination['subordinateNo']) {
                 return array(
                     'valid' => false,
@@ -263,22 +266,21 @@ class ApplicationController extends Controller
         // Not all nominations were self-nominations, group together roles and inform all nominees
         app(MessageController::class)->notifyNomineesApplicationCreated($application->applicationNo);
 
+        $accountNo = $data['accountNo'];
+        $applicationNo = $application->applicationNo;
+        $result = Application::where('applicationNo', $applicationNo)->first();
+        // get nominations for application and insert
+        $nominations = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
 
-        $result = Application::where('applicationNo', $application->applicationNo)->get();
-        
-        foreach ($result as $val) {
-            // get nominations for application and insert
-            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
-            
-            // check if is self nominated for all
-            if ($this->isSelfNominatedAll($nominations, $data['accountNo'])) {
-                $val['isSelfNominatedAll'] = true;
-            }
-            else {
-                $val["nominations"] = $nominations;
-            }
+        // check if is self nominated for all
+        if ($this->isSelfNominatedAll($nominations, $accountNo)) {
+            $result['isSelfNominatedAll'] = true;
+        } else {
+            $result["nominations"] = $nominations;
+            $result["nominationsToDisplay"] = $nominationsToDisplay;
         }
-        return response()->json($result[0]);
+        return response()->json($result);
     }
 
     /*
@@ -800,7 +802,7 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         $validation = $this->validateApplication($data);
@@ -884,7 +886,19 @@ class ApplicationController extends Controller
             app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $application->applicationNo);
         }
 
-        return response()->json(['success' => 'success'], 200);
+        $result = Application::where('applicationNo', $applicationNo)->first();
+        // get nominations for application and insert
+        $nominations = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
+
+        // check if is self nominated for all
+        if ($this->isSelfNominatedAll($nominations, $accountNo)) {
+            $result['isSelfNominatedAll'] = true;
+        } else {
+            $result["nominations"] = $nominations;
+            $result["nominationsToDisplay"] = $nominationsToDisplay;
+        }
+        return response()->json($result);
     }
 
 
