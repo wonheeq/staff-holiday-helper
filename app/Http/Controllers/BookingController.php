@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Nomination;
 use App\Models\Application;
+use App\Models\ManagerNomination;
 use DateTime;
 use DateTimeZone;
 class BookingController extends Controller
@@ -40,8 +41,9 @@ class BookingController extends Controller
     Returns a list of roles that the account has been assigned to, formatted.
     */
     public function getRolesForNominations(Request $request, String $accountNo) {
+        $account = Account::where('accountNo', $accountNo)->first();
         // Check if user exists for given accountNo
-        if (!Account::where('accountNo', $accountNo)->first()) {
+        if ($account == null) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
@@ -65,6 +67,30 @@ class BookingController extends Controller
                 'nomination' => "",
                 'visible' => true,
             ]);
+        }
+
+        // Check if account is line manager or admin
+        if ($account->accountType == 'lmanager' || $account->accountType == 'sysadmin') {
+            // Get all staff members the account is in charge of
+            $subordinates = Account::where('superiorNo', $accountNo)->get();
+
+            foreach ($subordinates as $sub) {
+                // Make sure that temporary subordinates are not added in
+                if (ManagerNomination::where('subordinateNo', $sub->accountNo)->where('nomineeNo', $accountNo)->first()) {
+                    continue;
+                }
+
+                $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+                // format and push data to result
+                array_push($result, [
+                    'accountRoleId' => 'MANAGER',
+                    'subordinateNo' => $sub->accountNo,
+                    'selected' => false,
+                    'role' => $role,
+                    'nomination' => "",
+                    'visible' => true,
+                ]);
+            }
         }
 
         return response()->json($result);

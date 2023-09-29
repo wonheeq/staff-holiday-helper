@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('manager_substitions', function (Blueprint $table) {
+        Schema::create('manager_nominations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('applicationNo');
             $table->char('nomineeNo', 7); // Nominee to temporarily takeover management of the subordinate
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('manager_substitions',function (Blueprint $table) {
+        Schema::table('manager_nominations',function (Blueprint $table) {
             $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
             $table->foreign('nomineeNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
             $table->foreign('subordinateNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('manager_substitions');
+        Schema::dropIfExists('manager_nominations');
     }
 };

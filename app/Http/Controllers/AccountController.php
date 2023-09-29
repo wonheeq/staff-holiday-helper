@@ -6,7 +6,7 @@ use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Models\School;
-use App\Models\ManagerSubstitution;
+use App\Models\ManagerNomination;
 use DateTime;
 use DateTimeZone;
 use DB;
@@ -128,8 +128,8 @@ class AccountController extends Controller
                     Since the substitute line manager SHOULD NOT be allowed to nominate others
                     for a role they are temporarily holding
                     */
-                    // check that the manager substitution actually exists
-                    $managerSub = ManagerSubstitution::where('applicationNo', $app->applicationNo)
+                    // check that the manager nomination actually exists
+                    $managerSub = ManagerNomination::where('applicationNo', $app->applicationNo)
                     ->where('subordinateNo', $accountNo)
                     ->first();
                     if ($managerSub) {

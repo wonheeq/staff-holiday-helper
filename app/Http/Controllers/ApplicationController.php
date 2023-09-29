@@ -7,6 +7,7 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Account;
 use App\Models\Message;
+use App\Models\ManagerNomination;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Log;
@@ -198,12 +199,24 @@ class ApplicationController extends Controller
                 $status = 'Y';
             }
 
-            $newNom = Nomination::create([
-                'applicationNo' => $application->applicationNo,
-                'nomineeNo' => $nomination['nomineeNo'],
-                'accountRoleId' => $nomination['accountRoleId'],
-                'status' => $status
-            ]);
+            // check it is a nomination for the line manager role
+            if ($nomination['accountRoleId'] == 'MANAGER') {
+                // Create ManagerNomination
+                $sub = ManagerNomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nomination['nomineeNo'],
+                    'subordinateNo' => $nomination['subordinateNo'],
+                    'status' => $status
+                ]);
+            }
+            else {
+                $newNom = Nomination::create([
+                    'applicationNo' => $application->applicationNo,
+                    'nomineeNo' => $nomination['nomineeNo'],
+                    'accountRoleId' => $nomination['accountRoleId'],
+                    'status' => $status
+                ]);
+            }
         }
 
 
