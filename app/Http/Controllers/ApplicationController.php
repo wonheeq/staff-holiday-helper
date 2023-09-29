@@ -589,9 +589,10 @@ class ApplicationController extends Controller
                         }
                     }
                     else {
-                        foreach ($remainingOldManagerNominations as $rem) {
-                            if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['subordinateNo'] == $new['subordinateNo']) {
-                                if ($rem->status == 'U' || $rem->status == 'N') {
+                        foreach ($remainingOldManagerNominations as $rom) {
+                            Log::debug($rom);
+                            if ($rom['nomineeNo'] == $new['nomineeNo'] && $rom->subordinateNo == $new['subordinateNo']) {
+                                if ($rom->status == 'U' || $rom->status == 'N') {
                                     if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
                                         Log::debug("D");
                                         ManagerNomination::where('applicationNo', $applicationNo)
@@ -805,6 +806,26 @@ class ApplicationController extends Controller
             return response()->json('Account does not exist.', 500);
         }
 
+        date_default_timezone_set("Australia/Perth"); 
+        // Make sure application is not ongoing
+        $startDate = new DateTime($application->sDate);
+        $endDate = new DateTime($application->eDate);
+        $nowDate = new DateTime();
+        /*
+        Log::debug($startDate->format('Y-m-d H:i:s'));
+        Log::debug($nowDate->format('Y-m-d H:i:s'));
+        Log::debug($endDate->format('Y-m-d H:i:s'));
+        Log::debug(($nowDate >= $startDate && $nowDate <= $endDate) ?"ongoing":"expired");
+        */
+        if ($application->status == "Y" && ($nowDate >= $startDate && $nowDate <= $endDate)) {
+            return response()->json("Cannot edit an ongoing application.", 500);
+        }
+
+        // Make sure application is not expired
+        if ($application->status == "E" || $nowDate >= $endDate) {
+            return response()->json("Cannot edit an expired application.", 500);
+        }
+
         $validation = $this->validateApplication($data);
         if (!$validation['valid']) {
             return response()->json($validation['reason'], 500);
@@ -921,6 +942,26 @@ class ApplicationController extends Controller
         if (!$application) {
             // Application does not exist or does not belong to accountNo, return exception
             return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
+        }
+
+        date_default_timezone_set("Australia/Perth"); 
+        // Make sure application is not ongoing
+        $startDate = new DateTime($application->sDate);
+        $endDate = new DateTime($application->eDate);
+        $nowDate = new DateTime();
+        /*
+        Log::debug($startDate->format('Y-m-d H:i:s'));
+        Log::debug($nowDate->format('Y-m-d H:i:s'));
+        Log::debug($endDate->format('Y-m-d H:i:s'));
+        Log::debug(($nowDate >= $startDate && $nowDate <= $endDate) ?"ongoing":"expired");
+        */
+        if ($application->status == "Y" && ($nowDate >= $startDate && $nowDate <= $endDate)) {
+            return response()->json("Cannot edit an ongoing application.", 500);
+        }
+
+        // Make sure application is not expired
+        if ($application->status == "E" || $nowDate >= $endDate) {
+            return response()->json("Cannot edit an expired application.", 500);
         }
 
         // Get current line manager account number

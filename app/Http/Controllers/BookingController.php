@@ -75,11 +75,6 @@ class BookingController extends Controller
             $subordinates = Account::where('superiorNo', $accountNo)->get();
 
             foreach ($subordinates as $sub) {
-                // Make sure that temporary subordinates are not added in
-                if (ManagerNomination::where('subordinateNo', $sub->accountNo)->where('nomineeNo', $accountNo)->first()) {
-                    continue;
-                }
-
                 $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
                 // format and push data to result
                 array_push($result, [
@@ -101,7 +96,8 @@ class BookingController extends Controller
     */
     public function getNominationsForApplication(Request $request, String $accountNo, int $applicationNo) {
         // Check if user exists for given accountNo
-        if (!Account::where('accountNo', $accountNo)->first()) {
+        $account = Account::where('accountNo', $accountNo)->first();
+        if (!$account) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
@@ -186,33 +182,36 @@ class BookingController extends Controller
         }
 
         // Add in manager nominations
-        $subordinates = Account::where('superiorNo', $accountNo)->get();
-        foreach ($subordinates as $sub) {
-            // Check if pseudo role has a nomination for this application
-            $managerNomination = ManagerNomination::where('applicationNo', $applicationNo)
-            ->where('subordinateNo', $sub->accountNo)->first();
+        // Check if account is line manager or admin
+        if ($account->accountType == 'lmanager' || $account->accountType == 'sysadmin') {
+            $subordinates = Account::where('superiorNo', $accountNo)->get();
+            foreach ($subordinates as $sub) {
+                // Check if pseudo role has a nomination for this application
+                $managerNomination = ManagerNomination::where('applicationNo', $applicationNo)
+                ->where('subordinateNo', $sub->accountNo)->first();
 
-            $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
-            $nomineeForNom = "";
-            // Exists, so set the current nomineeForNom 
-            if ($managerNomination != null) {
-                if ($managerNomination->nomineeNo == $accountNo) {
-                    $nomineeForNom = "Self Nomination";
+                $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+                $nomineeForNom = "";
+                // Exists, so set the current nomineeForNom 
+                if ($managerNomination != null) {
+                    if ($managerNomination->nomineeNo == $accountNo) {
+                        $nomineeForNom = "Self Nomination";
+                    }
+                    else {
+                        $nominee = Account::where('accountNo', $managerNomination->nomineeNo)->first();
+                        $nomineeForNom = "({$nominee->accountNo}) {$nominee->fName} {$nominee->lName}";
+                    }
                 }
-                else {
-                    $nominee = Account::where('accountNo', $managerNomination->nomineeNo)->first();
-                    $nomineeForNom = "({$nominee->accountNo}) {$nominee->fName} {$nominee->lName}";
-                }
+                // format and push data to result
+                array_push($result, [
+                    'accountRoleId' => "MANAGER",
+                    'subordinateNo' => $sub->accountNo,
+                    'selected' => false,
+                    'role' => $role,
+                    'nomination' => $nomineeForNom,
+                    'visible' => true,
+                ]);
             }
-            // format and push data to result
-            array_push($result, [
-                'accountRoleId' => "MANAGER",
-                'subordinateNo' => $sub->accountNo,
-                'selected' => false,
-                'role' => $role,
-                'nomination' => $nomineeForNom,
-                'visible' => true,
-            ]);
         }
 
         return response()->json($result);

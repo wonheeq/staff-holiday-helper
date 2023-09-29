@@ -21,6 +21,7 @@ const statusText = {
     "Y": "Approved",
     "N": "Denied",
     "C": "Cancelled",
+    "E": "Expired",
 };
 const statusColour = {
     "P": "text-orange-500",
@@ -28,6 +29,7 @@ const statusColour = {
     "Y": "text-green-500",
     "N": "text-red-500",
     "C": "text-gray-500",
+    "E": "",
 };
 
 let toggleContent = ref(false);
@@ -37,13 +39,6 @@ let toggleImage = (isVisible) => {
     }
 
     return '/images/triangle_down.svg';
-}
-
-function alertFailedCancelApplication() {
-    Swal.fire({
-        title: "Failed to Cancel Application",
-        text: "Please try again later.",
-    });
 }
 
 async function handleCancelApplication() {
@@ -60,13 +55,14 @@ async function handleCancelApplication() {
                 if (response.status == 200) {
                     emit('cancelApplication');
                 }
-                else {
-                    alertFailedCancelApplication();
-                }
             })
             .catch((error) => {
                 console.log(error);
-                alertFailedCancelApplication();
+                Swal.fire({
+                    icon: 'error',
+                    title: "Failed to Cancel Application",
+                    text: error.response.data
+                });
             });
         }
     });
@@ -85,7 +81,7 @@ function handleEditApplication() {
             </p>
             <ApplicationNominationData
                 v-show="toggleContent"
-                :nominations="source.nominationsToDisplay"
+                :nominations="source.nominations"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
                 :processedBy="source.processedBy"
@@ -174,7 +170,7 @@ function handleEditApplication() {
             </p>
             <ApplicationNominationData
                 v-show="toggleContent"
-                :nominations="source.nominationsToDisplay"
+                :nominations="source.nominations"
                 :appStatus="source.status"
                 :rejectReason="source.rejectReason"
                 :processedBy="source.processedBy"

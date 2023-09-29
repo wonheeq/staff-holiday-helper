@@ -111,6 +111,8 @@ class Kernel extends ConsoleKernel
             if ($account->isTemporaryManager == 0) {
                 $account->isTemporaryManager = 1;
                 $account->save();
+
+                Log::debug("Promoted {$account->accountNo}");
             }
         }
     }
@@ -141,6 +143,8 @@ class Kernel extends ConsoleKernel
             if ($account->isTemporaryManager == 1) {
                 $account->isTemporaryManager = 0;
                 $account->save();
+
+                Log::debug("Demoted {$account->accountNo}");
             }
 
             // Remove non acknowledged "Application Awaiting Review" messages from the ex-temp line manager

@@ -19,7 +19,8 @@ class EnsureUserIsManager
     {
         $user = Auth::user();
         $level = $user->accountType;
-        if ($level != "sysadmin" && $level != "lmanager") {
+        $isTemporaryManager = $user->isTemporaryManager ? true : false;
+        if ($level != "sysadmin" && $level != "lmanager" && !$isTemporaryManager) {
             abort(403, 'You are not authorised to access this.');
         }
 

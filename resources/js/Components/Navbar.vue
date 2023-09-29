@@ -46,15 +46,27 @@ async function handleLogout() {
 }
 
 function shouldDisplayOption(minPerm) {
+    // Account is an admin
     if (user.value.accountType == "sysadmin") {
         return true;
     }
+
+    // Account meets minimum permissions
     if (user.value.accountType == minPerm) {
         return true;
     }
+
+    // Minimum permission is lmanager AND user is temporary manager
+    if (minPerm == "lmanager" && user.value.isTemporaryManager==1) {
+        return true;
+    }
+
+    // Minimum required permissions = staff AKA everyone logged in can access
     if (minPerm == "staff") {
         return true;
     }
+
+    // Minimum required permissions not met
     return false;
 }
 
