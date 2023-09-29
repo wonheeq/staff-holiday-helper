@@ -27,6 +27,7 @@ class AccountFactory extends Factory
             'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')),
             'superiorNo' => fake()->randomElement(['000002L', '112237t', '123456a', '441817e', '877873p']),
             'schoolId' => fake()->numberBetween(101, 114),  // 14 schools
+            'isTemporaryManager' => false,
         ];
     }
 }
