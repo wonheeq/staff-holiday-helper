@@ -30,7 +30,7 @@ class Account extends Authenticatable
         'fname',
         'password',
         'superiorNo',
-        'schoolId'
+        'schoolId' // SchoolID: 1 reserved for Super Administrator
     ];
 
     protected $hidden = [

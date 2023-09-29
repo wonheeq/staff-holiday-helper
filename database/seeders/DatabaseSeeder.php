@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
 
         // schools - All 14 curtin schools shown on faculty pages on Curtin Website
         $schools = array(
+            array('schoolId' => '1', 'name' => 'Super Administrator'), // SchoolID: 1 reserved for Super Administrator
             array('schoolId' => '101', 'name' => 'Curtin Medical School'),
             array('schoolId' => '102', 'name' => 'Curtin School of Allied Health'),
             array('schoolId' => '103', 'name' => 'Curtin School of Nursing'),
@@ -68,14 +69,15 @@ class DatabaseSeeder extends Seeder
         }
 
 
-        // Create one line manager
-        $lineManagerNo = '000002L';
-        Account::factory()->create([
-            'accountNo' =>  $lineManagerNo,
+        // Create the super admin for the system
+        $superAdminNo = '000002L';
+        Account::create([
+            'accountNo' =>  $superAdminNo,
             'accountType' => 'sysadmin',
             'superiorNo' => null,
-            'fName' => 'TEST',
-            'lName' => 'DEFAULT ADMIN',
+            'schoolId' => 1,
+            'fName' => 'SUPER',
+            'lName' => 'ADMIN',
             'password' => Hash::make('testPassword1'),
         ]);
 
@@ -83,25 +85,25 @@ class DatabaseSeeder extends Seeder
         Account::factory()->create([
             'accountNo' =>  '112237t',
             'accountType' => 'lmanager',
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '123456a',
             'accountType' => 'lmanager',
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '441817e',
             'accountType' => 'lmanager',
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         Account::factory()->create([
             'accountNo' =>  '877873p',
             'accountType' => 'lmanager',
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         // Create test users for Hannes and co
@@ -170,7 +172,7 @@ class DatabaseSeeder extends Seeder
             'fName' => 'Static',
             'lName' => 'Test User',
             'password' => Hash::make('testPassword1'),
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         // TEST USER - sysadmin
@@ -180,7 +182,7 @@ class DatabaseSeeder extends Seeder
             'fName' => 'Bhos',
             'lName' => 'Mann',
             'password' => Hash::make('testPassword2'),
-            'superiorNo' => $lineManagerNo,
+            'superiorNo' => $superAdminNo,
         ]);
 
         // 10 roles for test user
@@ -213,7 +215,7 @@ class DatabaseSeeder extends Seeder
 
         // Create 30 accounts
         Account::factory(30)->create([
-            'superiorNo' => $lineManagerNo
+            'superiorNo' => $superAdminNo
         ]);
 
         $accounts = Account::get();
@@ -231,7 +233,7 @@ class DatabaseSeeder extends Seeder
             if ($count >= 4) {break;} 
             Application::factory(1)->create([
                 'accountNo' => $account['accountNo'],
-                'processedBy' => $lineManagerNo,
+                'processedBy' => $superAdminNo,
             ]);
 
             $applications = Application::where('accountNo', $account['accountNo'], 'and')
