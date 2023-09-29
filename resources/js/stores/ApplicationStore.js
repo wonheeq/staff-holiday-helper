@@ -31,7 +31,7 @@ export let useApplicationStore = defineStore('applications', {
         },
 
         addNewApplication(app) {
-            this.applications.push(app);
+            this.applications.unshift(app);
         }
     },
     getters: {
