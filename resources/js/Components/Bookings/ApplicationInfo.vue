@@ -7,6 +7,8 @@ import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
@@ -76,7 +78,7 @@ function handleEditApplication() {
 </script>
 <template>
     <div v-if="isMobile" class="flex flex-col">
-        <div class="flex flex-col bg-gray-200 p-2">
+        <div class="flex flex-col p-2">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">
                 {{ statusText[source.status] }}
@@ -114,23 +116,23 @@ function handleEditApplication() {
                 </div>
             </div>
         </div>
-        <div class="flex flex-row bg-white space-x-0.5">
-            <button @click="handleCancelApplication()" v-if="source.status!='C'" class="mt-0.5 bg-gray-200">
-                <img class="h-6 w-8" src="/images/delete.svg" />
+        <div class="flex flex-row space-x-0.5">
+            <button @click="handleCancelApplication()" v-if="source.status!='C'" class="mt-0.5" :class="isDark?'bg-gray-700':'bg-gray-200'">
+                <img class="h-6 w-8" src="/images/delete.svg" :class="isDark?'darkModeImage':''"/>
             </button>
             <button
-                class="mt-0.5 bg-gray-200 text-center h-8 w-full"
+                class="mt-0.5 text-center h-8 w-full" :class="isDark?'bg-gray-700':'bg-gray-200'"
                 @click="toggleContent=!toggleContent"
             >
-                <img :src="toggleImage(toggleContent)" class="toggleImageIcon"/>
+                <img :src="toggleImage(toggleContent)" class="toggleImageIcon" :class="isDark?'darkModeImage':''"/>
             </button>
-            <button @click="handleEditApplication()" class="mt-0.5 bg-gray-200">
-                <img class="h-6 w-8" src="/images/edit.svg" />
+            <button @click="handleEditApplication()" class="mt-0.5" :class="isDark?'bg-gray-700':'bg-gray-200'">
+                <img class="h-6 w-8" src="/images/edit.svg" :class="isDark?'darkModeImage':''"/>
             </button>
         </div>
     </div>
-    <div v-else class="flex flex-row bg-white">
-        <div class="flex flex-col w-5/6 bg-gray-200 p-2">
+    <div v-else class="flex flex-row">
+        <div class="flex flex-col w-5/6 p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
                 <div class="flex flex-row">
@@ -157,7 +159,7 @@ function handleEditApplication() {
                 </div>
             </div>
         </div>
-        <div class="flex flex-col w-1/5 bg-gray-200 text-4xl ml-2 p-2">
+        <div class="flex flex-col w-1/5 text-4xl ml-2 p-2"  :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p :class="statusColour[source.status]">
                 {{ statusText[source.status] }}
             </p>
@@ -176,12 +178,13 @@ function handleEditApplication() {
                 @editApplication="handleEditApplication()"
             />
         </div>
-        <div class="flex flex-col bg-white">
+        <div class="flex flex-col">
             <button
-                class="ml-2 text-5xl px-6 bg-gray-200 text-center h-14"
+                class="ml-2 text-5xl px-6 text-center h-14"
+                :class="isDark?'bg-gray-700':'bg-gray-200'"
                 @click="toggleContent=!toggleContent"
             >
-                <img :src="toggleImage(toggleContent)" class="toggleImageIcon"/>
+                <img :src="toggleImage(toggleContent)" class="toggleImageIcon" :class="isDark?'darkModeImage':''"/>
             </button>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, inject } from 'vue';
 import CreateSubpagePeriod from './CreateSubpagePeriod.vue';
 import CreateSubpageNominations from './CreateSubpageNominations.vue';
 import CalendarSmall from '../CalendarSmall.vue';
@@ -10,6 +10,9 @@ import Swal from 'sweetalert2';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { usePage } from '@inertiajs/vue3'
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const dayJS = inject("dayJS");
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const calendarStore = useCalendarStore();
@@ -23,13 +26,13 @@ const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
 
 let period = reactive({
-    start: null,
-    end: null,
+    start: new Date(),
+    end: new Date(),
 });
 
 function resetFields() {
-    period.start = null;
-    period.end = null;
+    period.start = new Date();
+    period.end = new Date();
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -104,13 +107,18 @@ function formatNominations(accountNo) {
     return result;
 }
 
+function formatDate(date) {
+    return dayJS(date).format('YYYY-MM-DDTHH:mm');
+}
+
 function createApplication(data) {
+    period.end = formatDate(period.end);
+    period.start = formatDate(period.start);
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);
         data.sDate = period.start;
         data.eDate = period.end;
-
         resetFields();
         
         axios.post('/api/createApplication', data)
@@ -132,7 +140,7 @@ function createApplication(data) {
         Swal.fire({
            icon: "error",
            title: "Error",
-           text:  errors
+           text:  errors.join(", ")
         });
     }
 }
@@ -140,7 +148,7 @@ function createApplication(data) {
 <template>
     <div>
         <div v-if="isMobile" class="w-full">
-            <div class="w-full bg-white rounded-b-md p-2">
+            <div class="w-full rounded-b-md p-2" :class="isDark?'bg-gray-800':'bg-white'">
                 <p class="text-xl font-bold">
                     Create New Leave Application:
                 </p>
@@ -157,8 +165,8 @@ function createApplication(data) {
                 :disableEnlarge="true" 
             />
         </div>
-        <div v-else class="flex bg-transparent subpage-height">
-            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 subpage-height" :class="subpageClass">
+        <div v-else class="flex subpage-height">
+            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 rounded-r-md rounded-bl-md subpage-height" :class="isDark?'bg-gray-800':'bg-white'">
                 <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
                     Create New Leave Application:
                 </p>

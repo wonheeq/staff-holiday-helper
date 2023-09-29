@@ -10,6 +10,11 @@ import Nomination from "./Nomination.vue";
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { usePage } from '@inertiajs/vue3';
+import { useDark } from "@vueuse/core";
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let nominationStore = useNominationStore();
@@ -24,8 +29,9 @@ let props = defineProps({
     applicationNo: Number
 });
 let emit = defineEmits(['resetFields', 'submitApplication']);
-
-let deadAreaColor = "#FFFFFF";
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 
 let selfNominateAll = isSelfNominateAll;
 let allSelected = ref(false);
@@ -39,7 +45,6 @@ let fetchStaffMembers = async() => {
         const resp = await axios.get('/api/getBookingOptions/' + user.value.accountNo);
         staffMembers = resp.data;
     } catch (error) {
-        alert("Failed to load data: Please try again");
         console.log(error);
     }
 }; 
@@ -182,9 +187,111 @@ function submitApplication() {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div class="flex flex-col w-full justify-between pageHeight" v-if="dataReady">
+    <div v-if="isMobile && dataReady" class="flex flex-col w-full justify-between pageHeight">
+        <div class="flex flex-col w-full h-[29%]">
+            <p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
+                Nominate Substitutes:
+            </p>
+            <div class="w-full justify-between pr-2">
+                <div class="flex space-x-6 pl-2.5 w-full">
+                    <div class="flex flex-col">
+                        <p class="text-xs">
+                            Select
+                        </p>
+                        <input type="checkbox"
+                            class="w-8 h-8 border-gray-300"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
+                            v-model="allSelected"
+                            @change="handleSelectAll()"    
+                            :disabled="selfNominateAll"
+                        />
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <p class="text-xs">
+                            Filter Roles
+                        </p>
+                        <input type="text"
+                            class="h-8 w-full border-gray-300 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
+                            :disabled="selfNominateAll"
+                        />
+                    </div>
+                </div>
+                <div class="w-full  pl-2.5">
+                    <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
+                        Select Substitute ({{ numSelectedNominations }}):
+                    </p>
+                    <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                        style="width: 100%; height: 2rem; background-color: inherit;  font-size: 0.75rem;"                            
+                        v-model="multiSelectNominee"
+                        @option:selected="(selection) => handleDropdownStaffSelection(selection)"
+                        :disabled="selfNominateAll"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="flex border border-black h-[67%] 1080:h-[76%]">
+            <VueScrollingTable
+                class="scrollTable"
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div>
+                        <Nomination
+                        v-for="nomination in filteredNominations"
+                        :nomination="nomination"
+                        :options="staffMembers"
+                        :isDisabled="selfNominateAll"
+                        @nominationSelected="(value) => handleSingleNominationSelected(value)"
+                    />
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div class="flex flex-col h-[14%] justify-between">
+            <div class="flex items-center space-x-2 py-2">
+                <input type="checkbox"
+                    class="w-8 h-8"
+                    :class="isDark?'bg-gray-800 border-white':''"
+                    v-model="selfNominateAll"
+                    @click="handleSelfNominateAll()"    
+                />
+                <p class="text-xs 1080:text-sm 1440:text-base 4k:text-2xl ">
+                    I will handle all my responsibilities for this period of leave, therefore no nominations are required.
+                </p>
+            </div>
+            <div class="flex justify-between h-3/4 space-x-16 pb-2">
+                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="cancelApplication()"
+                    v-if="!props.isEditing"
+                >
+                    Cancel Application
+                </button>
+                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="cancelApplication()"
+                    v-if="props.isEditing"
+                >
+                    Cancel Edit
+                </button>
+                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="submitApplication()"
+                    v-if="!props.isEditing"
+                >
+                    Submit Application
+                </button>
+                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                    @click="submitApplication()"
+                    v-if="props.isEditing"
+                >
+                    Submit Edit
+                </button>
+            </div>
+        </div>
+    </div>
+    <div v-else class="flex flex-col w-full justify-between pageHeight" v-if="dataReady">
         <div class="flex flex-col w-full h-[10%] 1080:h-[15%] 1440:h-[10%] pb-2 laptop:pb-0">
-            <p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
+            <p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:
             </p>
             <div class="flex w-full justify-between 4k:py-6 space-x-7 pr-2">
@@ -194,8 +301,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-8 h-8 ml-2"
-                            :class="selfNominateAll ? disabledClass : ''"
+                            class="w-8 h-8 ml-2 border-gray-300"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
@@ -206,9 +313,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-8 w-full text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
-                            :class="selfNominateAll ? disabledClass : ''"
-                            v-model="roleFilter"
+                            class="h-8 w-full border-gray-300 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
@@ -217,10 +323,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     <p class="text-xs 1080:text-base 1440:text-xl 4k:text-3xl w-full">
                         Select Substitute ({{ numSelectedNominations }}):
                     </p>
-                    <vSelect :options="staffMembers" :clearable="false"
-                        style="width: 100%; height: 2rem; background-color: white; 
-                        border: solid; border-color: #6b7280; border-width: 1px;
-                        --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
+                    <vSelect :options="staffMembers" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                        style="width: 100%; height: 2rem; background-color: inherit;"                            
                         v-model="multiSelectNominee"
                         @option:selected="(selection) => handleDropdownStaffSelection(selection)"
                         :disabled="selfNominateAll"
@@ -250,7 +354,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
         <div class="flex flex-col h-[14%] 1080:h-[12%] justify-between">
             <div class="flex items-center space-x-2 py-2">
                 <input type="checkbox"
-                    class="w-4 1080:w-6 h-4 1080:h-6 1440:w-8 1440:h-8 4k:h-12 4k:w-12"
+                    class="w-8 h-8"
+                    :class="isDark?'bg-gray-800 border-white':''"
                     v-model="selfNominateAll"
                     @click="handleSelfNominateAll()"    
                 />

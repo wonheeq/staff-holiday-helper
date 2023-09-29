@@ -8,10 +8,13 @@ import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useNominationStore } from '@/stores/NominationStore';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useCalendarStore } from '@/stores/CalendarStore';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
+const dayJS = inject("dayJS");
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
@@ -31,8 +34,8 @@ let props = defineProps({
 });
 
 function resetFields() {
-    props.period.start = null;
-    props.period.end = null;
+    props.period.start = new Date();
+    props.period.end = new Date();
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -107,8 +110,14 @@ function formatNominations(accountNo) {
 
     return result;
 }
+function formatDate(date) {
+    return dayJS(date).format('YYYY-MM-DDTHH:mm');
+}
 
 function handleEditApplication(data) {
+    props.period.end = formatDate(props.period.end);
+    props.period.start = formatDate(props.period.start);
+
     if (validateApplication(data)) {
         data.selfNominateAll = data.selfNominateAll || nominations.value.filter(nomination => nomination.nomination == "Self Nomination").length == nominations.value.length;
         data.nominations = formatNominations(data.accountNo);
@@ -151,7 +160,7 @@ function handleEditApplication(data) {
         Swal.fire({
            icon: "error",
            title: "Error",
-           text:  errors
+           text:  errors.join(", ")
         });
     }
 }
@@ -159,7 +168,7 @@ function handleEditApplication(data) {
 <template>
 <Modal>
     <div class="flex flex-col laptop:flex-row bg-transparent w-screen px-2 mt-2 mb-2 laptop:px-4 laptop:mt-auto laptop:mb-4">
-        <div v-if="isMobile" class="w-full bg-white p-2 rounded-md">
+        <div v-if="isMobile" class="w-full p-2 rounded-md">
             <div class="h-[4%] flex justify-between w-full">
                 <p class="text-xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
@@ -182,7 +191,7 @@ function handleEditApplication(data) {
             <div class="h-2">
             </div>
         </div>
-        <div v-else class="laptop:w-[80%] flex flex-col p-4 laptop:mr-4 subpage-height rounded-tl-md" :class="subpageClass">
+        <div v-else class="laptop:w-[80%] flex flex-col p-4 laptop:mr-4 subpage-height rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="h-[8%] flex justify-between">
                 <p class="text-5xl font-bold">
                     Edit Leave Application (ID: {{ applicationNo }}):
@@ -190,7 +199,7 @@ function handleEditApplication(data) {
                 <button class="h-full"
                     @click="resetFields(); $emit('close')"
                 >
-                    <img src="/images/close.svg" class="h-full w-full"/>
+                    <img src="/images/close.svg" class="h-full w-full" :class="isDark?'darkModeImage':''"/>
                 </button>
             </div>
             <div class="grid grid-cols-3 h-[92%]">

@@ -297,15 +297,61 @@ class MessageController extends Controller
         }
     }
 
+    /* Notifies nominees of application they agreed to substitute for being approved */
+    public function notifyNomineesApplicationApproved($applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Process nominations
+        $nominations = Nomination::where('applicationNo',  $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $processedNominees = [];
+
+        foreach ($nominations as $nomination) {
+            if (!in_array($nomination->nomineeNo, $processedNominees)) {
+                // add nomineeNo to array if not added
+                array_push($processedNominees, $nomination->nomineeNo);
+
+                $nominations = Nomination::where('applicationNo',  $applicationNo)
+                    ->where('nomineeNo', $nomination->nomineeNo)->get();
+
+                $content = [
+                    "An application you agreed to substitute for has been approved.",
+                    "Roles you agreed to takeover:"
+                ];
+
+                foreach ($nominations as $nom) {
+                    // Get role name
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}",
+                    );
+                }
+
+                array_push(
+                    $content,
+                    "Duration: {$application['sDate']} - {$application['eDate']}"
+                );
+
+                $message = Message::create([
+                    'applicationNo' => $applicationNo,
+                    'receiverNo' => $nom->nomineeNo,
+                    'senderNo' => $application->accountNo,
+                    'subject' => 'Confirmed Substitutions',
+                    'content' => json_encode($content),
+                    'acknowledged' => false,
+                ]);
+            }
+        }
+    }
+
     /*
     Notifies nominees of edited applications that have only the period edited to become a subset
     */
     public function notifyNomineeApplicationEditedSubsetOnly($applicationNo, $nomineeNos)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
-
-        // Resend Substitution Request messages
-        $this->notifyNomineeApplicationEdited($applicationNo, $nomineeNos);
 
         // Process nominations
         $nominations = Nomination::where('applicationNo',  $applicationNo)

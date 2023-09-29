@@ -51,7 +51,7 @@ const hasDigit = new RegExp("\\d");
 let validatePasswords = () => {
     errors.length = 0;
 
-
+    buttonActive = false;
     if (!hasUppercase.test(password.password)) {
         errors.push("Password must contain at least one uppercase letter.");
     }
@@ -152,17 +152,19 @@ function back() {
             />
         </button>
     </div>
-    <form action="#" @submit.prevent="handleChangePassword">
+    <form @submit.prevent="">
         <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
             <div class="w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Current Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.current"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.current.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.current)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.current)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.current.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -174,11 +176,13 @@ function back() {
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.password"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.password.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.password)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.password)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.password.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -190,11 +194,13 @@ function back() {
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.confirm"
+                        @submit.prevent
+                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
                     >
-                    <button @click.prevent="switchVis(fieldType.confirm)" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.confirm)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.confirm.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -224,7 +230,7 @@ function back() {
                     'bg-gray-900 text-white': !buttonActive && isDark,
                 }"
                 :disabled="!buttonActive"
-                type="submit"
+                @click="handleChangePassword"
             >
                 Change Password
             </button>
@@ -239,9 +245,7 @@ function back() {
 </div>
 </template>
 <style>
-.darkModeImage {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
-}
+
 .close-button {
     height: 40px;
     width: auto;

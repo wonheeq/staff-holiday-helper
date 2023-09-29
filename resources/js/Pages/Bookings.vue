@@ -40,26 +40,25 @@ if (props.screenProp !== "default") {
 
 let period = reactive({
     start: null,
-    end: null
-})
-
-const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md bg-white";
+    end: null,
+});
+const subpageClass = "rounded-bl-md rounded-br-md laptop:rounded-tr-md";
 let isEditing = ref(false);
 let applicationNo = ref(null);
 async function handleEditApplication(appNo) {
     appNo = parseInt(appNo);
-    isEditing.value = true;
     applicationNo.value = appNo;
 
     for (let app of applications.value) {
         if (app.applicationNo == appNo) {
-            period.start = app.sDate.replace(" ", "T");
-            period.end = app.eDate.replace(" ", "T");
+            period.start = app.sDate;
+            period.end = app.eDate;
             break;
         }
     }
 
     await fetchNominationsForApplicationNo(appNo, user.value.accountNo);
+    isEditing.value = true;
 }
 
 function changeUrl(params) {
@@ -131,16 +130,14 @@ function handleActiveScreenChanged(screen) {
                 class="p-4 h-[95%]"
             />
         </div>
-        <Teleport to="body">
-            <EditApplication
-                v-show="isEditing"
-                :applicationNo="applicationNo"
-                :subpageClass="subpageClass"
-                :period="period"
-                @close="isEditing = false; applicationNo = null;"
-            />
-        </Teleport>
     </AuthenticatedLayout>
+    <EditApplication
+        v-show="isEditing"
+        :applicationNo="applicationNo"
+        :subpageClass="subpageClass"
+        :period="period"
+        @close="isEditing = false; applicationNo = null;"
+    />
 </PageLayout>
 </template>
 

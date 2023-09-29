@@ -13,7 +13,7 @@ import { usePage } from '@inertiajs/vue3'
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let messageStore = useMessageStore();
-const { filteredMessages, viewing, unreadMessages, messages } = storeToRefs(messageStore);
+const { viewing, unreadMessages, messages } = storeToRefs(messageStore);
 const { fetchMessages } = messageStore;
 
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
@@ -69,8 +69,9 @@ const deadAreaColor = computed(() => {
                     :scrollHorizontal="false"
                 >
                     <template #tbody>
-                        <div v-for="item in filteredMessages" :key="item.id">
+                        <div v-for="item in messages" :key="item.id" class="mb-1">
                             <Message :source="item"
+                                v-show="(item.acknowledged == 0 && viewing == 'unread') || viewing == 'all'"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
                             ></Message>
@@ -128,8 +129,9 @@ const deadAreaColor = computed(() => {
                     class=""
                 >
                     <template #tbody>
-                        <div v-for="item in filteredMessages" :key="item.id" class="mb-2">
+                        <div v-for="item in messages" :key="item.id" class="mb-2">
                             <Message :source="item"
+                                v-show="(item.acknowledged == 0 && viewing == 'unread') || viewing == 'all'"
                                 @acceptSomeNominations="emit('acceptSomeNominations', item)"
                                 @reviewApplication="emit('reviewApplication', item)"
                             ></Message>
@@ -142,25 +144,6 @@ const deadAreaColor = computed(() => {
 </template>
 
 <style>
-
-@media 
-(min-width: 761px) {
-    ::-webkit-scrollbar {
-        height: 12px;
-        width: 12px;
-        background: #555555;
-    }
-
-        ::-webkit-scrollbar-thumb {
-        background: #9d9d9d;
-        -webkit-border-radius: 1ex;
-    }
-
-    ::-webkit-scrollbar-corner {
-        background: #9d9d9d;
-    }
-}
-
 .scroller {
   overflow-y: auto;
   height: calc(90% - 0.5rem);

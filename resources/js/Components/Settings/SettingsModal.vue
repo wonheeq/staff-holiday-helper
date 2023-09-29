@@ -13,6 +13,17 @@ function resetView() {
     emit('close-settings');
 }
 
+function changeSweetalertTheme() {
+    if (isDark.value) {
+        document.head.querySelector('#swal2-theme').setAttribute('href', "http://" + document.location.host + "/@sweetalert2/theme-dark/dark.css");
+    }
+    else {
+        document.head.querySelector('#swal2-theme').setAttribute('href', "http://" + document.location.host + "/@sweetalert2/theme-default/default.css");
+    }
+}
+
+changeSweetalertTheme();
+
 const options = [
     {
         screen: 'changePassword',
@@ -23,6 +34,7 @@ const options = [
         label: "Toggle Theme",
         click: function() {
             toggleDark();
+            changeSweetalertTheme();
         },
     },
 ];
@@ -68,9 +80,7 @@ const options = [
     </Modal>
 </template>
 <style>
-.darkModeImage {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
-}
+
 .close-button {
     height: 40px;
     width: auto;

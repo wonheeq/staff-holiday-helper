@@ -21,7 +21,7 @@ let options = {
         { source: "/images/admin.svg", caption: "Admin", minPerm: "sysadmin" },
     ],
     right: [
-        { source: "/images/account.svg", caption: "Settings", noLink: () => {
+        { source: "/images/settings.svg", caption: "Settings", noLink: () => {
             emit('open-settings');
         } },
         { source: "/images/logout.svg", caption: "Logout", noLink: () => {
@@ -97,9 +97,7 @@ img{
     height: 16px;
     width: 16px;
 }
-.darkModeImage {
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(100%);
-}
+
 .logo{
     height: 30px;
     width: auto;

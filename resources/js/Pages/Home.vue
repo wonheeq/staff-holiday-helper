@@ -101,8 +101,8 @@ fetchSubstitutions(user.value.accountNo);
     <PageLayout>
         <AuthenticatedLayout>
             <div v-if="isMobile">
-                <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge">
-                    <div class="flex flex-col w-full" v-if="dataReady">
+                <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge" v-if="dataReady">
+                    <div class="flex flex-col w-full">
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
                         <CalendarSmall
                             class="flex drop-shadow-md mt-2"
@@ -122,8 +122,8 @@ fetchSubstitutions(user.value.accountNo);
                 />
             </div>
             <div v-else>
-                <div class="flex screen mx-4 my-4" v-show="!calendarLarge">
-                    <div class="flex flex-col items-center w-3/4 1080:4/6 1440:w-10/12 mr-4" v-if="dataReady">
+                <div class="flex screen mx-4 my-4" v-show="!calendarLarge"  v-if="dataReady">
+                    <div class="flex flex-col items-center w-3/4 1080:4/6 1440:w-10/12 mr-4">
                         <HomeShortcuts :welcomeData="welcomeData" class="h-3/6 min-w-[400px] 1080:h-2/5 1440:h-2/5 4k:h-[35%] w-3/5 1080:w-1/2"></HomeShortcuts>
                         <HomeMessages
                             class="h-3/6 1080:h-3/5 1440:h-3/5 4k:h-[65%] mt-4 drop-shadow-md"

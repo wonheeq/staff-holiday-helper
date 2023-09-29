@@ -385,7 +385,6 @@ class ApplicationController extends Controller
                 $isOutOfRange = true;
             }
         }
-
         //Log::debug("isSubset = ".($isSubset?'true':'false'));
         //Log::debug("isOutOfRange = ".($isOutOfRange?'true':'false'));
 
@@ -423,18 +422,31 @@ class ApplicationController extends Controller
                     if ($new['nomineeNo'] != $application->accountNo) {
                         // Group under the edited substiton request array
                         if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                            Log::debug("A");
                             array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                         }
                     }
                 }
                 else if ($isSubset) {
-                    // Find existing nomination and edit status 
-                    Nomination::where('applicationNo', $applicationNo)
-                    ->where('accountRoleId', $new['accountRoleId'])->update([
-                        'nomineeNo' => $new['nomineeNo'],
-                        // status = 'Y' if self nominated, otherwise = 'U'
-                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
-                    ]);
+                    foreach ($remainingOldNominations as $rem) {
+                        if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
+                            if ($rem->status == 'U' || $rem->status == 'N') {
+                                if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                                    Log::debug("D");
+                                    Nomination::where('applicationNo', $applicationNo)
+                                    ->where('accountRoleId', $new['accountRoleId'])->update([
+                                        'nomineeNo' => $new['nomineeNo'],
+                                        // status = 'Y' if self nominated, otherwise = 'U'
+                                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                                    ]);
+
+                                    Log::debug("B");
+                                    array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
+                                }
+                            }
+                            break;
+                        }
+                    }
                     //Log::debug("Potential Subset Message for : {$new['nomineeNo']}");
                 }
                 else {
@@ -447,19 +459,20 @@ class ApplicationController extends Controller
                         if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
                             if ($rem->status == 'U' || $rem->status == 'N') {
                                 if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                                    Log::debug("C");
+                                    Nomination::where('applicationNo', $applicationNo)
+                                    ->where('accountRoleId', $new['accountRoleId'])->update([
+                                        'nomineeNo' => $new['nomineeNo'],
+                                        // status = 'Y' if self nominated, otherwise = 'U'
+                                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
+                                    ]);
+
                                     array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                 }
                             }
                             break;
                         }
                     }
-
-                    Nomination::where('applicationNo', $applicationNo)
-                    ->where('accountRoleId', $new['accountRoleId'])->update([
-                        'nomineeNo' => $new['nomineeNo'],
-                        // status = 'Y' if self nominated, otherwise = 'U'
-                        'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
-                    ]);
                 }
             }
             else {
@@ -492,6 +505,7 @@ class ApplicationController extends Controller
                     {
                         // Group under the edited substiton request array
                         if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
+                            Log::debug("D");
                             array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                         }
                     }
@@ -553,7 +567,8 @@ class ApplicationController extends Controller
         $application->save();
 
         if (count($nomineesToSendAs_EditedSubstitutionRequest) > 0) {
-            //Log::debug("SENT Edited Substition Request messages");
+            Log::debug("SENT Edited Substition Request messages");
+            Log::debug($nomineesToSendAs_EditedSubstitutionRequest);
             app(MessageController::class)->notifyNomineeApplicationEdited($applicationNo, $nomineesToSendAs_EditedSubstitutionRequest);
         }
         if (count($shouldSendToNomineeAs_EditedSubsetOnly) > 0) {
@@ -616,6 +631,12 @@ class ApplicationController extends Controller
                 ->where('senderNo', $accountNo)
                 ->where('subject', "Application Awaiting Review")
                 ->delete();
+
+                // Delete Confirmed Substitutions messages
+                Message::where('applicationNo', $applicationNo)
+                ->where('senderNo', $accountNo)
+                ->where('subject', "Confirmed Substitutions")
+                ->delete();
                 break;
             }
         }
@@ -627,6 +648,15 @@ class ApplicationController extends Controller
             // Get current line manager account number
             $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
             // Notify line manager of new application to review
+            Message::where('applicationNo', $applicationNo)
+            ->where('senderNo', $accountNo)
+            ->where('subject', "Application Awaiting Review")
+            ->delete();
+            // Delete Confirmed Substitutions messages
+            Message::where('applicationNo', $applicationNo)
+            ->where('senderNo', $accountNo)
+            ->where('subject', "Confirmed Substitutions")
+            ->delete();
             app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $application->applicationNo);
         }
 
@@ -694,6 +724,11 @@ class ApplicationController extends Controller
         // Delete each 'Edited Substitution Request' Message for the application
         Message::where('applicationNo', $applicationNo, "and")
         ->where('subject', "Edited Substitution Request")->delete();
+
+        // Delete Confirmed Substitutions messages
+        Message::where('applicationNo', $applicationNo)
+        ->where('subject', "Confirmed Substitutions")
+        ->delete();
 
         // Delete each nomination associated with the application
         //Nomination::where('applicationNo', $applicationNo)->delete();
@@ -849,6 +884,8 @@ class ApplicationController extends Controller
 
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, true, null);
+        // Message nominees that the application was approved.
+        app(MessageController::class)->notifyNomineesApplicationApproved($applicationNo);
 
         return response()->json(['success' => 'success'], 200);
     }

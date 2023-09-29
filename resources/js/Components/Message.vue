@@ -27,17 +27,21 @@ function handleAcceptSomeNominations() {
 function handleReviewApplication() {
     emit('reviewApplication');
 }
+const textClass = "text-sm 1080:text-lg 1440:text-xl 4k:text-2xl";
 </script>
 
 <template>
     <div class="flex flex-row justify-between p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
-        <div v-if="props.source.subject !== 'System Notification'" class="flex flex-col w-[75%] laptop:w-full">
+        <div v-if="props.source.subject !== 'System Notification'" class="flex flex-col w-[75%] laptop:w-full pr-2">
             <div v-if="isMobile && props.source.subject !== 'System Notification'" class="flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
-                <div class="flex items-center">
-                    <p class="text-sm">
+                <div class="flex items-center" :class="textClass">
+                    <p v-if="props.source.subject == 'Confirmed Substitutions'">
+                        for {{ props.source.senderName }}   
+                    </p>
+                    <p v-else :class="textClass">
                         by {{ props.source.senderName }}
                     </p>
                     <input
@@ -53,11 +57,14 @@ function handleReviewApplication() {
                 </div>
             </div>
             <div v-if="!isMobile && props.source.subject !== 'System Notification'" class="flex flex-row items-center">
-                <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
+                <p class="font-bold" :class="textClass">
                     {{ props.source.subject }}
                 </p>
                 <div class="flex items-center">
-                    <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl ml-1.5">
+                    <p v-if="props.source.subject == 'Confirmed Substitutions'" :class="textClass" class="ml-1.5">
+                        for {{ props.source.senderName }}
+                    </p>
+                    <p v-else :class="textClass" class="ml-1.5">
                         by {{ props.source.senderName }}
                     </p>
                     <input

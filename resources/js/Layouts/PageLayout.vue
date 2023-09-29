@@ -17,7 +17,7 @@ onMounted(() => {
 
 </script>
 <template>
-<main :class="isMobile ? isDark?'bg-mobile-dark':'bg-mobile' : isDark?'bg-desktop-dark':'bg-desktop'">
+<main :class="isMobile ? isDark?'bg-mobile-dark':'bg-mobile' : isDark?'bg-desktop-dark scrollbar-dark':'bg-desktop'">
     <slot/>
 </main>
 </template>

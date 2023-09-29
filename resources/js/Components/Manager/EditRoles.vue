@@ -9,6 +9,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { useManagerStore } from '@/stores/ManagerStore';
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const managerStore = useManagerStore();
 const { staffRoles, staffInfo, allUnits } = storeToRefs(managerStore);
 const { fetchRolesForStaff } = managerStore;
@@ -148,11 +150,11 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
             <div class="flex ">
                 <div>
                     <p style="font-size:20px;"><b>Unit Code: </b></p>
-                    <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown"></v-select>
+                    <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="pl-5">
                     <p style="font-size:20px;"><b>Role Name: </b></p>
-                    <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown"></v-select>
+                    <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="ml-auto pt-2 pr-5">
                     <button
@@ -202,7 +204,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
     border: solid; 
     border-color: #6b7280; 
     border-width: 1px;
-    --vs-border-style: none; 
+     
     --vs-search-input-placeholder-color: #6b7280;
     max-height: 60px;
   }
@@ -218,7 +220,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }
@@ -235,7 +237,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }
@@ -252,7 +254,7 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
         border: solid; 
         border-color: #6b7280; 
         border-width: 1px;
-        --vs-border-style: none; 
+         
         --vs-search-input-placeholder-color: #6b7280;
         max-height: 100px;
       }
