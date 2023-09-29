@@ -113,46 +113,68 @@ class MessageController extends Controller
 
         $isSelfNominatedAll = true;
 
-        // Iterate through all nominations and add data to content
-        // Set isSelfNominatedAll to false if not self nominated for all
-        foreach ($nominations as $nom) {
-            // Check if nomineeNo != applicant accountNo
-            if ($nom->nomineeNo != $application->accountNo) {
-                $isSelfNominatedAll = false;
-
-                // Get nominee data
-                $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
-
-                // Get role name
-                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
-                array_push(
-                    $content,
-                    "→{$nominee['fName']} {$nominee['lName']} - {$nom->nomineeNo}@curtin.wa.edu.au",
-                    "    {$roleName}"
-                );
-            }
+        $arr1 = Nomination::where('applicationNo', $applicationNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)->get();
+        $processed = [];
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
         }
 
-        // Iterate through all  manager nominations and add data to content
-        // Set isSelfNominatedAll to false if not self nominated for all
-        // Get all manager nominations for application
-        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)->get();
-        foreach ($managerNominations as $nom) {
-            // Check if nomineeNo != applicant accountNo
-            if ($nom->nomineeNo != $application->accountNo) {
-                $isSelfNominatedAll = false;
+        // Process each nomination
+        foreach ($toProcess as $nomination) {
+            $nomineeNo = $nomination->nomineeNo;
 
-                // Get nominee data
-                $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
-                $sub = Account::where('accountNo', $nom->subordinateNo)->first();
+            // Check if nomineeNo is not in processed nomineeNo's
+            if (!in_array($nomineeNo, $processed)) {
+                array_push($processed, $nomineeNo);
 
-                // Get role name
-                $roleName = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+                $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->get();
+                $managerNominationsForNominee = ManagerNomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->get();
+
+                $nominee = Account::where('accountNo', $nomineeNo)->first();
+
+                // add name to content
+                $name = "";
+                
+                if ($nomineeNo == $application->accountNo) {
+                    $name = "Self Nomination";
+                }
+                else {
+                    $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
+                    $isSelfNominatedAll = false;
+                }
+                
                 array_push(
                     $content,
-                    "→{$nominee['fName']} {$nominee['lName']} - {$nom->nomineeNo}@curtin.wa.edu.au",
-                    "    {$roleName}"
+                    "{$name}"
                 );
+
+                // Add nominated roles of all nominations for nominee to content
+                foreach ($nominationsForNominee as $nom) {
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                // Add nominated roles of all manager nominations for nominee to content
+                foreach ($managerNominationsForNominee as $nom) {
+                    $subordinate = Account::where('accountNo', $nom->subordinateNo)->first();
+                    $roleName = "Line Manager for ({$nom['subordinateNo']}) {$subordinate['fName']} {$subordinate['lName']}";
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
             }
         }
 
