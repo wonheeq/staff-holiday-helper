@@ -181,7 +181,7 @@ class DatabaseSeeder extends Seeder
             'accountType' => 'sysadmin',
             'fName' => 'Bhos',
             'lName' => 'Mann',
-            'password' => Hash::make('testPassword2'),
+            'password' => Hash::make('testPassword1'),
             'superiorNo' => $superAdminNo,
         ]);
 
