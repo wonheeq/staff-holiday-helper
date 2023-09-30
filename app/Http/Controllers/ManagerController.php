@@ -10,7 +10,9 @@ use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\Role;
-
+use App\Models\ManagerNomination;
+use DateTime;
+use DateTimeZone;
 
 
 use Illuminate\Http\Request;
@@ -231,31 +233,75 @@ class ManagerController extends Controller
         $managerApplications = array();
         //Check if there is any applications for the line manager
         $applications = [];
-        $users = Account::where('superiorNo', $accountNo)->get();
-        foreach ($users as $user) {
-            $userApps = Application::where('accountNo', $user->accountNo)->get();
-            foreach ($userApps as $app) {
-                array_push($applications, $app);
-            }
-        }
-    
-        foreach ($applications as $application) {
-            // Add in applicant name for each application
-            if ($application['accountNo'] != null && $application['status'] != 'P') {
-                // if application account number is not null, then applicant is a user
-                $applicant = app(UserController::class)->getUser($application["accountNo"]);
-                $application['applicantName'] = "{$applicant['fName']} {$applicant['lName']}";
-                $nominations = app(NominationController::class)->getNominations($application["applicationNo"]);
 
-                // check if is self nominated for all
-                if ($this->isSelfNominatedAll($nominations, $accountNo)) {
-                    $application['isSelfNominatedAll'] = true;
-                } else {
-                    $application["nominations"] = $nominations;
+        // get regular applications if the usual accountType of the user is not staff
+        $account = Account::where('accountNo', $accountNo)->first();
+        if ($account->accountType == 'lmanager' || $account->accountType == 'sysadmin') {
+            $users = Account::where('superiorNo', $accountNo)->get();
+            foreach ($users as $user) {
+                $userApps = Application::where('accountNo', $user->accountNo)->get();
+                foreach ($userApps as $app) {
+                    array_push($applications, $app);
                 }
-                array_push($managerApplications, $application);
+            }
+        
+            foreach ($applications as $application) {
+                // Add in applicant name for each application
+                if ($application['accountNo'] != null && $application['status'] != 'P') {
+                    // if application account number is not null, then applicant is a user
+                    $applicant = app(UserController::class)->getUser($application["accountNo"]);
+                    $application['applicantName'] = "{$applicant['fName']} {$applicant['lName']}";
+                    $nominations = app(NominationController::class)->getNominations($application["applicationNo"]);
+
+                    // check if is self nominated for all
+                    if ($this->isSelfNominatedAll($nominations, $accountNo)) {
+                        $application['isSelfNominatedAll'] = true;
+                    } else {
+                        $application["nominations"] = $nominations;
+                    }
+                    array_push($managerApplications, $application);
+                }
             }
         }
+
+        /* Get Applications from Temporary subordinates */
+        // Get all ManagerNominations where the nomineeNo is the temporary manager
+        $managerNominations = ManagerNomination::where('nomineeNo', $accountNo)->get();
+        
+        // Iterate though manager nominations
+        foreach ($managerNominations as $nomination) {
+            $application = Application::where('applicationNo', $nomination->applicationNo)->first();
+            date_default_timezone_set("Australia/Perth");
+            $now = new DateTime();
+            $now->setTimezone(new DateTimeZone("Australia/Perth"));
+            $startDate = new DateTime($application->sDate);
+            $endDate = new DateTime($application->eDate);
+            date_default_timezone_set("UTC");
+            // Process only if application is ongoing
+            //   AKA status of 'Y' and StartDate >= current DateTime <= EndDate
+            if ($application->status == 'Y' && ($now >= $startDate && $now <= $endDate)) {
+                // Get all applications from the subordinate the user is temporarily in charge of
+                $subordinateApplications = Application::where('accountNo', $nomination->subordinateNo)->get();
+                $subordinate = Account::where('accountNo', $nomination->subordinateNo)->first();
+
+                // Add only Accepted, Undecided or Rejected applications to result
+                foreach ($subordinateApplications as $subApp) {
+                    if ($subApp->status == 'Y' || $subApp->status == 'U' || $subApp->status == 'N') {
+                        $subApp['applicantName'] = "{$subordinate['fName']} {$subordinate['lName']}";
+                        $nominations = app(NominationController::class)->getNominations($subApp->applicationNo);
+
+                        // check if is self nominated for all
+                        if ($this->isSelfNominatedAll($nominations, $nomination->subordinateNo)) {
+                            $subApp['isSelfNominatedAll'] = true;
+                        } else {
+                            $subApp["nominations"] = $nominations;
+                        }
+                        array_push($managerApplications, $subApp);
+                    }
+                }
+            }
+        }
+        
         return response()->json($managerApplications);
     }
     public function getUCM(){

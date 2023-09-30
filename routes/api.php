@@ -84,14 +84,10 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
     Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
 
-
-
-
-
-Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
-Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
-Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
-Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
+    Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
+    Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
+    Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
+    Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
 
     Route::post('createApplication', [ApplicationController::class, 'createApplication']);
     Route::post('editApplication', [ApplicationController::class, 'editApplication']);

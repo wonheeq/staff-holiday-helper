@@ -25,10 +25,5 @@ const pClass = "text-sm laptop:text-sm 1080:text-base 1440:text-lg 4k:text-xl";
             Processed by: {{ processedBy }}
         </p>
     </div>
-    <div v-if="nominations == null">
-        <p v-if="appStatus === 'U'" :class="pClass">
-            Awaiting Line Manager Decision
-        </p>
-    </div>
 </div>
 </template>

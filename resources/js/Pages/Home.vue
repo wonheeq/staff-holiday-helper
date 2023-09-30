@@ -8,6 +8,7 @@ import HomeMessages from "@/Components/HomeMessages.vue";
 import AcceptSomeNominations from '@/Components/AcceptSomeNominations.vue';
 import ReviewApplication from "@/Components/ReviewApplication.vue";
 import axios from 'axios';
+import Swal from "sweetalert2";
 import { ref, reactive, computed } from "vue";
 import { usePage } from '@inertiajs/vue3';
 import { useApplicationStore } from '@/stores/ApplicationStore';
@@ -32,7 +33,7 @@ let fetchWelcomeMessageData = async() => {
         welcomeData = resp.data;
         dataReady.value = true;
     } catch (error) {
-        alert("Failed to load data: Please try again");
+        //silently fail
         console.log(error);
     }
 }
@@ -55,7 +56,11 @@ let fetchRoles = async() => {
         const resp = await axios.post('/api/getRolesForNominee', data);
         roles = resp.data;
     } catch (error) {
-        alert("Failed to load data: Please try again");
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to load data',
+            text: 'Please try again later.'
+        });
         console.log(error);
     }
 }; 
@@ -70,8 +75,8 @@ let showReviewAppModal = ref(false);
 let reviewAppModalData = reactive([
 ]);
 async function handleReviewApplication(message) {
-    await fetchApplicationForReview(message);
-    showReviewAppModal.value = true;
+    let shouldShow = await fetchApplicationForReview(message);
+    showReviewAppModal.value = shouldShow;
 }
 
 let fetchApplicationForReview = async(message) => {
@@ -79,9 +84,14 @@ let fetchApplicationForReview = async(message) => {
         const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + message.applicationNo);
         reviewAppModalData = resp.data;
         reviewAppModalData.message = message;
+        return true;
     } catch (error) {
-        alert("Failed to load data: Please try again");
-        console.log(error);
+        Swal.fire({
+            icon: "error",
+            title: 'Failed to load data',
+            text: error.response.data['error']
+        });
+        return false;
     }
 }; 
 

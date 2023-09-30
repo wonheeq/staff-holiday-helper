@@ -104,8 +104,10 @@ class AccountController extends Controller
 
         // Get assigned line manager
         $assignedLineManager = Account::where('accountNo', $superiorNo)->first();
+        //Log::debug("Assigned: {$assignedLineManager->accountNo}");
         // Check if assigned Line manager is on leave
         if ($this->isAccountOnLeave($superiorNo)) {
+            //Log::debug("Assigned is on leave");
             // Return substitute line manager
             // Get all approved applications of superior
             $applications = Application::where('accountNo', $superiorNo, "and")
@@ -135,10 +137,10 @@ class AccountController extends Controller
                     if ($managerSub) {
                         $substituteManager = Account::where('accountNo', $managerSub->nomineeNo)->first();
                         if ($substituteManager) {
+                            Log::debug("Found Sub: {$substituteManager->accountNo}");
                             return $substituteManager;
                         }
                     }
-                    break;
                 }
             }
 
@@ -154,31 +156,27 @@ class AccountController extends Controller
     */
     public function isAccountOnLeave(String $accountNo)
     {
-        try {
-            // Attempt to get user
-            $user = Account::where('accountNo', $accountNo)->first();
+        $user = Account::where('accountNo', $accountNo)->first();
 
-            // Get all approved applications of user
-            $applications = Application::where('accountNo', $accountNo, "and")
-                ->where('status', 'Y')->get();
+        // Get all approved applications of user
+        $applications = Application::where('accountNo', $accountNo, "and")
+            ->where('status', 'Y')->get();
+        date_default_timezone_set("Australia/Perth");
 
-            // Iterate through each application and check if current date is inside the period
-            $currentDate = new DateTime();
-            $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
-            foreach ($applications as $app) {
-                $startDate = new DateTime($app['sDate']);
-                $endDate = new DateTime($app['eDate']);
+        // Iterate through each application and check if current date is inside the period
+        $currentDate = new DateTime();
+        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
+        foreach ($applications as $app) {
+            $startDate = new DateTime($app['sDate']);
+            $endDate = new DateTime($app['eDate']);
 
-                // Return true if startDate >= currentDate <= endDate
-                if ($currentDate >= $startDate && $currentDate <= $endDate) {
-                    return true;
-                }
+            // Return true if startDate >= currentDate <= endDate
+            if ($currentDate >= $startDate && $currentDate <= $endDate) {
+                return true;
             }
-            return false;
-        } catch (Exception $e) {
-            // Error occurred, return default response
-            return false;
         }
+        date_default_timezone_set("UTC");
+        return false;
     }
 
     /*
