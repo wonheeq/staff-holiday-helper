@@ -14,6 +14,7 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\Message;
 use App\Models\ManagerNomination;
+use App\Http\Controllers\AccountController;
 use DateTime;
 use DateTimeZone;
 class Kernel extends ConsoleKernel
@@ -81,12 +82,12 @@ class Kernel extends ConsoleKernel
                 Log::debug("End: ".$endDate->format("Y-m-d H:i:s"));
                 */
                 if ($now >= $startDate && $now <= $endDate) {
-                    Log::debug("App {$application->applicationNo} Ongoing");
+                    //Log::debug("App {$application->applicationNo} Ongoing");
                     $this->promoteStaffToLineManager($application->applicationNo);
                 }
                 // Application is expired
                 else if ($now >= $endDate){
-                    Log::debug("App {$application->applicationNo} Expired");
+                    //Log::debug("App {$application->applicationNo} Expired");
                     $this->demoteStaffFromLineManager($application->applicationNo);
                 }
             }
@@ -156,7 +157,6 @@ class Kernel extends ConsoleKernel
                 $currentLineManager = app(AccountController::class)->getCurrentLineManager($message->senderNo);
                 
                 $createdTime = new DateTime();
-                $createdTime->setDateTimezone(new DateTimeZone("UTC"));
                 $message->update([
                     // Change receiverNo to the current line manager
                     'receiverNo' => $currentLineManager->accountNo,
