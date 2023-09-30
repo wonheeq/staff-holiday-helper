@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\AccountRole;
+use App\Models\EmailPreference;
 use App\Models\Role;
 use App\Models\Message;
 //use App\Models\EmailPreference;
@@ -117,7 +118,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('testPassword1'),
             'superiorNo' => '000002L',
         ]);
-       
+
         $hannesManager = Account::factory()->create([
             'accountNo' => '000000Y',
             'accountType' => 'lmanager',
@@ -146,7 +147,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('testPassword1'),
             'superiorNo' => '000002L',
         ]);
-       
+
         $ianManager = Account::factory()->create([
             'accountNo' => '000000V',
             'accountType' => 'lmanager',
@@ -238,7 +239,7 @@ class DatabaseSeeder extends Seeder
         $count = 0;
         // 4 accounts gets 1 applications
         foreach ($accounts as $account) {
-            if ($count >= 4) {break;} 
+            if ($count >= 4) {break;}
             Application::factory(1)->create([
                 'accountNo' => $account['accountNo'],
                 'processedBy' => $superAdminNo,
@@ -409,25 +410,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        //Applicaiton Awaiting Review
-
-
-        //Application Cancelled
-
-        //Application Approved
-
-        //Application Denied
-
-        //Nomination/s Rejected
-
-        //Substituion Request
-
-        // Nomination Cancelled
-
-        // Nomionation's cancelled
-
-        // Substituion period edited (subset)
-
-        // editec substitution request
+        $accounts = Account::get();
+        foreach($accounts as $account){
+            EmailPreference::factory()->create([
+                'accountNo' => $account->accountNo,
+            ]);
+        }
     }
 }
