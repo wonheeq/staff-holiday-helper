@@ -34,14 +34,12 @@ class Kernel extends ConsoleKernel
         // delete expired password reset tokens every hour
         $schedule->command('auth:clear-resets')->hourly();
 
+        // Every Hour, run commands to check and send archive emails.
         $schedule->call(function () {
             $msgController = new MessageController();
-            $msgController->sendDailyMessages();
-        })
-        ->dailyAt('10:00'); // once a day at 10 am
-        // ->daily(); // once a day at midnight
-        // ->twiceDailyAt('8', '15', '30'); // twice a day at 8:30 and 5:30
-        // ->twiceDaily(); // twice a day
+            $msgController->checkArchiveMessages();
+        })->everyHour();
+
 
 
 
@@ -222,9 +220,9 @@ class Kernel extends ConsoleKernel
                 $reminderValue = intval($split[0]);
                 $reminderPeriod = $split[1];
                 $created = new DateTime($nomination->created_at); // UTC
-                
+
                 $diff = date_diff($created, $now);
-                
+
                 // reminder timeframe is in days
                 if (str_contains($reminderPeriod, "day")) {
                     // check if period has been surpassed
@@ -248,7 +246,7 @@ class Kernel extends ConsoleKernel
                 // reminder timeframe is in weeks
                 else if (str_contains($reminderPeriod, "week")) {
                     // check if period has been surpassed
-                    if ($diff->d >= 7) {                   
+                    if ($diff->d >= 7) {
                         // Add schoolId to remindersToSend if not there already
                         if (!array_key_exists($schoolId, $remindersToSend)) {
                             $remindersToSend[$schoolId] = array();
@@ -317,10 +315,10 @@ class Kernel extends ConsoleKernel
                 // iterate through list of applicationNo's
                 foreach ($applicationNoList as $applicationNo) {
                     $application = Application::where('applicationNo', $applicationNo)->first();
-                    
+
                     $applicant = Account::where('accountNo', $application->accountNo)->first();
-                    $applicantName = "{$applicant->fName} {$applicant->lName}";    
-                
+                    $applicantName = "{$applicant->fName} {$applicant->lName}";
+
                     $duration = "{$application->sDate} - {$application->eDate}";
 
                     $roles = [];
@@ -330,9 +328,9 @@ class Kernel extends ConsoleKernel
                     Log::debug($nominations);
                     foreach ($nominations as $nomination) {
                         $num++;
-                        
+
                         $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nomination->accountRoleId);
-                        
+
                         array_push($roles, $roleName);
                     }
 
