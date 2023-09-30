@@ -129,11 +129,11 @@
             class="p-4 h-[95%]"
         >
 
-            <h1 class="text-2xl px-4">Database Data:</h1>
+            <h1 class="text-2xl px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
             
             <!-- To switch between tables -->
             <div class="flex flex-row mt-4 mx-4">
-                <h2 class="mt-1.5">Select Table:</h2>
+                <h2 class="mt-1.5 4k:text-3xl 4k:mt-6">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
                     <button
                         v-for="button in buttons"
@@ -168,15 +168,17 @@
     </AddCSVData>
 </template>
 
-<style>
+<style lang="postcss">
 
     .tableButtonOn {
         min-width: 13%;
         font-size: 1rem;
+        @apply 4k:text-3xl !important;
         font-weight: bold;
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         border-color: black;
         border-width: 2px;       
@@ -190,9 +192,11 @@
     .tableButtonOff {
         min-width: 13%;
         font-size: 1rem;
+        @apply 4k:text-3xl !important;
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         /*w-50 text-1xl text-center p-4 bg-gray-300 */
 
