@@ -28,7 +28,7 @@ class KernelTest extends TestCase
         parent::setup();
 
         $this->school = School::create([
-            'schoolId' => 1,
+            'schoolId' => 2,
             'name' => 'test'
         ]);
 

@@ -164,7 +164,7 @@ class DatabaseControllerTest extends TestCase
 
         // Removing account and school created for this test. (If the invalid accounts were somehow added)
         Account::where('accountNo', $accountNoInvalid)->delete();
-        Account::where('accountNo', $accountNoTaken)->where('lname', 'TestA')->delete();
+        Account::where('accountNo', $accountNoTaken)->where('lName', 'TestA')->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();
     } 
     

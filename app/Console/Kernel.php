@@ -59,40 +59,45 @@ class Kernel extends ConsoleKernel
 
 
 
-        // Checks all approved applications every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
-        // If the approved application has some associated ManagerNominations
-        //   then check if the approved application is currently ongoing:
-        //        AKA:  startDate >= now <= endDate
-        //     then call promoteStaffTolineManager()
-        //   otherwise if the approved application has expired
-        //     Call demoteStaffFromLineManager()
+        // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
         $schedule->call(function () {
-            // Get all approved applications
-            $applications = DB::select("SELECT * FROM applications WHERE status='Y'");
-
-            foreach ($applications as $application) {
-                $now = new DateTime();
-                $now->setTimezone(new DateTimeZone("Australia/Perth"));
-                $startDate = new DateTime($application->sDate);
-                $endDate = new DateTime($application->eDate);
-                /*
-                Log::debug("{$app->applicationNo}");
-                Log::debug("Now: ".$now->format("Y-m-d H:i:s"));
-                Log::debug("Start: ".$startDate->format("Y-m-d H:i:s"));
-                Log::debug("End: ".$endDate->format("Y-m-d H:i:s"));
-                */
-                if ($now >= $startDate && $now <= $endDate) {
-                    //Log::debug("App {$application->applicationNo} Ongoing");
-                    $this->promoteStaffToLineManager($application->applicationNo);
-                }
-                // Application is expired
-                else if ($now >= $endDate){
-                    //Log::debug("App {$application->applicationNo} Expired");
-                    $this->demoteStaffFromLineManager($application->applicationNo);
-                }
-            }
+            $this->processManagerNominations();
         })//->everyFifteenMinutes();
         ->everyTenSeconds(); // Ten seconds for testing purposes
+    }
+
+    // Gets all approved applications
+    // If the approved application has some associated ManagerNominations
+    //   then check if the approved application is currently ongoing:
+    //        AKA:  startDate >= now <= endDate
+    //     then call promoteStaffTolineManager()
+    //   otherwise if the approved application has expired
+    //     Call demoteStaffFromLineManager()
+    public function processManagerNominations() {
+        // Get all approved applications
+        $applications = DB::select("SELECT * FROM applications WHERE status='Y'");
+
+        foreach ($applications as $application) {
+            $now = new DateTime();
+            $now->setTimezone(new DateTimeZone("Australia/Perth"));
+            $startDate = new DateTime($application->sDate);
+            $endDate = new DateTime($application->eDate);
+            /*
+            Log::debug("{$app->applicationNo}");
+            Log::debug("Now: ".$now->format("Y-m-d H:i:s"));
+            Log::debug("Start: ".$startDate->format("Y-m-d H:i:s"));
+            Log::debug("End: ".$endDate->format("Y-m-d H:i:s"));
+            */
+            if ($now >= $startDate && $now <= $endDate) {
+                //Log::debug("App {$application->applicationNo} Ongoing");
+                $this->promoteStaffToLineManager($application->applicationNo);
+            }
+            // Application is expired
+            else if ($now >= $endDate){
+                //Log::debug("App {$application->applicationNo} Expired");
+                $this->demoteStaffFromLineManager($application->applicationNo);
+            }
+        }
     }
 
     /*

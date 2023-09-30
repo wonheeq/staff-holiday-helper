@@ -460,7 +460,7 @@ class MessageController extends Controller
 
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
-                    'receiverNo' => $nom->nomineeNo,
+                    'receiverNo' => $nomination->nomineeNo,
                     'senderNo' => $application->accountNo,
                     'subject' => 'Confirmed Substitutions',
                     'content' => json_encode($content),
@@ -538,7 +538,7 @@ class MessageController extends Controller
 
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
-                    'receiverNo' => $nom->nomineeNo,
+                    'receiverNo' => $nomination->nomineeNo,
                     'senderNo' => $application->accountNo,
                     'subject' => 'Substitution Period Edited (Subset)',
                     'content' => json_encode($content),

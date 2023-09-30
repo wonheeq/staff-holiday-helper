@@ -191,6 +191,7 @@ class ManagerController extends Controller
      */
     public function getStaffMembers(Request $request, String $superiorNo)
     {
+        $result = [];
         $staffMembers = Account::orderBy('fName')->where('superiorNo', $superiorNo)->get();
         foreach ($staffMembers as $staffMember) {
             $staffMember['pending'] = 'No'; //initialise to random letter
@@ -206,8 +207,44 @@ class ManagerController extends Controller
             else{
                 $staffMember['onLeave'] = 'No';
             }
+            array_push($result, $staffMember);
         }
-        return response()->json($staffMembers);
+
+        /* Get Temporary subordinates */
+        // Get all ManagerNominations where the superiorNo is the temporary manager
+        $managerNominations = ManagerNomination::where('nomineeNo', $superiorNo)->get();
+        
+        // Iterate though manager nominations
+        foreach ($managerNominations as $nomination) {
+            $application = Application::where('applicationNo', $nomination->applicationNo)->first();
+            date_default_timezone_set("Australia/Perth");
+            $now = new DateTime();
+            $now->setTimezone(new DateTimeZone("Australia/Perth"));
+            $startDate = new DateTime($application->sDate);
+            $endDate = new DateTime($application->eDate);
+            date_default_timezone_set("UTC");
+            // Process only if application is ongoing
+            //   AKA status of 'Y' and StartDate >= current DateTime <= EndDate
+            if ($application->status == 'Y' && ($now >= $startDate && $now <= $endDate)) {
+                $staffMember = Account::where('accountNo', $nomination->subordinateNo)->first();
+                $staffMember['pending'] = 'No'; //initialise to random letter
+                $applications = Application::where('status', 'U', "and")
+                ->where('accountNo', $staffMember['accountNo'])->get();
+                if($applications->isNotEmpty()){
+                    $staffMember['pending'] = 'Yes';
+                }
+                $onLeave = app(AccountController::class)->isAccountOnLeave($staffMember['accountNo']);
+                if($onLeave){
+                    $staffMember['onLeave'] = 'Yes';
+                }
+                else{
+                    $staffMember['onLeave'] = 'No';
+                }
+                array_push($result, $staffMember);
+            }
+        }
+
+        return response()->json($result);
     }
     public function getSpecificStaffMember(Request $request, String $staffNo)
     {
