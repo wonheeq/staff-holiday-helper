@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\Account;
 use App\Models\Application;
+use App\Models\EmailPreference;
 use App\Models\Nomination;
 use App\Models\ManagerNomination;
+use DateTime;
 use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
@@ -810,16 +812,41 @@ class MessageController extends Controller
         }
     }
 
-    // get each account, call the sendMessage function for each.
-    public function sendDailyMessages()
+
+    // For each account, check if it's time to send an archive email,
+    // and if so, send it.
+    public function checkArchiveMessages()
     {
         $accounts = Account::get();
-        foreach ($accounts as $account) {
-            $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
-            if ($messages->count() != 0) {
-                $account->sendDailyMessageNotification($messages);
-                sleep(2); // to get around mailtrap emails per second limit
+        foreach($accounts as $account) {
+            // get email preferences
+            $accountNo = $account->accountNo;
+            $preferences = EmailPreference::get()->where('accountNo', $accountNo)->first();
+
+            // calculate hours since last message sent
+            $now = new DateTime('NOW');
+            $lastSent = new DateTime($preferences->timeLastSent);
+            $interval = $now->diff($lastSent);
+            $hourInterval = ($interval->h) + ($interval->days * 24);
+
+            // check if greater than email sending prefernce
+            $frequency = $preferences->hours;
+            if( $hourInterval > $frequency)
+            {
+                // if so, send email
+                $this->sendEmail($account);
             }
+        }
+    }
+
+
+    // check if an account has any messages, and send an archive email if so
+    private function sendEmail($account)
+    {
+        $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
+        if ($messages->count() != 0) {
+            $account->sendDailyMessageNotification($messages);
+            sleep(2); // to get around mailtrap emails per second limit
         }
     }
 

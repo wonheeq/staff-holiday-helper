@@ -22,9 +22,10 @@ class EmailPreferenceFactory extends Factory
     public function definition(): array
     {
         $time = new DateTime('NOW');
+        $time->modify("-8 days");
         return [
             'accountNo' => fake()->randomElement(Account::pluck('accountNo')),
-            'hours' => fake()->numberBetween(1,100),
+            'hours' => fake()->numberBetween(1,168),
             'timeLastSent' => $time,
         ];
     }
