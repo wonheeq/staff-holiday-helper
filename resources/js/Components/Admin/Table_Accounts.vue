@@ -44,7 +44,7 @@ export default {
                 field: 'superiorNo',
                 },
                 {
-                label: 'Created/Last Updated',
+                label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
                 }
             ],
