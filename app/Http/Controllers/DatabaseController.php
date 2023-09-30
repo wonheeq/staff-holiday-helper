@@ -451,10 +451,8 @@ class DatabaseController extends Controller
             if (School::where('schoolId', $curAttr)->doesntExist()) {
                 return response()->json(['error' => $curAttr . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
-        }
 
-        // Adding verified entries to db
-        for ($i = 0; $i < $numEntries; $i++) {
+            // Changing 'none' to NULL
             if ($entries[$i]['Unit Code'] == 'none') {
                 $entries[$i]['Unit Code'] = NULL;
             }
@@ -465,6 +463,20 @@ class DatabaseController extends Controller
                 $entries[$i]['Course Code'] = NULL;
             }
 
+            // Checking if role is a duplicate
+            if (AccountRole::where('accountNo', $entries[$i]['Account Number'])
+                            ->where('roleId', $entries[$i]['Role ID'])
+                            ->where('unitId', $entries[$i]['Unit Code'])
+                            ->where('majorId', $entries[$i]['Major Code'])
+                            ->where('courseId', $entries[$i]['Course Code'])
+                            ->where('schoolId', $curAttr)->exists()) 
+            {
+                return response()->json(['error' => $curAttr . ' Invalid: Account Role already exists.'], 500);
+            }
+        }
+
+        // Adding verified entries to db
+        for ($i = 0; $i < $numEntries; $i++) {
             AccountRole::create([
                 'accountNo' =>  $entries[$i]['Account Number'],   
                 'roleId' =>  $entries[$i]['Role ID'], 
