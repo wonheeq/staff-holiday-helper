@@ -130,7 +130,7 @@ let onSearch = () => {
         width: 100%;       
     }
    
-    .scaled{
-        font-size: 2rem !important;
+    .scaled {
+        font-size: 2rem !important;  See if binding leads anywhere https://devpress.csdn.net/vue/62f41fca7e6682346618806f.html#:~:text=Since%20the%20release%20of%20VueJs,actually%20means%20behind%20the%20scene. 
     }
 </style>
