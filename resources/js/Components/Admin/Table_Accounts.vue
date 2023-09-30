@@ -94,6 +94,7 @@ let onSearch = () => {
                 <VueGoodTable 
                     :rows="accounts"
                     :columns="columns"
+                    <template slot="table-row"
                     v-bind:max-height= tHeight
                     :fixed-header="{
                         enabled: true,

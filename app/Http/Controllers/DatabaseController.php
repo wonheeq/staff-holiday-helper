@@ -451,6 +451,17 @@ class DatabaseController extends Controller
             if (School::where('schoolId', $curAttr)->doesntExist()) {
                 return response()->json(['error' => $curAttr . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
+
+            // Checking if role is a duplicate
+            if (AccountRole::where('accountNo', 'Account Number')
+                            ->where('roleId', $entries[$i]['Role ID'])
+                            ->where('unitId', $entries[$i]['Unit Code'])
+                            ->where('majorId', $entries[$i]['Major Code'])
+                            ->where('courseId', $entries[$i]['Course Code'])
+                            ->where('schoolId', $curAttr)->exists()) 
+            {
+                return response()->json(['error' => $curAttr . ' Invalid: Account Role already exists.'], 500);
+            }
         }
 
         // Adding verified entries to db
