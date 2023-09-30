@@ -474,6 +474,8 @@ class DatabaseController extends Controller
                 'schoolId' =>  $entries[$i]['School Code']   
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 
     /**
@@ -492,6 +494,10 @@ class DatabaseController extends Controller
             if (strlen($curAttr) > 40) {
                 return response()->json(['error' => $curAttr . ' Invalid: Role Name should be under 40 characters'], 500);
             }
+
+            if (Role::where('name', $curAttr)->exists()) {
+                return response()->json(['error' => $curAttr . ' Invalid: Role Name already in use'], 500);
+            }
         }
 
         // Adding verified entries to db
@@ -500,6 +506,8 @@ class DatabaseController extends Controller
                 'name' =>  $entries[$i]['Role Name']      
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 
 
@@ -538,6 +546,8 @@ class DatabaseController extends Controller
                 'name' =>  $entries[$i]['Unit Name']      
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 
 
@@ -576,6 +586,8 @@ class DatabaseController extends Controller
                 'name' =>  $entries[$i]['Major Name']      
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 
 
@@ -614,6 +626,8 @@ class DatabaseController extends Controller
                 'name' =>  $entries[$i]['Course Name']      
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 
 
@@ -633,6 +647,10 @@ class DatabaseController extends Controller
             if (strlen($curAttr) > 70) {
                 return response()->json(['error' => $curAttr . ' Invalid: School Name should be under 70 characters'], 500);
             }
+
+            if (School::where('name', $curAttr)->exists()) {
+                return response()->json(['error' => $curAttr . ' Invalid: School Name already in use'], 500);
+            }
         }
 
         // Adding verified entries to db
@@ -641,5 +659,7 @@ class DatabaseController extends Controller
                 'name' =>  $entries[$i]['School Name']      
             ]);
         }
+
+        return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
 }

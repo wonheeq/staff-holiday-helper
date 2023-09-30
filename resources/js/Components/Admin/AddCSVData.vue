@@ -75,6 +75,8 @@
                 //console.log(headers.length);
                 //console.log(headers);
 
+                var i = 0
+
                 for (var i = 2; i < lines.length; i++) {
                     if (!lines[i]) 
                     continue
@@ -89,10 +91,13 @@
                         break;
                     }
 
-                    for (var j = 0; j < headers.length-2; j++) {                        
+                    var j = 0
+
+                    while (headers[j] != "") {                        
                         let head = headers[j].trim();
                         let value = currentLine[j].trim();
-                        obj[head] = value;                        
+                        obj[head] = value;   
+                        j++;                     
                     }
                     //jsonEntries.push(obj);
                     jsonEntries[jsonEntries.length] = obj;
@@ -104,7 +109,7 @@
                 }
 
                 // Send .csv file to backend.
-                //console.log(data);
+                console.log(data);
                 axios.post("/api/addEntriesFromCSV/" + props.user, data)
                 .then(res => {
                     if (res.status == 200) {
