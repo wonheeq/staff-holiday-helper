@@ -452,8 +452,19 @@ class DatabaseController extends Controller
                 return response()->json(['error' => $curAttr . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
+            // Changing 'none' to NULL
+            if ($entries[$i]['Unit Code'] == 'none') {
+                $entries[$i]['Unit Code'] = NULL;
+            }
+            if ($entries[$i]['Major Code'] == 'none') {
+                $entries[$i]['Major Code'] = NULL;
+            }
+            if ($entries[$i]['Course Code'] == 'none') {
+                $entries[$i]['Course Code'] = NULL;
+            }
+
             // Checking if role is a duplicate
-            if (AccountRole::where('accountNo', 'Account Number')
+            if (AccountRole::where('accountNo', $entries[$i]['Account Number'])
                             ->where('roleId', $entries[$i]['Role ID'])
                             ->where('unitId', $entries[$i]['Unit Code'])
                             ->where('majorId', $entries[$i]['Major Code'])
@@ -466,16 +477,6 @@ class DatabaseController extends Controller
 
         // Adding verified entries to db
         for ($i = 0; $i < $numEntries; $i++) {
-            if ($entries[$i]['Unit Code'] == 'none') {
-                $entries[$i]['Unit Code'] = NULL;
-            }
-            if ($entries[$i]['Major Code'] == 'none') {
-                $entries[$i]['Major Code'] = NULL;
-            }
-            if ($entries[$i]['Course Code'] == 'none') {
-                $entries[$i]['Course Code'] = NULL;
-            }
-
             AccountRole::create([
                 'accountNo' =>  $entries[$i]['Account Number'],   
                 'roleId' =>  $entries[$i]['Role ID'], 
