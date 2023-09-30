@@ -21,7 +21,6 @@
     ];
 
     let activeScreen = ref("viewData");
-    
 
     let props = defineProps({
         screenProp: {
@@ -47,7 +46,6 @@
 
     function handleActiveScreenChanged(screen) {
         activeScreen.value = screen;
-
         changeUrl(screen);
     }
     const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
