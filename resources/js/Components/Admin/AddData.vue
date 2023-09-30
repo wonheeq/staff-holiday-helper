@@ -75,7 +75,7 @@ import "vue-select/dist/vue-select.css";
                 this.attributeEntries = [];   
             },
             activateCSV: function() {
-                this.$emit('toggleCSV', this.currentCSV);      
+                this.$emit('toggleCSV', this.currentCSV, this.content);      
             },
             // Add single entry to selected table
             addToDB: function() {

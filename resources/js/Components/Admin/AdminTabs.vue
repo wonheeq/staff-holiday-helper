@@ -86,7 +86,8 @@
                 ],
 
                 csvActivated: false,
-                csvFileName: ""
+                csvFileName: "",
+                curTable: ""
             }
         },
         components:{
@@ -106,8 +107,10 @@
                 this.content = message;
                 this.currentTable = table;
             },
-            activateCSV: function(csvFileName) {
+            activateCSV: function(csvFileName, tableName) {
+                console.log(tableName);
                 this.csvFileName = csvFileName;
+                this.curTable = tableName;
                 this.csvActivated = !this.csvActivated;
             },
         }
@@ -163,7 +166,7 @@
 <!---->
 
     </div>
-    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :user="user.accountNo" @close="activateCSV()">
+    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
     </AddCSVData>
 </template>
 

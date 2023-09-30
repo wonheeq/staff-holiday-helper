@@ -15,6 +15,7 @@
 
     let props = defineProps({
         csvFileName: String,
+        curTable: String,
         user: String,
         required: true
     });
@@ -158,7 +159,7 @@
                 <div class="h-[10%] flex justify-between">
                     <slot />
                     <p class="text-xl font-bold">             
-                        Add data with .csv file:
+                        Add data to {{ curTable }} with .csv file:
                     </p>
                     <!--Add full ui then worry about implementation-->
                     <button class="h-full" @click="$emit('close')">
