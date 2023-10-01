@@ -46,7 +46,7 @@ async function handleChangePreference() {
     displaySuccess = false;
     await axios.post("api/setEmailPreference", {
         accountNo: user.value.accountNo,
-        hours: reminderTimeframe.value
+        frequency: reminderTimeframe.value
     });
 }
 
