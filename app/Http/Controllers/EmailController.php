@@ -108,7 +108,7 @@ class EmailController extends Controller
         $nominees2->nRoles ="COMP2001 - Unit Coordinator \n COMP2001 - Lecturer \n ISEC2001 - Unit Coordinator";
 
         $nomineesArray = array($nominees, $nominees2);
-        
+
         $dynamicData = [
             'sName' => 'Joe',
             'editorName' => 'Ronaldo',
@@ -126,6 +126,10 @@ class EmailController extends Controller
         Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
 
         // Mail::to("{$accountNo}@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+    }
+
+    public function attemptBacklog(): void {
+        //TODO add function to check email backlog
     }
 }
 class Nominees
