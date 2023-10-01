@@ -18,8 +18,7 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\ForeignKeyController;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\AdminController;
-
-
+use App\Http\Controllers\EmailPreferenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +49,7 @@ Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
     Route::get('/allCourses/{accountNo}', [CourseController::class, 'getAllCourses']);
     Route::get('/allSchools/{accountNo}', [SchoolController::class, 'getAllSchools']);
     Route::get('/allFKData/{accountNo}', [ForeignKeyController::class, 'getAllFKs']);
-    Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']); 
+    Route::get('/allAccountsDisplay/{accountNo}', [AccountController::class, 'getAllAccountsDisplay']);
     Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
     Route::post('createSystemNotification', [MessageController::class, 'createSystemNotification']);
     Route::post('setReminderTimeframe', [AdminController::class, 'setReminderTimeframe']);
@@ -81,27 +80,23 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::get('messages/{accountNo}', [MessageController::class, 'getMessages']);
     Route::post('acknowledgeMessage', [MessageController::class, 'acknowledgeMessage']);
-
     Route::get('calendar/{accountNo}', [CalendarController::class, 'getCalendarData']);
-
     Route::get('getBookingOptions/{accountNo}', [BookingController::class, 'getBookingOptions']);
     Route::get('getRolesForNominations/{accountNo}', [BookingController::class, 'getRolesForNominations']);
     Route::get('getNominationsForApplication/{accountNo}/{applicationNo}', [BookingController::class, 'getNominationsForApplication']);
     Route::get('getSubstitutionsForUser/{accountNo}', [BookingController::class, 'getSubstitutionsForUser']);
-
     Route::post('rejectNominations', [NominationController::class, 'rejectNominations']);
     Route::post('acceptSomeNominations', [NominationController::class, 'acceptSomeNominations']);
     Route::post('acceptNominations', [NominationController::class, 'acceptNominations']);
     Route::post('getRolesForNominee', [NominationController::class, 'getRolesForNominee']);
-
     Route::post('createApplication', [ApplicationController::class, 'createApplication']);
     Route::post('editApplication', [ApplicationController::class, 'editApplication']);
     Route::get('cancelApplication/{accountNo}/{applicationNo}', [ApplicationController::class, 'cancelApplication']);
     Route::get('applications/{accountNo}', [ApplicationController::class, 'getApplications']);
     Route::get('getApplicationForReview/{accountNo}/{applicationNo}', [ApplicationController::class, 'getApplicationForReview']);
-
     Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
     Route::get('getReminderTimeframe/{accountNo}', [AdminController::class, 'getReminderTimeframe']);
+    Route::post('setEmailPreference', [EmailPreferenceController::class, 'setPreference']);
 });
 
 

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Modal from '@/Components/Modal.vue';
 import ChangePassword from './ChangePassword.vue';
+import ChangeEmailFrequency from './ChangeEmailFrequency.vue';
 import { useDark, useToggle } from '@vueuse/core';
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -30,6 +31,10 @@ const options = [
         label: 'Change Password'
     },
     {
+        screen: 'changeEmailFrequency',
+        label: 'Change Email Frequency'
+    },
+    {
         screen: '',
         label: "Toggle Theme",
         click: function() {
@@ -37,6 +42,7 @@ const options = [
             changeSweetalertTheme();
         },
     },
+
 ];
 </script>
 <template>
@@ -74,6 +80,11 @@ const options = [
             </div>
             <ChangePassword v-if="activeScreen=='changePassword'"
                 @close-password="activeScreen=''"
+                @close-settings="resetView();"
+            />
+
+            <ChangeEmailFrequency v-if="activeScreen=='changeEmailFrequency'"
+                @close-email="activeScreen=''"
                 @close-settings="resetView();"
             />
         </div>

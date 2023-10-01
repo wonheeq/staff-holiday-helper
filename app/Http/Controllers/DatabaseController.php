@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
+use App\Models\EmailPreference;
 use App\Models\School;
 use App\Models\Application;
 use App\Models\Nomination;
@@ -25,7 +26,7 @@ class DatabaseController extends Controller
     Works out what table a new entry should be added to and calls a method to create the new row
      */
     public function addEntry(Request $request, String $accountNo)
-    {  
+    {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
@@ -66,9 +67,9 @@ class DatabaseController extends Controller
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
             }
-  
+
             return $response;
-        }  
+        }
     }
 
     /**
@@ -109,9 +110,9 @@ class DatabaseController extends Controller
             'schoolId' => $attributes[4]['schoolId']
         ]);
 
-        /*EmailPreference::create([
-            'accountNo' => $attributes[0]
-        ]);*/
+        EmailPreference::create([
+            'accountNo' => $attributes[0],
+        ]);
 
         return response()->json(['success' => 'success'], 200);
     }
@@ -125,7 +126,7 @@ class DatabaseController extends Controller
         // No unrestricted attributes to check when manually adding to accountRoles
 
         AccountRole::create([
-            // New accountRoleId automatically generated   
+            // New accountRoleId automatically generated
             'accountNo' => $attributes[0]['accountNo'],
             'roleId' =>  $attributes[1]['roleId'],
             'unitId' => $attributes[2]['unitId'],
@@ -137,7 +138,7 @@ class DatabaseController extends Controller
         return response()->json(['success' => 'success'], 200);
     }
 
-    
+
     /**
      * Adds new Role to database
      */
@@ -147,7 +148,7 @@ class DatabaseController extends Controller
         // No unrestricted attributes to check when manually adding to Roles
 
         Role::create([
-            'name' =>  $attributes[0]      
+            'name' =>  $attributes[0]
         ]);
 
         return response()->json(['success' => 'success'], 200);
@@ -173,8 +174,8 @@ class DatabaseController extends Controller
         }
 
         Unit::create([
-            'unitId' =>  $attributes[1],       
-            'name' =>  $attributes[0]       
+            'unitId' =>  $attributes[1],
+            'name' =>  $attributes[0]
         ]);
 
         return response()->json(['success' => 'success'], 200);
@@ -200,8 +201,8 @@ class DatabaseController extends Controller
         }
 
         Major::create([
-            'majorId' =>  $attributes[1],       
-            'name' =>  $attributes[0]       
+            'majorId' =>  $attributes[1],
+            'name' =>  $attributes[0]
         ]);
 
         return response()->json(['success' => 'success'], 200);
@@ -227,8 +228,8 @@ class DatabaseController extends Controller
         }
 
         Course::create([
-            'courseId' =>  $attributes[1],       
-            'name' =>  $attributes[0]       
+            'courseId' =>  $attributes[1],
+            'name' =>  $attributes[0]
         ]);
 
         return response()->json(['success' => 'success'], 200);
@@ -243,7 +244,7 @@ class DatabaseController extends Controller
         // No unrestricted attributes to check when manually adding to Schools
 
         School::create([
-            'name' =>  $attributes[0]      
+            'name' =>  $attributes[0]
         ]);
 
         return response()->json(['success' => 'success'], 200);

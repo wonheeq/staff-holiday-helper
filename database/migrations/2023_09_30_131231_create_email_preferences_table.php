@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $defaultTime = new DateTime('NOW');
+        $defaultTime->modify('-8 days');
+
         Schema::create('email_preferences', function (Blueprint $table) {
             $table->id();
             $table->char('accountNo', 7);
             $table->integer('hours')->default(24);
-            $table->timestamp('timeLastSent');
+            $table->timestamp('timeLastSent')->useCurrent();
             $table->timestamps();
         });
     }

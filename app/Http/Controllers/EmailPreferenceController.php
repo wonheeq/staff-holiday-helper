@@ -12,6 +12,7 @@ class EmailPreferenceController extends Controller
     // Set the interval for a users archive email
     public function setPreference(Request $request)
     {
+        dd($request);
         $request->validate([
             'accountNo' => ['required'],
             'hours' => ['required']
