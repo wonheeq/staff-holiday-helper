@@ -34,6 +34,7 @@ class Kernel extends ConsoleKernel
         // delete expired password reset tokens every hour
         $schedule->command('auth:clear-resets')->hourly();
 
+
         // Every Hour, run commands to check and send archive emails.
         $schedule->call(function () {
             $msgController = new MessageController();
@@ -41,7 +42,11 @@ class Kernel extends ConsoleKernel
         })->everyHour();
 
 
-
+        // Every Odd Hour, attempt to send emails in backlog
+        $schedule->call(function () {
+            $emailController = new EmailController();
+            $emailController->attemptBacklog();
+        })->everyOddHour();
 
 
         // check all unresponded nominations every day
