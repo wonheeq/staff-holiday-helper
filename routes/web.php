@@ -155,5 +155,5 @@ Route::post(
 Route::get(
     '/testSend',
     // [MessageController::class, 'demoSendDailyMessages']
-    [MessageController::class, 'checkArchiveMessages']
+    [MessageController::class, 'temp']
 );

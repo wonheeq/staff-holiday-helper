@@ -60,8 +60,10 @@ class NewMessages extends Notification
             'otherMessages' => $this->getOtherMessages(),
             'numOther' => $this->numOther,
         ];
+        $subject = "Unacknowledged Messages";
+        $mailName = $this->getMailName();
         // create and return mailable object
-        $mailable = new MJML("Unacknowledged Messages", $this->getMailName(), $dynamicData);
+        $mailable = new MJML($subject, $mailName, $dynamicData);
 
         // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
 

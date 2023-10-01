@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class UnsentEmail extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['accountNo', 'subject'];
 }

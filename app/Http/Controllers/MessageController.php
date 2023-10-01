@@ -11,6 +11,8 @@ use App\Models\Nomination;
 use App\Models\ManagerNomination;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Exception\TransportException;
+use App\Models\UnsentEmail;
 
 class MessageController extends Controller
 {
@@ -844,9 +846,22 @@ class MessageController extends Controller
     private function sendEmail($account)
     {
         $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
-        if ($messages->count() != 0) {
-            $account->sendDailyMessageNotification($messages);
-            sleep(2); // to get around mailtrap emails per second limit
+        if ($messages->count() != 0) { // if Has messages
+            try
+            {   // send email
+                $account->sendDailyMessageNotification($messages);
+            }
+            catch( TransportException $e) // Email Sending Failed
+            {
+                // check if already has a backed up archive email
+                if(!UnsentEmail::where('accountNo', $account->accountNo)
+                ->where('subject', 'Unacknowledged Messages' )->first()){
+                    UnsentEmail::create([ // create one if not
+                        'accountNo' => $account->accountNo,
+                        'subject' => 'Unacknowledged Messages',
+                    ]);
+                }
+            }
         }
     }
 
@@ -858,8 +873,22 @@ class MessageController extends Controller
         $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
         $account2 = Account::where('accountNo', '000002L')->first();
         $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
-        $account1->sendDailyMessageNotification($messages1);
-        $account2->sendDailyMessageNotification($messages2);
+        // $account1->sendDailyMessageNotification($messages1);
+        try
+        {
+            $account2->sendDailyMessageNotification($messages2);
+        }
+        catch(TransportException $e)
+        {
+            if(!UnsentEmail::where('accountNo', '000002L')
+                ->where('subject', 'Unacknowledged Messages' )->first()){
+                    UnsentEmail::create([
+                        'accountNo' => '000002L',
+                        'subject' => 'Unacknowledged Messages',
+                    ]);
+            }
+
+        }
     }
 
 
@@ -872,5 +901,19 @@ class MessageController extends Controller
             $user->sendDailyMessageNotification($messages);
             sleep(2);
         }
+    }
+
+    public function temp()
+    {
+        // for( $i = 0; $i < 100; $i++)
+        // {
+
+            $this->demoSendDailyMessages();
+
+
+
+
+
+        // }
     }
 }

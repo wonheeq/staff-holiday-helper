@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('unsent_emails', function (Blueprint $table) {
             $table->id();
             $table->char('accountNo', 7);
-            $table->char('type', 50);
-            $table->json('dyanmicData');
+            $table->char('subject', 50);
             $table->timestamps();
         });
     }
