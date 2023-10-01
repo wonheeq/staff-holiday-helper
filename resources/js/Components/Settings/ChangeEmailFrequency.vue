@@ -45,18 +45,20 @@ watch(reminderTimeframe, () => {
 
 async function handleChangePreference() {
     displaySuccess = false;
+    errors.length = 0;
     await axios.post("api/setEmailPreference", {
         accountNo: user.value.accountNo,
         frequency: reminderTimeframe.value
 
     }).then(function(response) {
         displaySuccess = true;
-
+        showReminderApplyButton.value = false;
+        oldReminderTimeframe.value = reminderTimeframe.value;
     }).catch(error => {
-
+        errors.push("Something went wrong");
+        console.log(error);
     })
-    showReminderApplyButton.value = false;
-    oldReminderTimeframe.value = reminderTimeframe.value;
+
 }
 
 axios.post('/api/getEmailFrequency/', {
