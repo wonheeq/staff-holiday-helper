@@ -97,7 +97,7 @@ axios.post('/api/getEmailFrequency/', {
     </div>
     <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col ">
         <div class="text-base 1080:lg 1440:text-xl 4k:text-2xl">
-            <p>Change how often you recieve your daily reminder email here.</p>
+            <p>Change how often you recieve your unacknowledged messages reminder email here.</p>
         </div>
         <div class="text-base 1080:lg 1440:text-xl 4k:text-2xl">
             <p>By default, you'll recieve an email once a day if you have unacknowledged messages.</p>
