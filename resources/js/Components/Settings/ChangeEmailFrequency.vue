@@ -34,6 +34,7 @@ let showReminderApplyButton = ref(false);
 let displaySuccess = ref(false);
 
 watch(reminderTimeframe, () => {
+    displaySuccess = false;
     if (reminderTimeframe.value != oldReminderTimeframe.value) {
         showReminderApplyButton.value = true;
     }
@@ -128,6 +129,12 @@ axios.post('/api/getEmailFrequency/', {
                 </li>
             </ul>
         </div>
+        <p class="text-xs 1080:text-sm 4k:text-xl w-full text-center mt-2 1440:mt-4 p-4 border border-black rounded-md font-bold"
+                :class="isDark?'bg-cyan-600 text-blue-200':'bg-cyan-100 text-blue-800'"
+                v-show="displaySuccess"
+            >
+                Your password has been changed successfully!
+            </p>
     </div>
 </div>
 </template>
