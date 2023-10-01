@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MJML;
+use App\Models\UnsentEmail;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportException;
+use App\Models\Account;
+use App\Models\Message;
 
 class EmailController extends Controller
 {
@@ -130,6 +134,34 @@ class EmailController extends Controller
 
     public function attemptBacklog(): void {
         //TODO add function to check email backlog
+        $backlog = UnsentEmail::all();
+        foreach($backlog as $email)
+        {
+            $subject = $email->subject;
+            switch($subject){
+                case "Unacknowledged Messages":
+                    $this->attemptUnackMsg($email);
+                break;
+            }
+        }
+    }
+
+    private function attemptUnackMsg($email)
+    {
+        try
+        {
+            $accountNo = $email->accountNo;
+            $user = Account::where('accountNo', $accountNo)->first();
+            $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
+            if ($messages->count() != 0) { // if Has messages
+                $user->sendDailyMessageNotification($messages);
+            }
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do Nothing, email stays in backlog
+        }
     }
 }
 class Nominees
