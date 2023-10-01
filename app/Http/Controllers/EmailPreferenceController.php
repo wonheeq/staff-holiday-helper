@@ -9,6 +9,27 @@ use App\Models\EmailPreference;
 class EmailPreferenceController extends Controller
 {
 
+    // get the interval for a users archive email
+    public function getPreference(Request $request)
+    {
+        $request->validate([
+            'accountNo' => ['required'],
+        ]);
+        $accountNo = $request->accountNo;
+        if(!EmailPreference::where('accountNo', $accountNo)->first())
+        {
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else
+        {
+            $user = EmailPreference::where('accountNo', $accountNo)->first();
+            $hours = $user->hours;
+
+            return $this->getFrequencyFromHours($hours);
+        }
+
+    }
+
     // Set the interval for a users archive email
     public function setPreference(Request $request)
     {
@@ -25,13 +46,13 @@ class EmailPreferenceController extends Controller
         else
         {
             $user = EmailPreference::where('accountNo', $accountNo)->first();
-            $user->hours = $this->getHoursFromRequest($request->frequency);
+            $user->hours = $this->getHoursFromFrequency($request->frequency);
             $user->save();
             return response(200);
         }
     }
 
-    private function getHoursFromRequest($frequency)
+    private function getHoursFromFrequency($frequency)
     {
         $hours = 0;
         switch ($frequency) {
@@ -68,7 +89,7 @@ class EmailPreferenceController extends Controller
             break;
 
             case "Once a week":
-                $hours = 96;
+                $hours = 168;
             break;
 
             default:
@@ -76,5 +97,52 @@ class EmailPreferenceController extends Controller
         }
 
         return $hours;
+    }
+
+    private function getFrequencyFromHours($hours)
+    {
+        $frequency = "";
+        switch ($hours) {
+            case 1:
+                $frequency = "Hourly";
+            break;
+
+            case 12:
+                $frequency = "Twice a day";
+            break;
+
+            case 24:
+                $frequency = "Daily";
+            break;
+
+            case 48:
+                $frequency = "Every 2 days";
+            break;
+
+            case 72:
+                $frequency = "Every 3 days";
+            break;
+
+            case 96:
+                $frequency = "Every 4 days";
+            break;
+
+            case 120:
+                $frequency = "Every 5 days";
+            break;
+
+            case 144:
+                $frequency = "Every 6 days";
+            break;
+
+            case 168:
+                $frequency = "Once a week";
+            break;
+
+            default:
+                $frequency = "Daily";
+        }
+
+        return $frequency;
     }
 }

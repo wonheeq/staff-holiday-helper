@@ -50,6 +50,20 @@ async function handleChangePreference() {
     });
 }
 
+axios.post('/api/getEmailFrequency/', {
+    accountNo: user.value.accountNo
+})
+.then(res => {
+    if (res.status == 200) {
+        reminderTimeframe.value = res.data;
+        oldReminderTimeframe.value = res.data;
+    }
+    else {
+        console.log("Failed to getEmailFrequency");
+    }
+}).catch(err => {
+    console.log(err);
+});
 </script>
 <template>
 <div>
