@@ -86,7 +86,7 @@ axios.post('/api/getEmailFrequency/', {
             />
         </button>
         <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold">
-            Email Frequency
+            Email Settings
         </p>
         <button @click="emit('close-settings');">
             <img src="/images/close.svg"

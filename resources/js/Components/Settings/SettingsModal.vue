@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import Modal from '@/Components/Modal.vue';
 import ChangePassword from './ChangePassword.vue';
-import ChangeEmailFrequency from './ChangeEmailFrequency.vue';
+import EmailSettings from './EmailSettings.vue';
 import { useDark, useToggle } from '@vueuse/core';
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -31,8 +31,8 @@ const options = [
         label: 'Change Password'
     },
     {
-        screen: 'changeEmailFrequency',
-        label: 'Change Email Frequency'
+        screen: 'emailSettings',
+        label: 'Email Settings'
     },
     {
         screen: '',
@@ -83,7 +83,7 @@ const options = [
                 @close-settings="resetView();"
             />
 
-            <ChangeEmailFrequency v-if="activeScreen=='changeEmailFrequency'"
+            <EmailSettings v-if="activeScreen=='emailSettings'"
                 @close-email="activeScreen=''"
                 @close-settings="resetView();"
             />
