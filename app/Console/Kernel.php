@@ -36,17 +36,22 @@ class Kernel extends ConsoleKernel
 
 
         // Every Hour, run commands to check and send archive emails.
-        $schedule->call(function () {
-            $msgController = new MessageController();
-            $msgController->checkArchiveMessages();
-        })->everyHour();
+        // $schedule->call(function () {
+        //     $msgController = new MessageController();
+        //     $msgController->checkArchiveMessages();
+        // })->everyHour();
 
 
         // Every Odd Hour, attempt to send emails in backlog
+        // $schedule->call(function () {
+        //     $emailController = new EmailController();
+        //     $emailController->attemptBacklog();
+        // })->everyOddHour();
+
         $schedule->call(function () {
             $emailController = new EmailController();
             $emailController->attemptBacklog();
-        })->everyOddHour();
+        })->everyFifteenSeconds();
 
 
         // check all unresponded nominations every day

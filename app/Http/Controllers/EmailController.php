@@ -182,6 +182,7 @@ class EmailController extends Controller
         }
         catch(TransportException $e)
         {
+            error_log($e);
             // Do Nothing, email stays in backlog
         }
     }

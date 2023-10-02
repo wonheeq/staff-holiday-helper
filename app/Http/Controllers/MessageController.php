@@ -877,21 +877,28 @@ class MessageController extends Controller
         $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
         $account2 = Account::where('accountNo', '000002L')->first();
         $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
-        // $account1->sendDailyMessageNotification($messages1);
-        try
-        {
-            $account2->sendDailyMessageNotification($messages2);
-        }
-        catch(TransportException $e)
-        {
-            if(!UnsentEmail::where('accountNo', '000002L')
+        $preferences = EmailPreference::get()->where('accountNo', $account2->accountNo)->first();
+
+        if ($messages2->count() != 0) { // if Has messages
+            try
+            {   // send email
+                $account2->sendDailyMessageNotification($messages2);
+                $newTime = new DateTime('NOW');
+                $preferences->timeLastSent = $newTime;
+                $preferences->save();
+
+            }
+            catch( TransportException $e) // Email Sending Failed
+            {
+                // check if already has a backed up archive email
+                if(!UnsentEmail::where('accountNo', $account2->accountNo)
                 ->where('subject', 'Unacknowledged Messages' )->first()){
-                    UnsentEmail::create([
-                        'accountNo' => '000002L',
+                    UnsentEmail::create([ // create one if not
+                        'accountNo' => $account2->accountNo,
                         'subject' => 'Unacknowledged Messages',
                     ]);
+                }
             }
-
         }
     }
 

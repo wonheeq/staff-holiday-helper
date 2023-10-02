@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Notifications\ResetPassword;
 use Illuminate\Notifications\Notification;
 use App\Notifications\NewMessages;
-
-
+use Symfony\Component\Mailer\Exception\TransportException;
 
 class Account extends Authenticatable
 {
@@ -70,6 +69,7 @@ class Account extends Authenticatable
 
     public function sendDailyMessageNotification($messages)
     {
+        // throw new TransportException();
         $this->notify(new NewMessages($messages, $this->isManager()));
     }
 
