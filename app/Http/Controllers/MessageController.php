@@ -836,20 +836,24 @@ class MessageController extends Controller
             if( $hourInterval > $frequency)
             {
                 // if so, send email
-                $this->sendEmail($account);
+                $this->sendEmail($account, $preferences);
             }
         }
     }
 
 
     // check if an account has any messages, and send an archive email if so
-    private function sendEmail($account)
+    private function sendEmail($account, $preferences)
     {
         $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
         if ($messages->count() != 0) { // if Has messages
             try
             {   // send email
                 $account->sendDailyMessageNotification($messages);
+                $newTime = new DateTime('NOW');
+                $preferences->timeLastSent = $newTime;
+                $preferences->save();
+
             }
             catch( TransportException $e) // Email Sending Failed
             {
