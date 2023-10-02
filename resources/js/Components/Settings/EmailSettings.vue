@@ -114,21 +114,20 @@ axios.post('/api/getEmailFrequency/', {
 
                 />
 
-            <!-- <vSelect :options="options.all" :clearable="false"
-                style="width:100%; height: fit-content; background-color: white;
-                border: solid; border-color: #6b7280; border-width: 1px;
-                --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"
-                v-model="reminderTimeframe"
-            /> -->
             </div>
             <div class="w-[25%]">
                 <button
-                    class="h-fit w-full p-1 border-black border rounded-md bg-blue-200 font-bold"
+                    class="h-fit w-full p-1 rounded-md font-bold"
+                    :class="{
+                        'bg-blue-300': !isDark,
+                        'bg-blue-800 text-white': isDark,
+                    }"
                     v-show="showReminderApplyButton"
                     @click="handleChangePreference()"
                 >
                     Apply
                 </button>
+
             </div>
         </div>
         <div class="flex justify-center mb-2 mt-2 text-red-500 4k:text-xl text-center">
