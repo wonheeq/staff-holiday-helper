@@ -27,6 +27,17 @@ const user = computed(() => page.props.auth.user);
 let welcomeData = reactive([]);
 let dataReady = ref(false);
 
+
+// Error if insufficient permissions to visit a page
+const customError =  page.props.errors;
+if (customError != null) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: customError
+    });
+}
+
 let fetchWelcomeMessageData = async() => {
     try {
         const resp = await axios.get("/api/getWelcomeMessageData/" + user.value.accountNo);

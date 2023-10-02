@@ -25,7 +25,10 @@ class EnsureUserIsManager
         $isTemporaryManager = $user->isTemporaryManager==1? true : false;
         
         if ($level != "sysadmin" && $level != "lmanager" && !$isTemporaryManager) {
-            abort(403, 'You are not authorised to access this.');
+            //abort(403, 'You are not authorised to access this.');
+            return redirect("/home")->with([
+                'customError' => 'You are not authorised to access this page.'
+            ]);
         }
 
         return $next($request);
