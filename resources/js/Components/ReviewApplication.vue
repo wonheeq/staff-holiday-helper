@@ -56,7 +56,7 @@ function handleApproveApp() {
             if (res.status == 500) {
                 Swal.fire({
                     icon: "error",
-                    title: 'Failed to approve application, please try again.',
+                    title: 'Failed to approve application',
                     text: res.data.error
                 });
                 console.log(res);
@@ -78,7 +78,8 @@ function handleApproveApp() {
         console.log(err);
         Swal.fire({
             icon: "error",
-            title: 'Failed to approve application, please try again.',
+            title: 'Failed to approve application',
+            text: err.response.data.message
         });
     });
 }
@@ -115,7 +116,8 @@ function handleRejectApp() {
         console.log(err);
         Swal.fire({
             icon: "error",
-            title: 'Failed to reject application, please try again.',
+            title: 'Failed to reject application',
+            text: err.response.data.message
         });
     });
 }
