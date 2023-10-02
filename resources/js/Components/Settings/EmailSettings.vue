@@ -120,7 +120,7 @@ axios.post('/api/getEmailFrequency/', {
                     v-show="showReminderApplyButton"
                     @click="handleChangePreference()"
                 >
-                    Apply Change
+                    Apply
                 </button>
             </div>
         </div>
