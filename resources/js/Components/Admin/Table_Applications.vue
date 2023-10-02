@@ -57,7 +57,7 @@ export default {
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
 
-
+        
         };
     },
     created() {
@@ -74,9 +74,7 @@ export default {
     mounted() {
         if (screen.width >= 3840) { 
             this.c = 468;
-
-
-            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px";
         }
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);

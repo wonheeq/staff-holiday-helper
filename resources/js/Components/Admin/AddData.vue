@@ -300,7 +300,5 @@ import "vue-select/dist/vue-select.css";
         text-overflow: ellipsis;
         max-width: 100%;
         overflow: hidden;
-    }
-
-    
+    }   
 </style>

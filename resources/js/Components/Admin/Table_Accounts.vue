@@ -52,21 +52,6 @@ export default {
             accounts: [],
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
-            //tStyle: "vgt-table",
-            fontSizeMain: '16px',
-            fontSize: "14px",
-            searchPadding: '6px 12px',
-            searchHeight: '32px',
-            magnifyingGlassTop: '3px',
-            magnifyingGlassLeft: '8px',
-            magnifyingGlassWH: '16px',
-            sortButtonBorder: '5px',
-            sortButtonMargin: '-7px',
-            pageChangeBorder: '6px',
-            pageChangeMargin: '-6px',
-            footerFontSize: '1.1rem',
-            pageDropdownRight: '6px',
-            pageDropdownMargin: '-1px'
         };
     },
     created() {
@@ -82,22 +67,8 @@ export default {
     },
     // Using height of window to determine max table height
     mounted() {
-        if (screen.width >= 3840) {
-            //this.tStyle = 'vgt-table scaled';
-            this.fontSize = this.fontSizeMain = '1.8rem';
-            this.searchPadding = '12px 18px';
-            this.searchHeight = '54px';
+        if (screen.width >= 3840) {          
             this.c = 468;
-            this.magnifyingGlassTop = '7px';
-            this.magnifyingGlassLeft = '5px';
-            this.magnifyingGlassWH = '25px';
-            this.sortButtonBorder = '8px';
-            this.sortButtonMargin = '-13px';
-            this.pageChangeBorder = '10px';
-            this.pageChangeMargin = '-10px';
-            this.footerFontSize = '1.8rem';
-            this.pageDropdownRight = '-4px';
-            this.pageDropdownMargin = '-3px';
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         }
         this.$nextTick(() => {
@@ -155,71 +126,4 @@ let onSearch = () => {
     .parent1 {
         width: 100%;       
     }
-
-    table.vgt-table {
-        font-size: v-bind(fontSizeMain) !important;
-    }
-
-    .vgt-input, .vgt-select {
-        font-size: v-bind(fontSize) !important;
-        padding:  v-bind(searchPadding) !important;
-        height: v-bind(searchHeight) !important;
-    }
-
-    .vgt-global-search__input .input__icon .magnifying-glass {
-        margin-top: v-bind(magnifyingGlassTop) !important;
-        margin-left: v-bind(magnifyingGlassLeft) !important;
-        width: v-bind(magnifyingGlassWH) !important;
-        height: v-bind(magnifyingGlassWH) !important;
-    }
-
-    .vgt-table th.sortable button:before {
-        margin-bottom: v-bind(sortButtonMargin);
-        border-left: v-bind(sortButtonBorder) solid transparent;
-        border-right: v-bind(sortButtonBorder) solid transparent;
-        border-top: v-bind(sortButtonBorder) solid #606266;
-    }
-    .vgt-table th.sortable button:after {
-        margin-top: v-bind(sortButtonMargin);
-        border-left: v-bind(sortButtonBorder) solid transparent;
-        border-right: v-bind(sortButtonBorder) solid transparent;
-        border-bottom: v-bind(sortButtonBorder) solid #606266;
-    }
-
-    .vgt-table thead th.sorting-asc button:after {
-        border-bottom: v-bind(sortButtonBorder) solid #409eff;
-    }
-    .vgt-table thead th.sorting-desc button:before {
-        border-top: v-bind(sortButtonBorder) solid #409eff;
-    }
-
-    .vgt-wrap__footer .footer__row-count__label,
-    .vgt-wrap__footer .footer__row-count__select,
-    .vgt-wrap__footer .footer__navigation,
-    .vgt-wrap__footer .footer__navigation__page-btn span {
-        font-size: v-bind(footerFontSize);
-    }
-
-    .vgt-wrap__footer .footer__navigation__page-btn .chevron.left::after {
-        border-right: v-bind(pageChangeBorder) solid #409eff;
-    }
-
-    .vgt-wrap__footer .footer__navigation__page-btn .chevron.right::after {
-        border-left: v-bind(pageChangeBorder) solid #409eff;
-    }
-
-    .vgt-wrap__footer .footer__navigation__page-btn .chevron:after {
-        margin-top: v-bind(pageChangeMargin);
-        border-top: v-bind(pageChangeBorder) solid transparent;
-        border-bottom: v-bind(pageChangeBorder) solid transparent;
-    }
-
-    .vgt-wrap__footer .footer__row-count::after {
-        right: v-bind(pageDropdownRight);
-        margin-top: v-bind(pageDropdownMargin);
-        border-top: v-bind(pageChangeBorder) solid #606266;
-        border-left: v-bind(pageChangeBorder) solid transparent;
-        border-right: v-bind(pageChangeBorder) solid transparent;
-    }
-    
 </style>
