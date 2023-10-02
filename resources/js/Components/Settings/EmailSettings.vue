@@ -26,6 +26,7 @@ const options = {
     ]
 }
 
+
 let oldReminderTimeframe = ref(options.default);
 let reminderTimeframe = ref(options.default);
 
@@ -107,13 +108,12 @@ axios.post('/api/getEmailFrequency/', {
         </div>
         <div class="flex flex-row h-fit space-x-4 items-center">
             <div class="w-[75%]">
-            <vSelect :options="options.all" :clearable="false" :class="isDark ? 'dropdown-dark':''"
-                    style="width: 100%; height: fit-content; background-color: inherit;
-                    border: solid; border-color: #6b7280; border-width: 1px;
-                --vs-border-style: none; --vs-search-input-placeholder-color: inherit"
+                <vSelect :options="options.all" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                        style="width: 100%; height: 2rem; background-color: inherit;"
                 v-model="reminderTimeframe"
 
                 />
+
             <!-- <vSelect :options="options.all" :clearable="false"
                 style="width:100%; height: fit-content; background-color: white;
                 border: solid; border-color: #6b7280; border-width: 1px;

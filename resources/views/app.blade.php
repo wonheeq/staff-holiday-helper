@@ -9,6 +9,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="/@sweetalert2/theme-dark/dark.css" id="swal2-theme"/>
+        <link rel="stylesheet" href="/@sweetalert2/theme-dark/dark.css" id="swal2-theme"/>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
@@ -71,7 +72,7 @@ height:100%;
 }
 
 
-@media 
+@media
 (min-width: 768px) {
     .scrollbar-dark ::-webkit-scrollbar {
         height: 12px;
