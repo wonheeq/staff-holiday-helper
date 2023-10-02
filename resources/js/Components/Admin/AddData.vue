@@ -301,4 +301,6 @@ import "vue-select/dist/vue-select.css";
         max-width: 100%;
         overflow: hidden;
     }
+
+    
 </style>

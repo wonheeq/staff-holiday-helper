@@ -16,6 +16,7 @@ export default {
         }
     },
     data: function() {
+        let defaultC = 354;
         return {
             columns: [
                 {
@@ -53,7 +54,10 @@ export default {
                 },
             ],
             applications: [],
-            tHeight: ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
+            c: defaultC,
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
+
+
         };
     },
     created() {
@@ -68,6 +72,12 @@ export default {
     },
     // Using height of window to determine max table height
     mounted() {
+        if (screen.width >= 3840) { 
+            this.c = 468;
+
+
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+        }
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
             console.warn("tHeight: ", this.tHeight)
@@ -78,7 +88,7 @@ export default {
     },
     methods: {  
         onResize() {
-        this.tHeight = ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },

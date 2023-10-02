@@ -16,7 +16,7 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 364;
+        let defaultC = 354;
         return {
             columns: [
                 {
@@ -52,7 +52,8 @@ export default {
             accounts: [],
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
-            tStyle: "vgt-table",
+            //tStyle: "vgt-table",
+            fontSizeMain: '16px',
             fontSize: "14px",
             searchPadding: '6px 12px',
             searchHeight: '32px',
@@ -82,8 +83,8 @@ export default {
     // Using height of window to determine max table height
     mounted() {
         if (screen.width >= 3840) {
-            this.tStyle = 'vgt-table scaled';
-            this.fontSize = '1.8rem';
+            //this.tStyle = 'vgt-table scaled';
+            this.fontSize = this.fontSizeMain = '1.8rem';
             this.searchPadding = '12px 18px';
             this.searchHeight = '54px';
             this.c = 468;
@@ -127,8 +128,7 @@ let onSearch = () => {
             <div remove-tailwind-bg>
                 <VueGoodTable
                     :rows="accounts"
-                    :columns="columns"
-                    v-bind:styleClass= tStyle
+                    :columns="columns"        
                     v-bind:max-height= tHeight
                     :fixed-header="{
                         enabled: true,
@@ -155,9 +155,9 @@ let onSearch = () => {
     .parent1 {
         width: 100%;       
     }
-   
-    .scaled {
-        font-size: 1.8rem !important;
+
+    table.vgt-table {
+        font-size: v-bind(fontSizeMain) !important;
     }
 
     .vgt-input, .vgt-select {
@@ -221,4 +221,5 @@ let onSearch = () => {
         border-left: v-bind(pageChangeBorder) solid transparent;
         border-right: v-bind(pageChangeBorder) solid transparent;
     }
+    
 </style>
