@@ -29,6 +29,7 @@ let fetchApplicationForReview = async() => {
     } catch (error) {
         reviewAppModalData = [];
         Swal.fire({
+            icon: 'error',
             title: 'Failed to review application',
             text: 'Invalid permissions to review application'
         });
