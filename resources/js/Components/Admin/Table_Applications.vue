@@ -55,7 +55,7 @@ export default {
             ],
             applications: [],
             c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"  
 
         
         };
@@ -99,7 +99,7 @@ let onSearch = () => {
 
 <template>
     <div class="parent1">
-        <div class="mx-4 mt-4">
+        <div class="mx-4 mt-4 4k:mt-8">
             <div remove-tailwind-bg>
                 <VueGoodTable 
                     :rows="applications"

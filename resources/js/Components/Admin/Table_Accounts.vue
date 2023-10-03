@@ -51,7 +51,7 @@ export default {
             ],
             accounts: [],
             c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",    
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"    
         };
     },
     created() {
