@@ -64,13 +64,13 @@ export default {
         .catch((error) => {
             console.log(error);
         });
-    },
-    // Using height of window to determine max table height
-    mounted() {
         if (screen.width >= 3840) {          
             this.c = 468;
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         }
+    },
+    // Using height of window to determine max table height
+    mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
             //console.warn("tHeight: ", this.tHeight)
