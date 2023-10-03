@@ -156,38 +156,38 @@
     <Modal>
         <div class="h-screen flex items-center w-screen bg-transparent">
             <div class="w-3/6 flex flex-col p-4 mx-auto h-4/6 rounded-tl-md overflow-auto" :class="subpageClass">
-                <div class="h-[10%] flex justify-between">
+                <div class="h-[10%] flex justify-between 4k:ml-6">
                     <slot />
-                    <p class="text-xl font-bold">             
+                    <p class="text-xl font-bold 4k:text-3xl 4k:mt-6">             
                         Add data to {{ curTable }} table with .csv file:
                     </p>
                     <!--Add full ui then worry about implementation-->
                     <button class="h-full" @click="$emit('close')">
-                        <img src="/images/close.svg" class="h-full w-full"/>
+                        <img src="/images/close.svg" class="h-2/3 w-2/3"/>
                     </button>
                 </div> 
-                <div class="mt-6">
-                    <p class="">             
+                <div class="mt-6 4k:ml-6">
+                    <p class="4k:text-2xl">             
                         Fill in the provided template for the selected table and upload.
                     </p>
-                    <button class="mt-6 underline" @click="csvRequested()">    
+                    <button class="mt-6 underline 4k:text-2xl" @click="csvRequested()">    
                         Download CSV Template {{ csvFileName }}    
                     </button>
-                    <p class="mt-20 mb-8">    
+                    <p class="mt-20 mb-8 4k:text-2xl">    
                         Note: Only .csv files accepted, if the file was converted into another type while being filled in it must first be converted back to .csv type before uploading.
                     </p>
                     <div class="flex">
-                        <input type="file" class="bg-[#e3e3e3] pl-2 py-2 ml-4 text-center text-lg"
+                        <input type="file" class="bg-[#e3e3e3] pl-2 py-2 ml-4 text-center text-lg 4k:text-3xl 4k:pl-5 4k:py-5"
                                @change="csvSubmitted"
                                accept=".csv"
                                :key="fileInputKey">
                         
-                        <button class="bg-[#e3e3e3] px-6 py-2 ml-4 text-center text-lg"
+                        <button class="bg-[#e3e3e3] px-6 py-2 ml-4 text-center text-lg 4k:text-3xl"
                             @click="csvPosted()">
                             Upload .CSV
                         </button>
                     </div>
-                    <h4 class="mx-4 mt-6 text-sm text-red-700" v-show="msg.warning">
+                    <h4 class="mx-4 mt-6 text-sm text-red-700 4k:text-2xl 4k:mt-9" v-show="msg.warning">
                         <span v-html="msg.errorMsg"></span>
                     </h4>
                 </div>

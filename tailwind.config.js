@@ -29,7 +29,7 @@ export default {
                 'auto': 'repeat(auto-fit, minmax(10rem, 1fr))',
             },
             spacing: {
-                'drpdwn': '55rem',
+                'drpdwn': '55rem'
               }
         },
     },
