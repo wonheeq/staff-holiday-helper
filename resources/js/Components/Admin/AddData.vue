@@ -263,7 +263,7 @@ import "vue-select/dist/vue-select.css";
         </div><!--<div class="flex flex-col self-center">-->
             <div class="centeredRight">
                 <button
-                    class="bg-white px-6 py-2 mx-28 text-center text-xl font-bold"
+                    class="bg-white px-6 py-2 mx-28 text-center text-xl font-bold 4k:text-4xl 4k:px-9 4k:py-4"
                     @click="addToDB()">
                     <span> Add </span>       
                 </button>
