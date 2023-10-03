@@ -127,22 +127,24 @@
                 this.csvActivated = !this.csvActivated;
             },
         },
+        created() { 
+            if (screen.width >= 3840) {
+                this.fontSize = this.fontSizeMain = this.footerFontSize = '1.8rem';
+                this.searchPadding = '12px 18px';
+                this.searchHeight = '54px';
+                this.magnifyingGlassTop = '7px';
+                this.magnifyingGlassLeft = '5px';
+                this.magnifyingGlassWH = '25px';
+                this.sortButtonBorder = '8px';
+                this.sortButtonMargin = '-13px';
+                this.pageChangeBorder = '10px';
+                this.pageChangeMargin = '-10px';
+                this.pageDropdownRight = '-4px';
+                this.pageDropdownMargin = '-3px';
+            }
+        },
         mounted() {
-        if (screen.width >= 3840) {
-            this.fontSize = this.fontSizeMain = this.footerFontSize = '1.8rem';
-            this.searchPadding = '12px 18px';
-            this.searchHeight = '54px';
-            this.magnifyingGlassTop = '7px';
-            this.magnifyingGlassLeft = '5px';
-            this.magnifyingGlassWH = '25px';
-            this.sortButtonBorder = '8px';
-            this.sortButtonMargin = '-13px';
-            this.pageChangeBorder = '10px';
-            this.pageChangeMargin = '-10px';
-            this.pageDropdownRight = '-4px';
-            this.pageDropdownMargin = '-3px';
-            
-        }
+        
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
             //console.warn("tHeight: ", this.tHeight)

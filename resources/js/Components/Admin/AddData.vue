@@ -62,7 +62,9 @@ import "vue-select/dist/vue-select.css";
                 // An array containing the data entered into the manual input:
                 attributeEntries: [],
                 warning: false,
-                errorMsg: ''
+                errorMsg: '',
+
+                fontSizeDrpDwn: '1rem'
             }
         },
         methods: {
@@ -136,6 +138,11 @@ import "vue-select/dist/vue-select.css";
             //console.warn("tHeight: ", this.tHeight)
             },
         },
+        created() { 
+            if (screen.width >= 3840) {
+                this.fontSizeDrpDwn = '1.5rem';
+            }
+        },
         // Using height of window to determine max table height
         mounted() {
             axios.get("/api/allFKData/" + this.user)
@@ -187,11 +194,11 @@ import "vue-select/dist/vue-select.css";
 
 
 <template>
-    <h1 class="text-2xl px-4">Add Data:</h1>
+    <h1 class="text-2xl px-4 4k:text-5xl 4k:py-4">Add Data:</h1>
 
     <!-- To select table -->
     <div class="flex flex-row mt-4 mx-4">
-        <h2 class="mt-1.5">Select Table:</h2>
+        <h2 class="mt-1.5 4k:text-3xl 4k:mt-3">Select Table:</h2>
         <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
             <button
                 v-for="button in buttons"
@@ -206,8 +213,8 @@ import "vue-select/dist/vue-select.css";
     </div>
 
     <!-- To import .csv file -->
-    <div class="flex flex-row mt-8 mx-4">
-        <h1 class="mt-1.5">Add By CSV:</h1>
+    <div class="flex flex-row mt-8 mx-4 4k:mt-10">
+        <h2 class="mt-1.5 4k:text-3xl 4k:mt-3">Add By CSV:</h2>
         <button
             class= tableButtonOff
             @click="activateCSV()"
@@ -217,7 +224,7 @@ import "vue-select/dist/vue-select.css";
     </div>
 
 
-    <h1 class="mt-1.5 px-4 mt-6">Add Manually:</h1>
+    <h1 class="mt-1.5 px-4 mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
     <div class= manualArea :style="{ maxHeight: bHeight }">
         <div class="flex justify-between">
             <div class="flex flex-col mt-4 mx-4 mb-3">
@@ -228,10 +235,10 @@ import "vue-select/dist/vue-select.css";
                     v-for="(field, index) in fieldsList[currentFields]" :key="index"
                     
                 >
-                    <div class="flex justify-between space-x-7">
-                        <span class="mt-4">{{ field.desc }}: </span>
-                        <input  v-if="field.fk === 'none'"
-                               style="width: 35rem; height: 2rem; margin-top: 0.75rem;" 
+                    <div class="flex justify-between space-x-7 4k:space-x-11">
+                        <span class="mt-4 4k:mt-10 4k:text-2xl">{{ field.desc }}: </span>
+                        <input v-if="field.fk === 'none'"
+                               class="input_options" 
                                type="text" autocomplete="off" :placeholder="field.plhldr" 
                                v-model="attributeEntries[index]" />
                         <!--<v-select v-else v-model="selected" style="width: 35rem; height: 2rem; margin-top: 0.75rem;">
@@ -240,7 +247,8 @@ import "vue-select/dist/vue-select.css";
                         </v-select>-->
                         <form  autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
-                                     style="width: 35rem; height: 2rem; margin-top: 0.75rem; background-color: white; 
+                                     class="input_options" 
+                                     style="background-color: white; 
                                      border: solid; border-color: #6b7280; border-width: 1px;
                                      --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
                                      :placeholder="field.plhldr"
@@ -275,7 +283,7 @@ import "vue-select/dist/vue-select.css";
         margin-left: 1rem;
         margin-right: 1rem;
         margin-top: 0.5rem;
-        height: 100%;
+        height: 80%;
         position: relative;
     }
 
@@ -300,5 +308,20 @@ import "vue-select/dist/vue-select.css";
         text-overflow: ellipsis;
         max-width: 100%;
         overflow: hidden;
-    }   
+    }  
+
+    .vs__search, .vs__search:focus {
+        font-size: v-bind(fontSizeDrpDwn);
+    }
+</style>
+
+<style lang="postcss">
+
+.input_options {
+    width: 35rem; 
+    height: 2rem; 
+    margin-top: 0.75rem;
+    @apply 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-9 !important;
+}
+
 </style>
