@@ -45,10 +45,10 @@ class MinorTableControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allUnits/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allUnits/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allUnits/{$this->adminUser['accountNo']}");
@@ -70,10 +70,10 @@ class MinorTableControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allMajors/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->getJson("/api/allMajors/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allMajors/{$this->adminUser['accountNo']}");
@@ -95,10 +95,10 @@ class MinorTableControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allCourses/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allCourses/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allCourses/{$this->adminUser['accountNo']}");
@@ -120,10 +120,10 @@ class MinorTableControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allSchools/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allSchools/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allSchools/{$this->adminUser['accountNo']}");

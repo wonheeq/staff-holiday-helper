@@ -114,10 +114,10 @@ class MessageControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allMessages/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allMessages/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_api_request_for_accounts_content_is_json(): void

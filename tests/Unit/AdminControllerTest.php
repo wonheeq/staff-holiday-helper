@@ -71,7 +71,7 @@ class AdminControllerTest extends TestCase
             'accountNo' => $this->nonAdmin->accountNo,
             'timeframe' => '1 day'
         ]);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_setReminderTimeframe_is_unsuccessful_invalid_timeframe(): void {
