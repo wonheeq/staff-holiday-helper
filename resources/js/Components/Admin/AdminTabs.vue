@@ -21,7 +21,6 @@
     ];
 
     let activeScreen = ref("viewData");
-    
 
     let props = defineProps({
         screenProp: {
@@ -47,13 +46,13 @@
 
     function handleActiveScreenChanged(screen) {
         activeScreen.value = screen;
-
         changeUrl(screen);
     }
     const subpageClass = "p-4 rounded-bl-md rounded-br-md rounded-tr-md bg-white h-[95%]";
 </script>
 
 <script>
+    import AddCSVData from "@/Components/Admin/AddCSVData.vue";
 
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
@@ -82,7 +81,11 @@
                     { message: 'Courses', table: 'coursesTable' },
                     { message: 'Schools', table: 'schoolsTable' },
                     { message: 'Messages', table: 'messagesTable' }
-                ]
+                ],
+
+                csvActivated: false,
+                csvFileName: "",
+                curTable: ""
             }
         },
         components:{
@@ -101,7 +104,13 @@
             activate: function(message, table) {
                 this.content = message;
                 this.currentTable = table;
-            }
+            },
+            activateCSV: function(csvFileName, tableName) {
+                console.log(tableName);
+                this.csvFileName = csvFileName;
+                this.curTable = tableName;
+                this.csvActivated = !this.csvActivated;
+            },
         }
     }
 </script>
@@ -146,7 +155,7 @@
             class="p-4 h-[95%]"
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
-            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" />
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="subpageClass"
@@ -155,6 +164,8 @@
 <!---->
 
     </div>
+    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
+    </AddCSVData>
 </template>
 
 <style>

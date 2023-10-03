@@ -25,14 +25,15 @@ import "vue-select/dist/vue-select.css";
                 content: 'Staff Accounts',
                 selected: null,
                 currentFields: "accountFields",
+                currentCSV: "add_staffaccounts.csv",
                 buttons: [
-                    { message: 'Staff Accounts', fArray: "accountFields"},  
-                    { message: 'Account Roles', fArray: "accountRoleFields"},
-                    { message: 'Roles', fArray: "roleFields"},
-                    { message: 'Units', fArray: "unitFields"},
-                    { message: 'Majors', fArray: "majorFields"},
-                    { message: 'Courses', fArray: "courseFields"},
-                    { message: 'Schools', fArray: "schoolFields"},             
+                    { message: 'Staff Accounts', fArray: "accountFields", csvFileName: "add_staffaccounts.csv"},  
+                    { message: 'Account Roles', fArray: "accountRoleFields", csvFileName: "add_accountroles.csv"},
+                    { message: 'Roles', fArray: "roleFields", csvFileName: "add_roles.csv"},
+                    { message: 'Units', fArray: "unitFields", csvFileName: "add_units.csv"},
+                    { message: 'Majors', fArray: "majorFields", csvFileName: "add_majors.csv"},
+                    { message: 'Courses', fArray: "courseFields", csvFileName: "add_courses.csv"},
+                    { message: 'Schools', fArray: "schoolFields", csvFileName: "add_schools.csv"}            
                 ],
                 bHeight: ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px",
 
@@ -65,13 +66,18 @@ import "vue-select/dist/vue-select.css";
             }
         },
         methods: {
-            activate: function(message, fArray) {
+            activate: function(message, fArray, csvFileName) {
                 this.content = message;
                 this.currentFields = fArray;
+                this.currentCSV = csvFileName;
 
                 // Clear Fields if needed
                 this.attributeEntries = [];   
             },
+            activateCSV: function() {
+                this.$emit('toggleCSV', this.currentCSV, this.content);      
+            },
+            // Add single entry to selected table
             addToDB: function() {
                 console.log(this.attributeEntries)
                 this.warning = false;
@@ -192,7 +198,7 @@ import "vue-select/dist/vue-select.css";
                 :key="button.message"
                 class= tableButtonOff
                 :class="{'tableButtonOn': button.message === content}"
-                @click="activate(button.message, button.fArray)"
+                @click="activate(button.message, button.fArray, button.csvFileName)"
             >
                 <span>{{ button.message }}</span>
             </button>
@@ -202,8 +208,9 @@ import "vue-select/dist/vue-select.css";
     <!-- To import .csv file -->
     <div class="flex flex-row mt-8 mx-4">
         <h1 class="mt-1.5">Add By CSV:</h1>
-        <button 
+        <button
             class= tableButtonOff
+            @click="activateCSV()"
         >
             <span> Import .csv </span>
         </button>

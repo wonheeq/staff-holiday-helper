@@ -1,0 +1,4 @@
+﻿Add Majors,,,"Fill in rows, columns cannot be left blank. ",,,,Important Notes:
+Major Code,Major Name,,,,,,"Major Code must be ""MJ"" followed by 2 capital letters, then a dash ""-"", followed by 5 capital letters, and must be unique."
+,,,,,,,
+,,,,,,,Major Name must be under 60 characters.

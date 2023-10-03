@@ -54,6 +54,9 @@ Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
     Route::post('addSingleEntry/{accountNo}', [DatabaseController::class, 'addEntry']);
     Route::post('createSystemNotification', [MessageController::class, 'createSystemNotification']);
     Route::post('setReminderTimeframe', [AdminController::class, 'setReminderTimeframe']);
+
+    Route::get('getCSVTemplate/{accountNo}/{fileName}', [DatabaseController::class, 'sendCSVTemplate']);
+    Route::post('addEntriesFromCSV/{accountNo}', [DatabaseController::class, 'addEntriesFromCSV']);
 });
 
 
