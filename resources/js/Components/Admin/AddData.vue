@@ -21,6 +21,7 @@ import "vue-select/dist/vue-select.css";
             }
         },
         data: function() {
+            let defaultC = 288
             return {
                 content: 'Staff Accounts',
                 selected: null,
@@ -35,7 +36,8 @@ import "vue-select/dist/vue-select.css";
                     { message: 'Courses', fArray: "courseFields", csvFileName: "add_courses.csv"},
                     { message: 'Schools', fArray: "schoolFields", csvFileName: "add_schools.csv"}            
                 ],
-                bHeight: ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px",
+                c: defaultC,
+                bHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",
 
                 completeFKs: [],
                 roles: [], units: [], majors: [], courses: [], schools: [],
@@ -133,7 +135,7 @@ import "vue-select/dist/vue-select.css";
                 return this[arrayName];
             },
             onResize() {
-            this.bHeight = ((0.8889 * window.innerHeight) - 288.2223).toFixed(0) + "px"
+            this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
             //this.tHeight = (window.innerHeight).toFixed(0) + "px"
             //console.warn("tHeight: ", this.tHeight)
             },
@@ -141,6 +143,11 @@ import "vue-select/dist/vue-select.css";
         created() { 
             if (screen.width >= 3840) {
                 this.fontSizeDrpDwn = '1.5rem';
+            }
+            if (screen.width < 1430 && screen.width >= 1350)
+            {
+                this.c = 315;
+                this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
             }
         },
         // Using height of window to determine max table height
@@ -172,7 +179,7 @@ import "vue-select/dist/vue-select.css";
                 var resposeArr = response.data;
                 this.lmanagers = resposeArr[0];
                 this.displayAccounts = resposeArr[1];
-                console.log(response.data);
+                //console.log(response.data);
 
                 // lmanagers is a nullable field, adding "none" option
                 var nullObject = {accountNo: null, fullName: 'None'}
