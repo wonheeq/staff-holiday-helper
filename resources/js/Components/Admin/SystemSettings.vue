@@ -122,17 +122,18 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
     console.log(err);
 });
 
-const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font-bold"
+const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font-bold 4k:text-2xl"
 </script>
 <template>
     <div class="space-y-4">
         <div>
-            <div class="flex flex-row h-[2rem] space-x-4 items-center">
-                <p class="text-2xl h-full">
+            <div class="flex flex-row h-[2rem] space-x-4 items-center 4k:mt-5 4k:ml-5">
+                <p class="text-2xl h-full 4k:text-3xl">
                     Reminder Timeframe:
                 </p>
                 <vSelect :options="options.all" :clearable="false"
-                    style="width: 33rem; height: 2rem; background-color: white; 
+                    class="timeframe_options" 
+                    style="background-color: white; 
                     border: solid; border-color: #6b7280; border-width: 1px;
                     --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
                     v-model="reminderTimeframe"
@@ -143,21 +144,21 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
                     Apply Change
                 </button>
             </div>
-            <p>
+            <p class="4k:text-2xl 4k:mt-7 4k:ml-5">
                 The amount of time after being nominated that a nominee will receive a reminder if they have not responded.
             </p>
         </div>
-        <div>
-            <p class="text-2xl">
+        <div class="4k:ml-5">
+            <p class="text-2xl 4k:text-3xl 4k:mt-9">
                 Create System Notification
             </p>
-            <p>
+            <p class="4k:text-2xl 4k:mt-2">
                 This will send a message to <b>all</b> accounts.
             </p>
-            <div class="w-[48.5rem] h-32 relative">
-                <textarea class="w-full h-full" v-model="systemNotificationContent">
+            <div class="w-[48.5rem] h-32 relative 4k:w-[74rem] 4k:h-[23rem] 4k:mt-5">
+                <textarea class="w-full h-full 4k:text-2xl" v-model="systemNotificationContent">
                 </textarea>
-                <p class="absolute right-1 bottom-0"
+                <p class="absolute right-1 bottom-0 4k:text-xl"
                     v-show="systemNotificationContent.length > 0"
                     :class="systemNotificationContent.length > MAX_SYSTEM_NOTIFICATION_LENGTH ? 'text-red-600': ''"
                 >
@@ -165,7 +166,7 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
                 </p>
             </div>
             <button v-show="showSystemNotificationButton"
-                :class="buttonClass" class="py-2 mt-2"
+                :class="buttonClass" class="py-2 mt-2 4k:mt-5"
                 @click="createSystemNotification"    
             >
                 Create Notification
@@ -174,8 +175,18 @@ const buttonClass = "h-full px-4 border-black border rounded-md bg-blue-200 font
     </div>
 </template>
 <style>
-textarea {
-  resize: none;
-  overflow: hidden;
-}
+    textarea {
+    resize: none;
+    overflow: hidden;
+    }
+</style>
+
+<style lang="postcss">
+
+    .timeframe_options {
+        width: 33rem; 
+        height: 2rem; 
+        @apply 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-2 !important;
+    }
+
 </style>

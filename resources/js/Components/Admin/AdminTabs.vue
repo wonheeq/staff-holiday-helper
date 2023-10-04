@@ -85,7 +85,22 @@
 
                 csvActivated: false,
                 csvFileName: "",
-                curTable: ""
+                curTable: "",
+
+                fontSizeMain: '16px',
+                fontSize: "14px",
+                searchPadding: '6px 12px',
+                searchHeight: '32px',
+                magnifyingGlassTop: '3px',
+                magnifyingGlassLeft: '8px',
+                magnifyingGlassWH: '16px',
+                sortButtonBorder: '5px',
+                sortButtonMargin: '-7px',
+                pageChangeBorder: '6px',
+                pageChangeMargin: '-6px',
+                footerFontSize: '1.1rem',
+                pageDropdownRight: '6px',
+                pageDropdownMargin: '-1px'
             }
         },
         components:{
@@ -111,7 +126,30 @@
                 this.curTable = tableName;
                 this.csvActivated = !this.csvActivated;
             },
-        }
+        },
+        created() { 
+            if (screen.width >= 3840) {
+                this.fontSize = this.fontSizeMain = this.footerFontSize = '1.8rem';
+                this.searchPadding = '12px 18px';
+                this.searchHeight = '54px';
+                this.magnifyingGlassTop = '7px';
+                this.magnifyingGlassLeft = '5px';
+                this.magnifyingGlassWH = '25px';
+                this.sortButtonBorder = '8px';
+                this.sortButtonMargin = '-13px';
+                this.pageChangeBorder = '10px';
+                this.pageChangeMargin = '-10px';
+                this.pageDropdownRight = '-4px';
+                this.pageDropdownMargin = '-3px';
+            }
+        },
+        mounted() {
+        
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+            //console.warn("tHeight: ", this.tHeight)
+        })
+    },
     }
 </script>
 
@@ -129,11 +167,11 @@
             class="p-4 h-[95%]"
         >
 
-            <h1 class="text-2xl px-4">Database Data:</h1>
+            <h1 class="text-2xl px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
             
             <!-- To switch between tables -->
             <div class="flex flex-row mt-4 mx-4">
-                <h2 class="mt-1.5">Select Table:</h2>
+                <h2 class="mt-1.5 4k:text-3xl 4k:mt-6">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
                     <button
                         v-for="button in buttons"
@@ -168,15 +206,17 @@
     </AddCSVData>
 </template>
 
-<style>
+<style lang="postcss">
 
     .tableButtonOn {
         min-width: 13%;
         font-size: 1rem;
+        @apply 4k:text-3xl !important;
         font-weight: bold;
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         border-color: black;
         border-width: 2px;       
@@ -190,9 +230,11 @@
     .tableButtonOff {
         min-width: 13%;
         font-size: 1rem;
+        @apply 4k:text-3xl !important;
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         /*w-50 text-1xl text-center p-4 bg-gray-300 */
 
@@ -206,6 +248,72 @@
 
     body {
         font-family: "PT Sans", sans-serif;
+    }
+
+    table.vgt-table {
+        font-size: v-bind(fontSizeMain);
+    }
+
+    .vgt-input, .vgt-select {
+        font-size: v-bind(fontSize);
+        padding:  v-bind(searchPadding);
+        height: v-bind(searchHeight);
+    }
+
+    .vgt-global-search__input .input__icon .magnifying-glass {
+        margin-top: v-bind(magnifyingGlassTop);
+        margin-left: v-bind(magnifyingGlassLeft);
+        width: v-bind(magnifyingGlassWH);
+        height: v-bind(magnifyingGlassWH);
+    }
+
+    .vgt-table th.sortable button:before {
+        margin-bottom: v-bind(sortButtonMargin);
+        border-left: v-bind(sortButtonBorder) solid transparent;
+        border-right: v-bind(sortButtonBorder) solid transparent;
+        border-top: v-bind(sortButtonBorder) solid #606266;
+    }
+    .vgt-table th.sortable button:after {
+        margin-top: v-bind(sortButtonMargin);
+        border-left: v-bind(sortButtonBorder) solid transparent;
+        border-right: v-bind(sortButtonBorder) solid transparent;
+        border-bottom: v-bind(sortButtonBorder) solid #606266;
+    }
+
+    .vgt-table thead th.sorting-asc button:after {
+        border-bottom: v-bind(sortButtonBorder) solid #409eff;
+    }
+    .vgt-table thead th.sorting-desc button:before {
+        border-top: v-bind(sortButtonBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__row-count__label,
+    .vgt-wrap__footer .footer__row-count__select,
+    .vgt-wrap__footer .footer__navigation,
+    .vgt-wrap__footer .footer__navigation__page-btn span {
+        font-size: v-bind(footerFontSize);
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron.left::after {
+        border-right: v-bind(pageChangeBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron.right::after {
+        border-left: v-bind(pageChangeBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron:after {
+        margin-top: v-bind(pageChangeMargin);
+        border-top: v-bind(pageChangeBorder) solid transparent;
+        border-bottom: v-bind(pageChangeBorder) solid transparent;
+    }
+
+    .vgt-wrap__footer .footer__row-count::after {
+        right: v-bind(pageDropdownRight);
+        margin-top: v-bind(pageDropdownMargin);
+        border-top: v-bind(pageChangeBorder) solid #606266;
+        border-left: v-bind(pageChangeBorder) solid transparent;
+        border-right: v-bind(pageChangeBorder) solid transparent;
     }
 
 </style>
