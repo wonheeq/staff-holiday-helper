@@ -55,7 +55,16 @@ class Account extends Authenticatable
     {
         return 'accountNo';
     }
+
+    // needs to be named specifically this because of a call deep in the framework
     public function getEmailForPasswordReset()
+    {
+        // $email = $this->accountNo . '@curtin.edu.au';
+        $email = $this->accountNo . '@test.com.au';
+        return $email;
+    }
+
+    public function getEmail()
     {
         // $email = $this->accountNo . '@curtin.edu.au';
         $email = $this->accountNo . '@test.com.au';

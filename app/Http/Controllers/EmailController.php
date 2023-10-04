@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendNominationEmail;
 use App\Mail\MJML;
 use App\Models\UnsentEmail;
 use Illuminate\Support\Facades\Mail;
@@ -10,6 +11,8 @@ use App\Models\Account;
 use App\Models\Message;
 use App\Models\EmailPreference;
 use DateTime;
+use App\Jobs\SendNominationEmailJob;
+use Error;
 
 class EmailController extends Controller
 {
@@ -185,6 +188,15 @@ class EmailController extends Controller
             error_log($e);
             // Do Nothing, email stays in backlog
         }
+    }
+
+    public function sendNominationEmail($data)
+    {
+        // test exceptions
+        // error_log("here 1");
+
+            SendNominationEmail::dispatch($data);
+
     }
 }
 class Nominees

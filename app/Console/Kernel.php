@@ -35,23 +35,23 @@ class Kernel extends ConsoleKernel
         $schedule->command('auth:clear-resets')->hourly();
 
 
-        // Every Hour, run commands to check and send archive emails.
-        // $schedule->call(function () {
-        //     $msgController = new MessageController();
-        //     $msgController->checkArchiveMessages();
-        // })->everyHour();
+        // Every Fifteen Minutes, run commands to check and send archive emails.
+        $schedule->call(function () {
+            $msgController = new MessageController();
+            $msgController->checkArchiveMessages();
+        })->everyFifteenMinutes();
 
 
         // Every Odd Hour, attempt to send emails in backlog
-        // $schedule->call(function () {
-        //     $emailController = new EmailController();
-        //     $emailController->attemptBacklog();
-        // })->everyOddHour();
-
         $schedule->call(function () {
             $emailController = new EmailController();
             $emailController->attemptBacklog();
-        })->everyFifteenSeconds();
+        })->everyFifteenMinutes();
+
+        // $schedule->call(function () {
+        //     $emailController = new EmailController();
+        //     $emailController->attemptBacklog();
+        // })->everyFifteenSeconds();
 
 
         // check all unresponded nominations every day

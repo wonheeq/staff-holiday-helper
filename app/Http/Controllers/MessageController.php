@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
+use App\Http\Controllers\EmailController;
+
 class MessageController extends Controller
 {
     /*
@@ -204,6 +206,13 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 )
+        {
+            // do this part;
+        }
     }
 
     /*
@@ -278,7 +287,7 @@ class MessageController extends Controller
                 );
 
                 // Create message for nominee
-                Message::create([
+                $temp = Message::create([
                     'applicationNo' => $applicationNo,
                     'receiverNo' => $nomineeNo,
                     'senderNo' => $application->accountNo,
@@ -286,6 +295,14 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
+                $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 )
+                {
+                    $data = [$nomineeNo, $content];
+                    $emailController = new EmailController();
+                    $emailController->sendNominationEmail($data);
+                }
             }
         }
     }
@@ -312,6 +329,13 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 )
+        {
+            // do this part;
+        }
     }
 
     /*
@@ -335,6 +359,13 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 )
+        {
+            // do this part;
+        }
     }
 
     /*
@@ -400,6 +431,13 @@ class MessageController extends Controller
                 'content' => json_encode($content),
                 'acknowledged' => false,
             ]);
+
+            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 )
+            {
+                // do this part;
+            }
         }
     }
 
@@ -548,6 +586,13 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
+
+                $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 )
+                {
+                    // do this part;
+                }
             }
         }
     }
@@ -666,6 +711,13 @@ class MessageController extends Controller
                 'content' => json_encode($content),
                 'acknowledged' => false,
             ]);
+
+            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 )
+            {
+                // do this part;
+            }
         }
     }
 
@@ -709,6 +761,13 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 )
+        {
+            // do this part;
+        }
     }
 
     /*
@@ -754,6 +813,13 @@ class MessageController extends Controller
             'content' => json_encode($content),
             'acknowledged' => false,
         ]);
+
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 )
+        {
+            // do this part;
+        }
     }
 
 
@@ -793,6 +859,13 @@ class MessageController extends Controller
                 'content' => json_encode($content),
                 'acknowledged' => false,
             ]);
+
+            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 )
+            {
+                // do this part;
+            }
         }
 
         return response()->json(['success'], 200);
@@ -913,6 +986,11 @@ class MessageController extends Controller
             $user->sendDailyMessageNotification($messages);
             sleep(2);
         }
+    }
+
+    public function temp()
+    {
+        $this->notifyNomineesApplicationCreated(21);
     }
 
 }
