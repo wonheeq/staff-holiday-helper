@@ -56,6 +56,10 @@ class EmailPreferenceController extends Controller
     {
         $hours = 0;
         switch ($frequency) {
+            case "Instantly":
+                $hours = 0;
+            break;
+
             case "Hourly":
                 $hours = 1;
             break;
@@ -103,6 +107,10 @@ class EmailPreferenceController extends Controller
     {
         $frequency = "";
         switch ($hours) {
+            case 0:
+                $frequency = "Instantly";
+            break;
+
             case 1:
                 $frequency = "Hourly";
             break;
