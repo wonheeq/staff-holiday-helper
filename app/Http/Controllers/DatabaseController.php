@@ -9,6 +9,7 @@ use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+//use App\Models\EmailPreference;
 
 
 use Illuminate\Http\Request;
@@ -104,6 +105,10 @@ class DatabaseController extends Controller
             'superiorNo' => $attributes[5]['accountNo'],
             'schoolId' => $attributes[4]['schoolId']
         ]);
+
+        /*EmailPreference::create([
+            'accountNo' => $attributes[0]
+        ]);*/
 
         return response()->json(['success' => 'success'], 200);
     }
@@ -410,6 +415,10 @@ class DatabaseController extends Controller
                 'superiorNo' => $entries[$i]['Line Manager\'s ID'],
                 'schoolId' => $entries[$i]['School Code']
             ]);
+
+            /*EmailPreference::create([
+                'accountNo' => $entries[$i]['Account Number (Staff ID)']
+            ]);*/
         }
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);

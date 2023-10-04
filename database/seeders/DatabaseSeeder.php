@@ -11,6 +11,7 @@ use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Role;
 use App\Models\Message;
+//use App\Models\EmailPreference;
 use App\Models\ReminderTimeframe;
 use Illuminate\Support\Facades\Hash;
 
@@ -219,8 +220,14 @@ class DatabaseSeeder extends Seeder
 
         $accounts = Account::get();
 
+
+        // Each Account needs and EmailPreference 
         // Each account gets 5 random AccountRoles
         foreach ($accounts as $account) {
+            /*EmailPreference::create([
+                'accountNo' => $account['accountNo']
+            ]);*/
+            
             AccountRole::factory(5)->create([
                 'accountNo' => $account['accountNo'],
             ]);
