@@ -74,7 +74,7 @@ function handleEditApplication() {
 </script>
 <template>
     <div v-if="isMobile" class="flex flex-col">
-        <div class="flex flex-col p-2">
+        <div class="flex flex-col p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">
                 {{ statusText[source.status] }}
