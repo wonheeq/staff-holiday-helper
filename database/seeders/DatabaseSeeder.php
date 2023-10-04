@@ -52,7 +52,8 @@ class DatabaseSeeder extends Seeder
             array('schoolId' => '111', 'name' => 'School of Earth and Planetary Sciences'),
             array('schoolId' => '112', 'name' => 'School of Electrical Engineering, Computing and Mathematical Sciences'),
             array('schoolId' => '113', 'name' => 'School of Molecular and Life Sciences'),
-            array('schoolId' => '114', 'name' => 'WA School of Mines: Minerals, Energy and Chemical Engineering')
+            array('schoolId' => '114', 'name' => 'WA School of Mines: Minerals, Energy and Chemical Engineering'),
+            array('schoolId' => '1', 'name' => 'Super Administrator')
         );
 
         foreach ($schools as $school) {

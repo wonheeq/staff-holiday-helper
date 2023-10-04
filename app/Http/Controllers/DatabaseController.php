@@ -87,6 +87,13 @@ class DatabaseController extends Controller
             return response()->json(['error' => 'Account Number needs syntax<br />of 6 numbers followed by<br />lowercase letter with no spaces'], 500);
         }
 
+        // Checks if account is trying to have schoolId == 1
+        if ($attributes[4]['schoolId'] == 1) {
+        // The account is allowed to have a schoolId of one only if it is a 'sysadmin' and no other account is using '1' as its schoolId
+            if ($attributes[1]['db_name'] != 'sysadmin' || Account::where('schoolId', 1)->exists()) {
+                return response()->json(['error' => 'School Code of \'1\' can<br />only be assigned to one<br />System Administrator type<br />account at any given time.'], 500);
+            }
+        }
 
         Account::create([
             'accountNo' => $attributes[0],
@@ -365,6 +372,18 @@ class DatabaseController extends Controller
             $curAttr = $entries[$i]['School Code'];
             if (School::where('schoolId', $curAttr)->doesntExist()) {
                 return response()->json(['error' => $curID . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+            else if ($curAttr == 1) { // Checks if account is trying to have schoolId == 1                            
+                // The account is allowed to have a schoolId of one only if it is a 'sysadmin' and no other account is using '1' as its schoolId
+                if ($entries[$i]['Account Type'] != 'sysadmin' || Account::where('schoolId', 1)->exists()) {
+                    return response()->json(['error' => 'School Code of \'1\' can only be assigned to one System Administrator type account at any given time.'], 500);
+                }
+                // Ensuring other accounts in CSV don't also have schoolId == 1
+                for ($j = $i + 1; $j < $numEntries; $j++) {
+                    if ($entries[$j]['School Code'] == 1) {
+                        return response()->json(['error' => 'School Code of \'1\' can only be assigned to one System Administrator type account at any given time.'], 500);
+                    }
+                }
             }
 
             // Line Manager's ID
