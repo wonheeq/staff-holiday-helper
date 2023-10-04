@@ -831,9 +831,10 @@ class MessageController extends Controller
             $interval = $now->diff($lastSent);
             $hourInterval = ($interval->h) + ($interval->days * 24);
 
-            // check if greater than email sending prefernce
+            // check if the time since an email was last sent is greater than the
+            // correct frequency. Exclude users on instant notifications
             $frequency = $preferences->hours;
-            if( $hourInterval > $frequency)
+            if( $frequency != 0 && ($hourInterval > $frequency) )
             {
                 // if so, send email
                 $this->sendEmail($account, $preferences);
@@ -914,17 +915,4 @@ class MessageController extends Controller
         }
     }
 
-    public function temp()
-    {
-        // for( $i = 0; $i < 100; $i++)
-        // {
-
-            $this->demoSendDailyMessages();
-
-
-
-
-
-        // }
-    }
 }
