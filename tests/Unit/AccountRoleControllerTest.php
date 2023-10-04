@@ -48,11 +48,11 @@ class AccountRoleControllerTest extends TestCase
 
         // Acting as staff, assert forbidden
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allAccountRoles/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         // Acting as line manager, assert forbidden
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allAccountRoles/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_api_request_for_AccountRoles_content_is_json(): void

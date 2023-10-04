@@ -101,6 +101,7 @@ function formatNominations(accountNo) {
         result.push({
             accountRoleId: nomination.accountRoleId,
             nomineeNo: formatNomineeNo(nomination.nomination, accountNo),
+            subordinateNo: nomination.subordinateNo || null
         });
     }
 
@@ -119,7 +120,6 @@ function createApplication(data) {
         data.nominations = formatNominations(data.accountNo);
         data.sDate = period.start;
         data.eDate = period.end;
-        resetFields();
         
         axios.post('/api/createApplication', data)
             .then(res => {
@@ -127,13 +127,20 @@ function createApplication(data) {
                     let newApp = res.data;
                     addNewApplication(newApp);
                     fetchCalendarData(user.value.accountNo);
+                    
+                    resetFields();
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully created application.'
                     });
+                    
                 }
             }).catch(err => {
-            console.log(err)
+            Swal.fire({
+                icon: "error",
+                title: 'Failed to create application.',
+                text: err.response.data
+            });
         });
     }
     else {

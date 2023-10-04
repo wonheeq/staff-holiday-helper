@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Application;
 use Illuminate\Http\Request;
+use App\Models\School;
+use App\Models\ManagerNomination;
 use DateTime;
 use DateTimeZone;
 use DB;
@@ -60,11 +62,29 @@ class AccountController extends Controller
     }
 
     /*
-    Returns the account data for the default admin account
+    Return the default admin account for the system
+    AKA the super admin - "Admin in charge of admins"
     */
-    public function getDefaultAdmin()
-    {
+    public function getDefaultAdmin() {
         return Account::where('accountNo', DEFAULT_ADMIN_ACCOUNT_NO)->first();
+    }
+
+    /*
+    Returns the account data for the admin account of the provided schoolId
+    */
+    public function getAdminForSchool($schoolId)
+    {
+        if (School::where('schoolId', $schoolId)->first()) {
+            // Return FIRST administrator for the given SchoolID WHERE they do not have a superior
+            $account = Account::where('schoolId', $schoolId)
+            ->where('accountType', "sysadmin")
+            ->where('superiorNo', null)
+            ->first();
+            return $account;
+        }
+
+        // School doesn't exist??? return super admin
+        return $this->getDefaultAdmin();
     }
 
     /*
@@ -77,34 +97,20 @@ class AccountController extends Controller
         $user = Account::where('accountNo', $accountNo)->first();
         $superiorNo = $user->superiorNo;
 
+        // Return the super admin
         if ($superiorNo == null) {
             return $this->getDefaultAdmin();
         }
 
         // Get assigned line manager
         $assignedLineManager = Account::where('accountNo', $superiorNo)->first();
+        //Log::debug("Assigned: {$assignedLineManager->accountNo}");
         // Check if assigned Line manager is on leave
         if ($this->isAccountOnLeave($superiorNo)) {
-
-            // return default for now
-            // TODO: return substitute line manager
-            return $this->getDefaultAdmin();
-        }
-
-        return $assignedLineManager;
-    }
-
-    /*
-    Returns true if the account is currently on leave, returns false, otherwise
-    */
-    public function isAccountOnLeave(String $accountNo)
-    {
-        try {
-            // Attempt to get user
-            $user = Account::where('accountNo', $accountNo)->first();
-
-            // Get all approved applications of user
-            $applications = Application::where('accountNo', $accountNo, "and")
+            //Log::debug("Assigned is on leave");
+            // Return substitute line manager
+            // Get all approved applications of superior
+            $applications = Application::where('accountNo', $superiorNo, "and")
                 ->where('status', 'Y')->get();
 
             // Iterate through each application and check if current date is inside the period
@@ -116,13 +122,61 @@ class AccountController extends Controller
 
                 // Return true if startDate >= currentDate <= endDate
                 if ($currentDate >= $startDate && $currentDate <= $endDate) {
-                    return true;
+                    // NOTE: Intentional logic:
+                    /*
+                    If the original line manager is on leave
+                    And the substitute line manager is on leave
+                    The substitute line manager will be returned anyway
+                    Since the substitute line manager SHOULD NOT be allowed to nominate others
+                    for a role they are temporarily holding
+                    */
+                    // check that the manager nomination actually exists
+                    $managerSub = ManagerNomination::where('applicationNo', $app->applicationNo)
+                    ->where('subordinateNo', $accountNo)
+                    ->first();
+                    if ($managerSub) {
+                        $substituteManager = Account::where('accountNo', $managerSub->nomineeNo)->first();
+                        if ($substituteManager) {
+                            Log::debug("Found Sub: {$substituteManager->accountNo}");
+                            return $substituteManager;
+                        }
+                    }
                 }
             }
-        } catch (Exception $e) {
-            // Error occurred, return default response
-            return false;
+
+            // unable to find substitute line manager, return admin for school
+            return $this->getAdminForSchool($user->schoolId);
         }
+
+        return $assignedLineManager;
+    }
+
+    /*
+    Returns true if the account is currently on leave, returns false, otherwise
+    */
+    public function isAccountOnLeave(String $accountNo)
+    {
+        $user = Account::where('accountNo', $accountNo)->first();
+
+        // Get all approved applications of user
+        $applications = Application::where('accountNo', $accountNo, "and")
+            ->where('status', 'Y')->get();
+        date_default_timezone_set("Australia/Perth");
+
+        // Iterate through each application and check if current date is inside the period
+        $currentDate = new DateTime();
+        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
+        foreach ($applications as $app) {
+            $startDate = new DateTime($app['sDate']);
+            $endDate = new DateTime($app['eDate']);
+
+            // Return true if startDate >= currentDate <= endDate
+            if ($currentDate >= $startDate && $currentDate <= $endDate) {
+                return true;
+            }
+        }
+        date_default_timezone_set("UTC");
+        return false;
     }
 
     /*

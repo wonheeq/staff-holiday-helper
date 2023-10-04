@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\Account;
 use App\Models\Application;
 use App\Models\Nomination;
+use App\Models\ManagerNomination;
 use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
@@ -47,8 +48,10 @@ class MessageController extends Controller
 
                 $nominations = Nomination::where('applicationNo', $message['applicationNo'], 'and')
                     ->where('nomineeNo', $accountNo)->get();
+                $managerNominations = ManagerNomination::where('applicationNo', $message['applicationNo'], 'and')
+                    ->where('nomineeNo', $accountNo)->get();
 
-                $count = count($nominations);
+                $count = count($nominations) + count($managerNominations);
                 if ($count > 1) {
                     // add isNominatedMultiple flag to message data
                     $message["isNominatedMultiple"] = true;
@@ -110,22 +113,68 @@ class MessageController extends Controller
 
         $isSelfNominatedAll = true;
 
-        // Iterate through all nominations and add data to content
-        // Set isSelfNominatedAll to false if not self nominated for all
-        foreach ($nominations as $nom) {
-            // Check if nomineeNo != applicant accountNo
-            if ($nom->nomineeNo != $application->accountNo) {
-                $isSelfNominatedAll = false;
+        $arr1 = Nomination::where('applicationNo', $applicationNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)->get();
+        $processed = [];
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
+        }
 
-                // Get nominee data
-                $nominee = Account::where('accountNo', $nom->nomineeNo)->first();
+        // Process each nomination
+        foreach ($toProcess as $nomination) {
+            $nomineeNo = $nomination->nomineeNo;
 
-                // Get role name
-                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+            // Check if nomineeNo is not in processed nomineeNo's
+            if (!in_array($nomineeNo, $processed)) {
+                array_push($processed, $nomineeNo);
+
+                $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->get();
+                $managerNominationsForNominee = ManagerNomination::where('applicationNo', $applicationNo, "and")
+                ->where('nomineeNo', $nomineeNo)->get();
+
+                $nominee = Account::where('accountNo', $nomineeNo)->first();
+
+                // add name to content
+                $name = "";
+                
+                if ($nomineeNo == $application->accountNo) {
+                    $name = "• Self Nomination";
+                }
+                else {
+                    $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
+                    $isSelfNominatedAll = false;
+                }
+                
                 array_push(
                     $content,
-                    "→{$nominee['fName']} {$nominee['lName']} - {$nom->nomineeNo}@curtin.wa.edu.au    {$roleName}"
+                    "• {$name}"
                 );
+
+                // Add nominated roles of all nominations for nominee to content
+                foreach ($nominationsForNominee as $nom) {
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                // Add nominated roles of all manager nominations for nominee to content
+                foreach ($managerNominationsForNominee as $nom) {
+                    $subordinate = Account::where('accountNo', $nom->subordinateNo)->first();
+                    $roleName = "Line Manager for ({$nom['subordinateNo']}) {$subordinate['fName']} {$subordinate['lName']}";
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
             }
         }
 
@@ -141,6 +190,8 @@ class MessageController extends Controller
             $content,
             "Duration: {$application['sDate']} - {$application['eDate']}"
         );
+
+        date_default_timezone_set("UTC");
         Message::create([
             'applicationNo' => $applicationNo,
             'receiverNo' => $superiorNo,
@@ -160,12 +211,22 @@ class MessageController extends Controller
 
         // List of processed nomineeNo's
         $processed = [
-            $application->accountNo // Ignore application accountNo
         ];
-        $nominations = Nomination::where('applicationNo', $applicationNo)->get();
+
+        $arr1 = Nomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
+        }
 
         // Process each nomination
-        foreach ($nominations as $nomination) {
+        foreach ($toProcess as $nomination) {
             $nomineeNo = $nomination->nomineeNo;
 
             // Check if nomineeNo is not in processed nomineeNo's
@@ -175,7 +236,11 @@ class MessageController extends Controller
 
                 $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
                     ->where('nomineeNo', $nomineeNo)->get();
-                $count = count($nominationsForNominee->toArray());
+                $managerNominationsForNominee = ManagerNomination::where('applicationNo', $applicationNo, "and")
+                    ->where('nomineeNo', $nomineeNo)->get();
+
+
+                $count = count($nominationsForNominee->toArray()) + count($managerNominationsForNominee->toArray());
 
                 array_push(
                     $content,
@@ -185,6 +250,17 @@ class MessageController extends Controller
                 // Add nominated roles of all nominations for nominee to content
                 foreach ($nominationsForNominee as $nom) {
                     $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                // Add nominated roles of all manager nominations for nominee to content
+                foreach ($managerNominationsForNominee as $nom) {
+                    $subordinate = Account::where('accountNo', $nom->subordinateNo)->first();
+                    $roleName = "Line Manager for ({$nom['subordinateNo']}) {$subordinate['fName']} {$subordinate['lName']}";
 
                     array_push(
                         $content,
@@ -261,23 +337,49 @@ class MessageController extends Controller
     Notifies nominees of nomination cancellation
         e.g. a role they were nominated for was changed to a different nominee
     */
-    public function notifyNomineeNominationCancelled(array $removedNominations, String $applicationNo)
+    public function notifyNomineeNominationCancelled(array $removedNominations, array $removedManagerNominations, String $applicationNo)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
+ 
+        //combine into array of nomineeNos
+        $nomineeNos = array();
 
-        // Iterate through each key (nomineeNo), value (array of accountRoleIds)
         foreach ($removedNominations as $nomineeNo => $accountRoleIds) {
+            array_push($nomineeNos, $nomineeNo);
+        }
+        foreach ($removedManagerNominations as $nomineeNo => $accountRoleIds) {
+            array_push($nomineeNos, $nomineeNo);
+        }
+
+        // Iterate through each nomineeNo
+        foreach ($nomineeNos as $nomineeNo) {
             $content = ["You have been un-nominated for the following roles:"];
 
-            // Iterate through accountRoleIds and get roleName and add to content list
-            foreach ($accountRoleIds as $accountRoleId) {
-                // Get role name
-                $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
+            // process if nomineeNo is a key in removedNominations
+            if (array_key_exists($nomineeNo, $removedNominations)) {
+                // Iterate through accountRoleIds and get roleName and add to content list
+                foreach ($removedNominations[$nomineeNo] as $accountRoleId) {
+                    // Get role name
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
+    
+                    array_push(
+                        $content,
+                        "→{$roleName}",
+                    );
+                }
+            }
+            // process if nomineeNo is a key in removedManagerNominations
+            if (array_key_exists($nomineeNo, $removedManagerNominations)) {
+                // Iterate through subordinateNos and add to content list
+                foreach ($removedManagerNominations[$nomineeNo] as $subordinateNo) {
+                    $sub = Account::where('accountNo', $subordinateNo)->first();
+                    $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
 
-                array_push(
-                    $content,
-                    "→{$roleName}",
-                );
+                    array_push(
+                        $content,
+                        "→{$role}",
+                    );
+                }
             }
 
             array_push($content, "You no longer need to takeover these roles if you have previously accepted them for this period of time.");
@@ -302,17 +404,27 @@ class MessageController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Process nominations
-        $nominations = Nomination::where('applicationNo',  $applicationNo)
+        $arr1 = Nomination::where('applicationNo', $applicationNo)
         ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
+        }
         $processedNominees = [];
 
-        foreach ($nominations as $nomination) {
+        foreach ($toProcess as $nomination) {
             if (!in_array($nomination->nomineeNo, $processedNominees)) {
                 // add nomineeNo to array if not added
                 array_push($processedNominees, $nomination->nomineeNo);
 
                 $nominations = Nomination::where('applicationNo',  $applicationNo)
-                    ->where('nomineeNo', $nomination->nomineeNo)->get();
+                    ->where('nomineeNo', $nomination->nomineeNo)
+                    ->where('status', "Y")->get();
 
                 $content = [
                     "An application you agreed to substitute for has been approved.",
@@ -329,6 +441,18 @@ class MessageController extends Controller
                     );
                 }
 
+                $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
+                ->where('nomineeNo', $nomination->nomineeNo)->where('status', "Y")->get();
+                foreach ($managerNominations as $managerNomination) {
+                    $sub = Account::where('accountNo', $managerNomination->subordinateNo)->first();
+                    $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+
+                    array_push(
+                        $content,
+                        "→{$role}",
+                    );
+                }
+
                 array_push(
                     $content,
                     "Duration: {$application['sDate']} - {$application['eDate']}"
@@ -336,7 +460,7 @@ class MessageController extends Controller
 
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
-                    'receiverNo' => $nom->nomineeNo,
+                    'receiverNo' => $nomination->nomineeNo,
                     'senderNo' => $application->accountNo,
                     'subject' => 'Confirmed Substitutions',
                     'content' => json_encode($content),
@@ -354,11 +478,20 @@ class MessageController extends Controller
         $application = Application::where('applicationNo', $applicationNo)->first();
 
         // Process nominations
-        $nominations = Nomination::where('applicationNo',  $applicationNo)
+        $arr1 = Nomination::where('applicationNo', $applicationNo)
         ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
+        }
         $processedNominees = [];
 
-        foreach ($nominations as $nomination) {
+        foreach ($toProcess as $nomination) {
             if (!in_array($nomination->nomineeNo, $processedNominees)) {
                 // add nomineeNo to array if not added
                 array_push($processedNominees, $nomination->nomineeNo);
@@ -386,6 +519,18 @@ class MessageController extends Controller
                     );
                 }
 
+                $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
+                ->where('nomineeNo', $nomination->nomineeNo)->get();
+                foreach ($managerNominations as $managerNomination) {
+                    $sub = Account::where('accountNo', $managerNomination->subordinateNo)->first();
+                    $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+
+                    array_push(
+                        $content,
+                        "→{$role}",
+                    );
+                }
+
                 array_push(
                     $content,
                     "Duration: {$application['sDate']} - {$application['eDate']}"
@@ -393,7 +538,7 @@ class MessageController extends Controller
 
                 $message = Message::create([
                     'applicationNo' => $applicationNo,
-                    'receiverNo' => $nom->nomineeNo,
+                    'receiverNo' => $nomination->nomineeNo,
                     'senderNo' => $application->accountNo,
                     'subject' => 'Substitution Period Edited (Subset)',
                     'content' => json_encode($content),
@@ -413,9 +558,11 @@ class MessageController extends Controller
         foreach ($nomineeNos as $nomineeNo) {
             $content = [];
 
-            $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+            $nominations = Nomination::where('applicationNo', $applicationNo, "and")
                 ->where('nomineeNo', $nomineeNo)->get();
-            $count = count($nominationsForNominee->toArray());
+            $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
+            ->where('nomineeNo', $nomineeNo)->get();
+            $count = count($nominations->toArray()) + count($managerNominations->toArray());
 
             array_push(
                 $content,
@@ -423,12 +570,22 @@ class MessageController extends Controller
             );
 
             // Add nominated roles of all nominations for nominee to content
-            foreach ($nominationsForNominee as $nom) {
+            foreach ($nominations as $nom) {
                 $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
 
                 array_push(
                     $content,
                     "→{$roleName}"
+                );
+            }
+
+            foreach ($managerNominations as $managerNomination) {
+                $sub = Account::where('accountNo', $managerNomination->subordinateNo)->first();
+                $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+
+                array_push(
+                    $content,
+                    "→{$role}",
                 );
             }
 
@@ -466,6 +623,8 @@ class MessageController extends Controller
 
             $nominations = Nomination::where('nomineeNo', $nomineeNo)
             ->where('applicationNo', $applicationNo)->get();
+            $managerNominations = ManagerNomination::where('nomineeNo', $nomineeNo)
+            ->where('applicationNo', $applicationNo)->get();
 
             // Iterate through nominations and get roleName based on accountRoleId and add to content list
             foreach ($nominations as $nomination) {
@@ -478,6 +637,18 @@ class MessageController extends Controller
                     "→{$roleName}",
                 );
             }
+
+
+            foreach ($managerNominations as $managerNomination) {
+                $sub = Account::where('accountNo', $managerNomination->subordinateNo)->first();
+                $role = "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}";
+
+                array_push(
+                    $content,
+                    "→{$role}",
+                );
+            }
+
 
             array_push(
                 $content,

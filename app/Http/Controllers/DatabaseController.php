@@ -91,8 +91,8 @@ class DatabaseController extends Controller
         Account::create([
             'accountNo' => $attributes[0],
             'accountType' =>  $attributes[1]['db_name'],
-            'lname' => $attributes[2],
-            'fname' => $attributes[3],
+            'lName' => $attributes[2],
+            'fName' => $attributes[3],
             'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')), // Password created randomly
             'superiorNo' => $attributes[5]['accountNo'],
             'schoolId' => $attributes[4]['schoolId']

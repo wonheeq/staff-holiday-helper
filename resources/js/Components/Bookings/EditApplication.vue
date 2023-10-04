@@ -20,7 +20,7 @@ const { isMobile } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
-const { fetchApplications } = applicationStore;
+const { addNewApplication } = applicationStore;
 let nominationStore = useNominationStore();
 const { nominations, isSelfNominateAll } = storeToRefs(nominationStore);
 const page = usePage();
@@ -105,6 +105,7 @@ function formatNominations(accountNo) {
         result.push({
             accountRoleId: nomination.accountRoleId,
             nomineeNo: formatNomineeNo(nomination.nomination, accountNo),
+            subordinateNo: nomination.subordinateNo
         });
     }
 
@@ -124,17 +125,18 @@ function handleEditApplication(data) {
         data.sDate = props.period.start;
         data.eDate = props.period.end;
         data.applicationNo = props.applicationNo;
-
-        resetFields();
         
         axios.post('/api/editApplication', data)
             .then(res => {
                 if (res.status == 200) {
+                    let newApp = res.data;
+                    addNewApplication(newApp, props.applicationNo);
+
                     Swal.fire({
                         icon: "success",
                         title: 'Successfully edited application.'
                     }).then(() => {
-                        fetchApplications(user.value.accountNo);
+                        //fetchApplications(user.value.accountNo);
                         fetchCalendarData(user.value.accountNo);
                         resetFields();
                         emit('close');
@@ -152,7 +154,7 @@ function handleEditApplication(data) {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text:  err
+                    text:  err.response.data
                 });
         });
     }

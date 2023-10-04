@@ -30,7 +30,17 @@ export let useApplicationStore = defineStore('applications', {
             }
         },
 
-        addNewApplication(app) {
+        addNewApplication(app, oldAppNo) {
+            if (oldAppNo != null) {
+                let index = 0;
+                for (const app of this.applications) {
+                    if (app.applicationNo == oldAppNo) {
+                        this.applications.splice(index, 1);
+                        break;
+                    }
+                    index++;
+                }
+            }
             this.applications.unshift(app);
         }
     },

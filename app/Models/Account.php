@@ -26,11 +26,12 @@ class Account extends Authenticatable
     protected $fillable = [
         'accountNo',
         'accountType',
-        'lname',
-        'fname',
+        'lName',
+        'fName',
         'password',
         'superiorNo',
-        'schoolId'
+        'schoolId', // SchoolID: 1 reserved for Super Administrator
+        'isTemporaryManager'
     ];
 
     protected $hidden = [

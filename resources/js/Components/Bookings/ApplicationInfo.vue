@@ -21,6 +21,7 @@ const statusText = {
     "Y": "Approved",
     "N": "Denied",
     "C": "Cancelled",
+    "E": "Expired",
 };
 const statusColour = {
     "P": "text-orange-500",
@@ -28,6 +29,7 @@ const statusColour = {
     "Y": "text-green-500",
     "N": "text-red-500",
     "C": "text-gray-500",
+    "E": "",
 };
 
 let toggleContent = ref(false);
@@ -37,13 +39,6 @@ let toggleImage = (isVisible) => {
     }
 
     return '/images/triangle_down.svg';
-}
-
-function alertFailedCancelApplication() {
-    Swal.fire({
-        title: "Failed to Cancel Application",
-        text: "Please try again later.",
-    });
 }
 
 async function handleCancelApplication() {
@@ -60,13 +55,14 @@ async function handleCancelApplication() {
                 if (response.status == 200) {
                     emit('cancelApplication');
                 }
-                else {
-                    alertFailedCancelApplication();
-                }
             })
             .catch((error) => {
                 console.log(error);
-                alertFailedCancelApplication();
+                Swal.fire({
+                    icon: 'error',
+                    title: "Failed to Cancel Application",
+                    text: error.response.data
+                });
             });
         }
     });
@@ -78,7 +74,7 @@ function handleEditApplication() {
 </script>
 <template>
     <div v-if="isMobile" class="flex flex-col">
-        <div class="flex flex-col p-2">
+        <div class="flex flex-col p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">
                 {{ statusText[source.status] }}
@@ -97,17 +93,21 @@ function handleEditApplication() {
                 </div>                
                 <div>
                     <p class="text-sm font-medium">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <div class="text-sm" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]
-                            <p class="ml-5">{{ nomination.task }}</p>
-                        </div>
-                        <div class="text-sm" v-if="nomination.nomineeNo == user.accountNo">
-                            → Self Nominated    {{ nomination.task }}
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                        <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
+                            • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
+                        </p>
+                        <p v-else class="text-xs laptop:text-base">
+                            • Self Nomination
+                        </p>
+                        <div v-for="task in nomineeArray.tasks">
+                            <p class="text-xs laptop:text-base">
+                                →{{ task }}
+                            </p>
                         </div>
                     </div>
-                    <p class="text-sm" v-if="source.isSelfNominatedAll">
-                        → N/A - Self nominated for all roles
+                    <p v-else>
+                        • Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row text-sm">
@@ -135,22 +135,27 @@ function handleEditApplication() {
         <div class="flex flex-col w-5/6 p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
-                <div class="flex flex-row">
-                    <p class="font-medium mr-2">Application ID:</p>
+                <div class="flex flex-row text-lg">
+                    <p class="font-medium mr-2 text-lg">Application ID:</p>
                     {{ source.applicationNo }}
                 </div>
                 <div>
-                    <p class="font-medium">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} - [{{ nomination.nomineeNo }}@curtin.edu.au]    {{ nomination.task }}
+                    <p class="font-medium text-lg">Substitute/s:</p>
+                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                        <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
+                            • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
-                        <p v-if="nomination.nomineeNo == user.accountNo">
-                            → Self Nominated    {{ nomination.task }}
+                        <p v-else class="text-xs laptop:text-base">
+                            • Self Nomination
                         </p>
+                        <div v-for="task in nomineeArray.tasks">
+                            <p class="text-xs laptop:text-base">
+                                →{{ task }}
+                            </p>
+                        </div>
                     </div>
-                    <p v-if="source.isSelfNominatedAll">
-                        → N/A - Self nominated for all roles
+                    <p v-else>
+                        • Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row">

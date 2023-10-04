@@ -12,6 +12,9 @@ use App\Http\Controllers\RoleController;
 use App\Models\Account;
 use App\Models\Application;
 use App\Models\Nomination;
+use App\Models\Message;
+use App\Models\ManagerNomination;
+use App\Http\Controllers\AccountController;
 use DateTime;
 use DateTimeZone;
 class Kernel extends ConsoleKernel
@@ -21,6 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        date_default_timezone_set("Australia/Perth");
+
         // ON THE ACTUAL SERVER, ADD THIS CRON COMMAND:
         /*
         * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
@@ -49,7 +54,126 @@ class Kernel extends ConsoleKernel
             $now = new DateTime();
             $reminderLists = $this->getReminderLists($now);
             $this->sendReminders($reminderLists);
-        })->everyThirtySeconds();
+        })->twiceDaily();
+        //->everyThirtySeconds(); // 30 seconds for testing purposes
+
+
+
+        // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
+        $schedule->call(function () {
+            $this->processManagerNominations();
+        })//->everyFifteenMinutes();
+        ->everyTenSeconds(); // Ten seconds for testing purposes
+    }
+
+    // Gets all approved applications
+    // If the approved application has some associated ManagerNominations
+    //   then check if the approved application is currently ongoing:
+    //        AKA:  startDate >= now <= endDate
+    //     then call promoteStaffTolineManager()
+    //   otherwise if the approved application has expired
+    //     Call demoteStaffFromLineManager()
+    public function processManagerNominations() {
+        // Get all approved applications
+        $applications = DB::select("SELECT * FROM applications WHERE status='Y'");
+
+        foreach ($applications as $application) {
+            $now = new DateTime();
+            $now->setTimezone(new DateTimeZone("Australia/Perth"));
+            $startDate = new DateTime($application->sDate);
+            $endDate = new DateTime($application->eDate);
+            /*
+            Log::debug("{$app->applicationNo}");
+            Log::debug("Now: ".$now->format("Y-m-d H:i:s"));
+            Log::debug("Start: ".$startDate->format("Y-m-d H:i:s"));
+            Log::debug("End: ".$endDate->format("Y-m-d H:i:s"));
+            */
+            if ($now >= $startDate && $now <= $endDate) {
+                //Log::debug("App {$application->applicationNo} Ongoing");
+                $this->promoteStaffToLineManager($application->applicationNo);
+            }
+            // Application is expired
+            else if ($now >= $endDate){
+                //Log::debug("App {$application->applicationNo} Expired");
+                $this->demoteStaffFromLineManager($application->applicationNo);
+            }
+        }
+    }
+
+    /*
+    Temporarily sets accounts that agreed to takeover as a manager for a staff member
+    to a temporary line manager
+    */
+    public function promoteStaffToLineManager($applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+
+        // Iterate through manager nominations
+        foreach ($managerNominations as $nomination) {
+            // Check if the user has been promoted already
+            $account = Account::where('accountNo', $nomination->nomineeNo)->first();
+
+            if ($account->isTemporaryManager == 0) {
+                $account->isTemporaryManager = 1;
+                $account->save();
+
+                Log::debug("Promoted {$account->accountNo}");
+            }
+        }
+    }
+    
+    /*
+    Sets the application's status to Expired
+    Revokes the temporary line manager status from an account
+    "Removes" any non-acknowledged "Application Awaiting Review" messages from the temp line manager
+        Resends this message to the current line manager of the applicant
+    */
+    public function demoteStaffFromLineManager($applicationNo) {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // Safeguard to avoid double processing if it's even possible
+        if ($application->status == "E") {return;}
+
+        $application->status="E"; // Expired
+        $application->save();
+
+        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+
+        // Iterate through manager nominations
+        foreach ($managerNominations as $nomination) {
+            // Check if the user has been demoted already
+            $account = Account::where('accountNo', $nomination->nomineeNo)->first();
+
+            if ($account->isTemporaryManager == 1) {
+                $account->isTemporaryManager = 0;
+                $account->save();
+
+                Log::debug("Demoted {$account->accountNo}");
+            }
+
+            // Remove non acknowledged "Application Awaiting Review" messages from the ex-temp line manager
+            $messages = Message::where('receiverNo', $nomination->nomineeNo)
+            ->where('subject', "Application Awaiting Review")
+            ->where('acknowledged', 0)->get();
+
+            foreach ($messages as $message) {
+                $currentLineManager = app(AccountController::class)->getCurrentLineManager($message->senderNo);
+                
+                $createdTime = new DateTime();
+                $message->update([
+                    // Change receiverNo to the current line manager
+                    'receiverNo' => $currentLineManager->accountNo,
+
+                    // Change created_at and updated_at date to now so that currentLineManager doesn't
+                    // get spammed with reminders if the temp did not respond for long enough to the messages
+                    'created_at' => $createdTime,
+                    'updated_at' => $createdTime,
+                ]);
+            }
+        }
+
     }
 
     /*

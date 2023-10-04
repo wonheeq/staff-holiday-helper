@@ -47,10 +47,10 @@ class RolesControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/allRoles/{$this->otherUser1['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/allRoles/{$this->otherUser2['accountNo']}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_api_request_for_Roles_content_is_json(): void

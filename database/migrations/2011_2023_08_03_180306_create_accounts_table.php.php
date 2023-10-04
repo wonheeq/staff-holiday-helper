@@ -19,7 +19,8 @@ return new class extends Migration
             // No size limit on password for now, unsure about encryption
             $table->string('password');
             $table->char('superiorNo', 7)->nullable();
-            $table->integer('schoolId')->length(3);
+            $table->integer('isTemporaryManager')->length(1)->default(0);
+            $table->integer('schoolId')->length(3); // SchoolID: 1 reserved for Super Administrator
             //$table->rememberToken();
             $table->timestamps();
         });

@@ -1,6 +1,7 @@
 <script setup>
-import ReviewApplication from '@/Components/ReviewApplicationLM.vue';
+import ReviewApplication from '@/Components/ReviewApplication.vue';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { usePage } from '@inertiajs/vue3'
 import {computed, reactive, ref} from 'vue';
 import { useApplicationStore } from '@/stores/ApplicationStore';
@@ -16,17 +17,24 @@ let reviewAppModalData = reactive([]);
 let showReviewAppModal = ref(false);
     
 async function handleReviewApplication() {
-    await fetchApplicationForReview();
-    showReviewAppModal.value = true;
+    let response = await fetchApplicationForReview();
+    showReviewAppModal.value = response;
 }
 
 let fetchApplicationForReview = async() => {
     try {
         const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + props.source.applicationNo);
         reviewAppModalData = resp.data;
+        return true;
     } catch (error) {
-        alert("Failed to load data: Please try again");
+        reviewAppModalData = [];
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to review application',
+            text: 'Invalid permissions to review application'
+        });
         console.log(error);
+        return false;
     }
 }; 
 
