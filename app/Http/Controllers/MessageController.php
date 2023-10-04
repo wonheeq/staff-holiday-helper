@@ -143,7 +143,7 @@ class MessageController extends Controller
                 $name = "";
                 
                 if ($nomineeNo == $application->accountNo) {
-                    $name = "Self Nomination";
+                    $name = "• Self Nomination";
                 }
                 else {
                     $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
@@ -152,7 +152,7 @@ class MessageController extends Controller
                 
                 array_push(
                     $content,
-                    "{$name}"
+                    "• {$name}"
                 );
 
                 // Add nominated roles of all nominations for nominee to content

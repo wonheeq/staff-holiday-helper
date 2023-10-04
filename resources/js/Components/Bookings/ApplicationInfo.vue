@@ -95,10 +95,10 @@ function handleEditApplication() {
                     <p class="text-sm font-medium">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
                         <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
-                            {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
+                            • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
                         <p v-else class="text-xs laptop:text-base">
-                            Self Nomination
+                            • Self Nomination
                         </p>
                         <div v-for="task in nomineeArray.tasks">
                             <p class="text-xs laptop:text-base">
@@ -107,7 +107,7 @@ function handleEditApplication() {
                         </div>
                     </div>
                     <p v-else>
-                        → Self nominated for all roles
+                        • Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row text-sm">
@@ -143,10 +143,10 @@ function handleEditApplication() {
                     <p class="font-medium text-lg">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
                         <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
-                            {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
+                            • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
                         <p v-else class="text-xs laptop:text-base">
-                            Self Nomination
+                            • Self Nomination
                         </p>
                         <div v-for="task in nomineeArray.tasks">
                             <p class="text-xs laptop:text-base">
@@ -155,7 +155,7 @@ function handleEditApplication() {
                         </div>
                     </div>
                     <p v-else>
-                        → Self nominated for all roles
+                        • Self nominated for all roles
                     </p>
                 </div>
                 <div class="flex flex-row">
