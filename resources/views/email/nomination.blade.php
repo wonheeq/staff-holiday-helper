@@ -67,9 +67,7 @@
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email because your organisation is using LeaveOnTime and has created an account for you.
             </mj-text>
-            <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-              &copy; Leave On Time.
-            </mj-text>
+
           </mj-column>
         </mj-section>
       </mj-wrapper>

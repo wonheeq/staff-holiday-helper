@@ -85,14 +85,12 @@
             <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold" padding-top="0px">
                 <a class="text-link" href="https://leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
               </mj-text>
-          </mj-column>
+            </mj-column>
           <mj-column width="90%">
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email because your organisation is using LeaveOnTime and has created an account for you.
             </mj-text>
-            <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-              &copy; Leave On Time.
-            </mj-text>
+
           </mj-column>
         </mj-section>
       </mj-wrapper>
