@@ -9,5 +9,5 @@ class UnsentEmail extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['accountNo', 'subject'];
+    protected $fillable = ['accountNo', 'subject', 'data'];
 }

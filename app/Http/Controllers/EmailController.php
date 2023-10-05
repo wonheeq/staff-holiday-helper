@@ -150,7 +150,28 @@ class EmailController extends Controller
                 case "Unacknowledged Messages":
                     $this->attemptUnackMsg($email);
                 break;
+
+                case "New Nominations":
+                    $this->attemptNewNominations($email);
+                break;
             }
+        }
+    }
+
+
+    // handle a new nomination type email in the backlog
+    private function attemptNewNominations($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            $this->sendNominationEmail($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 
@@ -192,11 +213,7 @@ class EmailController extends Controller
 
     public function sendNominationEmail($data)
     {
-        // test exceptions
-        // error_log("here 1");
-
-            SendNominationEmail::dispatch($data);
-
+        SendNominationEmail::dispatch($data);
     }
 }
 class Nominees

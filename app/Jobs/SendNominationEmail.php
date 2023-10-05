@@ -39,7 +39,7 @@ class SendNominationEmail implements ShouldQueue
         $name = $reciever->getName();
         try
         {
-
+            // $this->texep();
 
             $roles = [];
             for( $i = 1; $i < sizeof($data[1]) - 1; $i++)
@@ -61,14 +61,21 @@ class SendNominationEmail implements ShouldQueue
         }
         catch(TransportException $e)
         {
+            $encoded = json_encode($data);
+            error_log("data: ". $encoded);
             UnsentEmail::create([ // create one if not
                 'accountNo' => $data[0],
                 'subject' => 'New Nominations',
-                'data' => json_encode($data),
+                'data' => $encoded,
             ]);
         }
 
 
+    }
+
+    private function texep()
+    {
+        throw new TransportException();
     }
 
 

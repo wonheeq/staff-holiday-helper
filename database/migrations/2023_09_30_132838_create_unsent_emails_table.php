@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->char('accountNo', 7);
             $table->char('subject', 50);
-            $table->json('data');
+            $table->json('data')->nullable();
             $table->timestamps();
         });
     }
