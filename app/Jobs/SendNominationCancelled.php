@@ -15,7 +15,7 @@ use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
-class SendAppWaitingRev implements ShouldQueue
+class SendNominationCancelled implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,27 +36,21 @@ class SendAppWaitingRev implements ShouldQueue
     {
         $data = $this->data;
         $reciever = Account::where('accountNo', $data[0])->first();
-        $creator = Account::where('accountNo', $data[1])->first();
         $name = $reciever->getName();
+        $sender = Account::where('accountNo', $data[2])->first();
+
         try
         {
-            // Extract indexes into new array for formatting
-            $application = [];
-            for( $i = 0; $i < sizeof($data[2]) - 1; $i++)
-            {
-                array_push($application, $data[2][$i]);
-            }
-
             $dynamicData = [
                 'name' => $name,
-                'applicantId' => $creator->accountNo,
-                'applicantName' => $creator->getName(),
-                'application' => $application,
-                'period' => $data[2][sizeof($data[2]) - 1], // last index
+                'senderName' => $sender->getName(),
+                'senderNo' => $data[2],
+                'message' => $data[1][0],
+                'period' => $data[1][1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
+            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
         }
         catch(TransportException $e)
         {
@@ -64,7 +58,7 @@ class SendAppWaitingRev implements ShouldQueue
             $encoded = json_encode($data);
             UnsentEmail::create([
                 'accountNo' => $data[0],
-                'subject' => 'Application Awaiting Review',
+                'subject' => 'Nomination Cancelled',
                 'data' => $encoded,
             ]);
         }

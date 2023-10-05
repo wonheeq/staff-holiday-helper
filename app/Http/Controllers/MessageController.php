@@ -17,6 +17,7 @@ use App\Models\UnsentEmail;
 use App\Http\Controllers\EmailController;
 use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
+use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationEmail;
 
 class MessageController extends Controller
@@ -370,11 +371,14 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
         $hours = $preferences->hours;
         if( $hours == 0 )
         {
-            // do this part;
+            // Collect data and queue an email
+            // application number, duration, staff account Id
+            $data = [$nomineeNo, $content, $application->accountNo];
+            SendNominationCancelled::dispatch($data);
         }
     }
 
