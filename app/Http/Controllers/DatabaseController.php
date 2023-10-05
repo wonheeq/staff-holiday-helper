@@ -732,13 +732,16 @@ class DatabaseController extends Controller
             switch ($data['table']) {
                 case 'accounts':                    
                     // Removing Account
+                    Account::where('superiorNo', $data['entryId'])->touch();
                     Account::destroy($data['entryId']);
                     break;
                 case 'applications':
                     Application::destroy($data['entryId']);
                     break;
                 case 'nominations':
-                    Nomination::destroy($data['entryId']);
+                    Nomination::where('applicationNo', $data['applicationNo'])
+                              ->where('nomineeNo', $data['nomineeNo'])
+                              ->where('accountRoleId', $data['accountRoleId'])->delete();
                     break;
                 case 'accountRoles':
                     AccountRole::destroy($data['entryId']);
@@ -747,12 +750,16 @@ class DatabaseController extends Controller
                     Role::destroy($data['entryId']);
                     break;
                 case 'units':
+                    AccountRole::where('unitId', $data['entryId'])->touch();
                     Unit::destroy($data['entryId']);
+                    
                     break;
                 case 'majors':
+                    AccountRole::where('majorId', $data['entryId'])->touch();
                     Major::destroy($data['entryId']);
                     break;
                 case 'courses':
+                    AccountRole::where('courseId', $data['entryId'])->touch();
                     Course::destroy($data['entryId']);
                     break;
                 case 'schools':
@@ -760,7 +767,7 @@ class DatabaseController extends Controller
                         School::destroy($data['entryId']);
                     }
                     else {
-                        return response()->json(['error' => 'School Code \'1\' can not be deleted.'], 500);
+                        return response()->json(['error' => 'School Code \'1\' deletion is not an allowed operation.'], 500);
                     }
                     break;
                 case 'messages':

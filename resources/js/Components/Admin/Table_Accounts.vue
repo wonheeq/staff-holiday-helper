@@ -7,7 +7,7 @@ import { VueGoodTable } from 'vue-good-table-next';
 
 <script>
 import axios from "axios";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -53,7 +53,7 @@ export default {
                 label: '',
                 field: 'delete',
                 sortable: false
-                },
+                }
             ],
             accounts: [],
             c: defaultC,
@@ -95,8 +95,8 @@ export default {
             //console.log(rowId);
             Swal.fire({
                 icon: 'warning',
-                title: 'Delete ' + rowId + '?',
-                text: 'This will not only remove the account from the database, but also all applications, nominations, account roles, and messages associated in any way with the account',
+                title: 'Delete \'' + rowId + '\'?',
+                text: 'This will not only remove the account from the database, but also all applications, nominations, account roles, and messages associated in any way with the account.',
                 showDenyButton: true,
                 confirmButtonText: 'Yes',
                 confirmButtonColor: '#22C55E',

@@ -7,6 +7,7 @@ import { VueGoodTable } from 'vue-good-table-next';
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -51,6 +52,11 @@ export default {
                 {
                 label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
+                },
+                {
+                label: '',
+                field: 'delete',
+                sortable: false
                 }
             ],
             accountRoles: [],
@@ -89,6 +95,60 @@ export default {
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },
+        deleteClicked: function(rowId) {
+            //console.log(rowId);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete \'' + rowId + '\'?',
+                text: 'This will not only remove the account role from the database, but also all nominations associated in any way with the account role.',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#22C55E',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteEntry(rowId);
+                }
+            });
+        },
+        deleteEntry: function(rowId) {
+            //console.log('deleting');
+
+            let data = {
+                'table': 'accountRoles',
+                'entryId': rowId
+            }
+
+            // Removing AccountRole from DB
+            axios.post("/api/dropEntry/" + this.user, data)
+            .then((response) => {
+                if (response.status == 200) {   
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully deleted account role.'
+                    });
+
+                    // Reset Table
+                    axios.get("/api/allAccountRoles/" + this.user)
+                    .then((response) => {
+                        this.accountRoles = response.data;
+                        //console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });                 
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: error.response.data.error
+                });
+            });
+        }
     }
 };
 
@@ -117,6 +177,13 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-row="props">
+                        <span v-if="props.column.field == 'delete'">
+                            <button type="button" class="" v-on:click="deleteClicked(props.row.accountRoleId)">
+                                <img src="/images/delete.svg" />
+                            </button>
+                        </span>
+                    </template>
                     <template #emptystate>
                         No entries found!
                     </template>        
