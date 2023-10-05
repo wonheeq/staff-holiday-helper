@@ -19,6 +19,7 @@ use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationEmail;
+use App\Jobs\SendNominationsCancelled;
 
 class MessageController extends Controller
 {
@@ -373,10 +374,9 @@ class MessageController extends Controller
 
         $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
         $hours = $preferences->hours;
-        if( $hours == 0 )
+        if( $hours == 0 ) // If user on instant notificatoins
         {
             // Collect data and queue an email
-            // application number, duration, staff account Id
             $data = [$nomineeNo, $content, $application->accountNo];
             SendNominationCancelled::dispatch($data);
         }
@@ -446,11 +446,13 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
             $hours = $preferences->hours;
-            if( $hours == 0 )
+            if( $hours == 0 ) // if on instant notifications
             {
-                // do this part;
+                // Collect data and queue an email
+                $data = [$nomineeNo, $content, ];
+                SendNominationsCancelled::dispatch($data);
             }
         }
     }
@@ -726,12 +728,12 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-            $hours = $preferences->hours;
-            if( $hours == 0 )
-            {
-                // do this part;
-            }
+            // $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            // $hours = $preferences->hours;
+            // if( $hours == 0 )
+            // {
+            //     // do this part;
+            // }
         }
     }
 

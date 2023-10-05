@@ -15,6 +15,7 @@ use App\Models\Message;
 use App\Models\EmailPreference;
 use DateTime;
 use App\Jobs\SendNominationEmailJob;
+use App\Jobs\SendNominationsCancelled;
 use Error;
 
 class EmailController extends Controller
@@ -169,12 +170,32 @@ class EmailController extends Controller
                 case "Nomination Cancelled":
                     $this->attemptNominationCancelled($email);
                 break;
+
+                case "Nomination/s Cancelled":
+                    $this->attemptNominationsCancelled($email);
+                break;
             }
         }
     }
 
+    // Attempt to send an unsent "Nomination/s Cancelled Email
+    private function attemptNominationsCancelled($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendNominationsCancelled::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
+        }
+    }
 
-    // Attemp to send an unset "Nomination Cancelled" Email
+
+    // Attempt to send an unsent "Nomination Cancelled" Email
     private function attemptNominationCancelled($email)
     {
         try
