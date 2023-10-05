@@ -52,7 +52,7 @@ function changeReminderTimeframe() {
         'accountNo': user.value.accountNo,
     };
 
-    axios.post('api/setReminderTimeframe', data)
+    axios.post('/api/setReminderTimeframe', data)
         .then(res => {
             if (res.status == 500) {
                 Swal.fire({
