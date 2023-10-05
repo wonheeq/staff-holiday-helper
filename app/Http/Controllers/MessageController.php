@@ -211,7 +211,9 @@ class MessageController extends Controller
         $hours = $preferences->hours;
         if( $hours == 0 )
         {
-            // do this part;
+            $data = [$superiorNo, $content];
+            $emailController = new EmailController();
+            $emailController->sendAppRevEmail($data);
         }
     }
 
@@ -295,6 +297,7 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
+
                 $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
                 $hours = $preferences->hours;
                 if( $hours == 0 )

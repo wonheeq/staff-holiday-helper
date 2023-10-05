@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationEmail;
 use App\Mail\MJML;
 use App\Models\UnsentEmail;
@@ -214,6 +215,11 @@ class EmailController extends Controller
     public function sendNominationEmail($data)
     {
         SendNominationEmail::dispatch($data);
+    }
+
+    public function sendAppRevEmail($data)
+    {
+        SendAppWaitingRev::dispatch($data);
     }
 }
 class Nominees

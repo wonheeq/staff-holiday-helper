@@ -15,7 +15,7 @@ use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
-class SendNominationEmail implements ShouldQueue
+class SendAppWaitingRev implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -41,30 +41,29 @@ class SendNominationEmail implements ShouldQueue
         {
             // $this->texep();
 
-            $roles = [];
-            for( $i = 1; $i < sizeof($data[1]) - 1; $i++)
+            $application = [];
+            for( $i = 0; $i < sizeof($data[1]) - 1; $i++)
             {
-                array_push($roles, $data[1][$i]);
+                array_push($application, $data[1][$i]);
             }
 
 
             $dynamicData = [
                 'name' => $name,
-                'message' => $data[1][0],
-                'roles' => $roles,
+                'application' => $application,
                 'period' => $data[1][sizeof($data[1]) - 1],
             ];
             // dd($dynamicData);
 
             // Mail::to($reciever->getEmail)->send(new MJML("New Nomination", "email/nomination", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("New Nominations", "email/nomination", $dynamicData));
+            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
             UnsentEmail::create([ // create one if not
                 'accountNo' => $data[0],
-                'subject' => 'New Nominations',
+                'subject' => 'Application Awaiting Review',
                 'data' => $encoded,
             ]);
         }
