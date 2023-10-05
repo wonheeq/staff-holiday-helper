@@ -705,4 +705,55 @@ class DatabaseController extends Controller
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);
     }
+
+    /**
+     * Removes entry from database
+     */
+    public function dropEntry(Request $request, String $accountNo) { 
+         // Check if user exists for given accountNo
+         if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            Log::info($request);
+            $data = $request->all();
+            Log::info($data);
+
+            // Use 'fields' to work out which model the entry applies to.
+            /*switch ($data['fields']) {
+                case 'accountFields':
+                    $response = $this->addAccount($data['newEntry']);
+                    break;
+                case 'accountRoleFields':
+                    $response = $this->addAccountRole($data['newEntry']);
+                    break;
+                case 'roleFields':
+                    $response = $this->addRole($data['newEntry']);
+                    break;
+                case 'unitFields':
+                    $response = $this->addUnit($data['newEntry']);
+                    break;
+                case 'majorFields':
+                    $response = $this->addMajor($data['newEntry']);
+                    break;
+                case 'courseFields':
+                    $response = $this->addCourse($data['newEntry']);
+                    break;
+                case 'schoolFields':
+                    $response = $this->addSchool($data['newEntry']);
+                    break;
+                default:
+                    return response()->json(['error' => 'Could not determine db table'], 500);
+            }*/
+  
+            return response()->json(['success' => 'success'], 200);
+        }  
+    }
 }

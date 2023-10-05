@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum', 'sysadmin', 'api'])->group(function () {
 
     Route::get('getCSVTemplate/{accountNo}/{fileName}', [DatabaseController::class, 'sendCSVTemplate']);
     Route::post('addEntriesFromCSV/{accountNo}', [DatabaseController::class, 'addEntriesFromCSV']);
+    Route::delete('dropEntry/{accountNo}', [DatabaseController::class, 'dropEntry']);
 });
 
 

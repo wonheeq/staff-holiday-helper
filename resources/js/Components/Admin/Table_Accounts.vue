@@ -7,6 +7,7 @@ import { VueGoodTable } from 'vue-good-table-next';
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2'
 
 export default {
     props: {
@@ -47,7 +48,12 @@ export default {
                 {
                 label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
-                }
+                },
+                {
+                label: '',
+                field: 'delete',
+                sortable: false
+                },
             ],
             accounts: [],
             c: defaultC,
@@ -85,6 +91,47 @@ export default {
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },
+        deleteClicked: function(rowId) {
+            //console.log(rowId);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete ' + rowId + '?',
+                text: 'This will remove the account from the database.',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#22C55E',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteEntry(rowId);
+                }
+            });
+        },
+        deleteEntry: function(rowId) {
+            //console.log('deleting');
+
+            let data = {
+                'table': 'accounts',
+                'entryId': rowId
+            }
+
+            // Removing Account from DB
+            axios.delete("/api/dropEntry/" + this.user, data) // FFFs it won't send the data again.
+            .then((response) => {
+                if (response.status == 200) {   
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully deleted account.'
+                    });
+
+                    // Reset Table
+                    this.accounts = response.data;                               
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
     }
 };
 
@@ -99,7 +146,7 @@ let onSearch = () => {
             <div remove-tailwind-bg>
                 <VueGoodTable
                     :rows="accounts"
-                    :columns="columns"        
+                    :columns="columns"             
                     v-bind:max-height= tHeight
                     :fixed-header="{
                         enabled: true,
@@ -113,6 +160,13 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-row="props">
+                        <span v-if="props.column.field == 'delete'">
+                            <button type="button" class="" v-on:click="deleteClicked(props.row.accountNo)">
+                                <img src="/images/delete.svg" />
+                            </button>
+                        </span>
+                    </template>
                     <template #emptystate>
                         No entries found!
                     </template>     
