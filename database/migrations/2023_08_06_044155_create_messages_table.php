@@ -23,9 +23,9 @@ return new class extends Migration
         });
 
         Schema::table('messages',function (Blueprint $table) {
-            $table->foreign('receiverNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
-            $table->foreign('senderNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
-            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnUpdate();
+            $table->foreign('receiverNo')->references('accountNo')->on('accounts')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('senderNo')->references('accountNo')->on('accounts')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('applicationNo')->references('applicationNo')->on('applications')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

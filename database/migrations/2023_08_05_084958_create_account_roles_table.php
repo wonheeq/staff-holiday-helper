@@ -23,12 +23,12 @@ return new class extends Migration
         });
 
         Schema::table('account_roles',function (Blueprint $table) {
-            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnUpdate();
-            $table->foreign('roleId')->references('roleId')->on('roles')->cascadeOnUpdate();
+            $table->foreign('accountNo')->references('accountNo')->on('accounts')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('roleId')->references('roleId')->on('roles')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('unitId')->references('unitId')->on('units')->cascadeOnUpdate()->nullOnDelete();
             $table->foreign('majorId')->references('majorId')->on('majors')->cascadeOnUpdate()->nullOnDelete();
             $table->foreign('courseId')->references('courseId')->on('courses')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnUpdate();
+            $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

@@ -96,7 +96,7 @@ export default {
             Swal.fire({
                 icon: 'warning',
                 title: 'Delete ' + rowId + '?',
-                text: 'This will remove the account from the database.',
+                text: 'This will not only remove the account from the database, but also all applications, nominations, account roles, and messages associated in any way with the account',
                 showDenyButton: true,
                 confirmButtonText: 'Yes',
                 confirmButtonColor: '#22C55E',
@@ -116,7 +116,7 @@ export default {
             }
 
             // Removing Account from DB
-            axios.delete("/api/dropEntry/" + this.user, data) // FFFs it won't send the data again.
+            axios.post("/api/dropEntry/" + this.user, data)
             .then((response) => {
                 if (response.status == 200) {   
                     Swal.fire({
@@ -130,6 +130,12 @@ export default {
             })
             .catch((error) => {
                 console.log(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: error.response.data.error
+                });
             });
         }
     }

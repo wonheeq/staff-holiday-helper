@@ -9,6 +9,9 @@ use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+use App\Models\Application;
+use App\Models\Nomination;
+use App\Models\Message;
 //use App\Models\EmailPreference;
 
 
@@ -722,36 +725,66 @@ class DatabaseController extends Controller
                 return response()->json(['error' => 'User not authorized for request.'], 500);
             }
 
-            Log::info($request);
             $data = $request->all();
-            Log::info($data);
+            //Log::info($data);
 
-            // Use 'fields' to work out which model the entry applies to.
-            /*switch ($data['fields']) {
-                case 'accountFields':
-                    $response = $this->addAccount($data['newEntry']);
+            // Use 'table' to work out which model the entry is being removed from.
+            switch ($data['table']) {
+                case 'accounts':                    
+                    // If account is a line manager type account it may have to be removed as superiorNo to other accounts
+                    /*if (Account::where('accountNo', $data['entryId'])->where('accountType', '!=', 'staff')->exists()) {
+                        Account::where('superiorNo', $data['entryId'])->update(['superiorNo' => NULL])->save();
+                    }*/
+
+                    // Must first remove entries from other tables that use this account for a foreign key.
+                    //Nomination::where('nomineeNo', $data['entryId'])->delete();
+
+                    //AccountRole::where('accountNo', $data['entryId'])->delete();
+
+                    //Message::where('recieverNo', $data['entryId'])->delete();
+                    //Message::where('senderNo', $data['entryId'])->delete();
+
+                    //Application::where('accountNo', $data['entryId'])->delete();
+                    //Application::where('processedBy', $data['entryId'])->delete();
+
+                    // Removing Account
+                    Account::destroy($data['entryId']);
                     break;
-                case 'accountRoleFields':
-                    $response = $this->addAccountRole($data['newEntry']);
+                case 'applications':
+                    Application::destroy($data['entryId']);
                     break;
-                case 'roleFields':
-                    $response = $this->addRole($data['newEntry']);
+                case 'nominations':
+                    Nomination::destroy($data['entryId']);
                     break;
-                case 'unitFields':
-                    $response = $this->addUnit($data['newEntry']);
+                case 'accountRoles':
+                    AccountRole::destroy($data['entryId']);
                     break;
-                case 'majorFields':
-                    $response = $this->addMajor($data['newEntry']);
+                case 'roles':
+                    Role::destroy($data['entryId']);
                     break;
-                case 'courseFields':
-                    $response = $this->addCourse($data['newEntry']);
+                case 'units':
+                    Unit::destroy($data['entryId']);
                     break;
-                case 'schoolFields':
-                    $response = $this->addSchool($data['newEntry']);
+                case 'majors':
+                    Major::destroy($data['entryId']);
+                    break;
+                case 'courses':
+                    Course::destroy($data['entryId']);
+                    break;
+                case 'schools':
+                    if ($data['entryId'] != 1) {
+                        School::destroy($data['entryId']);
+                    }
+                    else {
+                        return response()->json(['error' => 'School Code \'1\' can not be deleted.'], 500);
+                    }
+                    break;
+                case 'messages':
+                    Message::destroy($data['entryId']);
                     break;
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
-            }*/
+            }
   
             return response()->json(['success' => 'success'], 200);
         }  
