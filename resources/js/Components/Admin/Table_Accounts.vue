@@ -125,7 +125,14 @@ export default {
                     });
 
                     // Reset Table
-                    this.accounts = response.data;                               
+                    axios.get("/api/allAccounts/" + this.user)
+                    .then((response) => {
+                        this.accounts = response.data;
+                        //console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });                 
                 }
             })
             .catch((error) => {

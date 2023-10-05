@@ -731,22 +731,6 @@ class DatabaseController extends Controller
             // Use 'table' to work out which model the entry is being removed from.
             switch ($data['table']) {
                 case 'accounts':                    
-                    // If account is a line manager type account it may have to be removed as superiorNo to other accounts
-                    /*if (Account::where('accountNo', $data['entryId'])->where('accountType', '!=', 'staff')->exists()) {
-                        Account::where('superiorNo', $data['entryId'])->update(['superiorNo' => NULL])->save();
-                    }*/
-
-                    // Must first remove entries from other tables that use this account for a foreign key.
-                    //Nomination::where('nomineeNo', $data['entryId'])->delete();
-
-                    //AccountRole::where('accountNo', $data['entryId'])->delete();
-
-                    //Message::where('recieverNo', $data['entryId'])->delete();
-                    //Message::where('senderNo', $data['entryId'])->delete();
-
-                    //Application::where('accountNo', $data['entryId'])->delete();
-                    //Application::where('processedBy', $data['entryId'])->delete();
-
                     // Removing Account
                     Account::destroy($data['entryId']);
                     break;
