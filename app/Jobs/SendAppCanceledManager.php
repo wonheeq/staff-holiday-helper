@@ -40,8 +40,6 @@ class SendAppCanceledManager implements ShouldQueue
         $name = $reciever->getName();
         try
         {
-            // $this->texep();
-
             $dynamicData = [
                 'name' => $name,
                 'message' => $data[1][0],
@@ -61,14 +59,5 @@ class SendAppCanceledManager implements ShouldQueue
                 'data' => $encoded,
             ]);
         }
-
-
     }
-
-    private function texep()
-    {
-        throw new TransportException();
-    }
-
-
 }
