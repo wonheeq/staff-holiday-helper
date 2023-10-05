@@ -15,6 +15,8 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
 use App\Http\Controllers\EmailController;
+use App\Jobs\SendAppWaitingRev;
+use App\Jobs\SendNominationEmail;
 
 class MessageController extends Controller
 {
@@ -211,9 +213,8 @@ class MessageController extends Controller
         $hours = $preferences->hours;
         if( $hours == 0 )
         {
-            $data = [$superiorNo, $content];
-            $emailController = new EmailController();
-            $emailController->sendAppRevEmail($data);
+            $data = [$superiorNo, $application->accountNo, $content];
+            SendAppWaitingRev::dispatch($data);
         }
     }
 
@@ -303,8 +304,9 @@ class MessageController extends Controller
                 if( $hours == 0 )
                 {
                     $data = [$nomineeNo, $content];
-                    $emailController = new EmailController();
-                    $emailController->sendNominationEmail($data);
+                    // $emailController = new EmailController();
+                    // $emailController->sendNominationEmail($data);
+                    SendNominationEmail::dispatch($data);
                 }
             }
         }

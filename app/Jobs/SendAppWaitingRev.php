@@ -36,27 +36,30 @@ class SendAppWaitingRev implements ShouldQueue
     {
         $data = $this->data;
         $reciever = Account::where('accountNo', $data[0])->first();
+        $creator = Account::where('accountNo', $data[1])->first();
         $name = $reciever->getName();
         try
         {
-            // $this->texep();
+            $this->texep();
 
-            $application = [];
-            for( $i = 0; $i < sizeof($data[1]) - 1; $i++)
-            {
-                array_push($application, $data[1][$i]);
-            }
+            // $application = [];
+            // for( $i = 0; $i < sizeof($data[2]) - 1; $i++)
+            // {
+            //     array_push($application, $data[2][$i]);
+            // }
 
 
-            $dynamicData = [
-                'name' => $name,
-                'application' => $application,
-                'period' => $data[1][sizeof($data[1]) - 1],
-            ];
-            // dd($dynamicData);
+            // $dynamicData = [
+            //     'name' => $name,
+            //     'applicantId' => $creator->accountNo,
+            //     'applicantName' => $creator->getName(),
+            //     'application' => $application,
+            //     'period' => $data[2][sizeof($data[2]) - 1],
+            // ];
+            // // dd($dynamicData);
 
-            // Mail::to($reciever->getEmail)->send(new MJML("New Nomination", "email/nomination", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // // Mail::to($reciever->getEmail)->send(new MJML("New Nomination", "email/nomination", $dynamicData));
+            // Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {

@@ -155,7 +155,26 @@ class EmailController extends Controller
                 case "New Nominations":
                     $this->attemptNewNominations($email);
                 break;
+
+                case "Application Awaiting Review":
+                    $this->attemptAppReview($email);
+                break;
             }
+        }
+    }
+
+    private function attemptAppReview($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendAppWaitingRev::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 
@@ -166,7 +185,7 @@ class EmailController extends Controller
         try
         {
             $data = json_decode($email->data);
-            $this->sendNominationEmail($data);
+            SendNominationEmail::dispatch($data);
             $email->delete();
         }
         catch(TransportException $e)
@@ -212,15 +231,6 @@ class EmailController extends Controller
         }
     }
 
-    public function sendNominationEmail($data)
-    {
-        SendNominationEmail::dispatch($data);
-    }
-
-    public function sendAppRevEmail($data)
-    {
-        SendAppWaitingRev::dispatch($data);
-    }
 }
 class Nominees
 {

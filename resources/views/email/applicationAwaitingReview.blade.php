@@ -1,7 +1,7 @@
 <mjml>
     <mj-head>
-      <mj-title>Nomination</mj-title>
-      <mj-preview>New Nomination</mj-preview>
+      <mj-title>AppAwaitingReview</mj-title>
+      <mj-preview>Application Awaiting Review</mj-preview>
       <mj-attributes>
         <mj-all font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-all>
         <mj-text font-weight="400" font-size="16px" color="#000000" line-height="24px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-text>
@@ -22,14 +22,14 @@
           </mj-column>
           <mj-column vertical-align="middle" width="80%" background-color="#FFFFFF">
             <mj-text color="#212b35" font-weight="bold" font-size="20px" align="center">
-              New Nominations
+              Application Awaiting Review
             </mj-text>
             <mj-text color="#637381" font-size="16px">
               Hi {{ $dynamicData['name'] }},
             </mj-text>
 
            	<mj-text color="#637381" font-size="16px">
-              You have a new application awaiting review:
+              You have a new application from {{ $dynamicData['applicantName'] }} ({{ $dynamicData['applicantId'] }}) awaiting review:
             </mj-text>
 
 
@@ -67,9 +67,7 @@
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email because your organisation is using LeaveOnTime and has created an account for you.
             </mj-text>
-            <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-              &copy; Leave On Time.
-            </mj-text>
+
           </mj-column>
         </mj-section>
       </mj-wrapper>
