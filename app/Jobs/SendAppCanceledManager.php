@@ -15,7 +15,7 @@ use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
-class SendAppWaitingRev implements ShouldQueue
+class SendAppCanceledManager implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,37 +36,39 @@ class SendAppWaitingRev implements ShouldQueue
     {
         $data = $this->data;
         $reciever = Account::where('accountNo', $data[0])->first();
-        $creator = Account::where('accountNo', $data[1])->first();
+        $staffMember = Account::where('accountNo', $data[2])->first();
         $name = $reciever->getName();
         try
         {
-            // Extract indexes into new array for formatting
-            $application = [];
-            for( $i = 0; $i < sizeof($data[2]) - 1; $i++)
-            {
-                array_push($application, $data[2][$i]);
-            }
+            // $this->texep();
 
             $dynamicData = [
                 'name' => $name,
-                'applicantId' => $creator->accountNo,
-                'applicantName' => $creator->getName(),
-                'application' => $application,
-                'period' => $data[2][sizeof($data[2]) - 1], // last index
+                'message' => $data[1][0],
+                'applicantId' => $data[2],
+                'applicantName' => $staffMember->getName(),
+                'period' => $data[1][1],
             ];
-
-            // Mail::to($reciever->getEmail)->send(new MJML(Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
         }
         catch(TransportException $e)
         {
-            // if error, encode data and create row
             $encoded = json_encode($data);
-            UnsentEmail::create([
+            UnsentEmail::create([ // create one if not
                 'accountNo' => $data[0],
-                'subject' => 'Application Awaiting Review',
+                'subject' => 'Application Cancelled',
                 'data' => $encoded,
             ]);
         }
+
+
     }
+
+    private function texep()
+    {
+        throw new TransportException();
+    }
+
+
 }

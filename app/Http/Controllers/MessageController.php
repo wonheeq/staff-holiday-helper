@@ -15,6 +15,7 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
 use App\Http\Controllers\EmailController;
+use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationEmail;
 
@@ -211,12 +212,14 @@ class MessageController extends Controller
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
         $hours = $preferences->hours;
-        if( $hours == 0 )
+        if( $hours == 0 ) // If user is on instant notifications
         {
+            // collect require data, and queue an email
             $data = [$superiorNo, $application->accountNo, $content];
             SendAppWaitingRev::dispatch($data);
         }
     }
+
 
     /*
     Notifies nominees that they have been nominated for a newly created application
@@ -290,7 +293,7 @@ class MessageController extends Controller
                 );
 
                 // Create message for nominee
-                $temp = Message::create([
+                Message::create([
                     'applicationNo' => $applicationNo,
                     'receiverNo' => $nomineeNo,
                     'senderNo' => $application->accountNo,
@@ -301,11 +304,10 @@ class MessageController extends Controller
 
                 $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
                 $hours = $preferences->hours;
-                if( $hours == 0 )
+                if( $hours == 0 ) // If user is on instant notificaitons
                 {
+                    // Collect data and queue an email
                     $data = [$nomineeNo, $content];
-                    // $emailController = new EmailController();
-                    // $emailController->sendNominationEmail($data);
                     SendNominationEmail::dispatch($data);
                 }
             }
@@ -337,9 +339,12 @@ class MessageController extends Controller
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
         $hours = $preferences->hours;
-        if( $hours == 0 )
+        if( $hours == 0 ) // If on instant notifications
         {
-            // do this part;
+            // Collect data and queue an email
+            // application number, duration, staff account Id
+            $data = [$superiorNo, $content, $application->accountNo];
+            SendAppCanceledManager::dispatch($data);
         }
     }
 

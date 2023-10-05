@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationEmail;
 use App\Mail\MJML;
@@ -159,10 +160,32 @@ class EmailController extends Controller
                 case "Application Awaiting Review":
                     $this->attemptAppReview($email);
                 break;
+
+                case "Application Cancelled":
+                    $this->attemptAppCancelled($email);
+                break;
             }
         }
     }
 
+
+    private function attemptAppCancelled($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendAppCanceledManager::dispatch($data);
+            $email->delete();
+        }
+        catch( TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
+        }
+    }
+
+
+    // Attempt to send an unsent "Application Awaiting Review" Email
     private function attemptAppReview($email)
     {
         try
@@ -179,7 +202,7 @@ class EmailController extends Controller
     }
 
 
-    // handle a new nomination type email in the backlog
+    // Attempt to send an unsent "New Nomination" Type email
     private function attemptNewNominations($email)
     {
         try
