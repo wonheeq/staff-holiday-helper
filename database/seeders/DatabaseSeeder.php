@@ -79,6 +79,7 @@ class DatabaseSeeder extends Seeder
             'fName' => 'TEST',
             'lName' => 'DEFAULT ADMIN',
             'password' => Hash::make('testPassword1'),
+            'schoolId' => 1
         ]);
 
 
@@ -227,7 +228,7 @@ class DatabaseSeeder extends Seeder
             /*EmailPreference::create([
                 'accountNo' => $account['accountNo']
             ]);*/
-            
+
             AccountRole::factory(5)->create([
                 'accountNo' => $account['accountNo'],
             ]);

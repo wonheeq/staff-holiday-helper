@@ -730,9 +730,16 @@ class DatabaseController extends Controller
 
             // Use 'table' to work out which model the entry is being removed from.
             switch ($data['table']) {
-                case 'accounts':                    
+                case 'accounts': 
+                    if ($data['entryId'] == $accountNo) {
+                        return response()->json(['error' => 'Blocked: Deleting your own account is not permitted.'], 500);
+                    }
+                    else if (Account::where('accountNo', $data['entryId'])->where('schoolId', 1)->exists()) {
+                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted'], 500);
+                    }
+                    
                     // Removing Account
-                    Account::where('superiorNo', $data['entryId'])->touch();
+                    Account::where('superiorNo', )->touch();
                     Account::destroy($data['entryId']);
                     break;
                 case 'applications':
@@ -764,10 +771,13 @@ class DatabaseController extends Controller
                     break;
                 case 'schools':
                     if ($data['entryId'] != 1) {
+                        if (Account::where('accountNo', $accountNo)->where('schoolId', $data['entryId'])->exists()) {
+                            return response()->json(['error' => 'Blocked: Deleting this school would result in you own account being deleted.'], 500);
+                        }
                         School::destroy($data['entryId']);
                     }
                     else {
-                        return response()->json(['error' => 'School Code \'1\' deletion is not an allowed operation.'], 500);
+                        return response()->json(['error' => 'Blocked: School Code \'1\' deletion is not an allowed operation.'], 500);
                     }
                     break;
                 case 'messages':
