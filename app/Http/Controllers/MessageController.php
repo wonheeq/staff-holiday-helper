@@ -24,6 +24,7 @@ use App\Jobs\SendNominationsCancelled;
 use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
 use App\Jobs\SendApplicationDecision;
+use App\Jobs\SendConfirmSubstitutions;
 use App\Jobs\SendSystemNotification;
 use App\Models\ManagerNomination;
 

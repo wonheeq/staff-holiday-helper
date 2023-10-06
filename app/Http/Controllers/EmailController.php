@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
+use App\Jobs\SendConfirmSubstitutions;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationDeclined;
 use App\Jobs\SendNominationEmail;
@@ -199,7 +200,28 @@ class EmailController extends Controller
                 case "System Notification":
                     $this->attemptSystemNotification($email);
                 break;
+
+                case "Confirmed Substitutions":
+                    $this->attemptConfirmedSubstitutions($email);
+                break;
             }
+        }
+    }
+
+
+    // Attempt to send an unsent "Confirmed Substitutions email
+    private function attemptConfirmedSubstitutions($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendConfirmSubstitutions::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 
