@@ -25,6 +25,7 @@ use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendSystemNotification;
+use App\Models\ManagerNomination;
 
 class MessageController extends Controller
 {
