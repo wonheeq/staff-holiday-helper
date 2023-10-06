@@ -1214,6 +1214,22 @@ class DatabaseControllerTest extends TestCase
         // Mock valid account entry to be removed from db
         $testAccount = Account::factory()->create();
 
+        // Mock accountRole using testAccount for testing onDeleteCascade()
+        $testAccountRole = AccountRole::factory()->create([
+            'accountNo' => $testAccount->accountNo
+        ]);
+
+        // Other entries that use testAccount for a foreign key
+        $testNomination = Nomination::factory()->create([
+            'nomineeNo' => $testAccount->accountNo
+        ]);
+        $testApplication = Application::factory()->create([
+            'accountNo' => $testAccount->accountNo
+        ]);
+        $testMessage = Message::factory()->create([
+            'senderNo' => $testAccount->accountNo
+        ]);
+
         $validRequest = array('table' => 'accounts', 'entryId' => $testAccount->accountNo);
 
         // Check for valid response
@@ -1224,8 +1240,52 @@ class DatabaseControllerTest extends TestCase
             Account::where('accountNo', $testAccount->accountNo)->exists()     
         ); 
 
+        $this->assertFalse(
+            AccountRole::where('accountNo', $testAccountRole->accountNo)->exists(),
+            Nomination::where('nomineeNo', $testNomination->nomineeNo)->exists(),    
+            Application::where('accountNo', $testApplication->accountNo)->exists(), 
+            Message::where('senderNo', $testMessage->senderNo)->exists()
+        );
+
         $testAccount->delete();
+        $testAccountRole->delete();
+        Nomination::where('nomineeNo', $testNomination->nominationNo)
+                    ->where('applicationNo', $testNomination->applicationNo)
+                    ->where('accountRoleId', $testNomination->accountRoleId)->delete();
+        $testApplication->delete();
+        $testMessage->delete();
     }
+
+    public function test_api_request_for_deleting_line_manager_account(): void
+    {
+        // Mock line manager account
+        $testLMAccount = Account::factory()->create([
+            'accountType' => 'lmanager'
+        ]);
+
+        $testStaffAccount = Account::factory()->create([
+            'accountType' => 'staff',
+            'superiorNo' => $testLMAccount->accountNo
+        ]);
+
+        $validRequest = array('table' => 'accounts', 'entryId' => $testLMAccount->accountNo);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Account::where('accountNo', $testLMAccount->accountNo)->exists()     
+        ); 
+
+        $this->assertTrue(
+            Account::where('accountNo', $testStaffAccount->accountNo)
+                   ->where('superiorNo', NULL)->exists()     
+        );
+
+        $testLMAccount->delete();
+        $testStaffAccount->delete();
+    } 
 
     public function test_api_request_for_deleting_application(): void
     {
@@ -1305,65 +1365,59 @@ class DatabaseControllerTest extends TestCase
         $testRole->delete();
     }
     
-    public function test_api_request_for_deleting_unit(): void
+    public function test_api_request_for_deleting_unit_major_and_course(): void
     {
-        // Mock valid unit entry to be removed from db
+        // Mock valid unit, major and course entry to be removed from db
         $testUnit = Unit::factory()->create();
+        $testMajor = Major::factory()->create();
+        $testCourse = Course::factory()->create();
 
-        $validRequest = array('table' => 'units', 'entryId' => $testUnit->unitId);
+        // Mock AccountRole to test nulling of the 3 FKs
+        $testAccountRole = AccountRole::factory()->create([
+            'unitId' => $testUnit->unitId,
+            'majorId' => $testMajor->majorId,
+            'courseId' => $testCourse->courseId
+        ]);
 
-        // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $validRequestU = array('table' => 'units', 'entryId' => $testUnit->unitId);
+        $validRequestM = array('table' => 'majors', 'entryId' => $testMajor->majorId);
+        $validRequestC = array('table' => 'courses', 'entryId' => $testCourse->courseId);
+
+        // Check for valid responses
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequestU);
+        $response->assertStatus(200);
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequestM);
+        $response->assertStatus(200);
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequestC);
         $response->assertStatus(200);
 
         $this->assertFalse(
             Unit::where('unitId', $testUnit->unitId)->exists()     
         ); 
-
-        $testUnit->delete();
-    }
-
-    public function test_api_request_for_deleting_major(): void
-    {
-        // Mock valid major entry to be removed from db
-        $testMajor = Major::factory()->create();
-
-        $validRequest = array('table' => 'majors', 'entryId' => $testMajor->majorId);
-
-        // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
-        $response->assertStatus(200);
-
         $this->assertFalse(
             Major::where('majorId', $testMajor->majorId)->exists()     
-        ); 
-
-        $testMajor->delete();
-    }
-
-    public function test_api_request_for_deleting_course(): void
-    {
-        // Mock valid course entry to be removed from db
-        $testCourse = Course::factory()->create();
-
-        $validRequest = array('table' => 'courses', 'entryId' => $testCourse->courseId);
-
-        // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
-        $response->assertStatus(200);
-
+        );
         $this->assertFalse(
             Course::where('courseId', $testCourse->courseId)->exists()     
         ); 
 
+        $this->assertTrue(
+            AccountRole::where('accountRoleId', $testAccountRole->accountRoleId)
+                       ->where('unitId', NULL)
+                       ->where('majorId', NULL)
+                       ->where('courseId', NULL)->exists()
+        );
+
+        $testAccountRole->delete();
+        $testUnit->delete();
+        $testMajor->delete();
         $testCourse->delete();
     }
 
-    public function test_api_request_for_deleting_school(): void
+    public function test_api_request_for_deleting_valid_and_invalid_school(): void
     {
         // Mock valid school entry to be removed from db
         $testSchool = School::create(['name' => 'test school']);
-
 
         $validRequest = array('table' => 'schools', 'entryId' => $testSchool->schoolId);
 
@@ -1376,5 +1430,15 @@ class DatabaseControllerTest extends TestCase
         ); 
 
         $testSchool->delete();
+
+        $inValidRequest = array('table' => 'schools', 'entryId' => 1); // School '1' should not be deleted
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        $this->assertTrue(
+            School::where('schoolId', 1)->exists()     
+        ); 
     }
 }   
