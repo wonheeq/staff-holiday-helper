@@ -11,6 +11,10 @@ use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
 
+use App\Models\Application;
+use App\Models\Nomination;
+use App\Models\Message;
+
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -1167,5 +1171,210 @@ class DatabaseControllerTest extends TestCase
 
         Course::where('courseId', 'XXVLMNOPQR')->delete();
         Course::where('courseId', $tempCourse->courseId)->delete();
+    }
+
+
+    public function test_api_request_for_delete_entry_is_protected(): void
+    {
+        // Mock valid entry to be removed from db
+        $testUnit1 = Unit::factory()->create([
+            'unitId' => "TTTT5555"
+        ]);
+
+        $validRequest = array('table' => 'units', 'entryId' => $testUnit1->unitId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $testUnit2 = Unit::factory()->create([
+            'unitId' => "TTTT6666"
+        ]);
+        $validRequest = array('table' => 'units', 'entryId' => $testUnit2->unitId);
+
+        $response = $this->actingAs($this->otherUser1)->postJson("/api/dropEntry/{$this->otherUser1['accountNo']}", $validRequest);
+        $response->assertStatus(403);
+
+        $testUnit3 = Unit::factory()->create([
+            'unitId' => "TTTT7777"
+        ]);
+        $validRequest = array('table' => 'units', 'entryId' => $testUnit3->unitId);
+
+        $response = $this->actingAs($this->otherUser2)->postJson("/api/dropEntry/{$this->otherUser2['accountNo']}", $validRequest);
+        $response->assertStatus(403);
+
+        $testUnit1->delete();
+        $testUnit2->delete();
+        $testUnit3->delete();
+    }
+
+
+    public function test_api_request_for_deleting_account(): void
+    {
+        // Mock valid account entry to be removed from db
+        $testAccount = Account::factory()->create();
+
+        $validRequest = array('table' => 'accounts', 'entryId' => $testAccount->accountNo);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Account::where('accountNo', $testAccount->accountNo)->exists()     
+        ); 
+
+        $testAccount->delete();
+    }
+
+    public function test_api_request_for_deleting_application(): void
+    {
+        // Mock valid application entry to be removed from db
+        $testApplication = Application::factory()->create();
+
+        $validRequest = array('table' => 'applications', 'entryId' => $testApplication->applicationNo);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Application::where('applicationNo', $testApplication->applicationNo)->exists()     
+        ); 
+
+        $testApplication->delete();
+    }
+
+    public function test_api_request_for_deleting_nomination(): void
+    {
+        // Mock valid nomination entry to be removed from db
+        $testNomination = Nomination::factory()->create();
+
+        $validRequest = array('table' => 'nominations', 'applicationNo' => $testNomination->applicationNo,
+                              'nomineeNo' => $testNomination->nomineeNo, 'accountRoleId' => $testNomination->accountRoleId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Nomination::where('nomineeNo', $testNomination->nominationNo)
+                        ->where('applicationNo', $testNomination->applicationNo)
+                        ->where('accountRoleId', $testNomination->accountRoleId)->exists()     
+        ); 
+
+        Nomination::where('nomineeNo', $testNomination->nominationNo)
+                    ->where('applicationNo', $testNomination->applicationNo)
+                    ->where('accountRoleId', $testNomination->accountRoleId)->delete();
+    }
+
+    public function test_api_request_for_deleting_accountrole(): void
+    {
+        // Mock valid accountRole entry to be removed from db
+        $testAccountRole = AccountRole::factory()->create();
+
+        $validRequest = array('table' => 'accountRoles', 'entryId' => $testAccountRole->accountRoleId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            AccountRole::where('accountRoleId', $testAccountRole->accountRoleId)->exists()     
+        ); 
+
+        $testAccountRole->delete();
+    }
+
+    public function test_api_request_for_deleting_role(): void
+    {
+        // Mock valid role entry to be removed from db
+        $testRole = Role::create(['name' => 'test role']);
+
+
+        $validRequest = array('table' => 'roles', 'entryId' => $testRole->roleId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Role::where('roleId', $testRole->roleId)->exists()     
+        ); 
+
+        $testRole->delete();
+    }
+    
+    public function test_api_request_for_deleting_unit(): void
+    {
+        // Mock valid unit entry to be removed from db
+        $testUnit = Unit::factory()->create();
+
+        $validRequest = array('table' => 'units', 'entryId' => $testUnit->unitId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Unit::where('unitId', $testUnit->unitId)->exists()     
+        ); 
+
+        $testUnit->delete();
+    }
+
+    public function test_api_request_for_deleting_major(): void
+    {
+        // Mock valid major entry to be removed from db
+        $testMajor = Major::factory()->create();
+
+        $validRequest = array('table' => 'majors', 'entryId' => $testMajor->majorId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Major::where('majorId', $testMajor->majorId)->exists()     
+        ); 
+
+        $testMajor->delete();
+    }
+
+    public function test_api_request_for_deleting_course(): void
+    {
+        // Mock valid course entry to be removed from db
+        $testCourse = Course::factory()->create();
+
+        $validRequest = array('table' => 'courses', 'entryId' => $testCourse->courseId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            Course::where('courseId', $testCourse->courseId)->exists()     
+        ); 
+
+        $testCourse->delete();
+    }
+
+    public function test_api_request_for_deleting_school(): void
+    {
+        // Mock valid school entry to be removed from db
+        $testSchool = School::create(['name' => 'test school']);
+
+
+        $validRequest = array('table' => 'schools', 'entryId' => $testSchool->schoolId);
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/dropEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertFalse(
+            School::where('schoolId', $testSchool->schoolId)->exists()     
+        ); 
+
+        $testSchool->delete();
     }
 }   
