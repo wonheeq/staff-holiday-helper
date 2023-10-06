@@ -20,6 +20,7 @@ use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationEmail;
 use App\Jobs\SendNominationsCancelled;
+use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
 
 class MessageController extends Controller
@@ -731,12 +732,14 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            // $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-            // $hours = $preferences->hours;
-            // if( $hours == 0 )
-            // {
-            //     // do this part;
-            // }
+            $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 ) // on instant notifications
+            {
+                // Collect data and queue an email
+                $data = [$nomineeNo, $content, ];
+                SendNomineeAppEdited::dispatch($data);
+            }
         }
     }
 
