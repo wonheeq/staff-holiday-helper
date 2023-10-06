@@ -18,6 +18,7 @@ use App\Http\Controllers\EmailController;
 use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
+use App\Jobs\SendNominationDeclined;
 use App\Jobs\SendNominationEmail;
 use App\Jobs\SendNominationsCancelled;
 use App\Jobs\SendNomineeAppEdited;
@@ -836,11 +837,13 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
         $hours = $preferences->hours;
-        if( $hours == 0 )
+        if( $hours == 0 ) // on instant notifications
         {
-            // do this part;
+            // Collect data and queue an email
+            $data = [$application->accountNo, $content, ];
+            SendNominationDeclined::dispatch($data);
         }
     }
 

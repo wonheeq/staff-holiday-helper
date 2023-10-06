@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
+use App\Jobs\SendNominationDeclined;
 use App\Jobs\SendNominationEmail;
 use App\Mail\MJML;
 use App\Models\UnsentEmail;
@@ -184,7 +185,28 @@ class EmailController extends Controller
                 case "Edited Substitution Request":
                     $this->attemptEditedSubRequest($email);
                 break;
+
+                case "Nomination/s Rejected":
+                    $this->attemptNominationsRejected($email);
+                break;
             }
+        }
+    }
+
+
+    // Attempt to send an unsetn "Nomination/s Rejected" Email
+    private function attemptNominationsRejected($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendNominationDeclined::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 
