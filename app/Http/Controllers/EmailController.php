@@ -16,6 +16,7 @@ use App\Models\EmailPreference;
 use DateTime;
 use App\Jobs\SendNominationEmailJob;
 use App\Jobs\SendNominationsCancelled;
+use App\Jobs\SendSubPeriodEditSubset;
 use Error;
 
 class EmailController extends Controller
@@ -174,11 +175,33 @@ class EmailController extends Controller
                 case "Nomination/s Cancelled":
                     $this->attemptNominationsCancelled($email);
                 break;
+
+                case "Substitution Period Edited (Subset)":
+                    $this->attemptSubPeriodEditedSubset($email);
+                break;
             }
         }
     }
 
-    // Attempt to send an unsent "Nomination/s Cancelled Email
+
+    // Attempt to send an unsent "Substituion Period Edited (Subset)" Email
+    private function attemptSubPeriodEditedSubset($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendSubPeriodEditSubset::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
+        }
+    }
+
+
+    // Attempt to send an unsent "Nomination/s Cancelled" Email
     private function attemptNominationsCancelled($email)
     {
         try
