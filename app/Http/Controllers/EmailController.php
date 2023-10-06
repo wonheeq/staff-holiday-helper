@@ -20,6 +20,7 @@ use App\Jobs\SendNominationEmailJob;
 use App\Jobs\SendNominationsCancelled;
 use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
+use App\Jobs\SendSystemNotification;
 use Error;
 
 class EmailController extends Controller
@@ -194,7 +195,28 @@ class EmailController extends Controller
                 case "Application Updated":
                     $this->attemptAppUpdated($email);
                 break;
+
+                case "System Notification":
+                    $this->attemptSystemNotification($email);
+                break;
             }
+        }
+    }
+
+
+    // Attempt to send an unsent System announcement email
+    private function attemptSystemNotification($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendSystemNotification::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 

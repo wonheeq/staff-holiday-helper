@@ -24,6 +24,7 @@ use App\Jobs\SendNominationsCancelled;
 use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
 use App\Jobs\SendApplicationDecision;
+use App\Jobs\SendSystemNotification;
 
 class MessageController extends Controller
 {
@@ -348,7 +349,6 @@ class MessageController extends Controller
         if( $hours == 0 ) // If on instant notifications
         {
             // Collect data and queue an email
-            // application number, duration, staff account Id
             $data = [$superiorNo, $content, $application->accountNo];
             SendAppCanceledManager::dispatch($data);
         }
@@ -888,11 +888,13 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+            $preferences = EmailPreference::where('accountNo', $account->accountNo)->first();
             $hours = $preferences->hours;
-            if( $hours == 0 )
+            if( $hours == 0 ) // if user is on instant notifications
             {
-                // do this part;
+                // Collect data and queue an email
+                $data = [$account->accountNo, $content];
+                SendSystemNotification::dispatch($data);
             }
         }
 
