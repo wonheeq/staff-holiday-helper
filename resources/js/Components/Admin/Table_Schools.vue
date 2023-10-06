@@ -156,7 +156,7 @@ let onSearch = () => {
                     }">
                     <template #table-row="props">
                         <span v-if="props.column.field == 'delete'">
-                            <button type="button" class="" v-on:click="deleteClicked(props.row.schoolId)">
+                            <button type="button" class="4k:w-10 4k:h-10" v-on:click="deleteClicked(props.row.schoolId)">
                                 <img src="/images/delete.svg" />
                             </button>
                         </span>
