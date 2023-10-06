@@ -143,7 +143,7 @@ axios.post('/api/getEmailFrequency/', {
                 :class="isDark?'bg-cyan-600 text-blue-200':'bg-cyan-100 text-blue-800'"
                 v-show="displaySuccess"
             >
-                Your password has been changed successfully!
+                Your preference has been changed successfully!
             </p>
     </div>
 </div>

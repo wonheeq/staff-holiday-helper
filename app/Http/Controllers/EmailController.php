@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationDeclined;
@@ -189,7 +190,28 @@ class EmailController extends Controller
                 case "Nomination/s Rejected":
                     $this->attemptNominationsRejected($email);
                 break;
+
+                case "Application Updated":
+                    $this->attemptAppUpdated($email);
+                break;
             }
+        }
+    }
+
+
+    // Attempt to send an unsent "Application Updated" Email
+    private function attemptAppUpdated($email)
+    {
+        try
+        {
+            $data = json_decode($email->data);
+            SendApplicationDecision::dispatch($data);
+            $email->delete();
+        }
+        catch(TransportException $e)
+        {
+            // Do nothing, email stays in backlog
+            error_log($e);
         }
     }
 

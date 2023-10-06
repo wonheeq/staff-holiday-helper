@@ -23,6 +23,7 @@ use App\Jobs\SendNominationEmail;
 use App\Jobs\SendNominationsCancelled;
 use App\Jobs\SendNomineeAppEdited;
 use App\Jobs\SendSubPeriodEditSubset;
+use App\Jobs\SendApplicationDecision;
 
 class MessageController extends Controller
 {
@@ -787,9 +788,11 @@ class MessageController extends Controller
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
         $hours = $preferences->hours;
-        if( $hours == 0 )
+        if( $hours == 0 ) // if on instant notifications
         {
-            // do this part;
+            // Collect data and queue an email
+            $data = [$application->accountNo, $content, ];
+            SendApplicationDecision::dispatch($data);
         }
     }
 
