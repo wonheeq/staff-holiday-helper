@@ -52,7 +52,7 @@ class SendApplicationDecision implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Application Updated", "email/applicationUpdated", $dynamicData));
+            // Mail::to($reciever->getEmail)->queue(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Application Updated","email/applicationUpdated", $dynamicData));

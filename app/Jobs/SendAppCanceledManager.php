@@ -47,7 +47,7 @@ class SendAppCanceledManager implements ShouldQueue
                 'applicantName' => $staffMember->getName(),
                 'period' => $data[1][1],
             ];
-            // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to($reciever->getEmail)->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));

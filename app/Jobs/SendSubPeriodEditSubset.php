@@ -54,7 +54,7 @@ class SendSubPeriodEditSubset implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
+            // Mail::to($reciever->getEmail)->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));

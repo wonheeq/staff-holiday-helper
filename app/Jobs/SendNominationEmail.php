@@ -53,7 +53,7 @@ class SendNominationEmail implements ShouldQueue
                 'period' => $data[1][sizeof($data[1]) - 1],
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("New Nomination", "email/nomination", $dynamicData));
+            // Mail::to($reciever->getEmail)->queue(new MJML("New Nominations", "email/nomination", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("New Nominations", "email/nomination", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("New Nominations", "email/nomination", $dynamicData));

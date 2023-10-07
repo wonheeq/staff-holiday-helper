@@ -52,7 +52,7 @@ class SendConfirmSubstitutions implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to($reciever->getEmail)->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
