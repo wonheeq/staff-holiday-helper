@@ -53,9 +53,11 @@ class SendConfirmSubstitutions implements ShouldQueue
             ];
 
             // Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")
-                ->queue(new MJML("Confirmed Substitutions",
-                            "email/substitutionsConfirmed", $dynamicData));
+
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
         }
         catch(TransportException $e)
         {

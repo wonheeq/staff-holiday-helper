@@ -48,7 +48,11 @@ class SendAppCanceledManager implements ShouldQueue
                 'period' => $data[1][1],
             ];
             // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
         }
         catch(TransportException $e)
         {

@@ -56,7 +56,11 @@ class SendAppWaitingRev implements ShouldQueue
             ];
 
             // Mail::to($reciever->getEmail)->send(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("jansonferrall@gmail.com")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {
