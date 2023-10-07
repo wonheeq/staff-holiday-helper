@@ -49,12 +49,7 @@
                 <a class="text-link" href="https://leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
               </mj-text>
           </mj-column>
-          <mj-column width="90%">
-            <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
-              You are receiving this email because your organisation is using LeaveOnTime and has created an account for you.
-            </mj-text>
 
-          </mj-column>
           <mj-column width="90%">
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email because your organisation is using LeaveOnTime and has created an account for you.
