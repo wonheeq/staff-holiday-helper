@@ -153,58 +153,64 @@ class EmailController extends Controller
         $backlog = UnsentEmail::all();
         foreach($backlog as $email)
         {
-            // switch case used here for expandability to other email types
-            // that might be added later
-            $subject = $email->subject;
-            switch($subject){
-                case "Unacknowledged Messages":
-                    $this->attemptUnackMsg($email);
-                break;
+            $this->sortMail($email);
+        }
+    }
 
-                case "New Nominations":
-                    $this->attemptNewNominations($email);
-                break;
 
-                case "Application Awaiting Review":
-                    $this->attemptAppReview($email);
-                break;
+    public function sortMail($email)
+    {
+        // switch case used here for expandability to other email types
+        // that might be added later
+        $subject = $email->subject;
+        switch($subject){
+            case "Unacknowledged Messages":
+                $this->attemptUnackMsg($email);
+            break;
 
-                case "Application Cancelled":
-                    $this->attemptAppCancelled($email);
-                break;
+            case "New Nominations":
+                $this->attemptNewNominations($email);
+            break;
 
-                case "Nomination Cancelled":
-                    $this->attemptNominationCancelled($email);
-                break;
+            case "Application Awaiting Review":
+                $this->attemptAppReview($email);
+            break;
 
-                case "Nomination/s Cancelled":
-                    $this->attemptNominationsCancelled($email);
-                break;
+            case "Application Cancelled":
+                $this->attemptAppCancelled($email);
+            break;
 
-                case "Substitution Period Edited (Subset)":
-                    $this->attemptSubPeriodEditedSubset($email);
-                break;
+            case "Nomination Cancelled":
+                $this->attemptNominationCancelled($email);
+            break;
 
-                case "Edited Substitution Request":
-                    $this->attemptEditedSubRequest($email);
-                break;
+            case "Nomination/s Cancelled":
+                $this->attemptNominationsCancelled($email);
+            break;
 
-                case "Nomination/s Rejected":
-                    $this->attemptNominationsRejected($email);
-                break;
+            case "Substitution Period Edited (Subset)":
+                $this->attemptSubPeriodEditedSubset($email);
+            break;
 
-                case "Application Updated":
-                    $this->attemptAppUpdated($email);
-                break;
+            case "Edited Substitution Request":
+                $this->attemptEditedSubRequest($email);
+            break;
 
-                case "System Notification":
-                    $this->attemptSystemNotification($email);
-                break;
+            case "Nomination/s Rejected":
+                $this->attemptNominationsRejected($email);
+            break;
 
-                case "Confirmed Substitutions":
-                    $this->attemptConfirmedSubstitutions($email);
-                break;
-            }
+            case "Application Updated":
+                $this->attemptAppUpdated($email);
+            break;
+
+            case "System Notification":
+                $this->attemptSystemNotification($email);
+            break;
+
+            case "Confirmed Substitutions":
+                $this->attemptConfirmedSubstitutions($email);
+            break;
         }
     }
 

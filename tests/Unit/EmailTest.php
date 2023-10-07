@@ -3,15 +3,91 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\EmailController;
+use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendApplicationDecision;
+use App\Jobs\SendAppWaitingRev;
+use App\Jobs\SendConfirmSubstitutions;
+use App\Jobs\SendNominationCancelled;
+use App\Jobs\SendNominationDeclined;
+use App\Jobs\SendNominationEmail;
+use App\Jobs\SendNominationsCancelled;
+use App\Jobs\SendNomineeAppEdited;
+use App\Jobs\SendSubPeriodEditSubset;
+use App\Jobs\SendSystemNotification;
 use App\Mail\MJML;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Testing\Concerns\InteractsWithPages;
-
-
+use App\Models\Account;
+use App\Models\EmailPreference;
+use App\Models\UnsentEmail;
+use Illuminate\Support\Facades\Queue;
 
 class EmailTest extends TestCase
 {
+    private Account $user;
+    private $emails;
+
+    protected function setup(): void
+    {
+        parent::setup();
+        $this->emails = [];
+        $this->user = Account::factory()->create();
+        EmailPreference::factory()->create(['accountNo' => $this->user->accountNo]);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'New Nominations', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Application Awaiting Review', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Application Cancelled', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Nomination Cancelled', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Nomination/s Cancelled', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Substitution Period Edited (Subset)', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Edited Substitution Request', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Nomination/s Rejected', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Application Updated', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'System Notification', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        $email = UnsentEmail::create([
+            'accountNo' => $this->user->accountNo, 'subject' => 'Confirmed Substitutions', 'data' => json_encode('test'),
+        ]); array_push($this->emails, $email);
+
+        // $this->$emails = $emails;
+    }
+
+    protected function teardown(): void
+    {
+        UnsentEmail::where('accountNo', $this->user->accountNo)->delete();
+        $this->user->delete();
+        parent::teardown();
+    }
 
     // public function testApplicationApproval(): void
     // {
@@ -288,6 +364,83 @@ class EmailTest extends TestCase
         $this->assertStringContainsString('OtherMessageTwo', $mailable->render());
         $this->assertStringContainsString('OtherMessageThree', $mailable->render());
 
+    }
+
+    public function test_handle_newNominations(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[0]);
+        Queue::assertPushed(SendNominationEmail::class);
+    }
+
+    public function test_handle_ApplicationAwaitingReview(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[1]);
+        Queue::assertPushed(SendAppWaitingRev::class);
+    }
+
+    public function test_handle_ApplicationCancelled(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[2]);
+        Queue::assertPushed(SendAppCanceledManager::class);
+    }
+
+    public function test_handle_NominationCancelled(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[3]);
+        Queue::assertPushed(SendNominationCancelled::class);
+    }
+
+    public function test_handle_NominationsCancelled(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[4]);
+        Queue::assertPushed(SendNominationsCancelled::class);
+    }
+
+    public function test_handle_EditedSubset(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[5]);
+        Queue::assertPushed(SendSubPeriodEditSubset::class);
+    }
+
+    public function test_handle_Edited(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[6]);
+        Queue::assertPushed(SendNomineeAppEdited::class);
+    }
+
+    public function test_handle_NominationsRejected(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[7]);
+        Queue::assertPushed(SendNominationDeclined::class);
+    }
+
+    public function test_handle_applicationUpdated(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[8]);
+        Queue::assertPushed(SendApplicationDecision::class);
+    }
+
+    public function test_handle_systemNotification(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[9]);
+        Queue::assertPushed(SendSystemNotification::class);
+    }
+
+    public function test_handle_confirmedSubs(): void
+    {
+        Queue::fake();
+        app(EmailController::class)->sortMail($this->emails[10]);
+        Queue::assertPushed(SendConfirmSubstitutions::class);
     }
 }
 /*
