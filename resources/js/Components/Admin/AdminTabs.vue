@@ -53,6 +53,7 @@
 
 <script>
     import AddCSVData from "@/Components/Admin/AddCSVData.vue";
+    import EditDataPage from './EditData.vue'
 
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
@@ -86,6 +87,9 @@
                 csvActivated: false,
                 csvFileName: "",
                 curTable: "",
+
+                editing: false,
+                entryData: null,
 
                 fontSizeMain: '16px',
                 fontSize: "14px",
@@ -126,6 +130,12 @@
                 this.curTable = tableName;
                 this.csvActivated = !this.csvActivated;
             },
+            activateEditing: function(entryData) {
+                //console.log(params.row);
+                this.entryData = entryData;
+                
+                this.editing = !this.editing;
+            }
         },
         created() { 
             if (screen.width >= 3840) {
@@ -184,7 +194,7 @@
                     </button>
                 </div>
             </div>
-            <component :is="currentTable" :user="user.accountNo"></component>   
+            <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
         </div>
 
         <div
@@ -204,6 +214,8 @@
     </div>
     <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
     </AddCSVData>
+    <EditDataPage v-if="editing" :table="content" :entry="entryData" :user="user.accountNo" @close="activateEditing">
+    </EditDataPage>
 </template>
 
 <style lang="postcss">

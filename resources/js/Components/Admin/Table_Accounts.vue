@@ -8,7 +8,6 @@ import { VueGoodTable } from 'vue-good-table-next';
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import EditDataPage from './EditData.vue'
 
 export default {
     props: {
@@ -58,9 +57,7 @@ export default {
             ],
             accounts: [],
             c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",
-            editing: false,
-            entryData: null
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"
         };
     },
     created() {
@@ -149,12 +146,12 @@ export default {
             });
         },
         editAttribute: function(params) {
-            //console.log(params.row);
-            if (params !== undefined) {
-                this.entryData = params.row;
+
+            let editable = {
+                'Account Number': params.row.accountNo
             }
-            
-            this.editing = !this.editing;
+
+            this.$emit('toggleEditing', editable); 
         }
     }
 };
@@ -199,8 +196,6 @@ let onSearch = () => {
             </div>           
        </div>
     </div>
-    <EditDataPage v-if="editing" table="accounts" :entry="entryData" :user="user" @close="editAttribute()">
-    </EditDataPage>
 </template>
 
 <style>
