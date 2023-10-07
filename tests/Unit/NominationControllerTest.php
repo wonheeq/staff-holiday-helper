@@ -7,6 +7,7 @@ use App\Http\Controllers\NominationController;
 use App\Models\Application;
 use App\Models\Account;
 use App\Models\AccountRole;
+use App\Models\EmailPreference;
 use App\Models\Nomination;
 use App\Models\Message;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 class NominationControllerTest extends TestCase
 {
     private Account $user, $otherUser, $adminUser, $otherUser1, $otherUser2;
+
     private Application $application;
     private array $nominations;
     private Message $message;
@@ -132,10 +134,22 @@ class NominationControllerTest extends TestCase
             ]),
             'acknowledged' => false
         ]);
+
+        EmailPreference::factory()->create(['accountNo' => $this->user->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->adminUser->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser1->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser2->accountNo]);
     }
 
     protected function teardown(): void
     {
+        EmailPreference::where(['accountNo' => $this->user->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->adminUser->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser1->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser2->accountNo])->delete();
+
         Message::where('senderNo', $this->otherUser->accountNo)->delete();
         Message::where('senderNo', $this->user->accountNo)->delete();
         Message::where('receiverNo', $this->otherUser->accountNo)->delete();
@@ -246,7 +260,7 @@ class NominationControllerTest extends TestCase
 
     public function test_acceptNominations_changes_application_status_to_undecided_if_all_nominations_accepted(): void {
         $this->assertTrue(Application::where('applicationNo', $this->message->applicationNo)->first()->status == 'P');
-        
+
         $response = $this->actingAs($this->adminUser)->postJson('/api/acceptNominations', [
             'messageId' => $this->message->messageId,
             'accountNo' => $this->user->accountNo,
@@ -596,7 +610,7 @@ class NominationControllerTest extends TestCase
         $i = 0;
         foreach ($updatedNominations as $nom) {
             $this->assertTrue($nom['status'] != 'U');
-            
+
             // Ccheck that all statuses are the same as the randomly selected ones
             $this->assertTrue($nom['status'] == $statuses[$i]);
             $i++;
