@@ -121,7 +121,7 @@
                 this.currentTable = table;
             },
             activateCSV: function(csvFileName, tableName) {
-                console.log(tableName);
+                //console.log(tableName);
                 this.csvFileName = csvFileName;
                 this.curTable = tableName;
                 this.csvActivated = !this.csvActivated;
