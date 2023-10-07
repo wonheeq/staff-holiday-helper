@@ -788,7 +788,7 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
         $hours = $preferences->hours;
         if( $hours == 0 ) // if on instant notifications
         {
@@ -1019,10 +1019,4 @@ class MessageController extends Controller
             sleep(2);
         }
     }
-
-    public function temp()
-    {
-        $this->notifyNomineesApplicationCreated(21);
-    }
-
 }

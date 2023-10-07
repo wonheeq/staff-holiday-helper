@@ -8,15 +8,31 @@ use App\Models\Message;
 use App\Notifications\NewMessages;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\MessageController;
+use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppWaitingRev;
+use App\Jobs\SendConfirmSubstitutions;
+use App\Jobs\SendNominationCancelled;
+use App\Jobs\SendNominationDeclined;
+use App\Jobs\SendNominationEmail;
+use App\Jobs\SendNomineeAppEdited;
+use App\Jobs\SendSubPeriodEditSubset;
+use App\Jobs\SendSystemNotification;
 use App\Models\EmailPreference;
 use Illuminate\Support\Facades\Queue;
+use App\Models\Nomination;
+use App\Models\AccountRole;
+use App\Models\Role;
+use App\Models\Application;
 
 use function PHPUnit\Framework\assertTrue;
 
 class MessageControllerTest extends TestCase
 {
-    private Account $user, $adminUser, $otherUser1, $otherUser2;
+    private Account $user, $adminUser, $otherUser1, $otherUser2, $otherUser;
     private EmailPreference $adminPreference;
+    private $accountRoles;
+    private $applications;
+    private $nominations;
 
     protected function setup(): void
     {
@@ -37,6 +53,10 @@ class MessageControllerTest extends TestCase
             'accountType' => "lmanager"
         ]);
 
+        $this->otherUser = Account::factory()->create([
+            'accountType' => 'lmanager'
+        ]);
+
         // create 10 messages for user
         Message::factory(10)->create([
             'receiverNo' => $this->user->accountNo,
@@ -52,18 +72,91 @@ class MessageControllerTest extends TestCase
             'accountNo' => $this->adminUser->accountNo,
             'hours' => 0, // instant
         ]);
+
+        EmailPreference::create([
+            'accountNo' => $this->user->accountNo,
+            'hours' => 0, // instant
+        ]);
+
+        EmailPreference::create([
+            'accountNo' => $this->otherUser->accountNo,
+            'hours' => 0, // instant
+        ]);
+
+        EmailPreference::create([
+            'accountNo' => $this->otherUser1->accountNo,
+            'hours' => 0, // instant
+        ]);
+
+        EmailPreference::create([
+            'accountNo' => $this->otherUser2->accountNo,
+            'hours' => 0, // instant
+        ]);
+
+        $roles = Role::pluck('roleId');
+        $this->accountRoles = array();
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[0]
+        ]));
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[1]
+        ]));
+        array_push($this->accountRoles, AccountRole::factory()->create([
+            'accountNo' => $this->user->accountNo,
+            'roleId' => $roles[2]
+        ]));
+
+        $this->applications = Application::factory(5)->create([
+            'accountNo' => $this->user['accountNo'],
+            'sDate' => '2030-08-06 20:00:00',
+            'eDate' => '2030-08-08 20:00:00',
+        ]);
+
+        $firstApp = $this->applications[0];
+        $this->nominations = array();
+
+        // set nominations for first application
+        array_push($this->nominations, Nomination::factory()->create([
+            'applicationNo' => $firstApp->applicationNo,
+            'accountRoleId' => $this->accountRoles[0],
+            'nomineeNo' => $this->otherUser->accountNo,
+        ]));
     }
 
     protected function teardown(): void
     {
-        Message::where('receiverNo', $this->user->accountNo)->delete();
-        $this->user->delete();
+        $arr = Application::where('accountNo', $this->user->accountNo)->get();
+        foreach ($arr as $a) {
+            Nomination::where('applicationNo', $a->applicationNo)->delete();
+            Message::where('applicationNo', $a->applicationNo)->delete();
+        }
 
+        AccountRole::where('accountNo', $this->user['accountNo'])->delete();
+        AccountRole::where('accountNo', $this->otherUser['accountNo'])->delete();
+
+        Application::where('accountNo', $this->user['accountNo'])->delete();
+
+        Message::where('receiverNo', $this->user->accountNo)->delete();
+        Message::where('receiverNo', $this->otherUser->accountNo)->delete();
+        Message::where('receiverNo', $this->otherUser2->accountNo)->delete();
+        Message::where('receiverNo', $this->otherUser1->accountNo)->delete();
+        Message::where('receiverNo', $this->adminUser->accountNo)->delete();
+
+        $this->adminPreference->delete();
+        EmailPreference::where('accountNo', $this->user->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->otherUser->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->otherUser1->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->otherUser2->accountNo)->delete();
+
+
+
+        $this->user->delete();
+        $this->otherUser->delete();
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
-
-        $this->adminPreference->delete();
 
         parent::teardown();
     }
@@ -221,12 +314,17 @@ class MessageControllerTest extends TestCase
     }
 
 
-    public function test_appAwaitingReview_job_dispatch(): void
+    // Same logic for all job dispatches and jobs, just different class being sent
+    public function test_job_dispatch(): void
     {
         Queue::fake();
         Queue::assertNothingPushed();
-        app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
-
+        app(MessageController::class)
+            ->notifyManagerApplicationAwaitingReview($this->adminUser->accountNo, $this->applications[0]->applicationNo);
+        Queue::assertPushed(SendAppWaitingRev::class); // assert correct job pushed
     }
+
+
+
 
 }

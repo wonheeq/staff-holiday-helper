@@ -56,6 +56,7 @@ class SendApplicationDecision implements ShouldQueue
             Mail::to("jansonferrall@gmail.com")
                 ->queue(new MJML("Application Updated",
                             "email/applicationUpdated", $dynamicData));
+
         }
         catch(TransportException $e)
         {
