@@ -39,8 +39,6 @@ class SendNominationEmail implements ShouldQueue
         $name = $reciever->getName();
         try
         {
-            // $this->texep();
-
             $roles = [];
             for( $i = 1; $i < sizeof($data[1]) - 1; $i++)
             {
@@ -54,7 +52,6 @@ class SendNominationEmail implements ShouldQueue
                 'roles' => $roles,
                 'period' => $data[1][sizeof($data[1]) - 1],
             ];
-            // dd($dynamicData);
 
             // Mail::to($reciever->getEmail)->send(new MJML("New Nomination", "email/nomination", $dynamicData));
             Mail::to("jansonferrall@gmail.com")->queue(new MJML("New Nominations", "email/nomination", $dynamicData));
@@ -71,11 +68,4 @@ class SendNominationEmail implements ShouldQueue
 
 
     }
-
-    private function texep()
-    {
-        throw new TransportException();
-    }
-
-
 }

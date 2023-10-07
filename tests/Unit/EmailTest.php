@@ -23,6 +23,8 @@ use App\Models\EmailPreference;
 use App\Models\UnsentEmail;
 use Illuminate\Support\Facades\Queue;
 
+use function PHPUnit\Framework\assertEquals;
+
 class EmailTest extends TestCase
 {
     private Account $user;
@@ -145,23 +147,7 @@ class EmailTest extends TestCase
     //     $this->assertStringContainsString('Foundation of Computer Science and Data Engineering', $mailable->render());
     //     $this->assertStringContainsString('00:00 23/04/2022 - 00:00 25/04/2022', $mailable->render());
     // }
-    // public function testPasswordResetLink(): void
-    // {
-    //     $dynamicData = [
-    //         'name' => 'Peter',
-    //         'url' => 'www.google.com'
-    //     ];
-    //     $mailable = new MJML("Password Reset", "email/passwordResetLink", $dynamicData);
-    //     Mail::fake(); //a method that sends the email without actually sending it
-    //     Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
-    //     Mail::assertSent(MJML::class); //check if email has really been sent
-    //     $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
-    //     $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
 
-    //     //after render, check if the rendered content contains below strings/details:
-    //     $this->assertStringContainsString('Peter', $mailable->render());
-    //     $this->assertStringContainsString('www.google.com', $mailable->render());
-    // }
     // public function testPasswordReset(): void
     // {
     //     $dynamicData = [
@@ -365,6 +351,264 @@ class EmailTest extends TestCase
         $this->assertStringContainsString('OtherMessageThree', $mailable->render());
 
     }
+
+
+    public function test_appAwaitingReview_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'applicantId' => 'message2',
+            'applicantName' => 'Pan',
+            'application' => ['role1', 'role2'],
+            'period' => 'test'
+        ];
+        $mailable = new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Application Awaiting Review', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('Pan', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+    }
+
+
+    public function test_ApplicationCancelled_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'message' => 'message',
+            'applicantId' => 'message2',
+            'applicantName' => 'Pan',
+            'period' => 'test'
+        ];
+        $mailable = new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Staff Cancelled Application', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('Pan', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_applicationPeriodEditedSubset_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'messageOne' => 'message1',
+            'messageTwo' => 'message2',
+            'roles' => ['role1', 'role2'],
+            'duration' => 'test'
+        ];
+        $mailable = new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Substitution Period Edited (Subset)', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message1', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_applicationUpdated_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'messageOne' => 'message1',
+            'messageTwo' => 'message2',
+            'duration' => 'test'
+        ];
+        $mailable = new MJML("Application Updated", "email/applicationUpdated", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Application Updated', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message1', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_nominationsCancelled_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'messageOne' => 'message1',
+            'roles' => ['role1', 'role2'],
+            'messageTwo' => 'message2',
+            'period' => 'test'
+        ];
+        $mailable = new MJML("Nomination/s Cancelled", "email/nomination_sCancelled", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Nomination/s Cancelled', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message1', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_nomination_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'message' => 'message',
+            'roles' => ['role1', 'role2'],
+            'period' => 'test'
+        ];
+        $mailable = new MJML("New Nominations", "email/nomination", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('New Nominations', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('message', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_nominationCancelled_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'senderName' => 'Pan',
+            'senderNo' => 'number',
+            'message' => 'message',
+            'period' => 'test'
+        ];
+        $mailable = new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Nomination Cancelled', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('Pan', $mailable->render());
+        $this->assertStringContainsString('number', $mailable->render());
+        $this->assertStringContainsString('message', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+    public function test_nominationDeclined_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'messageOne' => 'message1',
+            'roles' => ['role1', 'role2'],
+            'messageTwo' => 'message2',
+            'messageThree' => 'message3',
+            'duration' => 'test'
+        ];
+        $mailable = new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Nomination/s Rejected', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+        $this->assertStringContainsString('message1', $mailable->render());
+        $this->assertStringContainsString('message2', $mailable->render());
+        $this->assertStringContainsString('message3', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+    }
+
+    public function test_SubRequestEdited_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'messageOne' => 'message',
+            'roles' => ['role1', 'role2'],
+            'duration' => 'test'
+        ];
+        $mailable = new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Edited Substitution Request', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+        $this->assertStringContainsString('message', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+    }
+
+    public function test_subsConfirmed_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'roles' => ['role1', 'role2'],
+            'duration' => 'test'
+        ];
+        $mailable = new MJML("Confirmed Submissions", "email/substitutionsConfirmed", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('Confirmed Submissions', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+        $this->assertStringContainsString('role2', $mailable->render());
+        $this->assertStringContainsString('role1', $mailable->render());
+    }
+
+    public function test_SystemNotification_email(): void
+    {
+        Mail::fake();
+        $dynamicData = [
+            'name' => 'Peter',
+            'content' => 'test'
+        ];
+        $mailable = new MJML("System Notification", "email/systemNotification", $dynamicData);
+        Mail::to('testEmail@gmail.com')->send($mailable);
+        Mail::assertSent(MJML::class);
+        assertEquals('System Notification', $mailable->subject);
+
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('test', $mailable->render());
+    }
+
+
+
+    public function testPasswordResetLink(): void
+    {
+        $dynamicData = [
+            'name' => 'Peter',
+            'url' => 'www.google.com'
+        ];
+        $mailable = new MJML("Password Reset", "email/passwordResetLink", $dynamicData);
+        Mail::fake(); //a method that sends the email without actually sending it
+        Mail::to("tvxqbenjamin0123@gmail.com")->send($mailable);
+        Mail::assertSent(MJML::class); //check if email has really been sent
+        $this->assertEquals('tvxqbenjamin0123@gmail.com', $mailable->to[0]['address']); //check if receiver's email is correct
+        $this->assertEquals('Password Reset', $mailable->subject); //check if subject of the email is correct
+
+        //after render, check if the rendered content contains below strings/details:
+        $this->assertStringContainsString('Peter', $mailable->render());
+        $this->assertStringContainsString('www.google.com', $mailable->render());
+    }
+
 
     public function test_handle_newNominations(): void
     {
