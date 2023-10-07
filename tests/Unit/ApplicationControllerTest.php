@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Message;
 use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Log;
+use App\Models\EmailPreference;
 
 class ApplicationControllerTest extends TestCase
 {
@@ -86,10 +87,22 @@ class ApplicationControllerTest extends TestCase
             'accountRoleId' => $this->accountRoles[2],
             'nomineeNo' => $this->otherUser->accountNo,
         ]));
+
+        EmailPreference::factory()->create(['accountNo' => $this->user->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->adminUser->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser1->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->otherUser2->accountNo]);
     }
 
     protected function teardown(): void
     {
+        EmailPreference::where(['accountNo' => $this->user->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->adminUser->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser1->accountNo])->delete();
+        EmailPreference::where(['accountNo' => $this->otherUser2->accountNo])->delete();
+
         $arr = Application::where('accountNo', $this->user->accountNo)->get();
         foreach ($arr as $a) {
             Nomination::where('applicationNo', $a->applicationNo)->delete();
@@ -538,7 +551,7 @@ class ApplicationControllerTest extends TestCase
         $message = Message::where('applicationNo', $application->applicationNo, "and")
             ->where('senderNo', $this->user->accountNo, 'and')
             ->where('receiverNo', $superiorNo)->first();
-        
+
             // manager may be a nominee too
         $this->assertTrue($message->subject == "Application Cancelled" || $message->subject == "Nomination Cancelled");
     }
@@ -573,7 +586,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2030-08-08 20:00:00', 'and')
             ->where('accountNo', $this->user->accountNo)->first();
         $this->assertTrue($application != null);
-        
+
         $response = $this->actingAs($this->user)->getJson("/api/cancelApplication/{$this->user->accountNo}/{$application->applicationNo}");
         $response->assertStatus(200);
 
@@ -1301,7 +1314,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1337,7 +1350,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1375,7 +1388,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1416,7 +1429,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1454,7 +1467,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'superiorNo' => "aoueirhgoiarg",
             'applicationNo' => $secondApp->applicationNo,
@@ -1494,7 +1507,7 @@ class ApplicationControllerTest extends TestCase
 
         $secondApp->status = 'N';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $secondApp->applicationNo,
@@ -1528,7 +1541,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/acceptApplication", [
             'accountNo' => Account::where('accountNo', "!=", $this->user->superiorNo )->first()->accountNo,
             'applicationNo' => $secondApp->applicationNo,
@@ -1572,7 +1585,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1609,7 +1622,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1648,7 +1661,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1690,7 +1703,7 @@ class ApplicationControllerTest extends TestCase
             ->where('eDate', '2024-09-08 20:00:00', "and")
             ->where('accountNo', $this->user->accountNo)->first();
 
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $app->applicationNo,
@@ -1729,7 +1742,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'superiorNo' => "aoueirhgoiarg",
             'applicationNo' => $secondApp->applicationNo,
@@ -1770,7 +1783,7 @@ class ApplicationControllerTest extends TestCase
 
         $secondApp->status = 'N';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $secondApp->applicationNo,
@@ -1805,7 +1818,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => Account::where('accountNo', "!=", $this->user->superiorNo )->first()->accountNo,
             'applicationNo' => $secondApp->applicationNo,
@@ -1814,7 +1827,7 @@ class ApplicationControllerTest extends TestCase
 
         $response->assertStatus(500);
     }
- 
+
     public function test_api_request_for_rejectApplication_is_unsuccessful_no_reject_reason(): void {
         $secondApp = $this->applications[1];
         array_push($this->nominations, Nomination::factory()->create([
@@ -1839,7 +1852,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $secondApp->applicationNo,
@@ -1873,7 +1886,7 @@ class ApplicationControllerTest extends TestCase
         // setup - make sure that application is status 'U'
         $secondApp->status = 'U';
         $secondApp->save();
-        
+
         $response = $this->actingAs($this->otherUser)->postJson("/api/rejectApplication", [
             'accountNo' => $this->otherUser->accountNo,
             'applicationNo' => $secondApp->applicationNo,

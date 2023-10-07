@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\Unit;
 use App\Models\Course;
 use App\Models\Major;
+use App\Models\EmailPreference;
 
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,7 @@ class ManagerControllerTest extends TestCase
     private $accountRoles;
     private $applications;
     private $nominations;
-    
+
 
 
     protected function setup(): void
@@ -83,10 +84,15 @@ class ManagerControllerTest extends TestCase
             'applicationNo' => $firstApp->applicationNo,
             'accountRoleId' => $this->accountRoles[2]
         ]));
+        EmailPreference::factory()->create(['accountNo' => $this->lineManager->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->staff->accountNo]);
     }
 
     protected function teardown(): void
     {
+        EmailPreference::where('accountNo', $this->lineManager->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->staff->accountNo)->delete();
+
         $arr = Application::where('accountNo', $this->staff->accountNo)->get();
         foreach ($arr as $a) {
             Nomination::where('applicationNo', $a->applicationNo)->delete();
@@ -191,7 +197,7 @@ class ManagerControllerTest extends TestCase
         $response->assertStatus(500);
     }
     public function test_api_request_for_accepted_applications_unsuccessful_wrong_manager(): void
-    {        
+    {
         $app = $this->applications[0];
         // Check for valid response
         $response = $this->actingAs($this->lineManager)->postJson("/api/acceptApplication", [
@@ -293,7 +299,7 @@ class ManagerControllerTest extends TestCase
             'unitCode' => Course::where('courseId', $accRole->courseId)->first()->courseId,
             'roleName' => 'Course Coordinator'
         ]);
-        
+
         $response->assertStatus(200);
         $updatedRoles = AccountRole::where('accountRoleId', $accRole->accountRoleId)->first();
         $this->assertTrue($updatedRoles == null);
@@ -314,7 +320,7 @@ class ManagerControllerTest extends TestCase
             'unitCode' => 'LLL3123',
             'roleName' => 'Course Coordinator'
         ]);
-        
+
         $response->assertStatus(500);
     }
     public function test_api_request_for_remove_major_roles_success(): void{
@@ -324,7 +330,7 @@ class ManagerControllerTest extends TestCase
             'unitCode' => Major::where('majorId', $accRole->majorId)->first()->majorId,
             'roleName' => 'Major Coordinator'
         ]);
-        
+
         $response->assertStatus(200);
         $updatedRoles = AccountRole::where('accountRoleId', $accRole->accountRoleId)->first();
         $this->assertTrue($updatedRoles == null);
@@ -336,7 +342,7 @@ class ManagerControllerTest extends TestCase
             'unitCode' => Major::where('majorId', $accRole->majorId)->first()->majorId,
             'roleName' => 'Course Coordinator'
         ]);
-        
+
         $response->assertStatus(500);
     }
     public function test_api_request_for_remove_major_roles_fail_wrong_major_code(): void{
@@ -355,7 +361,7 @@ class ManagerControllerTest extends TestCase
             'unitCode' => Unit::where('unitId', $accRole->unitId)->first()->unitId,
             'roleName' => 'Unit Coordinator'
         ]);
-        
+
         $response->assertStatus(200);
         $updatedRoles = AccountRole::where('accountRoleId', $accRole->accountRoleId)->first();
         $this->assertTrue($updatedRoles == null);
