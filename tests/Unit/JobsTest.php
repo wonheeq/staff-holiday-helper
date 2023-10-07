@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Jobs\EmailExceptionTestJob;
 use App\Jobs\SendAppCanceledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
@@ -16,6 +17,9 @@ use App\Jobs\SendSystemNotification;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Account;
+use App\Models\UnsentEmail;
+
+use function PHPUnit\Framework\assertTrue;
 
 class JobsTest extends TestCase
 {
@@ -168,6 +172,22 @@ class JobsTest extends TestCase
         $job = new SendSystemNotification($data);
         $job->handle();
         Mail::assertQueuedCount(1);
+    }
+
+
+    // Test that an unsent email is correctly created when a transport exception
+    // occurs. EmailExceptionTestJob is a demo job that garuntees a transport exception
+    // occurs, but keeps the exact same logic inside the catch statement as the other jobs
+    public function test_failure_logic(): void
+    {
+        $data = ['test data'];
+        $job = new EmailExceptionTestJob($data);
+        $unsentEmails = UnsentEmail::where('accountNo', 'AAAAAA')->get();
+        assertTrue($unsentEmails->count() == 0);
+        $job->handle();
+        $unsentEmails = UnsentEmail::where('accountNo', 'AAAAAA')->get();
+        assertTrue($unsentEmails->count() == 1);
+        UnsentEmail::where('accountNo', 'AAAAAA')->delete();
     }
 
 }
