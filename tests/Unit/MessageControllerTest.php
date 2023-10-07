@@ -8,10 +8,15 @@ use App\Models\Message;
 use App\Notifications\NewMessages;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\MessageController;
+use App\Models\EmailPreference;
+use Illuminate\Support\Facades\Queue;
+
+use function PHPUnit\Framework\assertTrue;
 
 class MessageControllerTest extends TestCase
 {
     private Account $user, $adminUser, $otherUser1, $otherUser2;
+    private EmailPreference $adminPreference;
 
     protected function setup(): void
     {
@@ -42,6 +47,11 @@ class MessageControllerTest extends TestCase
             'receiverNo' => $this->user->accountNo,
             'acknowledged' => false,
         ]);
+
+        $this->adminPreference = EmailPreference::create([
+            'accountNo' => $this->adminUser->accountNo,
+            'hours' => 0, // instant
+        ]);
     }
 
     protected function teardown(): void
@@ -52,6 +62,8 @@ class MessageControllerTest extends TestCase
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
+
+        $this->adminPreference->delete();
 
         parent::teardown();
     }
@@ -207,4 +219,14 @@ class MessageControllerTest extends TestCase
         $controller->sendDailyMessagesUnitTestFunction($this->user);
         Notification::assertNotSentTo($this->user, NewMessages::class);
     }
+
+
+    public function test_appAwaitingReview_job_dispatch(): void
+    {
+        Queue::fake();
+        Queue::assertNothingPushed();
+        app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
+
+    }
+
 }
