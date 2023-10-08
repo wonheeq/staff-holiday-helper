@@ -10,6 +10,7 @@ import { useManagerStore } from '@/stores/ManagerStore';
 import { onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 import { useDark } from "@vueuse/core";
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const isDark = useDark();
 const managerStore = useManagerStore();
 const { fetchRolesForStaff, fetchAllUnits } = managerStore;
@@ -18,7 +19,8 @@ const user = computed(() => page.props.auth.user);
 let staffStore = useStaffStore();
 const { staffValue, searchStaff, allUnits} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
-
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
 onMounted(() => {
     fetchStaffMembers(user.value.accountNo);
 });
@@ -35,9 +37,48 @@ let deadAreaColor = computed(() => {
 });
 </script>
 <template>
-    <div class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
+        <div class="h-[5%]">
+            <p class="font-bold text-2xl ">
+                Your Staff Members:
+            </p>
+        </div>
+        <div class="scroll"  :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div v-for="item in searchStaff" :key="item.id" class="mb-2 row-divider pt-2">
+                        <StaffInfo
+                            :source="item"
+                            @editRoles="handleEditRoles(item.accountNo)"
+                        ></StaffInfo>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div class="pt-10 font-bold text-sm">
+            <p ><b>Staff name or ID</b></p>
+            <div>
+                <input 
+                style="border: 2px solid #ccc; padding: 8px; border-radius: 4px; text-align: left; width: 100%;"
+                :class="isDark?'bg-gray-800':'bg-white'"
+                ref="searchInput" 
+                v-model="staffValue"
+                placeholder="Enter your search" >
+                </div>
+        </div>
+        <Teleport to="body">
+            <EditRole
+                v-show="showEditModal"
+                @close="showEditModal=false;"
+            />
+        </Teleport>
+    </div>
+    <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
-            <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
+            <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl" :class="isDark?'bg-gray-800':'bg-white'">
                 Your Staff Members:
             </p>
         </div>
@@ -58,7 +99,7 @@ let deadAreaColor = computed(() => {
               <p><b>Pending Application:</b></p>
             </div>
           </div>
-            <div class="bg-white 1440:mx-4 1440:mb-4 scroll">
+            <div class="1440:mx-4 1440:mb-4 scroll" :class="isDark?'bg-gray-800':'bg-white'">
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
@@ -92,7 +133,6 @@ let deadAreaColor = computed(() => {
                 />
             </Teleport>
     </div>
-    
 </template>
 <style>
 .subpage-height {
@@ -111,7 +151,7 @@ let deadAreaColor = computed(() => {
 .row-divider::after {
     content: "";
     display: block;
-    width: 96.5%;
+    width: 100%;
     height: 1px;
     background-color: #ccc;
     margin-top: 10px; 
