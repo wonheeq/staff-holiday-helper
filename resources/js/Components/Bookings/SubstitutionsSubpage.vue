@@ -17,7 +17,7 @@ const deadAreaColor = computed(() => {
 </script>
 <template>
     <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
-        <div class="h-[8%]">
+        <div class="h-[11%]">
             <p class="font-bold text-3xl laptop:text-5xl">
                 Your Substitutions
             </p>
@@ -25,7 +25,7 @@ const deadAreaColor = computed(() => {
                 You have agreed to substitute for the following:
             </p>
         </div>
-        <div class="h-[92%] border" :class="isDark?'border-gray-400':'border-black'">
+        <div class="h-[89%] border" :class="isDark?'border-gray-400':'border-black'">
             <VueScrollingTable
                 class=""
                 :deadAreaColor="deadAreaColor"
