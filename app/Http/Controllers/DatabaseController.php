@@ -1080,4 +1080,36 @@ class DatabaseController extends Controller
 
         return response()->json(['success' => 'success'], 200);
     }
+
+    private function editSchool(Array $initialEntry, Array $entry) {
+        // School Administrator 1 should be immutable
+        if ($initialEntry['School Code'] == 1) {
+            return response()->json(['error' => $entry['School Code'] . ' Invalid: Super Administrator School Code & Name are permanent.'], 500);
+        }
+
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['School Code'] != $entry['School Code']) {
+            if (!preg_match("/\A[0-9]{1,}$/", $entry['School Code'])) {
+                return response()->json(['error' => $entry['School Code'] . ' Invalid: School Code should be an integer.'], 500);
+            }
+        }
+
+        if ($initialEntry['School Name'] != $entry['School Name']) {
+            if (strlen($entry['School Name']) > 60) {
+                return response()->json(['error' => $entry['School Name'] . ' Invalid: School Name should be under 60 characters'], 500);
+            }
+
+            if (School::where('name', $entry['School Name'])->exists()) {
+                return response()->json(['error' => $entry['School Name'] . ' Invalid: School Name already in use'], 500);
+            }
+        }
+
+        School::where('schoolId', $initialEntry['School Code'])->update([
+            'schoolId' => $entry['School Code'],
+            'name' => $entry['School Name']
+        ]);
+        School::where('schoolId', $initialEntry['School Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
 }
