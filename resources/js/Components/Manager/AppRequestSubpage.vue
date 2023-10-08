@@ -35,7 +35,7 @@ const deadAreaColor = computed(() => {
                 Leave Applications:
             </p>
         </div>
-        <div class="mx-1 text-xs">
+        <div class="h-[3%] mx-1 text-xs">
             <input 
                 type="radio" 
                 id="allApplications" 
@@ -77,14 +77,14 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected Applications</label>
         </div>
-        <div class="scroller" :class="isDark?'bg-gray-800':'bg-white'">
+        <div class="h-[89%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
                 :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
-                    <div v-for="item in filteredApplications" :key="item.id" class="mb-2">
+                    <div v-for="item in filteredApplications" :key="item.id" class="mb-1">
                         <ApplicationInfo
                             :source="item"
                         ></ApplicationInfo>
