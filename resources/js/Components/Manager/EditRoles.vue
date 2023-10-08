@@ -1,6 +1,6 @@
 <script setup>
 import Modal from '../Modal.vue';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, computed } from 'vue';
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueScrollingTable from "vue-scrolling-table";
@@ -20,6 +20,9 @@ let emit = defineEmits(['close', 'removeRole']);
 let buttonActive = ref(false);
 let unitCode = ref("");
 let roleName = ref("");
+let deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 
 watch([unitCode, roleName], () => {
     if (unitCode.value !== "" || roleName.value !== "") {
@@ -112,22 +115,26 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 </script>
 <template>
 <Modal>
-    <div class="bg-white w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" v-if="staffInfo[0]">
+    <div class="w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" :class="isDark?'bg-gray-800':'bg-white'" v-if="staffInfo[0]">
         <div class="flex h-[10%] items-center justify-between">
-            <div class="flex flex-col">
+            <div class="flex flex-col" :class="isDark?'text-white':''">
               <p style="font-size: 25px;"><b>Staff Name: {{staffInfo[0].fName}} {{staffInfo[0].lName}} </b> </p>
               <p style="font-size: 25px;"><b>Staff ID: {{ staffInfo[0].accountNo }}</b></p>
               <p style="font-size: 25px;"><b>Roles: </b></p>
             </div>
             <button class="h-full" @click="handleClose()">
-              <img src="/images/close.svg" class="h-full w-full" />
+              <img src="/images/close.svg" 
+              class="h-full w-full"
+              :class="isDark?'darkModeImage':''" />
             </button>
           </div>
-          <div class="h-[70%] py-4 pt-12 scrolling">
-            <VueScrollingTable :scrollHorizontal="false">
+          <div class="h-[70%] py-4 pt-12 scrolling" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable 
+            :scrollHorizontal="false" 
+            :deadAreaColor="deadAreaColor">
                 <template #tbody>
-                    <div class="bg-white  pt-5 pl-5 flex items-center justify-between border-b border-gray-300 pb-3" v-for="role in staffRoles" :key="role.id">
-                        <p class="1080:text-lg 4k:text-2xl">
+                    <div class="pt-5 pl-5 flex items-center justify-between border-b border-gray-300 pb-3" :class="isDark?'bg-gray-800':'bg-white'" v-for="role in staffRoles" :key="role.id">
+                        <p class="1080:text-lg 4k:text-2xl" :class="isDark?'text-white':''">
                             {{ role.original.id}} {{ role.original.name }} - {{ role.original.roleName }}
                         </p>
                         <button 
@@ -137,23 +144,23 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
                             <span class="button-text">Remove</span>
                         </button>
                     </div>
-                    <div class="text-center text-3xl mt-20" v-if="Object.keys(staffRoles).length === 0">
+                    <div class="text-center text-3xl mt-20" :class="isDark?'text-white':''" v-if="Object.keys(staffRoles).length === 0">
                         <strong>This staff does not have any roles currently.</strong>
                     </div>
                 </template>
             </VueScrollingTable>
         </div>
         <div>
-            <p style="font-size:25px; padding-bottom:20px"><b>Add Role: </b></p>
+            <p style="font-size:25px; padding-bottom:20px" :class="isDark?'text-white':''"><b>Add Role: </b></p>
         </div>
         <div class="h-[10%]">
             <div class="flex ">
                 <div>
-                    <p style="font-size:20px;"><b>Unit Code: </b></p>
+                    <p style="font-size:20px;" :class="isDark?'text-white':''"><b>Unit Code: </b></p>
                     <v-select v-model="unitCode" label="Select" :options="allUnits" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="pl-5">
-                    <p style="font-size:20px;"><b>Role Name: </b></p>
+                    <p style="font-size:20px;" :class="isDark?'text-white':''"><b>Role Name: </b></p>
                     <v-select v-model="roleName" label="Select" :options="allRoles" class="short-dropdown" :class="isDark ? 'dropdown-dark':''"></v-select>
                 </div>
                 <div class="ml-auto pt-2 pr-5">
@@ -175,7 +182,6 @@ const buttonClass = "p-4 w-full rounded-md text-white text-2xl font-bold";
 .scrolling {
     overflow-y: auto;
     height: 60%;
-    background-color: white;
   }
 .searchbox {
     border: 2px solid #ccc;

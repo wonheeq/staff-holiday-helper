@@ -23,7 +23,7 @@ if (props.screenProp !== "default") {
     activeScreen.value = props.screenProp;
 }
 
-const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md bg-white";
+const subpageClass = "rounded-bl-md rounded-br-md rounded-tr-md";
 
 function changeUrl(params) {
     var baseUrl = window.location.origin;

@@ -9,6 +9,8 @@ import { useStaffStore } from '@/stores/StaffStore';
 import { useManagerStore } from '@/stores/ManagerStore';
 import { onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3'
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 const managerStore = useManagerStore();
 const { fetchRolesForStaff, fetchAllUnits } = managerStore;
 const page = usePage();
@@ -16,7 +18,6 @@ const user = computed(() => page.props.auth.user);
 let staffStore = useStaffStore();
 const { staffValue, searchStaff, allUnits} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
-
 
 onMounted(() => {
     fetchStaffMembers(user.value.accountNo);
@@ -29,16 +30,18 @@ async function handleEditRoles(accountNo) {
     await fetchAllUnits();
     showEditModal.value = true;
 }
-let deadAreaColor = "#FFFFFF";
+let deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+});
 </script>
 <template>
-    <div class="subpage-height w-full">
+    <div class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
             <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Your Staff Members:
             </p>
         </div>
-        <div class="staff-text grid grid-cols-6 bg-white mr-4 gap-x-2 mx-10 ml-6">
+        <div class="staff-text grid grid-cols-6 mr-4 gap-x-2 mx-10 ml-6" :class="isDark?'bg-gray-800':'bg-white'">
             <div>
               <p><b>Name:</b></p>
             </div>
@@ -76,6 +79,7 @@ let deadAreaColor = "#FFFFFF";
                 <div>
                     <input 
                     class="search-input" 
+                    :class="isDark?'bg-gray-800':'bg-white'"
                     ref="searchInput" 
                     v-model="staffValue"
                     placeholder="Enter your search" >

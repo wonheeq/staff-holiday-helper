@@ -1,9 +1,11 @@
 <script setup>
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 let props = defineProps({ source: Object });
 let emit = defineEmits(['editRoles']);
 </script>
 <template>
-    <div class="grid grid-cols-6 bg-white mr-4 mx-6" style="grid-auto-columns: min-content;"> 
+    <div class="grid grid-cols-6 mr-4 mx-6" style="grid-auto-columns: min-content;" :class="isDark?'bg-gray-800':'bg-white'"> 
         <div>
             <p class="staff-text">{{ source.fName }} {{ source.lName }} </p>
         </div>

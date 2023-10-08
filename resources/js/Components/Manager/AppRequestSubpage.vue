@@ -5,11 +5,12 @@ import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
 import { onMounted } from 'vue';
-import { usePage } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3';
 const page = usePage();
 import {computed} from 'vue';
 const user = computed(() => page.props.auth.user);
-
+import { useDark } from "@vueuse/core";
+const isDark = useDark();
 
 let applicationStore = useApplicationStore();
 const { filteredApplications, viewing } = storeToRefs(applicationStore);
@@ -19,10 +20,12 @@ onMounted(() => {
     fetchManagerApplications(user.value.accountNo);
 });
 
-let deadAreaColor = "#FFFFFF";
+const deadAreaColor = computed(() => {
+    return isDark.value ? '#1f2937': '#FFFFFF';
+})
 </script>
 <template>
-    <div class="subpage-height w-full">
+    <div class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
             <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Leave Applications:
@@ -69,7 +72,7 @@ let deadAreaColor = "#FFFFFF";
                 >
             <label for="rejected" class="filter-text">Rejected Applications</label>
         </div>
-        <div class="bg-white mx-2 mb-2 1440:mx-4 1440:mb-4 scroller">
+        <div class="mx-2 mb-2 1440:mx-4 1440:mb-4 scroller" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
