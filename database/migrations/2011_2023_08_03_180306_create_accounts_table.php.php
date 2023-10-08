@@ -29,7 +29,7 @@ return new class extends Migration
         // https://stackoverflow.com/a/65396800
         Schema::table('accounts', function (Blueprint $table) {
             $table->foreign('superiorNo')->references('accountNo')->on('accounts')->cascadeOnUpdate()->nullOnDelete();
-            $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnUpdate();
+            $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

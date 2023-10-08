@@ -28,7 +28,7 @@ class KernelTest extends TestCase
         parent::setup();
 
         $this->school = School::create([
-            'schoolId' => 1,
+            'schoolId' => 2,
             'name' => 'test'
         ]);
 
@@ -124,7 +124,6 @@ class KernelTest extends TestCase
 
         parent::teardown();
     }
-
 
     public function test_getReminderLists_is_successful_works_with_timeframe_1_day(): void {
         $date = new DateTime();

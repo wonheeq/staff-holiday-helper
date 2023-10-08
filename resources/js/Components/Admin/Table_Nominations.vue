@@ -7,6 +7,7 @@ import { VueGoodTable } from 'vue-good-table-next';
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -40,6 +41,11 @@ export default {
                 label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
                 },
+                {
+                label: '',
+                field: 'delete',
+                sortable: false
+                }
             ],
             nominations: [],
             c: defaultC,
@@ -75,6 +81,62 @@ export default {
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },
+        deleteClicked: function(applicationNo, nomineeNo, accountRoleId) {
+            //console.log(rowId);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete nomination for \'' + rowId + '\'?',
+                text: 'This will remove the nomination from the database.',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#22C55E',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteEntry(applicationNo, nomineeNo, accountRoleId);
+                }
+            });
+        },
+        deleteEntry: function(applicationNo, nomineeNo, accountRoleId) {
+            //console.log('deleting');
+
+            let data = {
+                'table': 'nominations',
+                'applicationNo': applicationNo,
+                'nomineeNo': nomineeNo,
+                'accountRoleId': accountRoleId
+            }
+
+            // Removing Nominations from DB
+            axios.post("/api/dropEntry/" + this.user, data)
+            .then((response) => {
+                if (response.status == 200) {   
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully deleted nomination.'
+                    });
+
+                    // Reset Table
+                    axios.get("/api/allNominations/" + this.user)
+                    .then((response) => {
+                        this.nominations = response.data;
+                        //console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });                 
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: error.response.data.error
+                });
+            });
+        }
     }
 };
 
@@ -103,6 +165,13 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-row="props">
+                        <span v-if="props.column.field == 'delete'">
+                            <button type="button" class="4k:w-10 4k:h-10" v-on:click="deleteClicked(props.row.applicationNo, props.row.nomineeNo, props.row.accountRoleId)">
+                                <img src="/images/delete.svg" />
+                            </button>
+                        </span>
+                    </template>
                     <template #emptystate>
                         No entries found!
                     </template>        

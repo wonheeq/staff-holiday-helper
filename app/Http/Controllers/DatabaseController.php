@@ -9,6 +9,10 @@ use App\Models\Unit;
 use App\Models\Major;
 use App\Models\Course;
 use App\Models\School;
+use App\Models\Application;
+use App\Models\Nomination;
+use App\Models\Message;
+//use App\Models\EmailPreference;
 
 
 use Illuminate\Http\Request;
@@ -87,6 +91,13 @@ class DatabaseController extends Controller
             return response()->json(['error' => 'Account Number needs syntax<br />of 6 numbers followed by<br />lowercase letter with no spaces'], 500);
         }
 
+        // Checks if account is trying to have schoolId == 1
+        /*if ($attributes[4]['schoolId'] == 1) {
+        // The account is allowed to have a schoolId of one only if it is a 'sysadmin' and no other account is using '1' as its schoolId
+            if ($attributes[1]['db_name'] != 'sysadmin' || Account::where('schoolId', 1)->exists()) {
+                return response()->json(['error' => 'School Code of \'1\' can<br />only be assigned to one<br />System Administrator type<br />account at any given time.'], 500);
+            }
+        }*/
 
         Account::create([
             'accountNo' => $attributes[0],
@@ -97,6 +108,10 @@ class DatabaseController extends Controller
             'superiorNo' => $attributes[5]['accountNo'],
             'schoolId' => $attributes[4]['schoolId']
         ]);
+
+        /*EmailPreference::create([
+            'accountNo' => $attributes[0]
+        ]);*/
 
         return response()->json(['success' => 'success'], 200);
     }
@@ -366,6 +381,21 @@ class DatabaseController extends Controller
             if (School::where('schoolId', $curAttr)->doesntExist()) {
                 return response()->json(['error' => $curID . ' Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
+            else if ($curAttr == 1) {
+                return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+            }
+            /*else if ($curAttr == 1) { // Checks if account is trying to have schoolId == 1                            
+                // The account is allowed to have a schoolId of one only if it is a 'sysadmin' and no other account is using '1' as its schoolId
+                if ($entries[$i]['Account Type'] != 'sysadmin' || Account::where('schoolId', 1)->exists()) {
+                    return response()->json(['error' => 'School Code of \'1\' can only be assigned to one System Administrator type account at any given time.'], 500);
+                }
+                // Ensuring other accounts in CSV don't also have schoolId == 1
+                for ($j = $i + 1; $j < $numEntries; $j++) {
+                    if ($entries[$j]['School Code'] == 1) {
+                        return response()->json(['error' => 'School Code of \'1\' can only be assigned to one System Administrator type account at any given time.'], 500);
+                    }
+                }
+            }*/
 
             // Line Manager's ID
             $curAttr = $entries[$i]['Line Manager\'s ID'];
@@ -391,6 +421,10 @@ class DatabaseController extends Controller
                 'superiorNo' => $entries[$i]['Line Manager\'s ID'],
                 'schoolId' => $entries[$i]['School Code']
             ]);
+
+            /*EmailPreference::create([
+                'accountNo' => $entries[$i]['Account Number (Staff ID)']
+            ]);*/
         }
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);
@@ -673,5 +707,87 @@ class DatabaseController extends Controller
         }
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);
+    }
+
+    /**
+     * Removes entry from database
+     */
+    public function dropEntry(Request $request, String $accountNo) { 
+         // Check if user exists for given accountNo
+         if (!Account::where('accountNo', $accountNo)->first()) {
+            // User does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+            // Verify that the account is a system admin account
+            if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+                // User is not a system admin, deny access to full table
+                return response()->json(['error' => 'User not authorized for request.'], 500);
+            }
+
+            $data = $request->all();
+            //Log::info($data);
+
+            // Use 'table' to work out which model the entry is being removed from.
+            switch ($data['table']) {
+                case 'accounts': 
+                    if ($data['entryId'] == $accountNo) {
+                        return response()->json(['error' => 'Blocked: Deleting your own account is not permitted.'], 500);
+                    }
+                    else if (Account::where('accountNo', $data['entryId'])->where('schoolId', 1)->exists()) {
+                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted'], 500);
+                    }
+                    
+                    // Removing Account
+                    Account::where('superiorNo', )->touch();
+                    Account::destroy($data['entryId']);
+                    break;
+                case 'applications':
+                    Application::destroy($data['entryId']);
+                    break;
+                case 'nominations':
+                    Nomination::where('applicationNo', $data['applicationNo'])
+                              ->where('nomineeNo', $data['nomineeNo'])
+                              ->where('accountRoleId', $data['accountRoleId'])->delete();
+                    break;
+                case 'accountRoles':
+                    AccountRole::destroy($data['entryId']);
+                    break;
+                case 'roles':
+                    Role::destroy($data['entryId']);
+                    break;
+                case 'units':
+                    AccountRole::where('unitId', $data['entryId'])->touch();
+                    Unit::destroy($data['entryId']);
+                    
+                    break;
+                case 'majors':
+                    AccountRole::where('majorId', $data['entryId'])->touch();
+                    Major::destroy($data['entryId']);
+                    break;
+                case 'courses':
+                    AccountRole::where('courseId', $data['entryId'])->touch();
+                    Course::destroy($data['entryId']);
+                    break;
+                case 'schools':
+                    if ($data['entryId'] != 1) {
+                        if (Account::where('accountNo', $accountNo)->where('schoolId', $data['entryId'])->exists()) {
+                            return response()->json(['error' => 'Blocked: Deleting this school would result in you own account being deleted.'], 500);
+                        }
+                        School::destroy($data['entryId']);
+                    }
+                    else {
+                        return response()->json(['error' => 'Blocked: School Code \'1\' deletion is not an allowed operation.'], 500);
+                    }
+                    break;
+                case 'messages':
+                    Message::destroy($data['entryId']);
+                    break;
+                default:
+                    return response()->json(['error' => 'Could not determine db table'], 500);
+            }
+  
+            return response()->json(['success' => 'success'], 200);
+        }  
     }
 }
