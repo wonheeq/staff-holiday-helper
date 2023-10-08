@@ -126,7 +126,8 @@ export default {
                     text: error.response.data.error
                 });
             });
-        }
+        },
+        
     }
 };
 

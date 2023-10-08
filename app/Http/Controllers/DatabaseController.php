@@ -909,7 +909,11 @@ class DatabaseController extends Controller
         }
 
         if ($initialEntry['Line Manager'] != $entry['Line Manager']) {
-            if (Account::where('accountNo', $entry['Line Manager'])->where('accountType', '!=', 'staff')->doesntExist()) {
+            if ($entry['Line Manager'] == "") {
+                // Line manager is null
+                $entry['Line Manager'] = NULL;
+            }
+            else if (Account::where('accountNo', $entry['Line Manager'])->where('accountType', '!=', 'staff')->doesntExist()) {
                 if ($entry['Line Manager'] != 'none') {
                     return response()->json(['error' => 'Invalid: Line Manager \'' . $entry['Line Manager'] . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
                 }

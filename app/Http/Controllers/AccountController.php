@@ -47,14 +47,14 @@ class AccountController extends Controller
         }
 
         $lineManager = $this->getCurrentLineManager($accountNo);
-
+        
         $data = [
             'name' => "{$account->fName}",
             'lineManager' => [
                 'name' => "{$lineManager->fName} {$lineManager->lName}",
                 'id' => "{$lineManager->accountNo}"
             ]
-        ];
+        ];     
 
         return response()->json($data);
     }
@@ -64,7 +64,13 @@ class AccountController extends Controller
     */
     public function getDefaultAdmin()
     {
-        return Account::where('accountNo', DEFAULT_ADMIN_ACCOUNT_NO)->first();
+        $defaultAdmin = Account::where('accountNo', DEFAULT_ADMIN_ACCOUNT_NO)->first();
+        
+        if ($defaultAdmin == NULL) { // Default accountNo must have been edited, find another super account
+            $defaultAdmin = Account::where('schoolId', 1)->first();
+        }
+
+        return $defaultAdmin;
     }
 
     /*
