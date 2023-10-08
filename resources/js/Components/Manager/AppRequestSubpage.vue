@@ -11,6 +11,10 @@ import {computed} from 'vue';
 const user = computed(() => page.props.auth.user);
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+
 
 let applicationStore = useApplicationStore();
 const { filteredApplications, viewing } = storeToRefs(applicationStore);
@@ -25,7 +29,71 @@ const deadAreaColor = computed(() => {
 })
 </script>
 <template>
-    <div class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
+        <div class="h-[5%]">
+            <p class="font-bold text-2xl">
+                Leave Applications:
+            </p>
+        </div>
+        <div class="mx-1 text-xs">
+            <input 
+                type="radio" 
+                id="allApplications" 
+                name="applicationFilter" 
+                class="filter-radio" 
+                value="all"
+                v-model="viewing"
+                checked>
+            <label for="allApplications" class="filter-text ">All Applications</label>
+        
+            <input 
+                type="radio" 
+                id="unAcknowledged" 
+                name="applicationFilter" 
+                class="filter-radio"
+                value="unAcknowledged"
+                v-model="viewing"
+                >
+            <label for="unAcknowledged" class="filter-text">Unacknowledged Applications</label>
+        </div>
+        <div class="h-[3%] mx-1 text-xs">
+            <input 
+                type="radio" 
+                id="accepted" 
+                name="applicationFilter" 
+                class="filter-radio"
+                value="accepted"
+                v-model="viewing"
+                >
+            <label for="accepted" class="filter-text">Accepted Applications</label>
+
+            <input 
+                type="radio" 
+                id="rejected" 
+                name="applicationFilter" 
+                class="filter-radio"
+                value="rejected"
+                v-model="viewing"
+                >
+            <label for="rejected" class="filter-text">Rejected Applications</label>
+        </div>
+        <div class="scroller" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+            >
+                <template #tbody>
+                    <div v-for="item in filteredApplications" :key="item.id" class="mb-2">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                    </div>
+                    
+                </template>
+            </VueScrollingTable>
+        </div>
+    </div>
+    <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
             <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Leave Applications:
@@ -92,6 +160,9 @@ const deadAreaColor = computed(() => {
 <style>
 .subpage-height {
     height: calc(0.95 * 93vh - 3rem);
+}
+.subpage-heightMobile2 {
+    height: calc(0.95 * (93vh - 1.5rem));
 }
 .scroller {
     overflow-y: auto;
