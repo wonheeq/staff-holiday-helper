@@ -839,7 +839,7 @@ class DatabaseController extends Controller
                     $response = $this->editSchool($initialEntry, $entry);
                    break;
                default:
-                   return response()->json(['error' => 'Could not determine db table'], 500);
+                   return response()->json(['error' => 'Could not determine db table.'], 500);
            }
  
            return $response;
@@ -977,17 +977,17 @@ class DatabaseController extends Controller
         // Verifying new data is compliant with db syntax
         if ($initialEntry['Role ID'] != $entry['Role ID']) {
             if (!preg_match("/\A[0-9]{1,}$/", $entry['Role ID'])) {
-                return response()->json(['error' => 'Invalid: Role ID should be an integer'], 500);
+                return response()->json(['error' => 'Invalid: Role ID should be an integer.'], 500);
             }
         }
 
         if ($initialEntry['Role Name'] != $entry['Role Name']) {
             if (strlen($entry['Role Name']) > 40) {
-                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name should be under 40 characters'], 500);
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name should be under 40 characters.'], 500);
             }
 
             if (Role::where('name', $entry['Role Name'])->exists()) {
-                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name already in use'], 500);
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name already in use.'], 500);
             }
         }
 
@@ -996,6 +996,87 @@ class DatabaseController extends Controller
             'name' => $entry['Role Name']
         ]);
         Role::where('roleId', $initialEntry['Role ID'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editUnit(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Unit Code'] != $entry['Unit Code']) {
+            if (strlen($entry['Unit Code']) != 8 || !preg_match("/\A[A-Z]{4}[0-9]{4}/", $entry['Unit Code'])) {
+                return response()->json(['error' => $entry['Unit Code'] . ' Invalid: Unit Code needs syntax of 4 capital letters followed by 4 numbers with no spaces.'], 500);
+            }
+        }
+
+        if ($initialEntry['Unit Name'] != $entry['Unit Name']) {
+            if (strlen($entry['Unit Name']) > 60) {
+                return response()->json(['error' => $entry['Unit Name'] . ' Invalid: Unit Name should be under 60 characters.'], 500);
+            }
+
+            if (Unit::where('name', $entry['Unit Name'])->exists()) {
+                return response()->json(['error' => $entry['Unit Name'] . ' Invalid: Unit Name already in use.'], 500);
+            }
+        }
+
+        Unit::where('unitId', $initialEntry['Unit Code'])->update([
+            'unitId' => $entry['Unit Code'],
+            'name' => $entry['Unit Name']
+        ]);
+        Unit::where('unitId', $initialEntry['Unit Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editMajor(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Major Code'] != $entry['Major Code']) {
+            if (strlen($entry['Major Code']) != 10 || !preg_match("/\AMJ[A-Z]{2}-[A-Z]{5}/", $entry['Major Code'])) {
+                return response()->json(['error' => $entry['Major Code'] . ' Invalid: Major Code needs syntax of "MJ" followed by 2 capital letters, then a "-" followed by 5 capital letters.'], 500);
+            }
+        }
+
+        if ($initialEntry['Major Name'] != $entry['Major Name']) {
+            if (strlen($entry['Major Name']) > 60) {
+                return response()->json(['error' => $entry['Major Name'] . ' Invalid: Major Name should be under 60 characters.'], 500);
+            }
+
+            if (Major::where('name', $entry['Major Name'])->exists()) {
+                return response()->json(['error' => $entry['Major Name'] . ' Invalid: Major Name already in use.'], 500);
+            }
+        }
+
+        Major::where('majorId', $initialEntry['Major Code'])->update([
+            'majorId' => $entry['Major Code'],
+            'name' => $entry['Major Name']
+        ]);
+        Major::where('majorId', $initialEntry['Major Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editCourse(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Course Code'] != $entry['Course Code']) {
+            if (strlen($entry['Course Code']) > 10 || !preg_match("/\A[A-Z]{1,2}-[A-Z]{4,7}/", $entry['Course Code'])) {
+                return response()->json(['error' => $entry['Course Code'] . ' Invalid: Course Code needs syntax of 1 to 2 capital letters, then a "-" followed by 4 to 7 capital letters.'], 500);
+            }
+        }
+
+        if ($initialEntry['Course Name'] != $entry['Course Name']) {
+            if (strlen($entry['Course Name']) > 60) {
+                return response()->json(['error' => $entry['Course Name'] . ' Invalid: Course Name should be under 60 characters.'], 500);
+            }
+
+            if (Course::where('name', $entry['Course Name'])->exists()) {
+                return response()->json(['error' => $entry['Course Name'] . ' Invalid: Course Name already in use.'], 500);
+            }
+        }
+
+        Course::where('courseId', $initialEntry['Course Code'])->update([
+            'courseId' => $entry['Course Code'],
+            'name' => $entry['Course Name']
+        ]);
+        Course::where('courseId', $initialEntry['Course Code'])->touch();
 
         return response()->json(['success' => 'success'], 200);
     }
