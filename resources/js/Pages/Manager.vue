@@ -11,7 +11,7 @@ const { isMobile } = storeToRefs(screenSizeStore);
 import { ref } from 'vue';
 
 const options = [
-    { id: 'appRequest', title: 'Application Request', mobileTitle: 'Application Request'},
+    { id: 'appRequest', title: 'Applications', mobileTitle: 'Applications'},
     { id: 'manage', title: 'Manage Staff', mobileTitle: 'Manage Staff'},
 ];
 
