@@ -790,4 +790,126 @@ class DatabaseController extends Controller
             return response()->json(['success' => 'success'], 200);
         }  
     }
+
+    /**
+     * Edits an entry in the database
+     */
+    public function editEntry(Request $request, String $accountNo) { 
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+           // User does not exist, return exception
+           return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+           // Verify that the account is a system admin account
+           if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+               // User is not a system admin, deny access to full table
+               return response()->json(['error' => 'User not authorized for request.'], 500);
+           }
+
+           $data = $request->all();
+           //Log::info($data);
+
+           $initialEntry = $data['initialEntry'];
+           $entry = $data['entry'];
+
+           // Verifying that a change has been made
+           if ($initialEntry == $entry) {
+                return response()->json(['error' => 'No changes made.'], 500);
+           }
+
+           // Use 'table' to work out which model the entry is being removed from.
+           switch ($data['table']) {
+               case 'Staff Accounts': 
+                    $response = $this->editAccount($initialEntry, $entry);
+                   break;
+               case 'Roles':
+                    $response = $this->editRole($initialEntry, $entry);
+                   break;
+               case 'Units':
+                    $response = $this->editUnit($initialEntry, $entry);
+                   break;
+               case 'Majors':
+                    $response = $this->editMajor($initialEntry, $entry);
+                   break;
+               case 'Courses':
+                    $response = $this->editCourse($initialEntry, $entry);
+                   break;
+               case 'Schools':
+                    $response = $this->editSchool($initialEntry, $entry);
+                   break;
+               default:
+                   return response()->json(['error' => 'Could not determine db table'], 500);
+           }
+ 
+           return $response;
+        }  
+    }
+
+    private function editAccount(Array $initialEntry, Array $entry) {
+
+        // Checking if accountNo has been changed
+        if ($initialEntry['Account Number'] != $entry['Account Number']) {
+            // Checking validity of new accountNo
+            // checking new primary key
+            if (Account::where('accountNo', $entry['Account Number'])->exists())
+            {
+                return response()->json(['error' => 'Invalid: Account ID already in use.'], 500);
+            }
+
+            // accountNo
+            if (strlen($entry['Account Number']) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $entry['Account Number'])) {
+                return response()->json(['error' => 'Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces.'], 500);
+            }
+        } 
+        
+        // Checking if other attributes have been changed and determining their validity
+        if ($initialEntry['Account Type'] != $entry['Account Type']) {
+            if ($entry['Account Type'] != 'staff' && $entry['Account Type'] != 'lmanager' && $entry['Account Type'] != 'sysadmin') {
+                return response()->json(['error' => 'Invalid: Account Type must be one of \'staff\', \'lmanager\', or \'sysadmin\'.'], 500);
+            }
+        }
+
+        if ($initialEntry['Surname'] != $entry['Surname']) {
+            if (strlen($entry['Surname']) > 20) {
+                return response()->json(['error' => 'Invalid: Surname must be 20 characters or less (If surname has multiple parts add some to \'First/Other Names\' column). Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        if ($initialEntry['First/Other Names'] != $entry['First/Other Names']) {
+            if (strlen($entry['First/Other Names']) > 30) {
+                return response()->json(['error' => 'Invalid: First/Other Names must be 30 characters or less. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        if ($initialEntry['School Code'] != $entry['School Code']) {
+            if (School::where('schoolId', $entry['School Code'])->doesntExist()) {
+                return response()->json(['error' => 'Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+            else if ($entry['School Code'] == 1) {
+                return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+            }
+        }
+
+        if ($initialEntry['Line Manager'] != $entry['Line Manager']) {
+            if (Account::where('accountNo', $entry['Line Manager'])->where('accountType', '!=', 'staff')->doesntExist()) {
+                if ($entry['Line Manager'] != 'none') {
+                    return response()->json(['error' => 'Invalid: Line Manager \'' . $entry['Line Manager'] . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+                }
+            }
+        }
+
+        // All checks have passed
+        Account::where('accountNo', $initialEntry['Account Number'])->update([
+            'accountNo' => $entry['Account Number'],
+            'accountType' => $entry['Account Type'],
+            'lName' => $entry['Surname'],
+            'fName' => $entry['First/Other Names'],
+            'superiorNo' => $entry['Line Manager'],
+            'schoolId' => $entry['School Code']
+        ]);
+        Account::where('accountNo', $entry['Account Number'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
 }
