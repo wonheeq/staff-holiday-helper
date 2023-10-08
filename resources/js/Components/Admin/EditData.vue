@@ -7,7 +7,7 @@
 
     let props = defineProps({
         table: String,
-        entry: Array,
+        entry: Object,
         user: String,
         required: true,
     });

@@ -127,12 +127,14 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'Role ID': params.row.roleId,
-                'Role Name': params.row.name
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Role ID': params.row.roleId,
+                    'Role Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable);
+            }      
         }
     }
 };

@@ -127,12 +127,14 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'Unit Code': params.row.unitId,
-                'Unit Name': params.row.name
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Unit Code': params.row.unitId,
+                    'Unit Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable);   
+            }   
         }
     }
 };

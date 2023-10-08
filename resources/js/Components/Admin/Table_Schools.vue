@@ -127,12 +127,14 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'School Code': params.row.schoolId,
-                'School Name': params.row.name
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'School Code': params.row.schoolId,
+                    'School Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable);  
+            }    
         }
     }
 };

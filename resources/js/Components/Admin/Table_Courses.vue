@@ -128,12 +128,14 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'Course Code': params.row.courseId,
-                'Course Name': params.row.name
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Course Code': params.row.courseId,
+                    'Course Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable);  
+            }    
         }
     }
 };

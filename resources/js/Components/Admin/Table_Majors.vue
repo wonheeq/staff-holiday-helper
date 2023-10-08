@@ -128,12 +128,14 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'Major Code': params.row.majorId,
-                'Major Name': params.row.name
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Major Code': params.row.majorId,
+                    'Major Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable); 
+            }     
         }
     }
 };

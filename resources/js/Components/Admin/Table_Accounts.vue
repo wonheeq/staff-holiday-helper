@@ -146,16 +146,18 @@ export default {
             });
         },
         editAttribute: function(params) {
-            let editable = {
-                'Account Number': params.row.accountNo,
-                'Account Type': params.row.accountType,
-                'Surname': params.row.lName,
-                'First/Other Names': params.row.fName,
-                'School Code': params.row.schoolId,
-                'Line Manager': params.row.superiorNo
-            }
- 
-            this.$emit('toggleEditing', editable);      
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Account Number': params.row.accountNo,
+                    'Account Type': params.row.accountType,
+                    'Surname': params.row.lName,
+                    'First/Other Names': params.row.fName,
+                    'School Code': params.row.schoolId,
+                    'Line Manager': params.row.superiorNo
+                }
+    
+                this.$emit('toggleEditing', editable); 
+            }     
         }
     }
 };
