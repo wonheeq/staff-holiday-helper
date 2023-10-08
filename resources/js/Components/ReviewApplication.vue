@@ -199,10 +199,8 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                     style="width: 100%; height: 2rem; background-color: white;
                     font-size: 10px; 
                     border: solid; border-color: #6b7280; border-width: 1px;
-                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
-                    v-model="multiSelectNominee"
+                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"
                     @option:selected="(selectedOption) => handleSelection(selectedOption)"
-                    :isDisabled="selfNominateAll"
                 />
             </div>
             <div class="flex justify-between pt-5">
@@ -272,10 +270,8 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 <vSelect :options="options" :clearable="false" :class="isDark ? 'dropdown-dark':''"
                     style="width: 100%; height: 2rem; background-color: white; 
                     border: solid; border-color: #6b7280; border-width: 1px;
-                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"                                 
-                    v-model="multiSelectNominee"
+                    --vs-border-style: none; --vs-search-input-placeholder-color: #6b7280"
                     @option:selected="(selectedOption) => handleSelection(selectedOption)"
-                    :isDisabled="selfNominateAll"
                 />
             </div>
             <div class="h-[10%] flex justify-between">
