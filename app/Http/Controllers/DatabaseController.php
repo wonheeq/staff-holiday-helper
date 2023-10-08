@@ -735,7 +735,7 @@ class DatabaseController extends Controller
                         return response()->json(['error' => 'Blocked: Deleting your own account is not permitted.'], 500);
                     }
                     else if (Account::where('accountNo', $data['entryId'])->where('schoolId', 1)->exists()) {
-                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted'], 500);
+                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted.'], 500);
                     }
                     
                     // Removing Account
@@ -821,7 +821,7 @@ class DatabaseController extends Controller
            // Use 'table' to work out which model the entry is being removed from.
            switch ($data['table']) {
                case 'Staff Accounts': 
-                    $response = $this->editAccount($initialEntry, $entry);
+                    $response = $this->editAccount($initialEntry, $entry, $accountNo);
                    break;
                case 'Roles':
                     $response = $this->editRole($initialEntry, $entry);
@@ -846,12 +846,19 @@ class DatabaseController extends Controller
         }  
     }
 
-    private function editAccount(Array $initialEntry, Array $entry) {
+    private function editAccount(Array $initialEntry, Array $entry, String $curAccount) {
+        // Checking that the admin has the right to edit the account
+        if ($initialEntry['Account Type'] == 'sysadmin' && Account::where('accountNo', $curAccount)->where('schoolId', 1)->doesntExist()) {
+            return response()->json(['error' => 'Invalid: Only Super Administrators can edit System Administrator accounts.'], 500);
+        }
 
+        $primaryKeyChanged = false;
+        
         // Checking if accountNo has been changed
         if ($initialEntry['Account Number'] != $entry['Account Number']) {
+            $primaryKeyChanged = true;
+            
             // Checking validity of new accountNo
-            // checking new primary key
             if (Account::where('accountNo', $entry['Account Number'])->exists())
             {
                 return response()->json(['error' => 'Invalid: Account ID already in use.'], 500);
@@ -887,7 +894,17 @@ class DatabaseController extends Controller
                 return response()->json(['error' => 'Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
             else if ($entry['School Code'] == 1) {
-                return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+                // Only Super Administrator can assign schoolId of 1
+                if (Account::where('accountNo', $curAccount)->where('schoolId', 1)->doesntExist()) {
+                    return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+                }
+                else if ($entry['Account Type'] != 'sysadmin') {
+                    // Only System Administrator accounts may be granted 'Super Administrator' status.   
+                    return response()->json(['error' => 'School Code of \'1\' cannot be assigned to non-sysadmin type accounts.'], 500);
+                }
+            }
+            else if ($initialEntry['School Code'] == 1) {
+                return response()->json(['error' => 'Account with School Code of \'1\' cannot have its School Code changed (in case no accoount is left with Super Administrator rights).'], 500);
             }
         }
 
@@ -899,16 +916,55 @@ class DatabaseController extends Controller
             }
         }
 
-        // All checks have passed
-        Account::where('accountNo', $initialEntry['Account Number'])->update([
-            'accountNo' => $entry['Account Number'],
-            'accountType' => $entry['Account Type'],
-            'lName' => $entry['Surname'],
-            'fName' => $entry['First/Other Names'],
-            'superiorNo' => $entry['Line Manager'],
-            'schoolId' => $entry['School Code']
-        ]);
-        Account::where('accountNo', $entry['Account Number'])->touch();
+        // If a line manager has their accountNo changed
+        if ($primaryKeyChanged && $entry['Account Type'] != 'staff') {
+           // Need to make a temp lmanager account with an unused, assign it as the line manager of the relevent accounts,
+           // then, then update the target account as needed, then re-assign the superiorNo to the updated on and then 
+           // delete the temp account.
+           Account::factory()->create([
+                'accountNo' => 'tempNo',
+                'accountType' => "lmanager"
+            ]);
+
+            Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => 'tempNo']);
+
+            // Updating account
+            Account::where('accountNo', $initialEntry['Account Number'])->update([
+                'accountNo' => $entry['Account Number'],
+                'accountType' => $entry['Account Type'],
+                'lName' => $entry['Surname'],
+                'fName' => $entry['First/Other Names'],
+                'superiorNo' => $entry['Line Manager'],
+                'schoolId' => $entry['School Code']
+            ]);
+            Account::where('accountNo', $entry['Account Number'])->touch();
+
+            // Subordinate accounts updated with new superiorNo
+            Account::where('superiorNo', 'tempNo')->touch();
+            Account::where('superiorNo', 'tempNo')->update(['superiorNo' => $entry['Account Number']]);
+            
+            // Deleting temp account
+            Account::destroy('tempNo');
+        }
+        else {
+            // All checks have passed
+            Account::where('accountNo', $initialEntry['Account Number'])->update([
+                'accountNo' => $entry['Account Number'],
+                'accountType' => $entry['Account Type'],
+                'lName' => $entry['Surname'],
+                'fName' => $entry['First/Other Names'],
+                'superiorNo' => $entry['Line Manager'],
+                'schoolId' => $entry['School Code']
+            ]);
+            Account::where('accountNo', $entry['Account Number'])->touch();
+        }
+
+        // If a line manager is changed to 'staff' type
+        if ($initialEntry['Account Type'] != 'staff' && $entry['Account Type'] == 'staff') {
+            // Remove any instances of line manager as 'superiorNo'
+            Account::where('superiorNo', $initialEntry['Account Number'])->touch();
+            Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => NULL]);
+        }
 
         return response()->json(['success' => 'success'], 200);
     }

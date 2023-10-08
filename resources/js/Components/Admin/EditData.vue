@@ -52,7 +52,7 @@
 <template>
     <Modal>
         <div class="h-screen flex items-center w-screen bg-transparent">
-            <div class="w-3/6 flex flex-col p-4 mx-auto h-3/6 rounded-tl-md overflow-auto" :class="subpageClass">
+            <div class="w-3/6 flex flex-col p-4 mx-auto h-4/7 rounded-tl-md overflow-auto" :class="subpageClass">
                 <div class="h-[10%] flex justify-between 4k:ml-6">
                     <slot />
                     <p class="text-xl mt-3 font-bold 4k:text-3xl 4k:mt-6">             
@@ -67,7 +67,10 @@
                 <p class="4k:text-2xl">             
                     Re-fill the values you wish to change.
                 </p>
-                <div class="mt-4 4k:ml-6">
+                <p  v-if="table == 'Staff Accounts'" class="4k:text-2xl text-red-700">             
+                    Note: Changing your own account details will require you to log back in.
+                </p>
+                <div class="mt-3 4k:ml-6">
                     <div v-for="(, index) in entry" :key="index">
                         <div class="flex justify-between mx-4 4k:mx-6">
                             <span class="mt-4 4k:mt-10 4k:text-2xl">{{ index }}: </span>
