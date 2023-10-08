@@ -158,7 +158,6 @@ function handleCloseReviewApp() {
                 </div>
             </div>  
             <div class="flex flex-col w-2/5 text-3xl p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
-                <p class="text-xs pr-10 pt-7 ml-auto laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl laptop:pt-8 1080:pt-8  1440:pt-8  4k:pt-8 ">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 <p v-if="source.status ==='Y'" class="text-sm pr-1 pb-7 laptop:text-base 1080:text-2xl 1440:text-3xl 4k:text-4xl ml-auto text-green-500 laptop:pr-10 1080:pr-10  1440:pr-10  4k:pr-10 " style="margin-top: auto;">
                     <strong>APPROVED</strong>
                 </p>
