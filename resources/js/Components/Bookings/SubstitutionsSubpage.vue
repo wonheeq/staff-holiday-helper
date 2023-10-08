@@ -30,6 +30,7 @@ const deadAreaColor = computed(() => {
                 class=""
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div v-for="item in substitutions" :key="item.id"
@@ -66,6 +67,7 @@ const deadAreaColor = computed(() => {
                 class=""
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div v-for="item in substitutions" :key="item.id"

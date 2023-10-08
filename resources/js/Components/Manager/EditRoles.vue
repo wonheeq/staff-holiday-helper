@@ -141,7 +141,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
           <div class="h-[35%] py-2 overflow-y: auto;" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable 
             :scrollHorizontal="false"
-            :deadAreaColor="deadAreaColor">
+            :deadAreaColor="deadAreaColor"
+            :class="isDark?'scrollbar-dark':''">
                 <template #tbody>
                     <div class="text-xs pt-5 flex items-center justify-between border-b border-gray-300 pb-3" :class="isDark?'bg-gray-800':'bg-white'" v-for="role in staffRoles" :key="role.id">
                         <p class="pr-2" :class="isDark?'text-white':''">
@@ -199,7 +200,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
           <div class="h-[70%] py-4 pt-12 scrolling" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable 
             :scrollHorizontal="false"
-            :deadAreaColor="deadAreaColor">
+            :deadAreaColor="deadAreaColor"
+            :class="isDark?'scrollbar-dark':''">
                 <template #tbody>
                     <div class="pt-5 pl-5 flex items-center justify-between border-b border-gray-300 pb-3"  :class="isDark?'bg-gray-800':'bg-white'" v-for="role in staffRoles" :key="role.id">
                         <p class="1080:text-lg 4k:text-2xl" :class="isDark?'text-white':''">

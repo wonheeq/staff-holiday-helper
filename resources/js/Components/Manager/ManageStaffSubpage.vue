@@ -47,6 +47,7 @@ let deadAreaColor = computed(() => {
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div v-for="item in searchStaff" :key="item.id" class="mb-2 row-divider pt-2">
@@ -69,7 +70,7 @@ let deadAreaColor = computed(() => {
                 placeholder="Enter your search" >
                 </div>
         </div>
-        <Teleport to="body">
+        <Teleport to="#modals">
             <EditRole
                 v-show="showEditModal"
                 @close="showEditModal=false;"
@@ -103,6 +104,7 @@ let deadAreaColor = computed(() => {
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
+                    :class="isDark?'scrollbar-dark':''"
                 >
                     <template #tbody>
                         <div v-for="item in searchStaff" :key="item.id" class="mb-2 row-divider pt-2">
@@ -126,7 +128,7 @@ let deadAreaColor = computed(() => {
                     placeholder="Enter your search" >
                   </div>
             </div>
-            <Teleport to="body">
+            <Teleport to="#modals">
                 <EditRole
                     v-show="showEditModal"
                     @close="showEditModal=false;"

@@ -81,6 +81,7 @@ const deadAreaColor = computed(() => {
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div v-for="item in filteredApplications" :key="item.id" class="mb-2">
@@ -144,6 +145,7 @@ const deadAreaColor = computed(() => {
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div v-for="item in filteredApplications" :key="item.id" class="mb-2">

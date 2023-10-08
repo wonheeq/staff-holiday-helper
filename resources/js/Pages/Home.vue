@@ -163,7 +163,7 @@ fetchSubstitutions(user.value.accountNo);
                     @shrink-calendar="calendarLarge=false"
                 />
             </div>
-            <Teleport to="body">
+            <Teleport to="#modals">
                 <AcceptSomeNominations
                     v-show="showNominationModal"
                     :data="nominationModalData"

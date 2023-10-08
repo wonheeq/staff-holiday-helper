@@ -125,6 +125,7 @@ function handleClose() {
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div class="flex mb-2 items-center h-[5rem] space-x-1 justify-between mr-4"
@@ -180,6 +181,7 @@ function handleClose() {
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div class="flex mb-2 items-center space-x-2 justify-between mr-4"

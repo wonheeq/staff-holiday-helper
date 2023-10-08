@@ -235,6 +235,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 class="scrollTable"
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div>
@@ -337,6 +338,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 class="scrollTable"
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <div>

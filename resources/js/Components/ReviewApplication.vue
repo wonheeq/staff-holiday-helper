@@ -161,6 +161,7 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
+                    :class="isDark?'scrollbar-dark':''"
                 >
                     <template #tbody>
                         <div class="mb-2"
@@ -237,6 +238,7 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 <VueScrollingTable
                     :deadAreaColor="deadAreaColor"
                     :scrollHorizontal="false"
+                    :class="isDark?'scrollbar-dark':''"
                 >
                     <template #tbody>
                         <div class="mb-2"

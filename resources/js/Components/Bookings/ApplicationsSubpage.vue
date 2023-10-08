@@ -26,6 +26,7 @@ let deadAreaColor = computed(() => {
     <VueScrollingTable
         :deadAreaColor="deadAreaColor"
         :scrollHorizontal="false"
+        :class="isDark?'scrollbar-dark':''"
     >
         <template #tbody>
             <div v-for="item in applications" :key="item.id" class="mb-2">

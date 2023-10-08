@@ -56,6 +56,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 class="w-full"
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
                     <NomineeDropdownOption

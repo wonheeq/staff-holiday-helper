@@ -173,7 +173,7 @@ function handleCloseReviewApp() {
         </div>
     </div>
     
-    <Teleport to="body">
+    <Teleport to="#modals">
         <ReviewApplication
             v-show="showReviewAppModal"
             :data="reviewAppModalData"
