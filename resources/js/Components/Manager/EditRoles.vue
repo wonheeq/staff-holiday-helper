@@ -312,7 +312,7 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
         width: 300px; 
       }
       .addRoleButton {
-        padding: 12px 50px;
+        padding: 12px 30px;
       }
 }
 /* 1440p */
@@ -332,7 +332,7 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
         width: 300px;
       }
       .addRoleButton {
-        padding: 12px 50px;
+        padding: 12px 30px;
       }
 }
 /* 2160p */
