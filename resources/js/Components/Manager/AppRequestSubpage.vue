@@ -164,7 +164,7 @@ const deadAreaColor = computed(() => {
     height: calc(0.95 * 93vh - 3rem);
 }
 .subpage-heightMobile2 {
-    height: calc(0.95 * (93vh - 1.5rem));
+    height: calc(0.95 * 93vh - 1.5rem);
 }
 .filter-radio {
     transform: scale(0.6);

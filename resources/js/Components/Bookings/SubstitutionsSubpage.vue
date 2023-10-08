@@ -95,6 +95,7 @@ const deadAreaColor = computed(() => {
 <style>
 .subpage-height {
     height: calc(0.95 * 93vh - 3rem);
+    height: calc(0.95 * 93vh - 3rem);
 }
 .subpage-height-mobile {
     height: calc(0.95 * 93vh - 1.5rem);

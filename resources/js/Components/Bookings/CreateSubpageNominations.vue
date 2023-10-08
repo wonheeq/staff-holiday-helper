@@ -302,7 +302,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Select
                         </p>
                         <input type="checkbox"
-                            class="w-8 h-8 ml-2 border-gray-500"
+                            class="w-8 h-8 ml-2 border-gray-100"
                             :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
@@ -314,7 +314,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                             Filter Roles
                         </p>
                         <input type="text"
-                            class="h-8 w-full border-gray-500 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
+                            class="h-8 w-full border-gray-100 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
                             :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
