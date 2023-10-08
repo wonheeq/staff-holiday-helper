@@ -55,6 +55,8 @@ let emit = defineEmits(['editRoles']);
             </div>
         </div>
     </div>
+</template>
+
 <style>
 .roles_button {
     display: flex;
