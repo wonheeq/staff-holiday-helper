@@ -141,7 +141,7 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected Applications</label>
         </div>
-        <div class="mx-2 1440:mx-4 1440:mb-4 scroller" :class="isDark?'bg-gray-800':'bg-white'">
+        <div class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -166,10 +166,6 @@ const deadAreaColor = computed(() => {
 .subpage-heightMobile2 {
     height: calc(0.95 * (93vh - 1.5rem));
 }
-.scroller {
-    overflow-y: auto;
-    height: 89.5%;
-  }
 .filter-radio {
     transform: scale(0.6);
     margin-right: 2px;
