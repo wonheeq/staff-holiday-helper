@@ -54,7 +54,7 @@ function handleCloseReviewApp() {
 <template>
     <div v-if="isMobile">
         <!-- Render for undecided applications -->
-        <div v-if="source.status == 'U'" class="mr-4 " :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="source.status == 'U'" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="w-full p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
@@ -84,7 +84,7 @@ function handleCloseReviewApp() {
         </div>
     
         <!-- Render for reviewed applications -->
-        <div v-if="source.status == 'Y' || source.status == 'N'" class="mr-4" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="source.status == 'Y' || source.status == 'N'" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="w-full p-2 " :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
@@ -114,13 +114,11 @@ function handleCloseReviewApp() {
     </div>
     <div v-else>
         <!-- Render for undecided applications -->
-        <div v-if="source.status == 'U'" class="flex flex-row mr-4" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="source.status == 'U'" class="flex flex-row" :class="isDark?'bg-gray-800':'bg-white'">
             <div  class="flex flex-col w-5/6 p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
-                <div class="flex flex-row">
+                <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
-                </div>
-                <div class="flex flex-row">
-                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5">Applicant email: <span class="underline">{{ source.accountNo }} <br>@curtin.edu.au</span></p>
+                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
                     <p class="pt-2 text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
@@ -144,10 +142,11 @@ function handleCloseReviewApp() {
         </div>
     
         <!-- Render for reviewed applications -->
-        <div v-if="source.status == 'Y' || source.status == 'N'" class="flex flex-row mr-4" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="source.status == 'Y' || source.status == 'N'" class="flex flex-row" :class="isDark?'bg-gray-800':'bg-white'">
             <div  class="flex flex-col w-full p-2 " :class="isDark?'bg-gray-700':'bg-gray-200'">
-                <div class="flex flex-row pb-8">
+                <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
+                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
                     <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
@@ -211,8 +210,8 @@ function handleCloseReviewApp() {
 @media
 (min-width: 3840px) {
     .review {
-        height: 100px;
-        width: 100px;
+        height: 150px;
+        width: 150px;
     }
 }
 </style>
