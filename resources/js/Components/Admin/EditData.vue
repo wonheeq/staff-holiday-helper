@@ -55,13 +55,13 @@
             <div class="w-3/6 flex flex-col p-4 mx-auto h-4/7 rounded-tl-md overflow-auto" :class="subpageClass">
                 <div class="h-[10%] flex justify-between 4k:ml-6">
                     <slot />
-                    <p class="text-xl mt-3 font-bold 4k:text-3xl 4k:mt-6">             
+                    <p class="text-xl mt-1 font-bold 4k:text-3xl 4k:mt-6">             
                         Edit {{ table }}:
                     </p>
 
                     <!--Add full ui then worry about implementation-->
                     <button class="h-full" @click="$emit('close')">
-                        <img src="/images/close.svg" class="h-2/3 w-2/3"/>
+                        <img src="/images/close.svg" class="h-full w-full"/>
                     </button>
                 </div>
                 <p class="4k:text-2xl">             
