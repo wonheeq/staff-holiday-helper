@@ -824,7 +824,7 @@ class DatabaseController extends Controller
                     $response = $this->editAccount($initialEntry, $entry, $accountNo);
                    break;
                case 'Roles':
-                    $response = $this->editRole($initialEntry, $entry); // Do these now
+                    $response = $this->editRole($initialEntry, $entry);
                    break;
                case 'Units':
                     $response = $this->editUnit($initialEntry, $entry);
@@ -969,6 +969,33 @@ class DatabaseController extends Controller
             Account::where('superiorNo', $initialEntry['Account Number'])->touch();
             Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => NULL]);
         }
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editRole(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Role ID'] != $entry['Role ID']) {
+            if (!preg_match("/\A[0-9]{1,}$/", $entry['Role ID'])) {
+                return response()->json(['error' => 'Invalid: Role ID should be an integer'], 500);
+            }
+        }
+
+        if ($initialEntry['Role Name'] != $entry['Role Name']) {
+            if (strlen($entry['Role Name']) > 40) {
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name should be under 40 characters'], 500);
+            }
+
+            if (Role::where('name', $entry['Role Name'])->exists()) {
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name already in use'], 500);
+            }
+        }
+
+        Role::where('roleId', $initialEntry['Role ID'])->update([
+            'roleId' => $entry['Role ID'],
+            'name' => $entry['Role Name']
+        ]);
+        Role::where('roleId', $initialEntry['Role ID'])->touch();
 
         return response()->json(['success' => 'success'], 200);
     }
