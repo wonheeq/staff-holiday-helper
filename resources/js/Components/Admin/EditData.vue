@@ -107,7 +107,6 @@
 <style lang="postcss">
 
     .input_options {
-        width: 30rem; 
         height: 2rem; 
         margin-top: 0.75rem;
         @apply 4k:text-2xl 4k:h-11 4k:w-[50rem] 4k:mt-9 !important;

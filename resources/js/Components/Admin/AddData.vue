@@ -1,5 +1,5 @@
 <script setup>
-
+import { ref } from 'vue';
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { useDark } from "@vueuse/core";
@@ -9,7 +9,15 @@ const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 
-    
+const buttons = [
+    { label: 'Accounts', fArray: "accountFields", csvFileName: "add_staffaccounts.csv"},  
+    { label: 'Account Roles', fArray: "accountRoleFields", csvFileName: "add_accountroles.csv"},
+    { label: 'Roles', fArray: "roleFields", csvFileName: "add_roles.csv"},
+    { label: 'Units', fArray: "unitFields", csvFileName: "add_units.csv"},
+    { label: 'Majors', fArray: "majorFields", csvFileName: "add_majors.csv"},
+    { label: 'Courses', fArray: "courseFields", csvFileName: "add_courses.csv"},
+    { label: 'Schools', fArray: "schoolFields", csvFileName: "add_schools.csv"}            
+];
 </script>
 
 <script>
@@ -30,19 +38,10 @@ const isDark = useDark();
         data: function() {
             let defaultC = 288
             return {
-                content: 'Staff Accounts',
+                content: 'Accounts',
                 selected: null,
                 currentFields: "accountFields",
                 currentCSV: "add_staffaccounts.csv",
-                buttons: [
-                    { message: 'Staff Accounts', fArray: "accountFields", csvFileName: "add_staffaccounts.csv"},  
-                    { message: 'Account Roles', fArray: "accountRoleFields", csvFileName: "add_accountroles.csv"},
-                    { message: 'Roles', fArray: "roleFields", csvFileName: "add_roles.csv"},
-                    { message: 'Units', fArray: "unitFields", csvFileName: "add_units.csv"},
-                    { message: 'Majors', fArray: "majorFields", csvFileName: "add_majors.csv"},
-                    { message: 'Courses', fArray: "courseFields", csvFileName: "add_courses.csv"},
-                    { message: 'Schools', fArray: "schoolFields", csvFileName: "add_schools.csv"}            
-                ],
                 c: defaultC,
                 bHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px",
 
@@ -208,30 +207,42 @@ const isDark = useDark();
 
 
 <template>
-    <h1 class="text-2xl px-4 4k:text-5xl 4k:py-4">Add Data:</h1>
+    <h1 class="text-2xl laptop:px-4 4k:text-5xl 4k:py-4">Add Data:</h1>
 
     <!-- To select table -->
-    <div class="flex flex-row mt-4 mx-4">
+    <div v-if="isMobile">
+        <vSelect
+            :clearable="false"
+            :searchable="false"
+            :filterable="false"
+            :class="isDark?'dropdown-dark':''"
+            :options="buttons"
+            placeholder="Accounts"
+            @option:selected="(selectedOption) => {activate(selectedOption.label, selectedOption.fArray, selectedOption.csvFileName)}"
+        >
+        </vSelect>
+    </div>
+    <div v-else class="flex flex-row mt-4 mx-4">
         <h2 class="mt-1.5 4k:text-3xl 4k:mt-3">Select Table:</h2>
         <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
             <button
                 v-for="button in buttons"
-                :key="button.message"
+                :key="button.label"
                 :class="{
-                    'tableButtonOn': button.message === content && !isDark,
-                    'tableButtonOnDark': button.message === content && isDark,
-                    'tableButtonOff': button.message != content && !isDark,
-                    'tableButtonOffDark': button.message != content && isDark,
+                    'tableButtonOn': button.label === content && !isDark,
+                    'tableButtonOnDark': button.label === content && isDark,
+                    'tableButtonOff': button.label != content && !isDark,
+                    'tableButtonOffDark': button.label != content && isDark,
                 }"
-                @click="activate(button.message, button.fArray, button.csvFileName)"
+                @click="activate(button.label, button.fArray, button.csvFileName)"
             >
-                <span>{{ button.message }}</span>
+                <span>{{ button.label }}</span>
             </button>
         </div>
     </div>
 
     <!-- To import .csv file -->
-    <div class="flex flex-row mt-8 mx-4 4k:mt-10">
+    <div class="flex flex-row mt-4 laptop:mt-8 laptop:mx-4 4k:mt-10">
         <h2 class="mt-1.5 4k:text-3xl 4k:mt-3">Add By CSV:</h2>
         <button
             :class="isDark?'tableButtonOffDark':'tableButtonOff'"
@@ -242,22 +253,23 @@ const isDark = useDark();
     </div>
 
 
-    <h1 class="mt-1.5 px-4 mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
-    <div :class="isDark?'manualAreaDark':'manualArea'" :style="{ maxHeight: bHeight }">
+    <h1 class="mt-1.5 laptop:px-4 mt-3 laptop:mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
+    <div :class="isMobile?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')" :style="{ maxHeight: bHeight }">
         <div class="flex justify-between">
-            <div class="flex flex-col mt-4 mx-4 mb-3">
+            <div class="flex flex-col laptop:mt-4 mx-2 laptop:mx-4 laptop:mb-3 w-full laptop:w-fit">
                 <!--<div>array: {{ fieldsList.accountFields }}</div>-->
                 <!--<div>array: {{ fieldsList[currentFields] }}</div>-->
                 <!--v-for="name in namesList[field.fk]""-->
                 <div 
                     v-for="(field, index) in fieldsList[currentFields]" :key="index"
-                    
+                    class="w-full"
                 >
-                    <div class="flex justify-between space-x-7 4k:space-x-11">
-                        <span class="mt-4 4k:mt-10 4k:text-2xl">{{ field.desc }}: </span>
+                    <div class="flex flex-row justify-between laptop:space-x-7 4k:space-x-11 w-full">
+                        <span v-if="isMobile" class="w-[6.5rem] mt-4">{{ field.desc }}: </span>
+                        <span v-else class="mt-4 4k:mt-10 4k:text-2xl">{{ field.desc }}: </span>
                         <input v-if="field.fk === 'none'"
                                class="input_options" 
-                               :class="isDark?'bg-gray-800 border-white text-white placeholder:text-white':''"
+                               :class="isMobile?(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[35rem]':'w-[35rem]')"
                                type="text" autocomplete="off" :placeholder="field.plhldr" 
                                v-model="attributeEntries[index]" />
                         <!--<v-select v-else v-model="selected" style="width: 35rem; height: 2rem; margin-top: 0.75rem;">
@@ -267,7 +279,8 @@ const isDark = useDark();
                         <form autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
                                 :class="isDark ? 'dropdown-dark':''"
-                                class="input_options"                           
+                                class="input_options"
+                                :style="isMobile?'width: 14rem; font-size: 0.75rem;':'width: 35rem; font-size: 1rem;'"                     
                                 :placeholder="field.plhldr"
                                 v-model="attributeEntries[index]" >
                             </vSelect>
@@ -278,17 +291,28 @@ const isDark = useDark();
             </div>        
                
         </div><!--<div class="flex flex-col self-center">-->
-            <div class="centeredRight">
-                <button
-                    class="px-6 py-2 mx-28 text-center text-xl font-bold 4k:text-4xl 4k:px-9 4k:py-4"
-                    :class="isDark?'bg-gray-800':'bg-white'"
-                    @click="addToDB()">
-                    <span> Add </span>       
-                </button>
-                <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
-                    <span v-html="errorMsg"></span>
-                </h4>
-            </div>       
+        <div v-if="isMobile" class="w-full p-2">
+            <button
+                class="w-full py-2 text-center text-xl font-bold"
+                :class="isDark?'bg-gray-800':'bg-white'"
+                @click="addToDB()">
+                <span> Add </span>       
+            </button>
+            <h4 class="w-full mx-2 mt-1.5 text-center text-sm text-red-500" v-show="warning">
+                <span v-html="errorMsg"></span>
+            </h4>
+        </div>    
+        <div v-else class="centeredRight">
+            <button
+                class="px-6 py-2 mx-28 text-center text-xl font-bold 4k:text-4xl 4k:px-9 4k:py-4"
+                :class="isDark?'bg-gray-800':'bg-white'"
+                @click="addToDB()">
+                <span> Add </span>       
+            </button>
+            <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
+                <span v-html="errorMsg"></span>
+            </h4>
+        </div>       
     </div>
 
 </template> 
@@ -302,6 +326,16 @@ const isDark = useDark();
         margin-right: 1rem;
         margin-top: 0.5rem;
         height: 80%;
+        width: 100%;
+        position: relative;
+    }
+
+    .manualAreaMobile {
+        background-color: rgb(227 227 227);
+        overflow: scroll; 
+        margin-top: 0.5rem;
+        height: 80%;
+        width: 100%;
         position: relative;
     }
 
@@ -312,6 +346,16 @@ const isDark = useDark();
         margin-right: 1rem;
         margin-top: 0.5rem;
         height: 80%;
+        width: 100%;
+        position: relative;
+    }
+
+    .manualAreaDarkMobile {
+        background-color: rgb(75, 85, 99);
+        overflow: scroll; 
+        margin-top: 0.5rem;
+        height: 80%;
+        width: 100%;
         position: relative;
     }
 
@@ -346,7 +390,6 @@ const isDark = useDark();
 <style lang="postcss">
 
 .input_options {
-    width: 35rem; 
     height: 2rem; 
     margin-top: 0.75rem;
     @apply 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-9 !important;

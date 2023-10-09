@@ -170,7 +170,62 @@ const { isMobile } = storeToRefs(screenSizeStore);
 </script>
 
 <template>
-    <div class="flex flex-col screen-mobile laptop:screen mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
+    <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
+        <SubpageNavbar
+            class="h-[5%]"
+            :options="options"
+            :activeScreen="activeScreen"
+            @screen-changed="screen => handleActiveScreenChanged(screen) "
+        />
+        <div
+            v-show="activeScreen === 'viewData'"
+            :class="{
+                'bg-gray-800': isDark,
+                'bg-white': !isDark,
+            }"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
+        >
+
+            <h1 class="text-2xl px-2 laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
+            
+            <!-- To switch between tables -->
+            <div class="flex flex-row mt-2 mx-2 laptop:mt-4 laptop:mx-4">
+                <h2 class="mt-1.5 4k:text-3xl 4k:mt-6">Select Table:</h2>
+                <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
+                    <button
+                        v-for="button in buttons"
+                        :key="button.message"
+                        :class="{
+                            'tableButtonOn': button.message === content && !isDark,
+                            'tableButtonOnDark': button.message === content && isDark,
+                            'tableButtonOff': button.message != content && !isDark,
+                            'tableButtonOffDark': button.message != content && isDark,
+                        }"
+                        @click="activate(button.message, button.table)"
+                    >
+                        <span>{{ button.message }}</span>
+                    </button>
+                </div>
+            </div>
+            <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
+        </div>
+
+        <div
+            v-show="activeScreen === 'addData'"
+            :class="isDark?'bg-gray-800':'bg-white'"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
+        >
+            <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
+        </div>
+        <SystemSettings v-show="activeScreen === 'sysSettings'"
+            :class="isDark?'bg-gray-800':'bg-white'"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
+        />
+<!---->
+
+    </div>
+    <div v-else class="flex flex-col screen mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
         <SubpageNavbar
             class="h-[5%]"
             :options="options"
@@ -232,7 +287,10 @@ const { isMobile } = storeToRefs(screenSizeStore);
 </template>
 
 <style lang="postcss">
-
+.screen-mobile {
+    /* mobile screen uses 0.5rem for margins */
+    height: calc(93vh - 1.5rem);
+}
     .tableButtonOn {
         min-width: 13%;
         font-size: 1rem;
@@ -241,6 +299,8 @@ const { isMobile } = storeToRefs(screenSizeStore);
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        padding-left: 1rem;
+        padding-right: 1rem;
         @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         border-color: black;
@@ -260,6 +320,8 @@ const { isMobile } = storeToRefs(screenSizeStore);
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        padding-left: 1rem;
+        padding-right: 1rem;
         @apply 4k:p-3 !important;
         background-color: rgb(71, 79, 90);
         border-color: rgb(31 41 55);
@@ -278,6 +340,8 @@ const { isMobile } = storeToRefs(screenSizeStore);
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        padding-left: 1rem;
+        padding-right: 1rem;
         @apply 4k:p-3 !important;
         background-color: rgb(227 227 227);
         /*w-50 text-1xl text-center p-4 bg-gray-300 */
@@ -293,6 +357,8 @@ const { isMobile } = storeToRefs(screenSizeStore);
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
+        padding-left: 1rem;
+        padding-right: 1rem;
         @apply 4k:p-3 !important;
         background-color: rgb(52, 58, 62);
         /*w-50 text-1xl text-center p-4 bg-gray-300 */
