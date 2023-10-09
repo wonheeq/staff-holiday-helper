@@ -1441,4 +1441,250 @@ class DatabaseControllerTest extends TestCase
             School::where('schoolId', 1)->exists()     
         ); 
     }
+
+
+    public function test_api_request_for_edit_entry_is_protected(): void
+    {
+        // Mock valid entry to be edited in db
+        $testUnit = Unit::factory()->create();
+
+        $validRequest = array('table' => 'Units', 
+        'entry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => $testUnit->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        Unit::where('unitId', $testUnit->unitId)->update(['name' => 'default']);
+
+        $response = $this->actingAs($this->otherUser1)->postJson("/api/editEntry/{$this->otherUser1['accountNo']}", $validRequest);
+        $response->assertStatus(403);
+
+        Unit::where('unitId', $testUnit->unitId)->update(['name' => 'default']);
+
+        $response = $this->actingAs($this->otherUser2)->postJson("/api/editEntry/{$this->otherUser2['accountNo']}", $validRequest);
+        $response->assertStatus(403);
+
+        $testUnit->delete();
+    }
+
+    public function test_api_request_for_edit_valid_and_invalid_unit(): void
+    {
+        // Mock valid unit to be edited in db
+        $testUnit = Unit::factory()->create();
+
+        $validRequest = array('table' => 'Units', 
+        'entry' => array(
+            'Unit Code' => 'ABCD1234',
+            'Unit Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => $testUnit->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            Unit::where('unitId', 'ABCD1234')->where('name', 'different name')->exists()
+        );
+
+        $testUnit = Unit::where('unitId', 'ABCD1234')->first();
+
+        // No change to unit
+        $inValidRequest = array('table' => 'Units', 
+        'entry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => $testUnit->name
+        ), 
+        'initialEntry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => $testUnit->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Unit should be unaffected
+        $this->assertTrue(
+            Unit::where('unitId', $testUnit->unitId)->where('name', $testUnit->name)->exists()
+        );
+
+        // Invalid unitId
+        $inValidRequest = array('table' => 'Units', 
+        'entry' => array(
+            'Unit Code' => '0000AAAA', // Invalid code
+            'Unit Name' => $testUnit->name
+        ), 
+        'initialEntry' => array(
+            'Unit Code' => $testUnit->unitId,
+            'Unit Name' => $testUnit->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Unit should be unaffected
+        $this->assertFalse(
+            Unit::where('unitId', '0000AAAA')->where('name', $testUnit->name)->exists()
+        );
+        $this->assertTrue(
+            Unit::where('unitId', $testUnit->unitId)->where('name', $testUnit->name)->exists()
+        );  
+
+        $testUnit->delete();
+    }
+
+    public function test_api_request_for_edit_valid_and_invalid_major(): void
+    {
+        // Mock valid major to be edited in db
+        $testMajor = Major::factory()->create();
+
+        $validRequest = array('table' => 'Majors', 
+        'entry' => array(
+            'Major Code' => 'MJXU-QWERT',
+            'Major Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'Major Code' => $testMajor->majorId,
+            'Major Name' => $testMajor->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            Major::where('majorId', 'MJXU-QWERT')->where('name', 'different name')->exists()
+        );
+
+        $testMajor = Major::where('majorId', 'MJXU-QWERT')->first();
+
+        // No change to Major
+        $inValidRequest = array('table' => 'Majors', 
+        'entry' => array(
+            'Major Code' => $testMajor->majorId,
+            'Major Name' => $testMajor->name
+        ), 
+        'initialEntry' => array(
+            'Major Code' => $testMajor->majorId,
+            'Major Name' => $testMajor->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Major should be unaffected
+        $this->assertTrue(
+            Major::where('majorId', $testMajor->majorId)->where('name', $testMajor->name)->exists()
+        );
+
+        // Invalid majorId
+        $inValidRequest = array('table' => 'Majors', 
+        'entry' => array(
+            'Major Code' => '00XU-QWERT', // Invalid code
+            'Major Name' => $testMajor->name
+        ), 
+        'initialEntry' => array(
+            'Major Code' => $testMajor->majorId,
+            'Major Name' => $testMajor->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Major should be unaffected
+        $this->assertFalse(
+            Major::where('majorId', '00XU-QWERT')->where('name', $testMajor->name)->exists()
+        );
+        $this->assertTrue(
+            Major::where('majorId', $testMajor->majorId)->where('name', $testMajor->name)->exists()
+        );  
+
+        $testMajor->delete();
+    }
+
+    public function test_api_request_for_edit_valid_and_invalid_course(): void
+    {
+        // Mock valid course to be edited in db
+        $testCourse = Course::factory()->create();
+
+        $validRequest = array('table' => 'Courses', 
+        'entry' => array(
+            'Course Code' => 'F-HIJK',
+            'Course Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'Course Code' => $testCourse->courseId,
+            'Course Name' => $testCourse->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            Course::where('courseId', 'F-HIJK')->where('name', 'different name')->exists()
+        );
+
+        $testCourse = Course::where('courseId', 'F-HIJK')->first();
+
+        // No change to Course
+        $inValidRequest = array('table' => 'Courses', 
+        'entry' => array(
+            'Course Code' => $testCourse->courseId,
+            'Course Name' => $testCourse->name
+        ), 
+        'initialEntry' => array(
+            'Course Code' => $testCourse->courseId,
+            'Course Name' => $testCourse->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Course should be unaffected
+        $this->assertTrue(
+            Course::where('courseId', $testCourse->courseId)->where('name', $testCourse->name)->exists()
+        );
+
+        // Invalid courseId
+        $inValidRequest = array('table' => 'Courses', 
+        'entry' => array(
+            'Course Code' => 'F=HIJK', // Invalid code
+            'Course Name' => $testCourse->name
+        ), 
+        'initialEntry' => array(
+            'Course Code' => $testCourse->courseId,
+            'Course Name' => $testCourse->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Course should be unaffected
+        $this->assertFalse(
+            Course::where('courseId', 'F=HIJK')->where('name', $testCourse->name)->exists()
+        );
+        $this->assertTrue(
+            Course::where('courseId', $testCourse->courseId)->where('name', $testCourse->name)->exists()
+        );  
+
+        $testCourse->delete();
+    }
 }   
