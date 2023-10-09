@@ -134,8 +134,8 @@ const options = [
     "Leave period is a public holiday."
 ];
 
-const disabledClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold bg-gray-300";
-const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
+const disabledClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold bg-gray-300";
+const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
 </script>
 
 <template>
@@ -204,7 +204,7 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                 />
             </div>
             <div class="flex justify-between pt-5">
-                <button :class="buttonClass" class="bg-green-500 p-0 text-base" @click="handleApproveApp()">
+                <button :class="buttonClass" class="bg-green-500 p-0 text-base"  @click="handleApproveApp()">
                     Approve
                 </button>
                 <button :class="rejectReason=='' ? disabledClass : buttonClass + ' bg-red-500'" class="text-base p-0"
@@ -274,8 +274,8 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
                     @option:selected="(selectedOption) => handleSelection(selectedOption)"
                 />
             </div>
-            <div class="h-[10%] flex justify-between">
-                <button :class="buttonClass" class="bg-green-500 p-0" @click="handleApproveApp()">
+            <div class="h-[10%] flex justify-between" style="align-items: center;">
+                <button :class="buttonClass" class="bg-green-500 p-0"  @click="handleApproveApp()">
                     Approve
                 </button>
                 <button :class="rejectReason=='' ? disabledClass : buttonClass + ' bg-red-500'" class="p-0"
@@ -292,7 +292,7 @@ const buttonClass = "p-4 w-1/3 rounded-md text-white text-2xl font-bold";
 <style>
 
 .close-button {
-    height: 70px;
+    height: 40px;
     width: auto;
 }
 /* 1080p */
