@@ -16,7 +16,7 @@ const deadAreaColor = computed(() => {
 });
 </script>
 <template>
-    <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full mb-2" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[8%]">
             <p class="font-bold text-3xl laptop:text-5xl">
                 Your Substitutions
@@ -51,7 +51,6 @@ const deadAreaColor = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <p class="text-transparent h-2 text-sm">e</p>
     </div>
     <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[15%] 1080:h-[12%] 1440:h-[9%] 4k:h-[6%]">
@@ -93,10 +92,9 @@ const deadAreaColor = computed(() => {
 
 <style>
 .subpage-height {
-    height: calc(0.95 * (93vh - 3rem));
+    height: calc(0.95 * 93vh - 3rem);
 }
 .subpage-height-mobile {
-    /* 95% of (screen - 7vh for navbar height - 1.5rem for 3x gaps ) + ((screen - 7vh for navbar height - 1.5rem for 3x gaps ) - 2rem from the subpagenavbar height of h-8 css)   */
-    height: calc(0.95 * (93vh - 1.5rem + ((0.95 * (93vh - 1.5rem)) - 2rem )));
+    height: calc(0.95 * 93vh - 1.5rem);
 }
 </style>

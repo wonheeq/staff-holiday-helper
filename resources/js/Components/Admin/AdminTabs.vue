@@ -13,7 +13,7 @@
     import { storeToRefs } from 'pinia';
     import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
     const screenSizeStore = useScreenSizeStore();
-    const { isMobile } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
     const isDark = useDark();
     const page = usePage();
     const user = computed(() => page.props.auth.user);
@@ -22,9 +22,9 @@
     let fieldsStore = useDataFieldsStore();
     
     const options = [
-    { id: 'viewData', title: 'View/Edit Data'},
-    { id: 'addData', title: 'Add Data'},
-    { id: 'sysSettings', title: 'System Settings'},
+    { id: 'viewData', title: 'View/Edit Data', mobileTitle: 'View/Edit Data'},
+    { id: 'addData', title: 'Add Data', mobileTitle: 'Add Data'},
+    { id: 'sysSettings', title: 'System Settings', mobileTitle: 'System Settings'},
     ];
 
     let activeScreen = ref("viewData");
@@ -170,7 +170,7 @@
 </script>
 
 <template>
-    <div class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
+    <div class="flex flex-col screen-mobile laptop:screen mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
         <SubpageNavbar
             class="h-[5%]"
             :options="options"
@@ -183,13 +183,13 @@
                 'bg-gray-800': isDark,
                 'bg-white': !isDark,
             }"
-            class="p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
         >
 
-            <h1 class="text-2xl px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
+            <h1 class="text-2xl px-2 laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
             
             <!-- To switch between tables -->
-            <div class="flex flex-row mt-4 mx-4">
+            <div class="flex flex-row mt-2 mx-2 laptop:mt-4 laptop:mx-4">
                 <h2 class="mt-1.5 4k:text-3xl 4k:mt-6">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
                     <button
@@ -213,14 +213,14 @@
         <div
             v-show="activeScreen === 'addData'"
             :class="isDark?'bg-gray-800':'bg-white'"
-            class="p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="isDark?'bg-gray-800':'bg-white'"
-            class="p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md h-[95%]"
         />
 <!---->
 
