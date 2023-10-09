@@ -183,7 +183,7 @@ const { isMobile } = storeToRefs(screenSizeStore);
                 'bg-gray-800': isDark,
                 'bg-white': !isDark,
             }"
-            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
         >
 
             <h1 class="text-2xl px-2 laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
@@ -213,14 +213,14 @@ const { isMobile } = storeToRefs(screenSizeStore);
         <div
             v-show="activeScreen === 'addData'"
             :class="isDark?'bg-gray-800':'bg-white'"
-            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md rounded-tr-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="isDark?'bg-gray-800':'bg-white'"
-            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md h-[95%]"
+            class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
         />
 <!---->
 

@@ -131,7 +131,7 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
 </script>
 <template>
     <div v-if="isMobile"
-        class="space-y-4 subpage-height-mobile laptop:rounded-tr-md">
+        class="space-y-4 subpage-height-mobile">
         <div>
             <div class="flex flex-col laptop:flex-row laptop:h-[2rem] laptop:space-x-4 laptop:items-center 4k:mt-5 4k:ml-5">
                 <p class="text-xl laptop:text-2xl h-full 4k:text-3xl">
