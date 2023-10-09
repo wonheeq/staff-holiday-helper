@@ -1475,6 +1475,302 @@ class DatabaseControllerTest extends TestCase
         $testUnit->delete();
     }
 
+    public function test_api_request_for_edit_valid_account(): void
+    {
+        // Mock valid account to be edited in db
+        $testAccount = Account::factory()->create([
+            'accountType' => 'staff'
+        ]);
+        $tempLMAccount = Account::factory()->create([
+            'accountType' => 'lmanager'
+        ]);
+        $tempSchool = School::create([
+            'name' => 'temp school'
+        ]);
+
+        $validRequest = array('table' => 'Staff Accounts', 
+        'entry' => array(
+            'Account Number' => '888888g',
+            'Account Type' => 'lmanager',
+            'Surname' => 'test surname',
+            'First/Other Names' => 'test forename',
+            'School Code' => $tempSchool->schoolId,
+            'Line Manager' => $tempLMAccount->accountNo
+        ), 
+        'initialEntry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            Account::where('accountNo', '888888g')
+                ->where('accountType', 'lmanager')
+                ->where('lName', 'test surname')
+                ->where('fName', 'test forename')
+                ->where('schoolId', $tempSchool->schoolId)
+                ->where('superiorNo', $tempLMAccount->accountNo)->exists()
+        );
+
+        $testAccount->delete();
+        $tempLMAccount->delete();
+        $tempSchool->delete();
+    }
+
+    public function test_api_request_for_edit_invalid_account(): void
+    {
+        // Mock valid account to be edited in db
+        $testAccount = Account::factory()->create([
+            'accountType' => 'staff'
+        ]);
+        $tempLMAccount = Account::factory()->create([
+            'accountType' => 'lmanager'
+        ]);
+        $tempSchool = School::create([
+            'name' => 'temp school'
+        ]);
+
+        // Identical to current account
+        $inValidRequest = array('table' => 'Staff Accounts', 
+        'entry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ), 
+        'initialEntry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Account should be unchanged
+        $this->assertTrue(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+
+        // Trying to assign school id of 1
+        $inValidRequest = array('table' => 'Staff Accounts', 
+        'entry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => 1,
+            'Line Manager' => $testAccount->superiorNo
+        ), 
+        'initialEntry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Account should be unchanged
+        $this->assertFalse(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', 1)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+        $this->assertTrue(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+
+        // Invalid syntax
+        $inValidRequest = array('table' => 'Staff Accounts', 
+        'entry' => array(
+            'Account Number' => '0000022',
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ), 
+        'initialEntry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Account should be unchanged
+        $this->assertFalse(
+            Account::where('accountNo', '0000022')
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+        $this->assertTrue(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+
+        // Invalid syntax
+        $inValidRequest = array('table' => 'Staff Accounts', 
+        'entry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $this->otherUser1->accountNo // Not a line manager
+        ), 
+        'initialEntry' => array(
+            'Account Number' => $testAccount->accountNo,
+            'Account Type' => $testAccount->accountType,
+            'Surname' => $testAccount->lName,
+            'First/Other Names' => $testAccount->fName,
+            'School Code' => $testAccount->schoolId,
+            'Line Manager' => $testAccount->superiorNo
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Account should be unchanged
+        $this->assertFalse(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $this->otherUser1->accountNo)->exists()
+        );
+        $this->assertTrue(
+            Account::where('accountNo', $testAccount->accountNo)
+                ->where('accountType', $testAccount->accountType)
+                ->where('lName', $testAccount->lName)
+                ->where('fName', $testAccount->fName)
+                ->where('schoolId', $testAccount->schoolId)
+                ->where('superiorNo', $testAccount->superiorNo)->exists()
+        );
+
+        $testAccount->delete();
+        $tempLMAccount->delete();
+        $tempSchool->delete();
+    }
+
+    public function test_api_request_for_edit_valid_and_invalid_role(): void
+    {
+        // Mock valid role to be edited in db
+        $testRole = Role::factory()->create([
+            'name' => 'default'
+        ]);
+
+        $validRequest = array('table' => 'Roles', 
+        'entry' => array(
+            'Role ID' => '999',
+            'Role Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'Role ID' => $testRole->roleId,
+            'Role Name' => $testRole->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            Role::where('roleId', '999')->where('name', 'different name')->exists()
+        );
+
+        $testRole = Role::where('roleId', '999')->first();
+
+        // No change to Role
+        $inValidRequest = array('table' => 'Roles', 
+        'entry' => array(
+            'Role ID' => $testRole->roleId,
+            'Role Name' => $testRole->name
+        ), 
+        'initialEntry' => array(
+            'Role ID' => $testRole->roleId,
+            'Role Name' => $testRole->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Role should be unaffected
+        $this->assertTrue(
+            Role::where('roleId', $testRole->roleId)->where('name', $testRole->name)->exists()
+        );
+
+        // Invalid roleId
+        $inValidRequest = array('table' => 'Roles', 
+        'entry' => array(
+            'Role ID' => 'a999', // Invalid id
+            'Role Name' => $testRole->name
+        ), 
+        'initialEntry' => array(
+            'Role ID' => $testRole->roleId,
+            'Role Name' => $testRole->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // Role should be unaffected
+        $this->assertFalse(
+            Role::where('roleId', 'a999')->where('name', $testRole->name)->exists()
+        );
+        $this->assertTrue(
+            Role::where('roleId', $testRole->roleId)->where('name', $testRole->name)->exists()
+        );  
+
+        $testRole->delete();
+    }
+
     public function test_api_request_for_edit_valid_and_invalid_unit(): void
     {
         // Mock valid unit to be edited in db
@@ -1686,5 +1982,124 @@ class DatabaseControllerTest extends TestCase
         );  
 
         $testCourse->delete();
+    }
+
+    public function test_api_request_for_edit_valid_and_invalid_school(): void
+    {
+        // Mock valid school to be edited in db
+        $testSchool = School::create(['name' => 'default']);
+
+        $validRequest = array('table' => 'Schools', 
+        'entry' => array(
+            'School Code' => '999',
+            'School Name' => 'different name'
+        ), 
+        'initialEntry' => array(
+            'School Code' => $testSchool->schoolId,
+            'School Name' => $testSchool->name
+        ));
+
+        // Check for valid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $validRequest);
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            School::where('schoolId', '999')->where('name', 'different name')->exists()
+        );
+
+        $testSchool = School::where('schoolId', '999')->first();
+
+        // No change to School
+        $inValidRequest = array('table' => 'Schools', 
+        'entry' => array(
+            'School Code' => $testSchool->schoolId,
+            'School Name' => $testSchool->name
+        ), 
+        'initialEntry' => array(
+            'School Code' => $testSchool->schoolId,
+            'School Name' => $testSchool->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // School should be unaffected
+        $this->assertTrue(
+            School::where('schoolId', $testSchool->schoolId)->where('name', $testSchool->name)->exists()
+        );
+
+        // Invalid schoolId
+        $inValidRequest = array('table' => 'Schools', 
+        'entry' => array(
+            'School Code' => 'a999', // Invalid id
+            'School Name' => $testSchool->name
+        ), 
+        'initialEntry' => array(
+            'School Code' => $testSchool->schoolId,
+            'School Name' => $testSchool->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // School should be unaffected
+        $this->assertFalse(
+            School::where('schoolId', 'a999')->where('name', $testSchool->name)->exists()
+        );
+        $this->assertTrue(
+            School::where('schoolId', $testSchool->schoolId)->where('name', $testSchool->name)->exists()
+        );  
+
+        // Super Administrator should not be editable
+        $superAdminSchool = School::where('schoolId', 1)->first();
+
+        $inValidRequest = array('table' => 'Schools', 
+        'entry' => array(
+            'School Code' => 1,
+            'School Name' => 'new name'
+        ), 
+        'initialEntry' => array(
+            'School Code' => 1,
+            'School Name' => $superAdminSchool->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // School should be unaffected
+        $this->assertFalse(
+            School::where('schoolId', 1)->where('name', 'new name')->exists()
+        );
+        $this->assertTrue(
+            School::where('schoolId', 1)->where('name', $superAdminSchool->name)->exists()
+        );
+        
+        // School Code should not be changed to 1.
+        $inValidRequest = array('table' => 'Schools', 
+        'entry' => array(
+            'School Code' => 1,
+            'School Name' => $testSchool->name
+        ), 
+        'initialEntry' => array(
+            'School Code' => $testSchool->schoolId,
+            'School Name' => $testSchool->name
+        ));
+
+        // Check for invalid response
+        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
+        $response->assertStatus(500);
+
+        // School should be unaffected
+        $this->assertFalse(
+            School::where('schoolId', 1)->where('name', $testSchool->name)->exists()
+        );
+        $this->assertTrue(
+            School::where('schoolId', $testSchool->schoolId)->where('name', $testSchool->name)->exists()
+        );
+            
+        $testSchool->delete();
     }
 }   

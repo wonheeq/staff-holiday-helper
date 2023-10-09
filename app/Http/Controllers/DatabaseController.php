@@ -818,29 +818,28 @@ class DatabaseController extends Controller
                 return response()->json(['error' => 'No changes made.'], 500);
            }
 
-           // Use 'table' to work out which model the entry is being removed from.
-           switch ($data['table']) {
-               case 'Staff Accounts': 
-                    $response = $this->editAccount($initialEntry, $entry, $accountNo);
-                   break;
-               case 'Roles':
-                    $response = $this->editRole($initialEntry, $entry);
-                   break;
-               case 'Units':
-                    $response = $this->editUnit($initialEntry, $entry);
-                   break;
-               case 'Majors':
-                    $response = $this->editMajor($initialEntry, $entry);
-                   break;
-               case 'Courses':
-                    $response = $this->editCourse($initialEntry, $entry);
-                   break;
-               case 'Schools':
-                    $response = $this->editSchool($initialEntry, $entry);
-                   break;
-               default:
-                   return response()->json(['error' => 'Could not determine db table.'], 500);
-           }
+            // Use 'table' to work out which model the entry is being removed from.
+            if ($data['table'] === "Staff Accounts") { 
+                $response = $this->editAccount($initialEntry, $entry, $accountNo);
+            }
+            else if ($data['table'] === "Roles") {
+                $response = $this->editRole($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Units") {
+                $response = $this->editUnit($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Majors") {
+                $response = $this->editMajor($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Courses") {
+                $response = $this->editCourse($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Schools") {
+                $response = $this->editSchool($initialEntry, $entry);
+            }
+            else {
+                return response()->json(['error' => 'Could not determine db table.'], 500);
+            }
  
            return $response;
         }  
@@ -1082,7 +1081,7 @@ class DatabaseController extends Controller
     }
 
     private function editSchool(Array $initialEntry, Array $entry) {
-        // School Administrator 1 should be immutable
+        // Super Administrator 1 should be immutable
         if ($initialEntry['School Code'] == 1) {
             return response()->json(['error' => $entry['School Code'] . ' Invalid: Super Administrator School Code & Name are permanent.'], 500);
         }
@@ -1091,6 +1090,10 @@ class DatabaseController extends Controller
         if ($initialEntry['School Code'] != $entry['School Code']) {
             if (!preg_match("/\A[0-9]{1,}$/", $entry['School Code'])) {
                 return response()->json(['error' => $entry['School Code'] . ' Invalid: School Code should be an integer.'], 500);
+            }
+
+            if (School::where('schoolId', $entry['School Code'])->exists()) {
+                return response()->json(['error' => $entry['School Code'] . ' Invalid: School Code already in use'], 500);
             }
         }
 
