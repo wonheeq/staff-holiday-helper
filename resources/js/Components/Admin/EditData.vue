@@ -54,13 +54,13 @@
 
 <template>
     <Modal>
-        <div class="mx-2 laptop:w-1/6 4k:w-[70rem] flex flex-col p-2 laptop:p-4 laptop:mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
+        <div class="mx-2 4k:w-[70rem] flex flex-col p-2 laptop:p-4 laptop:mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
             :class="isDark?'bg-gray-800':'bg-white'" 
         >
             <div class="h-[10%] flex justify-between 4k:ml-6">
                 <slot />
                 <p class="text-xl mt-1 font-bold 4k:text-3xl 4k:mt-6">             
-                    Edit {{ table }}:
+                    Edit {{ table }} entry:
                 </p>
 
                 <!--Add full ui then worry about implementation-->
@@ -76,7 +76,7 @@
             </p>
             <div class="mt-3 w-full">
                 <div v-for="(, index) in entry" :key="index">
-                    <div class="flex justify-between laptop:mx-4 4k:mx-6">
+                    <div class="flex justify-between space-x-2 laptop:space-x-4 laptop:mx-4 4k:mx-6">
                         <span class="mt-4 4k:mt-10 4k:text-2xl">{{ index }}: </span>
                         <input class="input_options" 
                             :class="isDark?'bg-gray-900':''"
