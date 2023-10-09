@@ -54,7 +54,7 @@
 
 <template>
     <Modal>
-        <div class="mx-2 laptop:w-3/6 4k:w-[70rem] flex flex-col p-2 laptop:p-4 laptop:mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
+        <div class="mx-2 laptop:w-1/6 4k:w-[70rem] flex flex-col p-2 laptop:p-4 laptop:mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
             :class="isDark?'bg-gray-800':'bg-white'" 
         >
             <div class="h-[10%] flex justify-between 4k:ml-6">
@@ -74,7 +74,7 @@
             <p  v-if="table == 'Staff Accounts'" class="4k:text-2xl text-red-700 4k:ml-6">             
                 Note: Changing your own account details will require you to log back in.
             </p>
-            <div class="mt-3 ">
+            <div class="mt-3 w-full">
                 <div v-for="(, index) in entry" :key="index">
                     <div class="flex justify-between laptop:mx-4 4k:mx-6">
                         <span class="mt-4 4k:mt-10 4k:text-2xl">{{ index }}: </span>
