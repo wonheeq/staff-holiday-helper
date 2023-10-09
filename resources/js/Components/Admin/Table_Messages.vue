@@ -3,10 +3,17 @@
 import 'vue-good-table-next/dist/vue-good-table-next.css';
 import { VueGoodTable } from 'vue-good-table-next';
 
+import { useDark } from "@vueuse/core";
+import { storeToRefs } from 'pinia';
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const screenSizeStore = useScreenSizeStore();
+const { isMobile } = storeToRefs(screenSizeStore);
+const isDark = useDark();
 </script>
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -16,6 +23,7 @@ export default {
         }
     },
     data: function() {
+        let defaultC = 354;
         return {
             columns: [
                 {
@@ -40,7 +48,7 @@ export default {
                 field: 'subject',
                 },
                 {
-                label: 'Content',
+                label: 'Content (JSON)',
                 field: 'content',
                 },
                 {
@@ -48,13 +56,18 @@ export default {
                 field: 'acknowledged',
                 },
                 {
-                label: 'Created/Last Updated',
+                label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
+                },
+                {
+                label: '',
+                field: 'delete',
+                sortable: false
                 }
             ],
             Messages: [],
-            tHeight: ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
-        };
+            c: defaultC,
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"          };
     },
     created() {
         axios.get("/api/allMessages/" + this.user)
@@ -65,12 +78,16 @@ export default {
         .catch((error) => {
             console.log(error);
         });
+        if (screen.width >= 3840) {          
+            this.c = 468;
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+        }
     },
     // Using height of window to determine max table height
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
-            //console.warn("tHeight: ", this.tHeight)
+            console.warn("tHeight: ", this.tHeight)
         })
     },
     beforeDestroy() { 
@@ -78,10 +95,64 @@ export default {
     },
     methods: {  
         onResize() {
-        this.tHeight = ((0.8889 * window.innerHeight) - 378.2223).toFixed(0) + "px"
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },
+        deleteClicked: function(rowId) {
+            //console.log(rowId);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete \'' + rowId + '\'?',
+                text: 'This will remove the message from the database.',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#22C55E',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteEntry(rowId);
+                }
+            });
+        },
+        deleteEntry: function(rowId) {
+            //console.log('deleting');
+
+            let data = {
+                'table': 'messages',
+                'entryId': rowId
+            }
+
+            // Removing Messages from DB
+            axios.post("/api/dropEntry/" + this.user, data)
+            .then((response) => {
+                if (response.status == 200) {   
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully deleted message.'
+                    });
+
+                    // Reset Table
+                    axios.get("/api/allMessages/" + this.user)
+                    .then((response) => {
+                        this.Messages = response.data;
+                        //console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });                 
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: error.response.data.error
+                });
+            });
+        }
     }
 };
 
@@ -92,9 +163,10 @@ let onSearch = () => {
 
 <template>
     <div class="parent1">
-        <div class="mx-4 mt-4">
+        <div class="mx-4 mt-4 4k:mt-8">
             <div remove-tailwind-bg>
                 <VueGoodTable 
+                    :theme="isDark?'nocturnal':''"
                     :rows="Messages"
                     :columns="columns"
                     v-bind:max-height= tHeight
@@ -110,6 +182,13 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-row="props">
+                        <span v-if="props.column.field == 'delete'">
+                            <button type="button" class="4k:w-10 4k:h-10" v-on:click="deleteClicked(props.row.messageId)">
+                                <img src="/images/delete.svg" :class="isDark?'darkModeImage':''"/>
+                            </button>
+                        </span>
+                    </template>
                     <template #emptystate>
                         No entries found!
                     </template>        
