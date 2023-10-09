@@ -263,16 +263,16 @@
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
                     <button
                         v-for="button in buttons"
-                        :key="button.message"
+                        :key="button.label"
                         :class="{
-                            'tableButtonOn': button.message === content && !isDark,
-                            'tableButtonOnDark': button.message === content && isDark,
-                            'tableButtonOff': button.message != content && !isDark,
-                            'tableButtonOffDark': button.message != content && isDark,
+                            'tableButtonOn': button.label === content && !isDark,
+                            'tableButtonOnDark': button.label === content && isDark,
+                            'tableButtonOff': button.label != content && !isDark,
+                            'tableButtonOffDark': button.label != content && isDark,
                         }"
-                        @click="activate(button.message, button.table)"
+                        @click="activate(button.label, button.table)"
                     >
-                        <span>{{ button.message }}</span>
+                        <span>{{ button.label }}</span>
                     </button>
                 </div>
             </div>

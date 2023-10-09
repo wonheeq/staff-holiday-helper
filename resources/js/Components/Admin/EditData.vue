@@ -54,7 +54,7 @@
 
 <template>
     <Modal>
-        <div class="w-3/6 4k:w-[70rem] flex flex-col p-4 mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
+        <div class="mx-2 laptop:w-3/6 4k:w-[70rem] flex flex-col p-2 laptop:p-4 laptop:mx-auto h-4/7 4k:h-[48rem] rounded-tl-md overflow-auto rounded-bl-md rounded-br-md laptop:rounded-tr-md"
             :class="isDark?'bg-gray-800':'bg-white'" 
         >
             <div class="h-[10%] flex justify-between 4k:ml-6">
@@ -76,7 +76,7 @@
             </p>
             <div class="mt-3 ">
                 <div v-for="(, index) in entry" :key="index">
-                    <div class="flex justify-between mx-4 4k:mx-6">
+                    <div class="flex justify-between laptop:mx-4 4k:mx-6">
                         <span class="mt-4 4k:mt-10 4k:text-2xl">{{ index }}: </span>
                         <input class="input_options" 
                             :class="isDark?'bg-gray-900':''"
@@ -87,7 +87,7 @@
                 </div>
             </div>
             <div class="flex mt-5 justify-center">
-                <button class="px-6 py-2 ml-4 text-center w-28 text-lg 4k:text-3xl 4k:mt-2 4k:w-36"
+                <button class="px-6 py-2 laptop:ml-4 text-center w-full laptop:w-28 text-lg 4k:text-3xl 4k:mt-2 4k:w-36"
                     :class="{
                         'bg-[#e3e3e3]': !isDark,
                         'bg-gray-600': isDark
