@@ -153,16 +153,14 @@ let onSearch = () => {
 
 <template>
     <div class="parent1">
-        <div class="mx-4 mt-4 4k:mt-8">
+        <div class="laptop:mx-4 laptop:mt-4 4k:mt-8">
             <div remove-tailwind-bg>
                 <VueGoodTable 
                     :theme="isDark?'nocturnal':''"
                     :rows="nominations"
                     :columns="columns"
                     v-bind:max-height= tHeight
-                    :fixed-header="{
-                        enabled: true,
-                    }"
+                    :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Substitute Nominations',

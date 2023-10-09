@@ -4,6 +4,8 @@
     import { ref, computed } from 'vue';
     import AddDataPage from './AddData.vue'
 
+    import vSelect from "vue-select";
+    import "vue-select/dist/vue-select.css";
     import { useDataFieldsStore } from '@/stores/AddDataStore';
     import SystemSettings from './SystemSettings.vue';
 
@@ -13,7 +15,7 @@
     import { storeToRefs } from 'pinia';
     import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
     const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+    const { isMobile } = storeToRefs(screenSizeStore);
     const isDark = useDark();
     const page = usePage();
     const user = computed(() => page.props.auth.user);
@@ -40,6 +42,18 @@ const { isMobile } = storeToRefs(screenSizeStore);
         activeScreen.value = props.screenProp;
     }
 
+    const buttons = [
+        { label: 'Accounts', table: 'accountTable' },
+        { label: 'Applications', table: 'applicationTable' },
+        { label: 'Nominations', table: 'nominationTable' },
+        { label: 'Account Roles', table: 'accountRolesTable' },
+        { label: 'Roles', table: 'rolesTable' },
+        { label: 'Units', table: 'unitsTable' },
+        { label: 'Majors', table: 'majorsTable' },
+        { label: 'Courses', table: 'coursesTable' },
+        { label: 'Schools', table: 'schoolsTable' },
+        { label: 'Messages', table: 'messagesTable' }
+    ];
 
     function changeUrl(params) {
         var baseUrl = window.location.origin;
@@ -77,18 +91,6 @@ const { isMobile } = storeToRefs(screenSizeStore);
             return {
                 currentTable: 'accountTable',
                 content: 'Accounts',
-                buttons: [
-                    { message: 'Accounts', table: 'accountTable' },
-                    { message: 'Applications', table: 'applicationTable' },
-                    { message: 'Nominations', table: 'nominationTable' },
-                    { message: 'Account Roles', table: 'accountRolesTable' },
-                    { message: 'Roles', table: 'rolesTable' },
-                    { message: 'Units', table: 'unitsTable' },
-                    { message: 'Majors', table: 'majorsTable' },
-                    { message: 'Courses', table: 'coursesTable' },
-                    { message: 'Schools', table: 'schoolsTable' },
-                    { message: 'Messages', table: 'messagesTable' }
-                ],
 
                 csvActivated: false,
                 csvFileName: "",
@@ -186,24 +188,36 @@ const { isMobile } = storeToRefs(screenSizeStore);
             class="p-2 laptop:p-4 rounded-bl-md rounded-br-md laptop:rounded-tr-md h-[95%]"
         >
 
-            <h1 class="text-2xl px-2 laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
+            <h1 class="text-2xl laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
             
             <!-- To switch between tables -->
-            <div class="flex flex-row mt-2 mx-2 laptop:mt-4 laptop:mx-4">
+            <div v-if="isMobile">
+                <vSelect
+                    :clearable="false"
+                    :searchable="false"
+                    :filterable="false"
+                    :class="isDark?'dropdown-dark':''"
+                    :options="buttons"
+                    placeholder="Accounts"
+                    @option:selected="(selectedOption) => {activate(selectedOption.label, selectedOption.table)}"
+                >
+                </vSelect>
+            </div>
+            <div v-else class="flex flex-row mt-2 mx-2 laptop:mt-4 laptop:mx-4">
                 <h2 class="mt-1.5 4k:text-3xl 4k:mt-6">Select Table:</h2>
                 <div class="grow grid grid-cols-auto auto-rows-fr gap-3">
                     <button
                         v-for="button in buttons"
-                        :key="button.message"
+                        :key="button.label"
                         :class="{
-                            'tableButtonOn': button.message === content && !isDark,
-                            'tableButtonOnDark': button.message === content && isDark,
-                            'tableButtonOff': button.message != content && !isDark,
-                            'tableButtonOffDark': button.message != content && isDark,
+                            'tableButtonOn': button.label === content && !isDark,
+                            'tableButtonOnDark': button.label === content && isDark,
+                            'tableButtonOff': button.label != content && !isDark,
+                            'tableButtonOffDark': button.label != content && isDark,
                         }"
-                        @click="activate(button.message, button.table)"
+                        @click="activate(button.label, button.table)"
                     >
-                        <span>{{ button.message }}</span>
+                        <span>{{ button.label }}</span>
                     </button>
                 </div>
             </div>

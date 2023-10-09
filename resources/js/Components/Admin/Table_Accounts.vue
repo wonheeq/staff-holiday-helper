@@ -183,9 +183,7 @@ let onSearch = () => {
                     :columns="columns"
                     v-on:cell-click="editAttribute"          
                     v-bind:max-height= tHeight
-                    :fixed-header="{
-                        enabled: true,
-                    }"
+                    :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Staff Accounts',
@@ -196,8 +194,8 @@ let onSearch = () => {
                         perPage: 30
                     }">
                     <template #table-actions>
-                        <p class="mr-2 mt-1 4k:text-xl">
-                            This table is editable, click a row to edit the account.
+                        <p class="w-[8.5rem] mt-1 4k:text-xl">
+                            Click a row to edit
                         </p>
                     </template>
                     <template #table-row="props">

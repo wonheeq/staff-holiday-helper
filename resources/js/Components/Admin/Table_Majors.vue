@@ -153,7 +153,7 @@ let onSearch = () => {
 
 <template>
     <div class="parent1">
-        <div class="mx-4 mt-4 4k:mt-8">
+        <div class="laptop:mx-4 laptop:mt-4 4k:mt-8">
             <div remove-tailwind-bg>
                 <VueGoodTable 
                     :theme="isDark?'nocturnal':''"
@@ -161,9 +161,7 @@ let onSearch = () => {
                     :columns="columns"
                     v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
-                    :fixed-header="{
-                        enabled: true,
-                    }"
+                    :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Majors',
@@ -174,8 +172,8 @@ let onSearch = () => {
                         perPage: 30
                     }">
                     <template #table-actions>
-                        <p class="mr-2 mt-1 4k:text-xl">
-                            This table is editable, click a row to edit the major.
+                        <p class="w-[8.5rem] mt-1 4k:text-xl">
+                            Click a row to edit
                         </p>
                     </template>
                     <template #table-row="props">
