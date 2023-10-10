@@ -177,10 +177,10 @@ function createApplication(data) {
                 <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
                     Create New Leave Application:
                 </p>
-                <div class="grid grid-cols-3 h-[92%]">
-                    <CreateSubpagePeriod :period="period" class="h-full" />
+                <div class="flex h-[92%]">
+                    <CreateSubpagePeriod :period="period" class="h-full w-1/3" />
                     <CreateSubpageNominations
-                        class="col-span-2"
+                        class="w-2/3"
                         @resetFields="resetFields()"
                         @submitApplication="(data) => createApplication(data)"
                         />
