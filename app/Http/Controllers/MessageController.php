@@ -915,12 +915,14 @@ class MessageController extends Controller
                                              ->where('schoolId', $schoolCode->schoolId)->get();
 
         Log::info($additionalApplications);
+
         $messages = Message::join('accounts', function($join) {
                                 $join->on('messages.receiverNo', '=', 'accounts.accountNo')
                                 ->orOn('messages.senderNo', '=', 'accounts.accountNo');
                             })
                             ->join('applications', 'messages.applicationNo', '=', 'applications.applicationNo')
                             ->select('messages.*')
+                            ->distinct()
                             ->where('schoolId', $schoolCode->schoolId)
                             //->where('schoolId', 9) // For testing
                             ->orWhere(function ($query) use ($additionalApplications) {
