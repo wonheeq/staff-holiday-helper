@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Nomination;
 use App\Models\ManagerNomination;
-use App\Models\Application;
 use App\Models\AccountRole;
+use App\Models\Application;
 use App\Models\Message;
 use App\Models\Account;
 use App\Models\Role;
@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Log;
 class NominationController extends Controller
 {
     /*
-    Returns all nominations, formatted, for the given application number
+    Returns all nominations, formatted, for the given Nomination number
     FOR display on frontend
     */
     public function getNominationsToDisplay($appNo)
     {
-        $nominations = Nomination::where('applicationNo', $appNo)->get();
-        $managerNominations = ManagerNomination::where('applicationNo', $appNo)->get();
+        $nominations = Nomination::where('NominationNo', $appNo)->get();
+        $managerNominations = ManagerNomination::where('NominationNo', $appNo)->get();
         $result = [];
         $processedNomineeNos = [];
         $processedManagerNomineeNos = [];
@@ -38,7 +38,7 @@ class NominationController extends Controller
             $nominee_user = app(UserController::class)->getUser($nomineeNo);
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
 
-            $noms = Nomination::where('applicationNo', $appNo)
+            $noms = Nomination::where('NominationNo', $appNo)
             ->where('nomineeNo', $nomineeNo)->get();
 
             foreach($noms as $n) {
@@ -71,7 +71,7 @@ class NominationController extends Controller
             $nominee_user = app(UserController::class)->getUser($nomineeNo);
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
             
-            $noms = ManagerNomination::where('applicationNo', $appNo)
+            $noms = ManagerNomination::where('NominationNo', $appNo)
             ->where('nomineeNo', $nomineeNo)->get();
 
             foreach($noms as $n) {
@@ -103,12 +103,12 @@ class NominationController extends Controller
 
 
     /*
-    Returns all nominations, formatted, for the given application number
+    Returns all nominations, formatted, for the given Nomination number
     */
     public function getNominations($appNo)
     {
-        $nominations = Nomination::where('applicationNo', $appNo)->get();
-        $managerNominations = ManagerNomination::where('applicationNo', $appNo)->get();
+        $nominations = Nomination::where('NominationNo', $appNo)->get();
+        $managerNominations = ManagerNomination::where('NominationNo', $appNo)->get();
         $result = [];
 
         // iteration through each nomination
@@ -163,10 +163,34 @@ class NominationController extends Controller
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
+        } 
+
+        // Super admin can view all accounts.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $nominations = Nomination::get();
-            return response()->json($nominations);
         }
+        else {
+            // Get schoolId of user
+            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
+            //Log::info($schoolCode);
+            
+            $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
+                                                 ->select('applications.applicationNo')
+                                                 ->where('schoolId', $schoolCode->schoolId)->get();
+
+            //Log::info($additionalApplications);
+
+            $nominations = Nomination::join('accounts', 'nominations.nomineeNo', '=', 'accounts.accountNo')
+                                     ->join('applications', 'nominations.applicationNo', '=', 'applications.applicationNo')
+                                     ->select('nominations.*')
+                                     ->where('schoolId', $schoolCode->schoolId)
+                                     //->where('schoolId', 9) // For testing
+                                     ->orWhere(function ($query) use ($additionalApplications) {
+                                        $query->whereIn('nominations.applicationNo', $additionalApplications);
+                                     })->get();
+        }
+        
+        return response()->json($nominations); 
     }
 
 
@@ -178,10 +202,10 @@ class NominationController extends Controller
         $data = $request->all();
         $messageId = $data['messageId'];
         $accountNo = $data['accountNo'];
-        $applicationNo = $data['applicationNo'];
+        $NominationNo = $data['NominationNo'];
 
         $account = Account::where('accountNo', $accountNo)->first();
-        $application = Application::where('applicationNo', $applicationNo)->first();
+        $Nomination = Nomination::where('NominationNo', $NominationNo)->first();
         $message = Message::where('messageId', $messageId)->first();
 
         // Check if user exists for given user id
@@ -195,19 +219,19 @@ class NominationController extends Controller
             return response()->json(['error' => 'Message does not exist.'], 500);
         }
 
-        // Check if application exists for given application No
-        if ($application == null) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+        // Check if Nomination exists for given Nomination No
+        if ($Nomination == null) {
+            return response()->json(['error' => 'Nomination does not exist.'], 500);
         }
 
-        // Check if user is nominated for that application
-        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+        // Check if user is nominated for that Nomination
+        $nominations = Nomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $accountNo)->get();
-        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo, "and")
+        $managerNominations = ManagerNomination::where('NominationNo', $NominationNo, "and")
         ->where('nomineeNo', $accountNo)->get();
 
         if (count($nominations) + count($managerNominations) == 0) {
-            return response()->json(['error' => 'Account not nominated for application.'], 500);
+            return response()->json(['error' => 'Account not nominated for Nomination.'], 500);
         }
 
         // update message
@@ -218,7 +242,7 @@ class NominationController extends Controller
 
         // set nomination statues to 'N' and add Role to rejectedRoles
         foreach ($nominations as $nomination) {
-            Nomination::where('applicationNo', $nomination->applicationNo, "and")
+            Nomination::where('NominationNo', $nomination->NominationNo, "and")
             ->where('nomineeNo', $nomination->nomineeNo, "and")
             ->where('accountRoleId', $nomination->accountRoleId)
             ->update([
@@ -233,7 +257,7 @@ class NominationController extends Controller
 
         // set manager nomination statues to 'N' and add Role to rejectedRoles
         foreach ($managerNominations as $nomination) {
-            ManagerNomination::where('applicationNo', $nomination->applicationNo, "and")
+            ManagerNomination::where('NominationNo', $nomination->NominationNo, "and")
             ->where('nomineeNo', $nomination->nomineeNo, "and")
             ->where('subordinateNo', $nomination->subordinateNo)
             ->update([
@@ -249,13 +273,13 @@ class NominationController extends Controller
         } 
 
         // Send message to applicant informing them that a nominee declined a nomination
-        app(MessageController::class)->notifyApplicantNominationDeclined($applicationNo, $accountNo, $rejectedRoles);
+        app(MessageController::class)->notifyApplicantNominationDeclined($NominationNo, $accountNo, $rejectedRoles);
 
-        // Set application status to denied by system
-        $application->status = 'N';
-        $application->processedBy = null;
-        $application->rejectReason = "At least one nomination was rejected.";
-        $application->save();
+        // Set Nomination status to denied by system
+        $Nomination->status = 'N';
+        $Nomination->processedBy = null;
+        $Nomination->rejectReason = "At least one nomination was rejected.";
+        $Nomination->save();
 
         return response()->json(['success'], 200);
     }
@@ -268,10 +292,10 @@ class NominationController extends Controller
         $data = $request->all();
         $messageId = $data['messageId'];
         $accountNo = $data['accountNo'];
-        $applicationNo = $data['applicationNo'];
+        $NominationNo = $data['NominationNo'];
 
         $account = Account::where('accountNo', $accountNo)->first();
-        $application = Application::where('applicationNo', $applicationNo)->first();
+        $Nomination = Nomination::where('NominationNo', $NominationNo)->first();
         $message = Message::where('messageId', $messageId)->first();
 
         // Check if user exists for given user id
@@ -285,19 +309,19 @@ class NominationController extends Controller
             return response()->json(['error' => 'Message does not exist.'], 500);
         }
 
-        // Check if application exists for given application No
-        if ($application == null) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+        // Check if Nomination exists for given Nomination No
+        if ($Nomination == null) {
+            return response()->json(['error' => 'Nomination does not exist.'], 500);
         }
 
-        // Check if user is nominated for that application
-        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+        // Check if user is nominated for that Nomination
+        $nominations = Nomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $accountNo)->get();
-        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo, "and")
+        $managerNominations = ManagerNomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $accountNo)->get();
 
         if (count($nominations) + count($managerNominations) == 0) {
-            return response()->json(['error' => 'Account not nominated for application.'], 500);
+            return response()->json(['error' => 'Account not nominated for Nomination.'], 500);
         }
 
         // update message
@@ -306,7 +330,7 @@ class NominationController extends Controller
 
         // set nomination statues to 'Y'
         foreach ($nominations as $nomination) {
-            Nomination::where('applicationNo', $nomination->applicationNo, "and")
+            Nomination::where('NominationNo', $nomination->NominationNo, "and")
             ->where('nomineeNo', $nomination->nomineeNo, "and")
             ->where('accountRoleId', $nomination->accountRoleId)
             ->update([
@@ -315,7 +339,7 @@ class NominationController extends Controller
         }
         // set manager nomination statues to 'Y'
         foreach ($managerNominations as $nomination) {
-            ManagerNomination::where('applicationNo', $nomination->applicationNo, "and")
+            ManagerNomination::where('NominationNo', $nomination->NominationNo, "and")
             ->where('nomineeNo', $nomination->nomineeNo, "and")
             ->where('subordinateNo', $nomination->subordinateNo)
             ->update([
@@ -324,23 +348,23 @@ class NominationController extends Controller
         }
 
 
-        // Set application status to Undecided by system if all nominees agreed
-        $allNominations = Nomination::where('applicationNo', $applicationNo)->get();
-        $acceptedNominations = Nomination::where('applicationNo', $applicationNo, 'and')
+        // Set Nomination status to Undecided by system if all nominees agreed
+        $allNominations = Nomination::where('NominationNo', $NominationNo)->get();
+        $acceptedNominations = Nomination::where('NominationNo', $NominationNo, 'and')
             ->where('status', 'Y')->get();
 
-        $allManagerNominations = ManagerNomination::where('applicationNo', $applicationNo)->get();
-        $acceptedManagerNominations = ManagerNomination::where('applicationNo', $applicationNo, 'and')
+        $allManagerNominations = ManagerNomination::where('NominationNo', $NominationNo)->get();
+        $acceptedManagerNominations = ManagerNomination::where('NominationNo', $NominationNo, 'and')
             ->where('status', 'Y')->get();
         if (count($acceptedNominations) + count($acceptedManagerNominations) == count($allNominations) + count($allManagerNominations)) {
-            $application->status = 'U';
-            $application->processedBy = null;
-            $application->save();
+            $Nomination->status = 'U';
+            $Nomination->processedBy = null;
+            $Nomination->save();
 
             // Get current line manager account number
             $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
-            // Notify line manager of new application to review
-            app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
+            // Notify line manager of new Nomination to review
+            app(MessageController::class)->notifyManagerNominationAwaitingReview($superiorNo, $NominationNo);
         }
 
         return response()->json(['success'], 200);
@@ -354,11 +378,11 @@ class NominationController extends Controller
         $data = $request->all();
         $messageId = $data['messageId'];
         $accountNo = $data['accountNo'];
-        $applicationNo = $data['applicationNo'];
+        $NominationNo = $data['NominationNo'];
         $responseData = $data['responses'];
 
         $account = Account::where('accountNo', $accountNo)->first();
-        $application = Application::where('applicationNo', $applicationNo)->first();
+        $Nomination = Nomination::where('NominationNo', $NominationNo)->first();
         $message = Message::where('messageId', $messageId)->first();
 
         // Check if user exists for given user id
@@ -372,20 +396,20 @@ class NominationController extends Controller
             return response()->json(['error' => 'Message does not exist.'], 500);
         }
 
-        // Check if application exists for given application No
-        if ($application == null) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+        // Check if Nomination exists for given Nomination No
+        if ($Nomination == null) {
+            return response()->json(['error' => 'Nomination does not exist.'], 500);
         }
 
-        // Check if user is nominated for that application
-        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+        // Check if user is nominated for that Nomination
+        $nominations = Nomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $accountNo)->get();
-        // Check if user is nominated for that application
-        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo, "and")
+        // Check if user is nominated for that Nomination
+        $managerNominations = ManagerNomination::where('NominationNo', $NominationNo, "and")
         ->where('nomineeNo', $accountNo)->get();
 
         if (count($nominations) + count($managerNominations) == 0) {
-            return response()->json(['error' => 'Account not nominated for application.'], 500);
+            return response()->json(['error' => 'Account not nominated for Nomination.'], 500);
         }
 
 
@@ -412,7 +436,7 @@ class NominationController extends Controller
             $accountRoleId = $response['accountRoleId'];
             $status = $response['status'];
             if ($accountRoleId != "MANAGER") {
-                Nomination::where('applicationNo', $applicationNo, "and")
+                Nomination::where('NominationNo', $NominationNo, "and")
                 ->where('nomineeNo', $accountNo, "and")
                 ->where('accountRoleId', $accountRoleId)
                 ->update([
@@ -428,7 +452,7 @@ class NominationController extends Controller
                 }
             }
             else {
-                ManagerNomination::where('applicationNo', $applicationNo, "and")
+                ManagerNomination::where('NominationNo', $NominationNo, "and")
                 ->where('nomineeNo', $accountNo, "and")
                 ->where('subordinateNo', $response['subordinateNo'])
                 ->update([
@@ -448,34 +472,34 @@ class NominationController extends Controller
         }
 
         if (count($rejectedRoles) == 0) {
-            // Set application status to Undecided by system if all nominees agreed
-            $allNominations = Nomination::where('applicationNo', $applicationNo)->get();
-            $acceptedNominations = Nomination::where('applicationNo', $applicationNo, 'and')
+            // Set Nomination status to Undecided by system if all nominees agreed
+            $allNominations = Nomination::where('NominationNo', $NominationNo)->get();
+            $acceptedNominations = Nomination::where('NominationNo', $NominationNo, 'and')
                 ->where('status', 'Y')->get();
 
-            $allManagerNominations = ManagerNomination::where('applicationNo', $applicationNo)->get();
-            $acceptedManagerNominations = ManagerNomination::where('applicationNo', $applicationNo, 'and')
+            $allManagerNominations = ManagerNomination::where('NominationNo', $NominationNo)->get();
+            $acceptedManagerNominations = ManagerNomination::where('NominationNo', $NominationNo, 'and')
                 ->where('status', 'Y')->get();
             if (count($acceptedNominations) + count($acceptedManagerNominations) == count($allNominations) + count($allManagerNominations)) {
-                $application->status = 'U';
-                $application->processedBy = null;
-                $application->save();
+                $Nomination->status = 'U';
+                $Nomination->processedBy = null;
+                $Nomination->save();
 
                 // Get current line manager account number
                 $superiorNo = app(AccountController::class)->getCurrentLineManager($accountNo)->accountNo;
-                // Notify line manager of new application to review
-                app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
+                // Notify line manager of new Nomination to review
+                app(MessageController::class)->notifyManagerNominationAwaitingReview($superiorNo, $NominationNo);
             }
         }
         else {
             // Send message to applicant informing them that a nominee declined a nomination
-            app(MessageController::class)->notifyApplicantNominationDeclined($applicationNo, $accountNo, $rejectedRoles);
+            app(MessageController::class)->notifyApplicantNominationDeclined($NominationNo, $accountNo, $rejectedRoles);
 
-            // Set application status to denied by system
-            $application->status = 'N';
-            $application->processedBy = null;
-            $application->rejectReason = "At least one nomination was rejected.";
-            $application->save();
+            // Set Nomination status to denied by system
+            $Nomination->status = 'N';
+            $Nomination->processedBy = null;
+            $Nomination->rejectReason = "At least one nomination was rejected.";
+            $Nomination->save();
         }
         
 
@@ -490,10 +514,10 @@ class NominationController extends Controller
     {
         $data = $request->all();
         $nomineeNo = $data['accountNo'];
-        $applicationNo = $data['applicationNo'];
+        $NominationNo = $data['NominationNo'];
 
         $account = Account::where('accountNo', $nomineeNo)->first();
-        $application = Application::where('applicationNo', $applicationNo)->first();
+        $Nomination = Nomination::where('NominationNo', $NominationNo)->first();
 
         // Check if user exists for given user id
         if ($account == null) {
@@ -501,19 +525,19 @@ class NominationController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 500);
         }
 
-        // Check if application exists for given application No
-        if ($application == null) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+        // Check if Nomination exists for given Nomination No
+        if ($Nomination == null) {
+            return response()->json(['error' => 'Nomination does not exist.'], 500);
         }
 
-        // Check if user is nominated for that application
-        $nominations = Nomination::where('applicationNo', $applicationNo, "and")
+        // Check if user is nominated for that Nomination
+        $nominations = Nomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $nomineeNo)->get();
-        $managerNominations = ManagerNomination::where('applicationNo', $applicationNo, "and")
+        $managerNominations = ManagerNomination::where('NominationNo', $NominationNo, "and")
             ->where('nomineeNo', $nomineeNo)->get();
 
         if (count($nominations) + count($managerNominations) == 0) {
-            return response()->json(['error' => 'Account not nominated for application.'], 500);
+            return response()->json(['error' => 'Account not nominated for Nomination.'], 500);
         }
 
 

@@ -38,7 +38,7 @@ export default {
                 field: 'applicationNo',
                 },
                 {
-                label: 'Nominee ID',
+                label: 'Applicant ID',
                 field: 'accountNo',
                 },
                 {
@@ -82,7 +82,7 @@ export default {
         axios.get("/api/allApplications/" + this.user)
         .then((response) => {
             this.applications = response.data;
-            //console.log(response.data);
+            console.log(response.data);
         })
         .catch((error) => {
             console.log(error);
