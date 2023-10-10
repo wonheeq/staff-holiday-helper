@@ -231,7 +231,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </div>
             </div>
         </div>
-        <div class="flex border border-black h-[67%] 1080:h-[76%]">
+        <div class="flex border border-black h-[63%]">
             <VueScrollingTable
                 class="scrollTable"
                 :deadAreaColor="deadAreaColor"
@@ -251,7 +251,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </template>
             </VueScrollingTable>
         </div>
-        <div class="flex flex-col h-[14%] justify-between">
+        <div class="flex flex-col justify-between">
             <div class="flex items-center space-x-2 py-2">
                 <input type="checkbox"
                     class="w-8 h-8"
@@ -263,26 +263,26 @@ const disabledClass = "bg-gray-300 border-gray-100";
                     I will handle all my responsibilities for this period of leave, therefore no nominations are required.
                 </p>
             </div>
-            <div class="flex justify-between h-3/4 space-x-16 pb-2">
-                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+            <div class="flex justify-between h-3/4 space-x-16 pb-1">
+                <button class="py-2 bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                     @click="cancelApplication()"
                     v-if="!props.isEditing"
                 >
                     Cancel Application
                 </button>
-                <button class="bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                <button class="py-2 bg-red-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                     @click="cancelApplication()"
                     v-if="props.isEditing"
                 >
                     Cancel Edit
                 </button>
-                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                <button class="py-2 bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                     @click="submitApplication()"
                     v-if="!props.isEditing"
                 >
                     Submit Application
                 </button>
-                <button class="bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
+                <button class="py-2 bg-green-500 rounded-md text-white font-bold 1080:text-xl 1440:text-2xl 4k:text-4xl text-center w-1/2"
                     @click="submitApplication()"
                     v-if="props.isEditing"
                 >
