@@ -415,8 +415,8 @@ class DatabaseController extends Controller
             Account::create([
                 'accountNo' => $entries[$i]['Account Number (Staff ID)'],
                 'accountType' =>  $entries[$i]['Account Type'],
-                'lname' => $entries[$i]['Surname'],
-                'fname' => $entries[$i]['First/Other Names'],
+                'lName' => $entries[$i]['Surname'],
+                'fName' => $entries[$i]['First/Other Names'],
                 'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')), // Password created randomly
                 'superiorNo' => $entries[$i]['Line Manager\'s ID'],
                 'schoolId' => $entries[$i]['School Code']

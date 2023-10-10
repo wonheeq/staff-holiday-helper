@@ -396,10 +396,10 @@ class DatabaseControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->getJson("/api/getCSVTemplate/{$this->otherUser1['accountNo']}/{$validFileName}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->getJson("/api/getCSVTemplate/{$this->otherUser2['accountNo']}/{$validFileName}");
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_api_request_for_getting_csv_templates_returns_correct_files(): void
@@ -482,10 +482,10 @@ class DatabaseControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response = $this->actingAs($this->otherUser1)->postJson("/api/addEntriesFromCSV/{$this->otherUser1['accountNo']}", $this->validCSVEntry);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $response = $this->actingAs($this->otherUser2)->postJson("/api/addEntriesFromCSV/{$this->otherUser2['accountNo']}", $this->validCSVEntry);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
     }
 
     public function test_api_request_for_adding_valid_accounts_via_csv_entries(): void
@@ -652,7 +652,7 @@ class DatabaseControllerTest extends TestCase
                 ->where('schoolId', $tempSchool->schoolId)->exists()     
         ); 
 
-        Account::where('accountNo', $existingStaffAccountNo)->where('lname', 'testlast')->delete();
+        Account::where('accountNo', $existingStaffAccountNo)->where('lName', 'testlast')->delete();
         Account::where('accountNo', '123456g')->delete();
         Account::where('accountNo', '123456h')->delete();
         School::where('schoolId', $tempSchool->schoolId)->delete();
@@ -1193,7 +1193,7 @@ class DatabaseControllerTest extends TestCase
         $validRequest = array('table' => 'units', 'entryId' => $testUnit2->unitId);
 
         $response = $this->actingAs($this->otherUser1)->postJson("/api/dropEntry/{$this->otherUser1['accountNo']}", $validRequest);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $testUnit3 = Unit::factory()->create([
             'unitId' => "TTTT7777"
@@ -1201,7 +1201,7 @@ class DatabaseControllerTest extends TestCase
         $validRequest = array('table' => 'units', 'entryId' => $testUnit3->unitId);
 
         $response = $this->actingAs($this->otherUser2)->postJson("/api/dropEntry/{$this->otherUser2['accountNo']}", $validRequest);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $testUnit1->delete();
         $testUnit2->delete();
@@ -1465,12 +1465,12 @@ class DatabaseControllerTest extends TestCase
         Unit::where('unitId', $testUnit->unitId)->update(['name' => 'default']);
 
         $response = $this->actingAs($this->otherUser1)->postJson("/api/editEntry/{$this->otherUser1['accountNo']}", $validRequest);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         Unit::where('unitId', $testUnit->unitId)->update(['name' => 'default']);
 
         $response = $this->actingAs($this->otherUser2)->postJson("/api/editEntry/{$this->otherUser2['accountNo']}", $validRequest);
-        $response->assertStatus(403);
+        $response->assertStatus(302);
 
         $testUnit->delete();
     }
