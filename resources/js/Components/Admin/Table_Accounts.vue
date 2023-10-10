@@ -57,7 +57,7 @@ export default {
             ],
             accounts: [],
             c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"    
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"
         };
     },
     created() {
@@ -144,6 +144,20 @@ export default {
                     text: error.response.data.error
                 });
             });
+        },
+        editAttribute: function(params) {
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Account Number': params.row.accountNo,
+                    'Account Type': params.row.accountType,
+                    'Surname': params.row.lName,
+                    'First/Other Names': params.row.fName,
+                    'School Code': params.row.schoolId,
+                    'Line Manager': params.row.superiorNo
+                }
+    
+                this.$emit('toggleEditing', editable); 
+            }     
         }
     }
 };
@@ -159,7 +173,8 @@ let onSearch = () => {
             <div remove-tailwind-bg>
                 <VueGoodTable
                     :rows="accounts"
-                    :columns="columns"             
+                    :columns="columns"
+                    v-on:cell-click="editAttribute"          
                     v-bind:max-height= tHeight
                     :fixed-header="{
                         enabled: true,
@@ -173,6 +188,11 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-actions>
+                        <p class="mr-2 mt-1 4k:text-xl">
+                            This table is editable, click a row to edit the account.
+                        </p>
+                    </template>
                     <template #table-row="props">
                         <span v-if="props.column.field == 'delete'">
                             <button type="button" class="4k:w-10 4k:h-10" v-on:click="deleteClicked(props.row.accountNo)">

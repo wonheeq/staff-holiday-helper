@@ -735,7 +735,7 @@ class DatabaseController extends Controller
                         return response()->json(['error' => 'Blocked: Deleting your own account is not permitted.'], 500);
                     }
                     else if (Account::where('accountNo', $data['entryId'])->where('schoolId', 1)->exists()) {
-                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted'], 500);
+                        return response()->json(['error' => 'Blocked: Deleting Super Administrator account not permitted.'], 500);
                     }
                     
                     // Removing Account
@@ -789,5 +789,330 @@ class DatabaseController extends Controller
   
             return response()->json(['success' => 'success'], 200);
         }  
+    }
+
+    /**
+     * Edits an entry in the database
+     */
+    public function editEntry(Request $request, String $accountNo) { 
+        // Check if user exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+           // User does not exist, return exception
+           return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+        else {
+           // Verify that the account is a system admin account
+           if (!Account::where('accountNo', $accountNo)->where('accountType', 'sysadmin')->first()) {
+               // User is not a system admin, deny access to full table
+               return response()->json(['error' => 'User not authorized for request.'], 500);
+           }
+
+           $data = $request->all();
+           //Log::info($data);
+
+           $initialEntry = $data['initialEntry'];
+           $entry = $data['entry'];
+
+           // Verifying that a change has been made
+           if ($initialEntry == $entry) {
+                return response()->json(['error' => 'No changes made.'], 500);
+           }
+
+            // Use 'table' to work out which model the entry is being removed from.
+            if ($data['table'] === "Staff Accounts") { 
+                $response = $this->editAccount($initialEntry, $entry, $accountNo);
+            }
+            else if ($data['table'] === "Roles") {
+                $response = $this->editRole($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Units") {
+                $response = $this->editUnit($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Majors") {
+                $response = $this->editMajor($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Courses") {
+                $response = $this->editCourse($initialEntry, $entry);
+            }
+            else if ($data['table'] === "Schools") {
+                $response = $this->editSchool($initialEntry, $entry);
+            }
+            else {
+                return response()->json(['error' => 'Could not determine db table.'], 500);
+            }
+ 
+           return $response;
+        }  
+    }
+
+    private function editAccount(Array $initialEntry, Array $entry, String $curAccount) {
+        // Checking that the admin has the right to edit the account
+        if ($initialEntry['Account Type'] == 'sysadmin' && Account::where('accountNo', $curAccount)->where('schoolId', 1)->doesntExist()) {
+            return response()->json(['error' => 'Invalid: Only Super Administrators can edit System Administrator accounts.'], 500);
+        }
+
+        $primaryKeyChanged = false;
+        
+        // Checking if accountNo has been changed
+        if ($initialEntry['Account Number'] != $entry['Account Number']) {
+            $primaryKeyChanged = true;
+            
+            // Checking validity of new accountNo
+            if (Account::where('accountNo', $entry['Account Number'])->exists())
+            {
+                return response()->json(['error' => 'Invalid: Account ID already in use.'], 500);
+            }
+
+            // accountNo
+            if (strlen($entry['Account Number']) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $entry['Account Number'])) {
+                return response()->json(['error' => 'Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces.'], 500);
+            }
+        } 
+        
+        // Checking if other attributes have been changed and determining their validity
+        if ($initialEntry['Account Type'] != $entry['Account Type']) {
+            if ($entry['Account Type'] != 'staff' && $entry['Account Type'] != 'lmanager' && $entry['Account Type'] != 'sysadmin') {
+                return response()->json(['error' => 'Invalid: Account Type must be one of \'staff\', \'lmanager\', or \'sysadmin\'.'], 500);
+            }
+        }
+
+        if ($initialEntry['Surname'] != $entry['Surname']) {
+            if (strlen($entry['Surname']) > 20) {
+                return response()->json(['error' => 'Invalid: Surname must be 20 characters or less (If surname has multiple parts add some to \'First/Other Names\' column). Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        if ($initialEntry['First/Other Names'] != $entry['First/Other Names']) {
+            if (strlen($entry['First/Other Names']) > 30) {
+                return response()->json(['error' => 'Invalid: First/Other Names must be 30 characters or less. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+        }
+
+        if ($initialEntry['School Code'] != $entry['School Code']) {
+            if (School::where('schoolId', $entry['School Code'])->doesntExist()) {
+                return response()->json(['error' => 'Invalid: School Code does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+            else if ($entry['School Code'] == 1) {
+                // Only Super Administrator can assign schoolId of 1
+                if (Account::where('accountNo', $curAccount)->where('schoolId', 1)->doesntExist()) {
+                    return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+                }
+                else if ($entry['Account Type'] != 'sysadmin') {
+                    // Only System Administrator accounts may be granted 'Super Administrator' status.   
+                    return response()->json(['error' => 'School Code of \'1\' cannot be assigned to non-sysadmin type accounts.'], 500);
+                }
+            }
+            else if ($initialEntry['School Code'] == 1) {
+                return response()->json(['error' => 'Account with School Code of \'1\' cannot have its School Code changed (in case no accoount is left with Super Administrator rights).'], 500);
+            }
+        }
+
+        if ($initialEntry['Line Manager'] != $entry['Line Manager']) {
+            if ($entry['Line Manager'] == "") {
+                // Line manager is null
+                $entry['Line Manager'] = NULL;
+            }
+            else if (Account::where('accountNo', $entry['Line Manager'])->where('accountType', '!=', 'staff')->doesntExist()) {
+                if ($entry['Line Manager'] != 'none') {
+                    return response()->json(['error' => 'Invalid: Line Manager \'' . $entry['Line Manager'] . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+                }
+            }
+        }
+
+        // If a line manager has their accountNo changed
+        if ($primaryKeyChanged && $entry['Account Type'] != 'staff') {
+           // Need to make a temp lmanager account with an unused, assign it as the line manager of the relevent accounts,
+           // then, then update the target account as needed, then re-assign the superiorNo to the updated on and then 
+           // delete the temp account.
+           Account::factory()->create([
+                'accountNo' => 'tempNo',
+                'accountType' => "lmanager"
+            ]);
+
+            Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => 'tempNo']);
+
+            // Updating account
+            Account::where('accountNo', $initialEntry['Account Number'])->update([
+                'accountNo' => $entry['Account Number'],
+                'accountType' => $entry['Account Type'],
+                'lName' => $entry['Surname'],
+                'fName' => $entry['First/Other Names'],
+                'superiorNo' => $entry['Line Manager'],
+                'schoolId' => $entry['School Code']
+            ]);
+            Account::where('accountNo', $entry['Account Number'])->touch();
+
+            // Subordinate accounts updated with new superiorNo
+            Account::where('superiorNo', 'tempNo')->touch();
+            Account::where('superiorNo', 'tempNo')->update(['superiorNo' => $entry['Account Number']]);
+            
+            // Deleting temp account
+            Account::destroy('tempNo');
+        }
+        else {
+            // All checks have passed
+            Account::where('accountNo', $initialEntry['Account Number'])->update([
+                'accountNo' => $entry['Account Number'],
+                'accountType' => $entry['Account Type'],
+                'lName' => $entry['Surname'],
+                'fName' => $entry['First/Other Names'],
+                'superiorNo' => $entry['Line Manager'],
+                'schoolId' => $entry['School Code']
+            ]);
+            Account::where('accountNo', $entry['Account Number'])->touch();
+        }
+
+        // If a line manager is changed to 'staff' type
+        if ($initialEntry['Account Type'] != 'staff' && $entry['Account Type'] == 'staff') {
+            // Remove any instances of line manager as 'superiorNo'
+            Account::where('superiorNo', $initialEntry['Account Number'])->touch();
+            Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => NULL]);
+        }
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editRole(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Role ID'] != $entry['Role ID']) {
+            if (!preg_match("/\A[0-9]{1,}$/", $entry['Role ID'])) {
+                return response()->json(['error' => 'Invalid: Role ID should be an integer.'], 500);
+            }
+        }
+
+        if ($initialEntry['Role Name'] != $entry['Role Name']) {
+            if (strlen($entry['Role Name']) > 40) {
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name should be under 40 characters.'], 500);
+            }
+
+            if (Role::where('name', $entry['Role Name'])->exists()) {
+                return response()->json(['error' => $entry['Role Name'] . ' Invalid: Role Name already in use.'], 500);
+            }
+        }
+
+        Role::where('roleId', $initialEntry['Role ID'])->update([
+            'roleId' => $entry['Role ID'],
+            'name' => $entry['Role Name']
+        ]);
+        Role::where('roleId', $initialEntry['Role ID'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editUnit(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Unit Code'] != $entry['Unit Code']) {
+            if (strlen($entry['Unit Code']) != 8 || !preg_match("/\A[A-Z]{4}[0-9]{4}/", $entry['Unit Code'])) {
+                return response()->json(['error' => $entry['Unit Code'] . ' Invalid: Unit Code needs syntax of 4 capital letters followed by 4 numbers with no spaces.'], 500);
+            }
+        }
+
+        if ($initialEntry['Unit Name'] != $entry['Unit Name']) {
+            if (strlen($entry['Unit Name']) > 60) {
+                return response()->json(['error' => $entry['Unit Name'] . ' Invalid: Unit Name should be under 60 characters.'], 500);
+            }
+
+            if (Unit::where('name', $entry['Unit Name'])->exists()) {
+                return response()->json(['error' => $entry['Unit Name'] . ' Invalid: Unit Name already in use.'], 500);
+            }
+        }
+
+        Unit::where('unitId', $initialEntry['Unit Code'])->update([
+            'unitId' => $entry['Unit Code'],
+            'name' => $entry['Unit Name']
+        ]);
+        Unit::where('unitId', $initialEntry['Unit Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editMajor(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Major Code'] != $entry['Major Code']) {
+            if (strlen($entry['Major Code']) != 10 || !preg_match("/\AMJ[A-Z]{2}-[A-Z]{5}/", $entry['Major Code'])) {
+                return response()->json(['error' => $entry['Major Code'] . ' Invalid: Major Code needs syntax of "MJ" followed by 2 capital letters, then a "-" followed by 5 capital letters.'], 500);
+            }
+        }
+
+        if ($initialEntry['Major Name'] != $entry['Major Name']) {
+            if (strlen($entry['Major Name']) > 60) {
+                return response()->json(['error' => $entry['Major Name'] . ' Invalid: Major Name should be under 60 characters.'], 500);
+            }
+
+            if (Major::where('name', $entry['Major Name'])->exists()) {
+                return response()->json(['error' => $entry['Major Name'] . ' Invalid: Major Name already in use.'], 500);
+            }
+        }
+
+        Major::where('majorId', $initialEntry['Major Code'])->update([
+            'majorId' => $entry['Major Code'],
+            'name' => $entry['Major Name']
+        ]);
+        Major::where('majorId', $initialEntry['Major Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editCourse(Array $initialEntry, Array $entry) {
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['Course Code'] != $entry['Course Code']) {
+            if (strlen($entry['Course Code']) > 10 || !preg_match("/\A[A-Z]{1,2}-[A-Z]{4,7}/", $entry['Course Code'])) {
+                return response()->json(['error' => $entry['Course Code'] . ' Invalid: Course Code needs syntax of 1 to 2 capital letters, then a "-" followed by 4 to 7 capital letters.'], 500);
+            }
+        }
+
+        if ($initialEntry['Course Name'] != $entry['Course Name']) {
+            if (strlen($entry['Course Name']) > 60) {
+                return response()->json(['error' => $entry['Course Name'] . ' Invalid: Course Name should be under 60 characters.'], 500);
+            }
+
+            if (Course::where('name', $entry['Course Name'])->exists()) {
+                return response()->json(['error' => $entry['Course Name'] . ' Invalid: Course Name already in use.'], 500);
+            }
+        }
+
+        Course::where('courseId', $initialEntry['Course Code'])->update([
+            'courseId' => $entry['Course Code'],
+            'name' => $entry['Course Name']
+        ]);
+        Course::where('courseId', $initialEntry['Course Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+    private function editSchool(Array $initialEntry, Array $entry) {
+        // Super Administrator 1 should be immutable
+        if ($initialEntry['School Code'] == 1) {
+            return response()->json(['error' => $entry['School Code'] . ' Invalid: Super Administrator School Code & Name are permanent.'], 500);
+        }
+
+        // Verifying new data is compliant with db syntax
+        if ($initialEntry['School Code'] != $entry['School Code']) {
+            if (!preg_match("/\A[0-9]{1,}$/", $entry['School Code'])) {
+                return response()->json(['error' => $entry['School Code'] . ' Invalid: School Code should be an integer.'], 500);
+            }
+
+            if (School::where('schoolId', $entry['School Code'])->exists()) {
+                return response()->json(['error' => $entry['School Code'] . ' Invalid: School Code already in use'], 500);
+            }
+        }
+
+        if ($initialEntry['School Name'] != $entry['School Name']) {
+            if (strlen($entry['School Name']) > 60) {
+                return response()->json(['error' => $entry['School Name'] . ' Invalid: School Name should be under 60 characters'], 500);
+            }
+
+            if (School::where('name', $entry['School Name'])->exists()) {
+                return response()->json(['error' => $entry['School Name'] . ' Invalid: School Name already in use'], 500);
+            }
+        }
+
+        School::where('schoolId', $initialEntry['School Code'])->update([
+            'schoolId' => $entry['School Code'],
+            'name' => $entry['School Name']
+        ]);
+        School::where('schoolId', $initialEntry['School Code'])->touch();
+
+        return response()->json(['success' => 'success'], 200);
     }
 }

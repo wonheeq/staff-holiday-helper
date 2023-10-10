@@ -126,6 +126,16 @@ export default {
                     text: error.response.data.error
                 });
             });
+        },
+        editAttribute: function(params) {
+            if (params.column.field != 'delete') {
+                let editable = {
+                    'Major Code': params.row.majorId,
+                    'Major Name': params.row.name
+                }
+    
+                this.$emit('toggleEditing', editable); 
+            }     
         }
     }
 };
@@ -142,6 +152,7 @@ let onSearch = () => {
                 <VueGoodTable 
                     :rows="Majors"
                     :columns="columns"
+                    v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
                     :fixed-header="{
                         enabled: true,
@@ -155,6 +166,11 @@ let onSearch = () => {
                         //mode: 'pages',
                         perPage: 30
                     }">
+                    <template #table-actions>
+                        <p class="mr-2 mt-1 4k:text-xl">
+                            This table is editable, click a row to edit the major.
+                        </p>
+                    </template>
                     <template #table-row="props">
                         <span v-if="props.column.field == 'delete'">
                             <button type="button" class="4k:w-10 4k:h-10" v-on:click="deleteClicked(props.row.majorId)">

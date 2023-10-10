@@ -14,10 +14,10 @@ const substitutionStore = useSubstitutionStore();
 const { substitutions } = storeToRefs(substitutionStore);
 let props = defineProps({ welcomeData: Object });
 
-let copyEmail = () => {
+let copyEmail = () => { 
     let email = props.welcomeData.lineManager.id + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
-    Swal.fire("Email address copied to clipboard.");
+    Swal.fire("Email address copied to clipboard.");   
 };
 
 function formatDate(date) {
@@ -35,7 +35,7 @@ function formatDate(date) {
                 <p class="text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
                     Welcome {{ props.welcomeData.name }},
                 </p>
-                <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                <p  class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
                     Your line manager is currently {{ props.welcomeData['lineManager']['name'] }}
                     <input @click="copyEmail"
                         type="image"
