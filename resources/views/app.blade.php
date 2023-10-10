@@ -3,12 +3,13 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
         <title inertia>{{ config('app.name') }}</title>
         <link rel="icon" href="/images/logo.svg" type="image/x-icon">
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="stylesheet" href="//@sweetalert2/theme-dark/dark.css" id="swal2-theme"/>
+        <link rel="stylesheet" href="/@sweetalert2/theme-dark/dark.css" id="swal2-theme"/>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
