@@ -200,7 +200,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="checkbox"
                             class="w-8 h-8 border-gray-500"
-                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':'border-gray-500'"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
@@ -212,7 +212,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="text"
                             class="h-8 w-full border-gray-500 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
-                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':'border-gray-500'"
+                            v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
@@ -303,7 +304,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="checkbox"
                             class="w-8 h-8 ml-2 border-gray-100"
-                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':'border-gray-500'"
                             v-model="allSelected"
                             @change="handleSelectAll()"    
                             :disabled="selfNominateAll"
@@ -315,7 +316,7 @@ const disabledClass = "bg-gray-300 border-gray-100";
                         </p>
                         <input type="text"
                             class="h-8 w-full border-gray-100 text-xs 1080:text-sm 1440:text-base 4k:text-2xl"
-                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':''"                            v-model="roleFilter"
+                            :class="selfNominateAll ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800':'border-gray-500'"                            v-model="roleFilter"
                             :disabled="selfNominateAll"
                         />
                     </div>
