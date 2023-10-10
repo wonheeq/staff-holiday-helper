@@ -2,14 +2,14 @@
     
     import SubpageNavbar from '../SubpageNavbar.vue';
     import { ref, computed } from 'vue';
-    import AddDataPage from './AddData.vue'
+    import AddDataPage from './AddData.vue';
 
     import vSelect from "vue-select";
     import "vue-select/dist/vue-select.css";
     import { useDataFieldsStore } from '@/stores/AddDataStore';
     import SystemSettings from './SystemSettings.vue';
 
-    import { usePage } from '@inertiajs/vue3'
+    import { usePage } from '@inertiajs/vue3';
 
     import { useDark } from "@vueuse/core";
     import { storeToRefs } from 'pinia';
@@ -74,9 +74,7 @@
 
 <script>
     import AddCSVData from "@/Components/Admin/AddCSVData.vue";
-    import EditDataPage from './EditData.vue'
-    import AddCSVData from "@/Components/Admin/AddCSVData.vue";
-    import EditDataPage from './EditData.vue'
+    import EditDataPage from './EditData.vue';
 
     import table1 from './Table_Accounts.vue';
     import table2 from './Table_Applications.vue';
@@ -177,12 +175,10 @@
             }
         },
         mounted() {
-        
-        this.$nextTick(() => {
-            window.addEventListener('resize', this.onResize);
-            //console.warn("tHeight: ", this.tHeight)
-        })
-    },
+            this.$nextTick(() => {
+                window.addEventListener('resize', this.onResize);
+                ////console.warn("tHeight: ", this.tHeight)
+            })
         },
         created() { 
             if (screen.width >= 3840) {
@@ -204,7 +200,7 @@
         
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
-            //console.warn("tHeight: ", this.tHeight)
+            ////console.warn("tHeight: ", this.tHeight)
         })
     },
     }
@@ -316,7 +312,6 @@
                 </div>
             </div>
             <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
-            <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
         </div>
 
         <div
@@ -326,7 +321,6 @@
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
-            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="isDark?'bg-gray-800':'bg-white'"
@@ -335,10 +329,6 @@
 <!---->
 
     </div>
-    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
-    </AddCSVData>
-    <EditDataPage v-if="editing" :table="content" :entry="entryData" :user="user.accountNo" @close="activateEditing">
-    </EditDataPage>
     <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
     </AddCSVData>
     <EditDataPage v-if="editing" :table="content" :entry="entryData" :user="user.accountNo" @close="activateEditing">

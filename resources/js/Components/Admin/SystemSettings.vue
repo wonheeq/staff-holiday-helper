@@ -220,7 +220,6 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
                 Create System Notification
             </p>
             <p class="4k:text-2xl 4k:mt-2">
-            <p class="4k:text-2xl 4k:mt-2">
                 This will send a message to <b>all</b> accounts.
             </p>
             <div class="w-[48.5rem] h-32 relative 4k:w-[74rem] 4k:h-[23rem] 4k:mt-5">
@@ -229,7 +228,6 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
                     :class="isDark?'bg-gray-600':''"
                     v-model="systemNotificationContent">
                 </textarea>
-                <p class="absolute right-1 bottom-0 4k:text-xl"
                 <p class="absolute right-1 bottom-0 4k:text-xl"
                     v-show="systemNotificationContent.length > 0"
                     :class="systemNotificationContent.length > MAX_SYSTEM_NOTIFICATION_LENGTH ? 'text-red-600': ''"
@@ -255,20 +253,6 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
     resize: none;
     overflow: hidden;
     }
-    textarea {
-    resize: none;
-    overflow: hidden;
-    }
-</style>
-
-<style lang="postcss">
-
-    .timeframe_options {
-        width: 33rem; 
-        height: 2rem; 
-        @apply 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-2 !important;
-    }
-
 </style>
 
 <style lang="postcss">

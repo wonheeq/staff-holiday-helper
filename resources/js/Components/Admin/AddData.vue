@@ -37,7 +37,6 @@ const buttons = [
         },
         data: function() {
             let defaultC = 288
-            let defaultC = 288
             return {
                 content: 'Accounts',
                 selected: null,
@@ -74,17 +73,12 @@ const buttons = [
                 errorMsg: '',
 
                 fontSizeDrpDwn: '1rem'
-                errorMsg: '',
-
-                fontSizeDrpDwn: '1rem'
             }
         },
         methods: {
             activate: function(message, fArray, csvFileName) {
-            activate: function(message, fArray, csvFileName) {
                 this.content = message;
                 this.currentFields = fArray;
-                this.currentCSV = csvFileName;
                 this.currentCSV = csvFileName;
 
                 // Clear Fields if needed
@@ -94,12 +88,8 @@ const buttons = [
                 this.$emit('toggleCSV', this.currentCSV, this.content);      
             },
             // Add single entry to selected table
-            activateCSV: function() {
-                this.$emit('toggleCSV', this.currentCSV, this.content);      
-            },
-            // Add single entry to selected table
             addToDB: function() {
-                console.log(this.attributeEntries)
+                //console.log(this.attributeEntries)
                 this.warning = false;
 
                 // Checking array is at least populated
@@ -152,20 +142,9 @@ const buttons = [
             },
             onResize() {
             this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-            this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
             //this.tHeight = (window.innerHeight).toFixed(0) + "px"
-            //console.warn("tHeight: ", this.tHeight)
+            ////console.warn("tHeight: ", this.tHeight)
             },
-        },
-        created() { 
-            if (screen.width >= 3840) {
-                this.fontSizeDrpDwn = '1.5rem';
-            }
-            if (screen.width < 1430 && screen.width >= 1350)
-            {
-                this.c = 315;
-                this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-            }
         },
         created() { 
             if (screen.width >= 3840) {
@@ -218,7 +197,7 @@ const buttons = [
             });
             this.$nextTick(() => {
                 window.addEventListener('resize', this.onResize);
-                //console.warn("tHeight: ", this.tHeight)
+                ////console.warn("tHeight: ", this.tHeight)
             })
         },
         beforeDestroy() { 

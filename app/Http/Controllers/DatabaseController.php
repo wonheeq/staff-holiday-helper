@@ -87,8 +87,8 @@ class DatabaseController extends Controller
         }
 
         // accountNo
-        if (strlen($attributes[0]) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $attributes[0])) {
-            return response()->json(['error' => 'Account Number needs syntax<br />of 6 numbers followed by<br />lowercase letter with no spaces'], 500);
+        if (strlen($attributes[0]) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/i", $attributes[0])) {
+            return response()->json(['error' => 'Account Number needs syntax<br />of 6 numbers followed by<br />a letter with no spaces'], 500);
         }
 
         // Checks if account is trying to have schoolId == 1
@@ -347,15 +347,15 @@ class DatabaseController extends Controller
 
         for ($i = 0; $i < $numEntries; $i++) {
             // checking new primary keys
-            $curID = $entries[$i]['Account Number (Staff ID)'];
+            $curID = $entries[$i]['Account Number'];
             if (Account::where('accountNo', $curID)->exists())
             {
                 return response()->json(['error' => 'Account ID ' . $curID . ' already in use.'], 500);
             }
 
             // accountNo
-            if (strlen($curID) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $curID)) {
-                return response()->json(['error' => $curID . ' Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            if (strlen($curID) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/i", $curID)) {
+                return response()->json(['error' => $curID . ' Invalid: Account Number needs syntax of 6 numbers followed by a letter with no spaces. Check syntax or if you didn\'t fill in an attribute.'], 500);
             }
 
 
@@ -413,7 +413,7 @@ class DatabaseController extends Controller
             }
 
             Account::create([
-                'accountNo' => $entries[$i]['Account Number (Staff ID)'],
+                'accountNo' => $entries[$i]['Account Number'],
                 'accountType' =>  $entries[$i]['Account Type'],
                 'lName' => $entries[$i]['Surname'],
                 'fName' => $entries[$i]['First/Other Names'],
@@ -423,7 +423,7 @@ class DatabaseController extends Controller
             ]);
 
             /*EmailPreference::create([
-                'accountNo' => $entries[$i]['Account Number (Staff ID)']
+                'accountNo' => $entries[$i]['Account Number']
             ]);*/
         }
 
@@ -819,7 +819,7 @@ class DatabaseController extends Controller
            }
 
             // Use 'table' to work out which model the entry is being removed from.
-            if ($data['table'] === "Staff Accounts") { 
+            if ($data['table'] === "Accounts") { 
                 $response = $this->editAccount($initialEntry, $entry, $accountNo);
             }
             else if ($data['table'] === "Roles") {
@@ -864,8 +864,8 @@ class DatabaseController extends Controller
             }
 
             // accountNo
-            if (strlen($entry['Account Number']) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/", $entry['Account Number'])) {
-                return response()->json(['error' => 'Invalid: Account Number needs syntax of 6 numbers followed by lowercase letter with no spaces.'], 500);
+            if (strlen($entry['Account Number']) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/i", $entry['Account Number'])) {
+                return response()->json(['error' => 'Invalid: Account Number needs syntax of 6 numbers followed by a letter with no spaces.'], 500);
             }
         } 
         

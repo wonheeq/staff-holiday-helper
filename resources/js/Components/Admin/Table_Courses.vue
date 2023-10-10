@@ -14,7 +14,6 @@ const isDark = useDark();
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -24,7 +23,6 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 354;
         let defaultC = 354;
         return {
             columns: [
@@ -38,7 +36,6 @@ export default {
                 },
                 {
                 label: 'Created/Last Updated (UTC)',
-                label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
                 },
                 {
@@ -46,15 +43,8 @@ export default {
                 field: 'delete',
                 sortable: false
                 },
-                {
-                label: '',
-                field: 'delete',
-                sortable: false
-                }
             ],
             Courses: [],
-            c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"  
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"  
         };
@@ -63,15 +53,11 @@ export default {
         axios.get("/api/allCourses/" + this.user)
         .then((response) => {
             this.Courses = response.data;
-            console.log(response.data);
+            //console.log(response.data);
         })
         .catch((error) => {
             console.log(error);
         });
-        if (screen.width >= 3840) {          
-            this.c = 468;
-            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-        }
         if (screen.width >= 3840) {          
             this.c = 468;
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
@@ -81,8 +67,7 @@ export default {
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
-            console.warn("tHeight: ", this.tHeight)
-            console.warn("tHeight: ", this.tHeight)
+            //console.warn("tHeight: ", this.tHeight)
         })
     },
     beforeDestroy() { 
@@ -91,74 +76,8 @@ export default {
     methods: {  
         onResize() {
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-        //this.tHeight = (window.innerHeight).toFixed(0) + "px"
-        //console.warn("tHeight: ", this.tHeight)
+        ////console.warn("tHeight: ", this.tHeight)
         },
-        deleteClicked: function(rowId) {
-            //console.log(rowId);
-            Swal.fire({
-                icon: 'warning',
-                title: 'Delete \'' + rowId + '\'?',
-                text: 'This will remove the course from the database, any account roles associated with the course will not be deleted, however the courseId attribute they have will be set to \'null\'.',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                confirmButtonColor: '#22C55E',
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    this.deleteEntry(rowId);
-                }
-            });
-        },
-        deleteEntry: function(rowId) {
-            //console.log('deleting');
-
-            let data = {
-                'table': 'courses',
-                'entryId': rowId
-            }
-
-            // Removing Course from DB
-            axios.post("/api/dropEntry/" + this.user, data)
-            .then((response) => {
-                if (response.status == 200) {   
-                    Swal.fire({
-                        icon: "success",
-                        title: 'Successfully deleted course.'
-                    });
-
-                    // Reset Table
-                    axios.get("/api/allCourses/" + this.user)
-                    .then((response) => {
-                        this.Courses = response.data;
-                        //console.log(response.data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });                 
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-
-                Swal.fire({
-                    icon: "error",
-                    title: 'Error',
-                    text: error.response.data.error
-                });
-            });
-        },
-        editAttribute: function(params) {
-            if (params.column.field != 'delete') {
-                let editable = {
-                    'Course Code': params.row.courseId,
-                    'Course Name': params.row.name
-                }
-    
-                this.$emit('toggleEditing', editable);  
-            }    
-        }
         deleteClicked: function(rowId) {
             //console.log(rowId);
             Swal.fire({
@@ -225,9 +144,6 @@ export default {
         }
     }
 };
-
-let onSearch = () => {
-};
 </script>
 
 
@@ -239,7 +155,6 @@ let onSearch = () => {
                     :theme="isDark?'nocturnal':''"
                     :rows="Courses"
                     :columns="columns"
-                    v-on:cell-click="editAttribute"
                     v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
                     :fixed-header="!isMobile"

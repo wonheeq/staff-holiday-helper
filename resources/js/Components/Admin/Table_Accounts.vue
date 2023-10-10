@@ -21,7 +21,6 @@ const isDark = useDark();
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -32,12 +31,10 @@ export default {
     },
     data: function() {
         let defaultC = 354;
-        let defaultC = 354;
         return {
             columns: [
                 {
-                label: 'Account ID',
-                field: 'accountNo',              
+                label: 'Account ID',     
                 field: 'accountNo',              
                 },
                 {
@@ -63,7 +60,6 @@ export default {
                 },
                 {
                 label: 'Created/Last Updated (UTC)',
-                label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
                 },
                 {
@@ -71,15 +67,8 @@ export default {
                 field: 'delete',
                 sortable: false
                 },
-                {
-                label: '',
-                field: 'delete',
-                sortable: false
-                }
             ],
             accounts: [],
-            c: defaultC,
-            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"
         };
@@ -98,16 +87,12 @@ export default {
             this.c = 468;
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         }
-        if (screen.width >= 3840) {          
-            this.c = 468;
-            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-        }
     },
     // Using height of window to determine max table height
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
-            //console.warn("tHeight: ", this.tHeight)
+            ////console.warn("tHeight: ", this.tHeight)
         })
     },
     beforeDestroy() { 
@@ -116,9 +101,8 @@ export default {
     methods: {  
         onResize() {
         this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
-        this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
-        //console.warn("tHeight: ", this.tHeight)
+        ////console.warn("tHeight: ", this.tHeight)
         },
         deleteClicked: function(rowId) {
             //console.log(rowId);
@@ -187,79 +171,8 @@ export default {
     
                 this.$emit('toggleEditing', editable); 
             }     
-        }
-        deleteClicked: function(rowId) {
-            //console.log(rowId);
-            Swal.fire({
-                icon: 'warning',
-                title: 'Delete \'' + rowId + '\'?',
-                text: 'This will not only remove the account from the database, but also all applications, nominations, account roles, and messages associated in any way with the account.',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                confirmButtonColor: '#22C55E',
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    this.deleteEntry(rowId);
-                }
-            });
         },
-        deleteEntry: function(rowId) {
-            //console.log('deleting');
-
-            let data = {
-                'table': 'accounts',
-                'entryId': rowId
-            }
-
-            // Removing Account from DB
-            axios.post("/api/dropEntry/" + this.user, data)
-            .then((response) => {
-                if (response.status == 200) {   
-                    Swal.fire({
-                        icon: "success",
-                        title: 'Successfully deleted account.'
-                    });
-
-                    // Reset Table
-                    axios.get("/api/allAccounts/" + this.user)
-                    .then((response) => {
-                        this.accounts = response.data;
-                        //console.log(response.data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });                 
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-
-                Swal.fire({
-                    icon: "error",
-                    title: 'Error',
-                    text: error.response.data.error
-                });
-            });
-        },
-        editAttribute: function(params) {
-            if (params.column.field != 'delete') {
-                let editable = {
-                    'Account Number': params.row.accountNo,
-                    'Account Type': params.row.accountType,
-                    'Surname': params.row.lName,
-                    'First/Other Names': params.row.fName,
-                    'School Code': params.row.schoolId,
-                    'Line Manager': params.row.superiorNo
-                }
-    
-                this.$emit('toggleEditing', editable); 
-            }     
-        }
     }
-};
-
-let onSearch = () => {
 };
 </script>
 
@@ -272,8 +185,7 @@ let onSearch = () => {
                     :theme="isDark?'nocturnal':''"
                     :rows="accounts"
                     :columns="columns"
-                    v-on:cell-click="editAttribute"          
-                    v-on:cell-click="editAttribute"          
+                    v-on:cell-click="editAttribute"     
                     v-bind:max-height= tHeight
                     :fixed-header="!isMobile"
                     :search-options="{
@@ -300,8 +212,7 @@ let onSearch = () => {
                     </template>
                     <template #emptystate>
                         No entries found!
-                    </template>     
-                    </template>     
+                    </template>   
                 </VueGoodTable> 
             </div>           
        </div>

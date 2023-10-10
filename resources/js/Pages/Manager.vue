@@ -36,7 +36,6 @@ function changeUrl(params) {
         'LeaveOnTime',
         baseUrl + "/manager/" + params
     );
-    window.location.reload();
 }
 
 function handleActiveScreenChanged(screen) {
