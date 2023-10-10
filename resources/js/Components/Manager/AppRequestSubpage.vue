@@ -107,7 +107,7 @@ const deadAreaColor = computed(() => {
                 value="all"
                 v-model="viewing"
                 checked>
-            <label for="allApplications" class="filter-text ">All Applications</label>
+            <label for="allApplications" class="filter-text ">All</label>
         
             <input 
                 type="radio" 
@@ -117,7 +117,7 @@ const deadAreaColor = computed(() => {
                 value="unAcknowledged"
                 v-model="viewing"
                 >
-            <label for="unAcknowledged" class="filter-text">Unacknowledged Applications</label>
+            <label for="unAcknowledged" class="filter-text">Unacknowledged</label>
 
             <input 
                 type="radio" 
@@ -127,7 +127,7 @@ const deadAreaColor = computed(() => {
                 value="accepted"
                 v-model="viewing"
                 >
-            <label for="accepted" class="filter-text">Accepted Applications</label>
+            <label for="accepted" class="filter-text">Accepted</label>
 
             <input 
                 type="radio" 
@@ -137,7 +137,7 @@ const deadAreaColor = computed(() => {
                 value="rejected"
                 v-model="viewing"
                 >
-            <label for="rejected" class="filter-text">Rejected Applications</label>
+            <label for="rejected" class="filter-text">Rejected</label>
         </div>
         <div class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
