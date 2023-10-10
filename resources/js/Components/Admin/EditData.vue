@@ -19,11 +19,6 @@
 
     const initialEntry = Object.assign({}, props.entry);
 
-    /*let msg = reactive({
-        warning: false,
-        errorMsg: "default"
-    });*/
-
     function updateTuple() {
         let data = {
             'table': props.table,

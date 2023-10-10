@@ -21,6 +21,7 @@ const isDark = useDark();
 <script>
 import axios from "axios";
 import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 export default {
     props: {
@@ -30,6 +31,7 @@ export default {
         }
     },
     data: function() {
+        let defaultC = 354;
         let defaultC = 354;
         return {
             columns: [
@@ -52,6 +54,7 @@ export default {
                 },
                 {
                 label: 'Created/Last Updated (UTC)',
+                label: 'Created/Last Updated (UTC)',
                 field: 'updated_at',
                 },
                 {
@@ -59,8 +62,15 @@ export default {
                 field: 'delete',
                 sortable: false
                 }
+                {
+                label: '',
+                field: 'delete',
+                sortable: false
+                }
             ],
             nominations: [],
+            c: defaultC,
+            tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"          };
             c: defaultC,
             tHeight: ((0.8889 * window.innerHeight) - defaultC).toFixed(0) + "px"          };
     },
@@ -77,11 +87,16 @@ export default {
             this.c = 468;
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         }
+        if (screen.width >= 3840) {          
+            this.c = 468;
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+        }
     },
     // Using height of window to determine max table height
     mounted() {
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
+            console.warn("tHeight: ", this.tHeight)
             console.warn("tHeight: ", this.tHeight)
         })
     },
@@ -91,9 +106,66 @@ export default {
     methods: {  
         onResize() {
             this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+            this.tHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
         //this.tHeight = (window.innerHeight).toFixed(0) + "px"
         //console.warn("tHeight: ", this.tHeight)
         },
+        deleteClicked: function(applicationNo, nomineeNo, accountRoleId) {
+            //console.log(rowId);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Delete nomination for \'' + rowId + '\'?',
+                text: 'This will remove the nomination from the database.',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#22C55E',
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    this.deleteEntry(applicationNo, nomineeNo, accountRoleId);
+                }
+            });
+        },
+        deleteEntry: function(applicationNo, nomineeNo, accountRoleId) {
+            //console.log('deleting');
+
+            let data = {
+                'table': 'nominations',
+                'applicationNo': applicationNo,
+                'nomineeNo': nomineeNo,
+                'accountRoleId': accountRoleId
+            }
+
+            // Removing Nominations from DB
+            axios.post("/api/dropEntry/" + this.user, data)
+            .then((response) => {
+                if (response.status == 200) {   
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Successfully deleted nomination.'
+                    });
+
+                    // Reset Table
+                    axios.get("/api/allNominations/" + this.user)
+                    .then((response) => {
+                        this.nominations = response.data;
+                        //console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });                 
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: error.response.data.error
+                });
+            });
+        }
         deleteClicked: function(applicationNo, nomineeNo, accountRoleId) {
             //console.log(rowId);
             Swal.fire({

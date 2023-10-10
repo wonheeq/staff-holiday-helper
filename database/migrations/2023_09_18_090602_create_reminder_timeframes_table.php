@@ -27,7 +27,7 @@ return new class extends Migration
         });
 
         Schema::table('reminder_timeframes', function (Blueprint $table) {
-            $table->foreign('schoolId')->references('schoolId')->on('schools');
+            $table->foreign('schoolId')->references('schoolId')->on('schools')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

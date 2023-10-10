@@ -125,7 +125,6 @@ class KernelTest extends TestCase
         parent::teardown();
     }
 
-
     public function test_getReminderLists_is_successful_works_with_timeframe_1_day(): void {
         $date = new DateTime();
         $reminderLists = app(Kernel::class)->getReminderLists($date);

@@ -49,14 +49,14 @@ class AccountController extends Controller
         }
 
         $lineManager = $this->getCurrentLineManager($accountNo);
-
+        
         $data = [
             'name' => "{$account->fName}",
             'lineManager' => [
                 'name' => "{$lineManager->fName} {$lineManager->lName}",
                 'id' => "{$lineManager->accountNo}"
             ]
-        ];
+        ];     
 
         return response()->json($data);
     }
@@ -65,8 +65,15 @@ class AccountController extends Controller
     Return the default admin account for the system
     AKA the super admin - "Admin in charge of admins"
     */
-    public function getDefaultAdmin() {
-        return Account::where('accountNo', DEFAULT_ADMIN_ACCOUNT_NO)->first();
+    public function getDefaultAdmin()
+    {
+        $defaultAdmin = Account::where('accountNo', DEFAULT_ADMIN_ACCOUNT_NO)->first();
+        
+        if ($defaultAdmin == NULL) { // Default accountNo must have been edited, find another super account
+            $defaultAdmin = Account::where('schoolId', 1)->first();
+        }
+
+        return $defaultAdmin;
     }
 
     /*
@@ -197,7 +204,7 @@ class AccountController extends Controller
             }
 
             $lmAccounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))
-                ->where('accountType', 'lmanager')->get();
+                ->where('accountType','!=', 'staff')->get();
 
             $accounts = Account::select("accountNo",DB::raw("CONCAT(fName,' ',lName,' (',accountNo,')') AS fullName"))->get();
 

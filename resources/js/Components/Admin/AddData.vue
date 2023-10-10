@@ -37,6 +37,7 @@ const buttons = [
         },
         data: function() {
             let defaultC = 288
+            let defaultC = 288
             return {
                 content: 'Accounts',
                 selected: null,
@@ -73,17 +74,26 @@ const buttons = [
                 errorMsg: '',
 
                 fontSizeDrpDwn: '1rem'
+                errorMsg: '',
+
+                fontSizeDrpDwn: '1rem'
             }
         },
         methods: {
             activate: function(message, fArray, csvFileName) {
+            activate: function(message, fArray, csvFileName) {
                 this.content = message;
                 this.currentFields = fArray;
+                this.currentCSV = csvFileName;
                 this.currentCSV = csvFileName;
 
                 // Clear Fields if needed
                 this.attributeEntries = [];   
             },
+            activateCSV: function() {
+                this.$emit('toggleCSV', this.currentCSV, this.content);      
+            },
+            // Add single entry to selected table
             activateCSV: function() {
                 this.$emit('toggleCSV', this.currentCSV, this.content);      
             },
@@ -142,9 +152,20 @@ const buttons = [
             },
             onResize() {
             this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+            this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
             //this.tHeight = (window.innerHeight).toFixed(0) + "px"
             //console.warn("tHeight: ", this.tHeight)
             },
+        },
+        created() { 
+            if (screen.width >= 3840) {
+                this.fontSizeDrpDwn = '1.5rem';
+            }
+            if (screen.width < 1430 && screen.width >= 1350)
+            {
+                this.c = 315;
+                this.bHeight = ((0.8889 * window.innerHeight) - this.c).toFixed(0) + "px"
+            }
         },
         created() { 
             if (screen.width >= 3840) {
@@ -185,6 +206,7 @@ const buttons = [
                 var resposeArr = response.data;
                 this.lmanagers = resposeArr[0];
                 this.displayAccounts = resposeArr[1];
+                //console.log(response.data);
                 //console.log(response.data);
 
                 // lmanagers is a nullable field, adding "none" option

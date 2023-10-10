@@ -21,6 +21,7 @@ class Account extends Authenticatable
 
     // set accountNo as primary key so eloquent doesn't have a fit about columns
     protected $primaryKey = 'accountNo';
+    protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [

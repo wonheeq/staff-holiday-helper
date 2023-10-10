@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Unit extends Model
 {
     use HasFactory;
-    protected $primarayKey = 'unitId';
+    protected $primaryKey = 'unitId';
     public $incrementing = false;
     protected $fillable = ['unitId', 'name'];
 }

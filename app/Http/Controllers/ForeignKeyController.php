@@ -57,7 +57,7 @@ class ForeignKeyController extends Controller
             $courseFK = Course::select("courseId",DB::raw("CONCAT(name, ' (', courseId, ')') AS disName"))->get();
             //$courseFK->makeHidden(['created_at','updated_at']);
 
-            $schoolFK = School::get();
+            $schoolFK = School::where('schoolId', '!=', 1)->get();
             $schoolFK->makeHidden(['created_at','updated_at']);
 
             $result = array($roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);

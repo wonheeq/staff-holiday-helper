@@ -31,6 +31,7 @@
 
     let activeScreen = ref("viewData");
 
+
     let props = defineProps({
         screenProp: {
             type: String,
@@ -72,6 +73,8 @@
 </script>
 
 <script>
+    import AddCSVData from "@/Components/Admin/AddCSVData.vue";
+    import EditDataPage from './EditData.vue'
     import AddCSVData from "@/Components/Admin/AddCSVData.vue";
     import EditDataPage from './EditData.vue'
 
@@ -143,7 +146,43 @@
                 this.entryData = entryData;
                 
                 this.editing = !this.editing;
+            },
+            activateCSV: function(csvFileName, tableName) {
+                //console.log(tableName);
+                this.csvFileName = csvFileName;
+                this.curTable = tableName;
+                this.csvActivated = !this.csvActivated;
+            },
+            activateEditing: function(entryData) {
+                //console.log(params.row);
+                this.entryData = entryData;
+                
+                this.editing = !this.editing;
             }
+        },
+        created() { 
+            if (screen.width >= 3840) {
+                this.fontSize = this.fontSizeMain = this.footerFontSize = '1.8rem';
+                this.searchPadding = '12px 18px';
+                this.searchHeight = '54px';
+                this.magnifyingGlassTop = '7px';
+                this.magnifyingGlassLeft = '5px';
+                this.magnifyingGlassWH = '25px';
+                this.sortButtonBorder = '8px';
+                this.sortButtonMargin = '-13px';
+                this.pageChangeBorder = '10px';
+                this.pageChangeMargin = '-10px';
+                this.pageDropdownRight = '-4px';
+                this.pageDropdownMargin = '-3px';
+            }
+        },
+        mounted() {
+        
+        this.$nextTick(() => {
+            window.addEventListener('resize', this.onResize);
+            //console.warn("tHeight: ", this.tHeight)
+        })
+    },
         },
         created() { 
             if (screen.width >= 3840) {
@@ -277,6 +316,7 @@
                 </div>
             </div>
             <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
+            <component :is="currentTable" :user="user.accountNo" @toggleEditing="activateEditing"></component>   
         </div>
 
         <div
@@ -286,6 +326,7 @@
         >
             <!--<AddDataPage :fieldsList="fieldsStore" :namesList="namesStore"/>-->
             <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
+            <AddDataPage :fieldsList="fieldsStore" :user="user.accountNo" @toggleCSV="activateCSV" />
         </div>
         <SystemSettings v-show="activeScreen === 'sysSettings'"
             :class="isDark?'bg-gray-800':'bg-white'"
@@ -294,6 +335,10 @@
 <!---->
 
     </div>
+    <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
+    </AddCSVData>
+    <EditDataPage v-if="editing" :table="content" :entry="entryData" :user="user.accountNo" @close="activateEditing">
+    </EditDataPage>
     <AddCSVData v-if="csvActivated" :csvFileName="csvFileName" :curTable="curTable" :user="user.accountNo" @close="activateCSV()">
     </AddCSVData>
     <EditDataPage v-if="editing" :table="content" :entry="entryData" :user="user.accountNo" @close="activateEditing">
@@ -308,6 +353,7 @@
     .tableButtonOn {
         min-width: 13%;
         font-size: 1rem;
+        @apply 4k:text-3xl !important;
         @apply 4k:text-3xl !important;
         font-weight: bold;
         line-height: 1.3rem;
@@ -351,6 +397,7 @@
         min-width: 13%;
         font-size: 1rem;
         @apply 4k:text-3xl !important;
+        @apply 4k:text-3xl !important;
         line-height: 1.3rem;
         text-align: center;
         padding: 2px;
@@ -387,6 +434,72 @@
 
     body {
         font-family: "PT Sans", sans-serif;
+    }
+
+    table.vgt-table {
+        font-size: v-bind(fontSizeMain);
+    }
+
+    .vgt-input, .vgt-select {
+        font-size: v-bind(fontSize);
+        padding:  v-bind(searchPadding);
+        height: v-bind(searchHeight);
+    }
+
+    .vgt-global-search__input .input__icon .magnifying-glass {
+        margin-top: v-bind(magnifyingGlassTop);
+        margin-left: v-bind(magnifyingGlassLeft);
+        width: v-bind(magnifyingGlassWH);
+        height: v-bind(magnifyingGlassWH);
+    }
+
+    .vgt-table th.sortable button:before {
+        margin-bottom: v-bind(sortButtonMargin);
+        border-left: v-bind(sortButtonBorder) solid transparent;
+        border-right: v-bind(sortButtonBorder) solid transparent;
+        border-top: v-bind(sortButtonBorder) solid #606266;
+    }
+    .vgt-table th.sortable button:after {
+        margin-top: v-bind(sortButtonMargin);
+        border-left: v-bind(sortButtonBorder) solid transparent;
+        border-right: v-bind(sortButtonBorder) solid transparent;
+        border-bottom: v-bind(sortButtonBorder) solid #606266;
+    }
+
+    .vgt-table thead th.sorting-asc button:after {
+        border-bottom: v-bind(sortButtonBorder) solid #409eff;
+    }
+    .vgt-table thead th.sorting-desc button:before {
+        border-top: v-bind(sortButtonBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__row-count__label,
+    .vgt-wrap__footer .footer__row-count__select,
+    .vgt-wrap__footer .footer__navigation,
+    .vgt-wrap__footer .footer__navigation__page-btn span {
+        font-size: v-bind(footerFontSize);
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron.left::after {
+        border-right: v-bind(pageChangeBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron.right::after {
+        border-left: v-bind(pageChangeBorder) solid #409eff;
+    }
+
+    .vgt-wrap__footer .footer__navigation__page-btn .chevron:after {
+        margin-top: v-bind(pageChangeMargin);
+        border-top: v-bind(pageChangeBorder) solid transparent;
+        border-bottom: v-bind(pageChangeBorder) solid transparent;
+    }
+
+    .vgt-wrap__footer .footer__row-count::after {
+        right: v-bind(pageDropdownRight);
+        margin-top: v-bind(pageDropdownMargin);
+        border-top: v-bind(pageChangeBorder) solid #606266;
+        border-left: v-bind(pageChangeBorder) solid transparent;
+        border-right: v-bind(pageChangeBorder) solid transparent;
     }
 
     table.vgt-table {
