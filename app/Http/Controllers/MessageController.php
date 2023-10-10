@@ -26,7 +26,6 @@ use App\Jobs\SendSubPeriodEditSubset;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendConfirmSubstitutions;
 use App\Jobs\SendSystemNotification;
-use App\Models\ManagerNomination;
 
 class MessageController extends Controller
 {
@@ -220,13 +219,13 @@ class MessageController extends Controller
         ]);
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-        $hours = $preferences->hours;
-        if( $hours == 0 ) // If user is on instant notifications
-        {
-            // collect require data, and queue an email
-            $data = [$superiorNo, $application->accountNo, $content];
-            SendAppWaitingRev::dispatch($data, false);
-        }
+        // $hours = $preferences->hours;
+        // if( $hours == 0 ) // If user is on instant notifications
+        // {
+        //     // collect require data, and queue an email
+        //     $data = [$superiorNo, $application->accountNo, $content];
+        //     SendAppWaitingRev::dispatch($data, false);
+        // }
     }
 
 
@@ -463,6 +462,8 @@ class MessageController extends Controller
         }
     }
 
+
+
     /* Notifies nominees of application they agreed to substitute for being approved */
     public function notifyNomineesApplicationApproved($applicationNo) {
         $application = Application::where('applicationNo', $applicationNo)->first();
@@ -530,15 +531,6 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
-
-                // $preferences = EmailPreference::where('accountNo', $nomination->nomineeNo)->first();
-                // $hours = $preferences->hours;
-                // if( $hours == 0 ) // on instant notifications
-                // {
-                //     // Collect data and queue an email
-                //     $data = [$nomination->nomineeNo, $content, ];
-                //     SendConfirmSubstitutions::dispatch($data);
-                // }
             }
         }
     }
@@ -903,15 +895,9 @@ class MessageController extends Controller
     {
         $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
         if ($messages->count() != 0) { // if Has messages
-            try
-            {   // send email
-                $account->sendDailyMessageNotification($messages);
-                $newTime = new DateTime('NOW');
-                $preferences->timeLastSent = $newTime;
-                $preferences->save();
-
-            }
-            catch( TransportException $e) // Email Sending Failed
+  
+            $result = $account->sendDailyMessageNotification($messages);
+            if( !$result )
             {
                 // check if already has a backed up archive email
                 if(!UnsentEmail::where('accountNo', $account->accountNo)
@@ -922,6 +908,7 @@ class MessageController extends Controller
                     ]);
                 }
             }
+            sleep(2); // to get around mailtrap emails per second limit
         }
     }
 

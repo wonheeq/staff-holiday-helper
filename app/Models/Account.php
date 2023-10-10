@@ -79,7 +79,16 @@ class Account extends Authenticatable
     public function sendDailyMessageNotification($messages)
     {
         // throw new TransportException();
-        $this->notify(new NewMessages($messages, $this->isManager()));
+        try{
+            $this->notify(new NewMessages($messages, $this->isManager()));
+            return true;
+
+        }
+        catch(TransportException $e)
+        {
+            return false;
+        }
+
     }
 
     public function routeNotificationFor($driver, $notification = null)

@@ -59,6 +59,8 @@ class SendAppWaitingRev implements ShouldQueue
                 'application' => $application,
                 'period' => $data[2][sizeof($data[2]) - 1], // last index
             ];
+
+            
             // $this->sendEmail();
 
             // Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));

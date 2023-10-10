@@ -418,8 +418,7 @@ class EmailController extends Controller
     // Handles the attempted resending of an archive email
     private function attemptUnackMsg($email)
     {
-        try
-        {
+
             // Get account and preferences
             $accountNo = $email->accountNo;
             $user = Account::where('accountNo', $accountNo)->first();
@@ -437,17 +436,23 @@ class EmailController extends Controller
             {
                 // try and send the email if they have any messages
                 $messages = Message::where('receiverNo', $user->accountNo)->where('acknowledged', 0)->get();
-                if ($messages->count() != 0) { // if Has messages
-                    $user->sendDailyMessageNotification($messages);
+                try
+                {
+                    if ($messages->count() != 0) { // if Has messages
+                        $result = $user->sendDailyMessageNotification($messages);
+                        if( $result == true)
+                        {
+                            $email->delete(); // delete from backlog
+                        }
+                    }
                 }
-                $email->delete(); // delete from backlog
+                catch(TransportException $e)
+                {
+                    error_log($e);
+                    // Do Nothing, email stays in backlog
+                }
             }
-        }
-        catch(TransportException $e)
-        {
-            error_log($e);
-            // Do Nothing, email stays in backlog
-        }
+        
     }
 
 }

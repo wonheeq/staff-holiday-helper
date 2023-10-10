@@ -11,6 +11,7 @@ use Error;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 class NewMessages extends Notification
 {
@@ -49,29 +50,32 @@ class NewMessages extends Notification
      */
     public function toMail($notifiable): Mailable
     {
-        // get the name and build the URL
-        $dynamicData = [
-            'name' => $notifiable->getName(),
-            'num' => $this->messages->count(),
-            'appMessages' => $this->getAppMessages(),
-            'numApp' => $this->numApp,
-            'appRevMessages' => $this->getAppRevMessages(),
-            'numAppRev' => $this->numAppRev,
-            'otherMessages' => $this->getOtherMessages(),
-            'numOther' => $this->numOther,
-        ];
-        $subject = "Unacknowledged Messages";
-        $mailName = $this->getMailName();
-        // create and return mailable object
-        $mailable = new MJML($subject, $mailName, $dynamicData);
 
-        // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
+            // get the name and build the URL
+            $dynamicData = [
+                'name' => $notifiable->getName(),
+                'num' => $this->messages->count(),
+                'appMessages' => $this->getAppMessages(),
+                'numApp' => $this->numApp,
+                'appRevMessages' => $this->getAppRevMessages(),
+                'numAppRev' => $this->numAppRev,
+                'otherMessages' => $this->getOtherMessages(),
+                'numOther' => $this->numOther,
+            ];
+            $subject = "Unacknowledged Messages";
+            $mailName = $this->getMailName();
+            // create and return mailable object
+            $mailable = new MJML($subject, $mailName, $dynamicData);
+            
+            // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
+            
+            // uncomment / comment so that it goes to you
+            // return $mailable->to("wonhee.qin@student.curtin.edu.au");
+            return $mailable->to("b.lee20@student.curtin.edu.au");
+            // return $mailable->to("aden.moore@student.curtin.edu.au");
+            // return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
 
-        // uncomment / comment so that it goes to you
-        // return $mailable->to("wonhee.qin@student.curtin.edu.au");
-        // return $mailable->to("b.lee20@student.curtin.edu.au");
-        // return $mailable->to("aden.moore@student.curtin.edu.au");
-        return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
+        
     }
 
 
@@ -119,7 +123,9 @@ class NewMessages extends Notification
         $messages = $this->messages;
         $appRevMessages = [];
         foreach ($messages as $message) {
+
             if ($message->subject == "Application Cancelled") {
+
                 $this->numAppRev++;
                 $content = json_decode($message->content);
                 $messageString = $message->subject . ": " . $content[0]; // get subject and first line
@@ -128,7 +134,9 @@ class NewMessages extends Notification
                 }
                 array_push($appRevMessages, $messageString);
 
-            } else if ($message->subject == "Application Awaiting Review") {
+            } 
+            else if ($message->subject == "Application Awaiting Review") {
+
                 $this->numAppRev++;
                 $content = json_decode($message->content);
                 // build a message to reduce clutter
