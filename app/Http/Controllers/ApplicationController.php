@@ -67,7 +67,7 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 500);
         } 
 
-        // Super admin can view all accounts.
+        // Super admin can view all applications.
         if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $applications = Application::get();
         }

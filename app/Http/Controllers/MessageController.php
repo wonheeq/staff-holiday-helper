@@ -906,29 +906,35 @@ class MessageController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 500);
         } 
 
-        // Get schoolId of user
-        $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
-        //Log::info($schoolCode);
+        // Super admin can view all messages.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
+            $messages = Message::get();
+        }
+        else {
+            // Get schoolId of user
+            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
+            //Log::info($schoolCode);
+            
+            $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
+                                                ->select('applications.applicationNo')
+                                                ->where('schoolId', $schoolCode->schoolId)->get();
+
+            Log::info($additionalApplications);
+
+            $messages = Message::join('accounts', function($join) {
+                                    $join->on('messages.receiverNo', '=', 'accounts.accountNo')
+                                    ->orOn('messages.senderNo', '=', 'accounts.accountNo');
+                                })
+                                ->join('applications', 'messages.applicationNo', '=', 'applications.applicationNo')
+                                ->select('messages.*')
+                                ->distinct()
+                                ->where('schoolId', $schoolCode->schoolId)
+                                //->where('schoolId', 9) // For testing
+                                ->orWhere(function ($query) use ($additionalApplications) {
+                                    $query->whereIn('messages.applicationNo', $additionalApplications);
+                                })->get();
+        }
         
-        $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
-                                             ->select('applications.applicationNo')
-                                             ->where('schoolId', $schoolCode->schoolId)->get();
-
-        Log::info($additionalApplications);
-
-        $messages = Message::join('accounts', function($join) {
-                                $join->on('messages.receiverNo', '=', 'accounts.accountNo')
-                                ->orOn('messages.senderNo', '=', 'accounts.accountNo');
-                            })
-                            ->join('applications', 'messages.applicationNo', '=', 'applications.applicationNo')
-                            ->select('messages.*')
-                            ->distinct()
-                            ->where('schoolId', $schoolCode->schoolId)
-                            //->where('schoolId', 9) // For testing
-                            ->orWhere(function ($query) use ($additionalApplications) {
-                                $query->whereIn('messages.applicationNo', $additionalApplications);
-                            })->get();
-    
         return response()->json($messages); 
     }
 

@@ -20,7 +20,7 @@ class AccountRoleController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 500);
         } 
 
-        // Super admin can view all accounts.
+        // Super admin can view all account roles.
         if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $accountRoles = AccountRole::get();
         }
