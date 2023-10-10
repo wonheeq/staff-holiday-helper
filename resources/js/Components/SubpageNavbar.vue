@@ -13,7 +13,7 @@ const emit = defineEmits(['screen-changed']);
 </script>
 <template>
     <div v-if="isMobile"  class="flex space-x-4">
-        <button class="w-1/3 h-8 laptop:w-80 px-2 rounded-tl-md rounded-tr-md text-xs"
+        <button class="w-1/3 h-full laptop:w-80 px-2 rounded-tl-md rounded-tr-md text-xs"
             :class="{
                 'bg-white': activeScreen===option.id && !isDark,
                 'bg-gray-800': activeScreen===option.id && isDark,

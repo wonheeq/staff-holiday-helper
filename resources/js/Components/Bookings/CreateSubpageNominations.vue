@@ -397,12 +397,12 @@ const disabledClass = "bg-gray-300 border-gray-100";
     overflow-y: auto;
 }
 .pageHeight{
-    height: calc(0.92 * 0.95 * (93vh - 3rem) - 1rem);
+    height: calc(0.92 * 0.95 * 93vh - 3rem - 1rem);
 }
 .tableHeight{
-    height: calc(0.7 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
+    height: calc(0.7 * 0.92 * 0.95 * 93vh - 3rem - 2rem);
 }
 .tableHeight1080{
-    height: calc(0.77 * 0.92 * 0.95 * (93vh - 3rem) - 2rem);
+    height: calc(0.77 * 0.92 * 0.95 * 93vh - 3rem - 2rem);
 }
 </style>

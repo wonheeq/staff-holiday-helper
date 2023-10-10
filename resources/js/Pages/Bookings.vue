@@ -83,7 +83,7 @@ function handleActiveScreenChanged(screen) {
     <AuthenticatedLayout>
         <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
             <SubpageNavbar
-                class=""
+                class="h-[5%]"
                 :options="options"
                 :activeScreen="activeScreen"
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
@@ -102,7 +102,7 @@ function handleActiveScreenChanged(screen) {
             <SubstitutionsSubpage
                 v-show="activeScreen === 'subs'" 
                 :class="subpageClass"
-                class="p-2"
+                class="p-2 h-[95%]"
             />
         </div>
         <div v-else class="flex flex-col screen mt-4 mx-4 drop-shadow-md">
