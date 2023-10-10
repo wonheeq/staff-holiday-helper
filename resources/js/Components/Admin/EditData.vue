@@ -66,12 +66,13 @@
             <p class="4k:text-2xl 4k:ml-6 4k:mt-3">             
                 Re-fill the values you wish to change.
             </p>
-            <p  v-if="table == 'Staff Accounts'" class="4k:text-2xl text-red-700 4k:ml-6">             
+            <p  v-if="table == 'Accounts'" class="4k:text-2xl text-red-700 4k:ml-6">             
                 Note: Changing your own account details will require you to log back in.
             </p>
             <div class="mt-3 w-full">
                 <div v-for="(, index) in entry" :key="index">
-                    <div class="flex justify-between space-x-2 laptop:space-x-4 laptop:mx-4 4k:mx-6">
+                    <div class="flex justify-between space-x-2 laptop:space-x-4 laptop:mx-4 4k:mx-6" 
+                            v-if="!(table==='Accounts' && index==='Account Number')">
                         <span class="mt-4 4k:mt-10 4k:text-2xl">{{ index }}: </span>
                         <input class="input_options" 
                             :class="isDark?'bg-gray-900':''"

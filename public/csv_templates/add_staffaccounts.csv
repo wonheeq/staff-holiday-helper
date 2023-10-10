@@ -1,5 +1,5 @@
 Add Staff Accounts,,,"Fill in rows, columns cannot be left blank. ",,,,Important Notes:,,,,,,,,,,,,
-Account Number (Staff ID),Account Type,Surname,First/Other Names,School Code,Line Manager's ID,,"Account Number must be 6 digits followed by a lowercase letter. It must be unique to the staff member.",,,,,,,,,,,,
+Account Number,Account Type,Surname,First/Other Names,School Code,Line Manager's ID,,"Account Number must be 6 digits followed by a lowercase letter. It must be unique to the staff member.",,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,
 ,,,,,,,"Account Role must be one of 'staff', 'lmanager', or 'sysadmin' (Indicating the account belongs to a Staff Member, Line Manager or System Administrator respectively). ",,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,

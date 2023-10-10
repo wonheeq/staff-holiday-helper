@@ -494,7 +494,7 @@ class DatabaseControllerTest extends TestCase
         $testSuperiorNo = $this->otherUser2->accountNo;
 
         $account1 = array(
-            'Account Number (Staff ID)' => '123456f',
+            'Account Number' => '123456f',
             'Account Type' => 'staff',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -502,7 +502,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account2 = array(
-            'Account Number (Staff ID)' => '123456g',
+            'Account Number' => '123456g',
             'Account Type' => 'lmanager',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -510,7 +510,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account3 = array(
-            'Account Number (Staff ID)' => '123456h',
+            'Account Number' => '123456h',
             'Account Type' => 'sysadmin',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -570,7 +570,7 @@ class DatabaseControllerTest extends TestCase
 
         // Each account invalid in a different way.
         $account1 = array(
-            'Account Number (Staff ID)' => $existingStaffAccountNo, // Account number already in use
+            'Account Number' => $existingStaffAccountNo, // Account number already in use
             'Account Type' => 'staff',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -578,7 +578,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account2 = array(
-            'Account Number (Staff ID)' => '123456g',
+            'Account Number' => '123456g',
             'Account Type' => 'invalidtype', // Invalid account type
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -586,7 +586,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account3 = array(
-            'Account Number (Staff ID)' => '123456h',
+            'Account Number' => '123456h',
             'Account Type' => 'sysadmin',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -1488,9 +1488,9 @@ class DatabaseControllerTest extends TestCase
             'name' => 'temp school'
         ]);
 
-        $validRequest = array('table' => 'Staff Accounts', 
+        $validRequest = array('table' => 'Accounts', 
         'entry' => array(
-            'Account Number' => '888888g',
+            'Account Number' => $testAccount->accountNo,
             'Account Type' => 'lmanager',
             'Surname' => 'test surname',
             'First/Other Names' => 'test forename',
@@ -1511,7 +1511,7 @@ class DatabaseControllerTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertTrue(
-            Account::where('accountNo', '888888g')
+            Account::where('accountNo', $testAccount->accountNo)
                 ->where('accountType', 'lmanager')
                 ->where('lName', 'test surname')
                 ->where('fName', 'test forename')
@@ -1538,7 +1538,7 @@ class DatabaseControllerTest extends TestCase
         ]);
 
         // Identical to current account
-        $inValidRequest = array('table' => 'Staff Accounts', 
+        $inValidRequest = array('table' => 'Accounts', 
         'entry' => array(
             'Account Number' => $testAccount->accountNo,
             'Account Type' => $testAccount->accountType,
@@ -1571,7 +1571,7 @@ class DatabaseControllerTest extends TestCase
         );
 
         // Trying to assign school id of 1
-        $inValidRequest = array('table' => 'Staff Accounts', 
+        $inValidRequest = array('table' => 'Accounts', 
         'entry' => array(
             'Account Number' => $testAccount->accountNo,
             'Account Type' => $testAccount->accountType,
@@ -1612,48 +1612,7 @@ class DatabaseControllerTest extends TestCase
         );
 
         // Invalid syntax
-        $inValidRequest = array('table' => 'Staff Accounts', 
-        'entry' => array(
-            'Account Number' => '0000022',
-            'Account Type' => $testAccount->accountType,
-            'Surname' => $testAccount->lName,
-            'First/Other Names' => $testAccount->fName,
-            'School Code' => $testAccount->schoolId,
-            'Line Manager' => $testAccount->superiorNo
-        ), 
-        'initialEntry' => array(
-            'Account Number' => $testAccount->accountNo,
-            'Account Type' => $testAccount->accountType,
-            'Surname' => $testAccount->lName,
-            'First/Other Names' => $testAccount->fName,
-            'School Code' => $testAccount->schoolId,
-            'Line Manager' => $testAccount->superiorNo
-        ));
-
-        // Check for invalid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/editEntry/{$this->adminUser['accountNo']}", $inValidRequest);
-        $response->assertStatus(500);
-
-        // Account should be unchanged
-        $this->assertFalse(
-            Account::where('accountNo', '0000022')
-                ->where('accountType', $testAccount->accountType)
-                ->where('lName', $testAccount->lName)
-                ->where('fName', $testAccount->fName)
-                ->where('schoolId', $testAccount->schoolId)
-                ->where('superiorNo', $testAccount->superiorNo)->exists()
-        );
-        $this->assertTrue(
-            Account::where('accountNo', $testAccount->accountNo)
-                ->where('accountType', $testAccount->accountType)
-                ->where('lName', $testAccount->lName)
-                ->where('fName', $testAccount->fName)
-                ->where('schoolId', $testAccount->schoolId)
-                ->where('superiorNo', $testAccount->superiorNo)->exists()
-        );
-
-        // Invalid syntax
-        $inValidRequest = array('table' => 'Staff Accounts', 
+        $inValidRequest = array('table' => 'Accounts', 
         'entry' => array(
             'Account Number' => $testAccount->accountNo,
             'Account Type' => $testAccount->accountType,

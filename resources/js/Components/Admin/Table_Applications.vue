@@ -178,7 +178,7 @@ export default {
                     :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
-                        placeholder: 'Search Leave Applications',
+                        placeholder: 'Search Applications',
                     }"
                     :pagination-options="{
                         enabled: true,

@@ -850,24 +850,6 @@ class DatabaseController extends Controller
         if ($initialEntry['Account Type'] == 'sysadmin' && Account::where('accountNo', $curAccount)->where('schoolId', 1)->doesntExist()) {
             return response()->json(['error' => 'Invalid: Only Super Administrators can edit System Administrator accounts.'], 500);
         }
-
-        $primaryKeyChanged = false;
-        
-        // Checking if accountNo has been changed
-        if ($initialEntry['Account Number'] != $entry['Account Number']) {
-            $primaryKeyChanged = true;
-            
-            // Checking validity of new accountNo
-            if (Account::where('accountNo', $entry['Account Number'])->exists())
-            {
-                return response()->json(['error' => 'Invalid: Account ID already in use.'], 500);
-            }
-
-            // accountNo
-            if (strlen($entry['Account Number']) != 7 || !preg_match("/\A[0-9]{6}[a-z]{1}/i", $entry['Account Number'])) {
-                return response()->json(['error' => 'Invalid: Account Number needs syntax of 6 numbers followed by a letter with no spaces.'], 500);
-            }
-        } 
         
         // Checking if other attributes have been changed and determining their validity
         if ($initialEntry['Account Type'] != $entry['Account Type']) {
@@ -919,48 +901,16 @@ class DatabaseController extends Controller
             }
         }
 
-        // If a line manager has their accountNo changed
-        if ($primaryKeyChanged && $entry['Account Type'] != 'staff') {
-           // Need to make a temp lmanager account with an unused, assign it as the line manager of the relevent accounts,
-           // then, then update the target account as needed, then re-assign the superiorNo to the updated on and then 
-           // delete the temp account.
-           Account::factory()->create([
-                'accountNo' => 'tempNo',
-                'accountType' => "lmanager"
-            ]);
-
-            Account::where('superiorNo', $initialEntry['Account Number'])->update(['superiorNo' => 'tempNo']);
-
-            // Updating account
-            Account::where('accountNo', $initialEntry['Account Number'])->update([
-                'accountNo' => $entry['Account Number'],
-                'accountType' => $entry['Account Type'],
-                'lName' => $entry['Surname'],
-                'fName' => $entry['First/Other Names'],
-                'superiorNo' => $entry['Line Manager'],
-                'schoolId' => $entry['School Code']
-            ]);
-            Account::where('accountNo', $entry['Account Number'])->touch();
-
-            // Subordinate accounts updated with new superiorNo
-            Account::where('superiorNo', 'tempNo')->touch();
-            Account::where('superiorNo', 'tempNo')->update(['superiorNo' => $entry['Account Number']]);
-            
-            // Deleting temp account
-            Account::destroy('tempNo');
-        }
-        else {
-            // All checks have passed
-            Account::where('accountNo', $initialEntry['Account Number'])->update([
-                'accountNo' => $entry['Account Number'],
-                'accountType' => $entry['Account Type'],
-                'lName' => $entry['Surname'],
-                'fName' => $entry['First/Other Names'],
-                'superiorNo' => $entry['Line Manager'],
-                'schoolId' => $entry['School Code']
-            ]);
-            Account::where('accountNo', $entry['Account Number'])->touch();
-        }
+        // All checks have passed
+        Account::where('accountNo', $initialEntry['Account Number'])->update([
+            'accountNo' => $entry['Account Number'],
+            'accountType' => $entry['Account Type'],
+            'lName' => $entry['Surname'],
+            'fName' => $entry['First/Other Names'],
+            'superiorNo' => $entry['Line Manager'],
+            'schoolId' => $entry['School Code']
+        ]);
+        Account::where('accountNo', $entry['Account Number'])->touch();
 
         // If a line manager is changed to 'staff' type
         if ($initialEntry['Account Type'] != 'staff' && $entry['Account Type'] == 'staff') {

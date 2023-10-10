@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export let useDataFieldsStore = defineStore('fields', {
     state: () => ({
         accountFields: [ 
-            {desc:"Account Number (Staff ID)",attr:"accountNo",plhldr:"e.g. 000000a",fk:"none",fkAttr:""},
+            {desc:"Account Number",attr:"accountNo",plhldr:"e.g. 000000a",fk:"none",fkAttr:""},
             {desc:"Account Type",attr:"accountType",plhldr:"e.g. Staff",fk:"acctTypes",fkAttr:"name"},
             {desc:"Surname",attr:"lName",plhldr:"Fill",fk:"none",fkAttr:""},
             {desc:"First/Other Names",attr:"fName",plhldr:"Fill",fk:"none",fkAttr:""},
@@ -11,7 +11,7 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select Account or \"None\"",fk:"lmanagers",fkAttr:"fullName"}
         ],
         accountRoleFields: [
-            {desc:"Account Number (Staff ID)",attr:"accountNo",plhldr:"Select",fk:"displayAccounts",fkAttr:"fullName"},
+            {desc:"Account Number",attr:"accountNo",plhldr:"Select",fk:"displayAccounts",fkAttr:"fullName"},
             {desc:"Role",attr:"roleId",plhldr:"e.g. Unit Coordinator",fk:"roles",fkAttr:"name"},
             {desc:"Unit",attr:"unitId",plhldr:"Select Unit or \"None\"",fk:"units",fkAttr:"disName"},
             {desc:"Major",attr:"majorId",plhldr:"Select Major or \"None\"",fk:"majors",fkAttr:"disName"},

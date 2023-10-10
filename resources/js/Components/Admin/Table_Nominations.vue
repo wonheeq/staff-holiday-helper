@@ -167,7 +167,7 @@ export default {
                     :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
-                        placeholder: 'Search Substitute Nominations',
+                        placeholder: 'Search Nominations',
                     }"
                     :pagination-options="{
                         enabled: true,

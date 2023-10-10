@@ -190,7 +190,7 @@ export default {
                     :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
-                        placeholder: 'Search Staff Accounts',
+                        placeholder: 'Search Accounts',
                     }"
                     :pagination-options="{
                         enabled: true,
