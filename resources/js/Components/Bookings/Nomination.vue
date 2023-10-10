@@ -17,7 +17,9 @@ let emit = defineEmits(['nominationSelected']);
 </script>
 <template>
     <div v-if="isMobile" class="flex mb-2.5 mt-2.5 w-full">
-        <div class="mx-2 w-full justify-between">
+        <div class="mx-2 w-full justify-between border-b-4"
+            :class="isDark?'border-gray-700':''"
+        >
             <div class="w-full pr-2">
                 <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
                     <input type="checkbox"
@@ -38,6 +40,7 @@ let emit = defineEmits(['nominationSelected']);
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"
             />
+            <div class="h-1"></div>
         </div>
     </div>
     <div v-else class="flex mb-2.5 mt-2.5 w-full">
