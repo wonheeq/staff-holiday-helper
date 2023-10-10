@@ -5,6 +5,13 @@ import { VueGoodTable } from 'vue-good-table-next';
 import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { computed } from 'vue';
+const pageDropdown = computed(() => {
+    if (isMobile.value) {
+        return [10,20,30];
+    }
+    return [10,20,30,40,50];
+});
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
@@ -191,7 +198,8 @@ let onSearch = () => {
                     :pagination-options="{
                         enabled: true,
                         //mode: 'pages',
-                        perPage: 30
+                        perPage: 30,
+                        perPageDropdown: pageDropdown
                     }">
                     <template #table-actions>
                         <p class="w-[8.5rem] mt-1 4k:text-xl">

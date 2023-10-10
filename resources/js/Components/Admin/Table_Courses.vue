@@ -169,7 +169,8 @@ let onSearch = () => {
                     :pagination-options="{
                         enabled: true,
                         //mode: 'pages',
-                        perPage: 30
+                        perPage: 30,
+                        perPageDropdown: pageDropdown
                     }">
                     <template #table-actions>
                         <p class="w-[8.5rem] mt-1 4k:text-xl">
