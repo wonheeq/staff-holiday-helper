@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 class DatabaseControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
+    private string $adminSchoolId;
     private Array $validEntry, $validCSVEntry;
 
     protected function setup(): void {
@@ -31,12 +32,16 @@ class DatabaseControllerTest extends TestCase
             'accountType' => "sysadmin"
         ]);
 
+        $this->adminSchoolId = $this->adminUser->schoolId;
+
         $this->otherUser1 = Account::factory()->create([
-            'accountType' => "staff"
+            'accountType' => "staff",
+            'schoolId' => $this->adminSchoolId
         ]);
 
         $this->otherUser2 = Account::factory()->create([
-            'accountType' => "lmanager"
+            'accountType' => "lmanager",
+            'schoolId' => $this->adminSchoolId
         ]);
 
         // Mock valid entry to be added to db
@@ -82,7 +87,7 @@ class DatabaseControllerTest extends TestCase
         $accountNo1 = '123456j';
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
-        $tempSchool = School::create(['name' => 'School of Test']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
@@ -112,7 +117,7 @@ class DatabaseControllerTest extends TestCase
 
         // Removing account and school created for this test.
         Account::where('accountNo', $accountNo1)->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     }     
     
     public function test_api_request_for_addentry_adding_invalid_account(): void
@@ -123,7 +128,7 @@ class DatabaseControllerTest extends TestCase
 
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
-        $tempSchool = School::create(['name' => 'School of Test']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
@@ -177,7 +182,7 @@ class DatabaseControllerTest extends TestCase
         // Removing account and school created for this test. (If the invalid accounts were somehow added)
         Account::where('accountNo', $accountNoInvalid)->delete();
         Account::where('accountNo', $accountNoTaken)->where('lName', 'TestA')->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     } 
     
     public function test_api_request_for_addentry_adding_valid_accountrole(): void
@@ -191,13 +196,13 @@ class DatabaseControllerTest extends TestCase
         $tempUnit = Unit::create(['unitId' => 'ABCD1234', 'name' => 'Testing Tester\'s Tests']);
         $unitObj = array('unitId' => $tempUnit->unitId, 'disName' => $tempUnit->name);
 
-        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE', 'name' => 'Test Testing']);
+        $tempMajor = Major::factory()->create();
         $majorObj = array('majorId' => $tempMajor->majorId, 'disName' => $tempMajor->name);
 
         $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG', 'name' => 'Masters of Testing']);
         $courseObj = array('courseId' => $tempCourse->courseId, 'disName' => $tempCourse->name);
 
-        $tempSchool = School::create(['name' => 'School of Test']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
 
@@ -291,7 +296,7 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_addentry_adding_valid_and_invalid_major(): void
     {
-        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE', 'name' => 'Test Testing']);
+        $tempMajor = Major::factory()->create();
         $majorObjInserted = array('majorId' => $tempMajor->majorId, 'disName' => $tempMajor->name);
 
         $majorObjUninserted = array('majorId' => 'MJRU-VWXYZ', 'disName' => 'Other Testing major');
@@ -490,7 +495,7 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_valid_accounts_via_csv_entries(): void
     {
-        $tempSchool = School::create(['name' => 'test school']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $testSuperiorNo = $this->otherUser2->accountNo;
 
         $account1 = array(
@@ -564,7 +569,7 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_invalid_accounts_via_csv_entries(): void
     {
-        $tempSchool = School::create(['name' => 'test school']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $testSuperiorNo = $this->otherUser2->accountNo;
         $existingStaffAccountNo = $this->otherUser1->accountNo;
 
@@ -661,10 +666,10 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_valid_accountroles_via_csv_entries(): void
     {
-        $tempSchool = School::create(['name' => 'test school']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $tempRole = Role::create(['name' => 'test role']);
         $tempUnit = Unit::create(['unitId' => 'ABCD1234','name' => 'test unit']);
-        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE','name' => 'test major']);
+        $tempMajor = Major::factory()->create();
         $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG','name' => 'test course']);
         $accountNo1 = $this->otherUser1->accountNo;
         $accountNo2 = $this->otherUser2->accountNo;
@@ -743,10 +748,10 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_invalid_accountroles_via_csv_entries(): void
     {
-        $tempSchool = School::create(['name' => 'test school']);
+        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
         $tempRole = Role::create(['name' => 'test role']);
         $tempUnit = Unit::create(['unitId' => 'ABCD1234','name' => 'test unit']);
-        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE','name' => 'test major']);
+        $tempMajor = Major::factory()->create();
         $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG','name' => 'test course']);
         $accountNo1 = $this->otherUser1->accountNo;
 
@@ -1021,7 +1026,7 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_valid_and_invalid_majors_via_csv_entries(): void
     {
-        $tempMajor = Major::create(['majorId' => 'MJRU-ABCDE','name' => 'test major']);
+        $tempMajor = Major::factory()->create();
 
         // Valid Majors
         $testMajor1 = array(
@@ -1417,7 +1422,7 @@ class DatabaseControllerTest extends TestCase
     public function test_api_request_for_deleting_valid_and_invalid_school(): void
     {
         // Mock valid school entry to be removed from db
-        $testSchool = School::create(['name' => 'test school']);
+        $testSchool = School::create('name', 'test school')->first();
 
         $validRequest = array('table' => 'schools', 'entryId' => $testSchool->schoolId);
 
@@ -1429,7 +1434,7 @@ class DatabaseControllerTest extends TestCase
             School::where('schoolId', $testSchool->schoolId)->exists()     
         ); 
 
-        $testSchool->delete();
+        //$testSchool->delete();
 
         $inValidRequest = array('table' => 'schools', 'entryId' => 1); // School '1' should not be deleted
 
@@ -1485,6 +1490,7 @@ class DatabaseControllerTest extends TestCase
             'accountType' => 'lmanager'
         ]);
         $tempSchool = School::create([
+            'schoolId' => $this->adminSchoolId,
             'name' => 'temp school'
         ]);
 
@@ -1521,7 +1527,7 @@ class DatabaseControllerTest extends TestCase
 
         $testAccount->delete();
         $tempLMAccount->delete();
-        $tempSchool->delete();
+        //$tempSchool->delete();
     }
 
     public function test_api_request_for_edit_invalid_account(): void
@@ -1534,6 +1540,7 @@ class DatabaseControllerTest extends TestCase
             'accountType' => 'lmanager'
         ]);
         $tempSchool = School::create([
+            'schoolId' => $this->adminSchoolId,
             'name' => 'temp school'
         ]);
 
@@ -1654,7 +1661,7 @@ class DatabaseControllerTest extends TestCase
 
         $testAccount->delete();
         $tempLMAccount->delete();
-        $tempSchool->delete();
+        //$tempSchool->delete();
     }
 
     public function test_api_request_for_edit_valid_and_invalid_role(): void
@@ -1946,7 +1953,7 @@ class DatabaseControllerTest extends TestCase
     public function test_api_request_for_edit_valid_and_invalid_school(): void
     {
         // Mock valid school to be edited in db
-        $testSchool = School::create(['name' => 'default']);
+        $testSchool = School::where('schoolId', $this->adminSchoolId)->first();
 
         $validRequest = array('table' => 'Schools', 
         'entry' => array(
@@ -2059,6 +2066,6 @@ class DatabaseControllerTest extends TestCase
             School::where('schoolId', $testSchool->schoolId)->where('name', $testSchool->name)->exists()
         );
             
-        $testSchool->delete();
+        //$testSchool->delete();
     }
 }   

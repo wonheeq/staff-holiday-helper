@@ -45,10 +45,10 @@ class DatabaseController extends Controller
             // Use 'fields' to work out which model the entry applies to.
             switch ($data['fields']) {
                 case 'accountFields':
-                    $response = $this->addAccount($data['newEntry']);
+                    $response = $this->addAccount($data['newEntry'], $accountNo);
                     break;
                 case 'accountRoleFields':
-                    $response = $this->addAccountRole($data['newEntry']);
+                    $response = $this->addAccountRole($data['newEntry'], $accountNo);
                     break;
                 case 'roleFields':
                     $response = $this->addRole($data['newEntry']);
@@ -63,7 +63,7 @@ class DatabaseController extends Controller
                     $response = $this->addCourse($data['newEntry']);
                     break;
                 case 'schoolFields':
-                    $response = $this->addSchool($data['newEntry']);
+                    $response = $this->addSchool($data['newEntry'], $accountNo);
                     break;
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
@@ -76,9 +76,15 @@ class DatabaseController extends Controller
     /**
      * Adds new Account to database
      */
-    private function addAccount(array $attributes) {
+    private function addAccount(array $attributes, $adminNo) {
         //Log::info($attributes);
         //Log::info($attributes[1]['db_name']);
+
+        // Check if system admin is allowed to create the account for the given schoolId
+        $admin = Account::where('accountNo', $adminNo)->first();
+        if ($admin->schoolId != '1' && $admin->schoolId != $attributes[4]['schoolId']) {
+            return response()->json(['error' => 'Not authorised to create an account for the given schoolId.'], 500);
+        }
 
         // Check that un-restricted attributes are valid
 
@@ -125,9 +131,14 @@ class DatabaseController extends Controller
     /**
      * Adds new AccountRole to database
      */
-    private function addAccountRole(array $attributes) {
+    private function addAccountRole(array $attributes, $accountNo) {
         //Log::info($attributes);
 
+        // Check if system admin is allowed to create the account for the given schoolId
+        $admin = Account::where('accountNo', $adminNo)->first();
+        if ($admin->schoolId != '1' && $admin->schoolId != Account::where('accountNo', $attributes[0]['accountNo'])->first()->schoolId) {
+            return response()->json(['error' => 'Not authorised to create an account role for the given account - not part of same school.'], 500);
+        }
         // No unrestricted attributes to check when manually adding to accountRoles
 
         AccountRole::create([
@@ -245,7 +256,11 @@ class DatabaseController extends Controller
      */
     private function addSchool(array $attributes) {
         //Log::info($attributes);
-
+    // Check if system admin is allowed to create the account for the given schoolId
+    $admin = Account::where('accountNo', $adminNo)->first();
+    if ($admin->schoolId != '1') {
+        return response()->json(['error' => 'Not authorised to create a school - only the super administrator can create new schools.'], 500);
+    }
         // No unrestricted attributes to check when manually adding to Schools
 
         School::create([
@@ -314,10 +329,10 @@ class DatabaseController extends Controller
             switch ($data['table']) {
                 case 'add_staffaccounts.csv':
                     
-                    $response = $this->csvAddAccounts($data['entries']);
+                    $response = $this->csvAddAccounts($data['entries'], $accountNo);
                 break;
                 case 'add_accountroles.csv':
-                    $response = $this->csvAddAccountRoles($data['entries']);
+                    $response = $this->csvAddAccountRoles($data['entries'], $accountNo);
                 break;
                 case 'add_roles.csv':
                     $response = $this->csvAddRoles($data['entries']);
@@ -332,7 +347,7 @@ class DatabaseController extends Controller
                     $response = $this->csvAddCourses($data['entries']);
                 break;
                 case 'add_schools.csv':
-                    $response = $this->csvAddSchools($data['entries']);
+                    $response = $this->csvAddSchools($data['entries'], $accountNo);
                 break;
                 default:
                     return response()->json(['error' => 'Could not determine db table'], 500);
@@ -345,11 +360,13 @@ class DatabaseController extends Controller
     /**
      * Adds new Accounts to database from array
      */
-    private function csvAddAccounts(array $entries) {
+    private function csvAddAccounts(array $entries, $accountNo) {
        
         // Check that all attributes are valid (input is entirely unrestricted)
         $numEntries = count($entries);
         //Log::info($numEntries);
+
+        $admin = Account::where('accountNo', $accountNo)->first();
 
         for ($i = 0; $i < $numEntries; $i++) {
             // checking new primary keys
@@ -389,6 +406,9 @@ class DatabaseController extends Controller
             }
             else if ($curAttr == 1) {
                 return response()->json(['error' => 'School Code of \'1\' is not an allowed school code for accounts.'], 500);
+            }
+            else if ($admin->schoolId != $curAttr && $admin->schoolId != 1) {
+                return response()->json(['error' => 'Invalid: User not admin of school: \''.$curAttr.'\', only admins of that school may add new accounts with it'], 500);
             }
             /*else if ($curAttr == 1) { // Checks if account is trying to have schoolId == 1                            
                 // The account is allowed to have a schoolId of one only if it is a 'sysadmin' and no other account is using '1' as its schoolId
@@ -443,8 +463,10 @@ class DatabaseController extends Controller
     /**
      * Adds new AccountRoles to database from array
      */
-    private function csvAddAccountRoles(array $entries) {
+    private function csvAddAccountRoles(array $entries, $accountNo) {
         //Log::info($entries);
+
+        $admin = Account::where('accountNo', $accountNo)->first();
 
         // Check that all attributes are valid (input is entirely unrestricted)
         $numEntries = count($entries);
@@ -457,6 +479,11 @@ class DatabaseController extends Controller
             $curAttr = $entries[$i]['Account Number'];
             if (Account::where('accountNo', $curAttr)->doesntExist()) {
                 return response()->json(['error' => $curAttr . ' Invalid: Account Number does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
+            }
+
+            // Checking that admin has authority of given accountNo
+            if ($admin->schoolId != '1' && $admin->schoolId != Account::where('accountNo', $curAttr)->first()->schoolId) {
+                return response()->json(['error' => 'Not authorised to create an account role for the given account - user not part of same school.'], 500);
             }
 
             // Role ID
@@ -689,22 +716,29 @@ class DatabaseController extends Controller
     /**
      * Adds new Schools to database from array
      */
-    private function csvAddSchools(array $entries) {
+    private function csvAddSchools(array $entries, $accountNo) {
         // Check that all attributes are valid (input is entirely unrestricted)
         $numEntries = count($entries);
+        $admin = Account::where('accountNo', $accountNo)->first();
 
         for ($i = 0; $i < $numEntries; $i++) {
+
+            // Only super admin can create new schools.
+            // Checking that admin has authority of given accountNo
+            if ($admin->schoolId != '1') {
+                return response()->json(['error' => 'Not authorised to create a new school - Only super administrator may create a new school.'], 500);
+            }
             
             // Primary Key automatically created
 
             // School Name
             $curAttr = $entries[$i]['School Name'];
             if (strlen($curAttr) > 70) {
-                return response()->json(['error' => $curAttr . ' Invalid: School Name should be under 70 characters'], 500);
+                return response()->json(['error' => $curAttr . ' Invalid: School Name should be under 70 characters.'], 500);
             }
 
             if (School::where('name', $curAttr)->exists()) {
-                return response()->json(['error' => $curAttr . ' Invalid: School Name already in use'], 500);
+                return response()->json(['error' => $curAttr . ' Invalid: School Name already in use.'], 500);
             }
         }
 
