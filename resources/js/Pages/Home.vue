@@ -127,7 +127,7 @@ fetchSubstitutions(user.value.accountNo);
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
                         <CalendarSmall
                             class="flex drop-shadow-md mt-2"
-                            @enlarge-calendar="calendarLarge=true"    
+                            disableEnlarge="true"  
                         />
                         <HomeMessages
                             class="mt-2 drop-shadow-md"
@@ -136,11 +136,6 @@ fetchSubstitutions(user.value.accountNo);
                         ></HomeMessages>
                     </div>
                 </div>
-                <CalendarLarge
-                    class="screen-mobile mx-2 mt-2 drop-shadow-md"
-                    v-show="calendarLarge"
-                    @shrink-calendar="calendarLarge=false"
-                />
             </div>
             <div v-else>
                 <div class="flex screen mx-4 my-4" v-show="!calendarLarge"  v-if="dataReady">

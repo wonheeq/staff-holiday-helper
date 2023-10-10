@@ -20,7 +20,10 @@ let props = defineProps({ welcomeData: Object });
 let copyEmail = () => { 
     let email = props.welcomeData.lineManager.id + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
-    Swal.fire("Email address copied to clipboard.");   
+    Swal.fire({
+        'title':"Email address copied to clipboard.",
+        'icon':'info'
+    });   
 };
 
 function formatDate(date) {
