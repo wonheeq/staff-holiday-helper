@@ -1249,7 +1249,7 @@ class DatabaseControllerTest extends TestCase
 
         $testAccount->delete();
         $testAccountRole->delete();
-        Nomination::where('nomineeNo', $testNomination->nominationNo)
+        Nomination::where('nomineeNo', $testNomination->nomineeNo)
                     ->where('applicationNo', $testNomination->applicationNo)
                     ->where('accountRoleId', $testNomination->accountRoleId)->delete();
         $testApplication->delete();
@@ -1318,12 +1318,12 @@ class DatabaseControllerTest extends TestCase
         $response->assertStatus(200);
 
         $this->assertFalse(
-            Nomination::where('nomineeNo', $testNomination->nominationNo)
+            Nomination::where('nomineeNo', $testNomination->nomineeNo)
                         ->where('applicationNo', $testNomination->applicationNo)
                         ->where('accountRoleId', $testNomination->accountRoleId)->exists()     
         ); 
 
-        Nomination::where('nomineeNo', $testNomination->nominationNo)
+        Nomination::where('nomineeNo', $testNomination->nomineeNo)
                     ->where('applicationNo', $testNomination->applicationNo)
                     ->where('accountRoleId', $testNomination->accountRoleId)->delete();
     }

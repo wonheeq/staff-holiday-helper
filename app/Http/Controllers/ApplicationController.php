@@ -11,7 +11,6 @@ use App\Models\ManagerNomination;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Log;
-use DB;
 
 class ApplicationController extends Controller
 {
@@ -56,17 +55,18 @@ class ApplicationController extends Controller
 
 
 
-    /*
-    Returns all applications
-     */
+   /*
+   Returns all applications
+    */
     public function getAllApplications(Request $request, String $accountNo)
     {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } 
-
+        }
+ 
+ 
         // Super admin can view all applications.
         if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $applications = Application::get();
@@ -75,12 +75,13 @@ class ApplicationController extends Controller
             // Get schoolId of user
             $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
             //Log::info($schoolCode);
-            
-            $applications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')->select('applications.*')->where('schoolId', $schoolCode->schoolId)->get();           
+           
+            $applications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')->select('applications.*')->where('schoolId', $schoolCode->schoolId)->get();          
         }
-        
-        return response()->json($applications); 
+       
+        return response()->json($applications);
     }
+ 
     /*
     public function getAllApplications(Request $request)
     {
@@ -174,16 +175,16 @@ class ApplicationController extends Controller
         }
 
         foreach ($data['nominations'] as $nomination) {
-            // An ApplicationId is null
-            if ($nomination['ApplicationId'] == null) {
+            // An AccountRoleId is null
+            if ($nomination['accountRoleId'] == null) {
                 return array(
                     'valid' => false,
-                    'reason' => 'An ApplicationId is null'
+                    'reason' => 'An accountRoleId is null'
                 );
             }
 
             // Nomination for Line Manager for USER is the USER
-            if ($nomination['ApplicationId'] == "MANAGER"
+            if ($nomination['accountRoleId'] == "MANAGER"
             && array_key_exists("subordinateNo", $nomination)
             && $nomination['nomineeNo'] == $nomination['subordinateNo']) {
                 return array(
@@ -248,7 +249,7 @@ class ApplicationController extends Controller
             }
 
             // check it is a nomination for the line manager role
-            if ($nomination['ApplicationId'] == 'MANAGER') {
+            if ($nomination['accountRoleId'] == 'MANAGER') {
                 // Create ManagerNomination
                 $sub = ManagerNomination::create([
                     'applicationNo' => $application->applicationNo,
@@ -261,7 +262,7 @@ class ApplicationController extends Controller
                 $newNom = Nomination::create([
                     'applicationNo' => $application->applicationNo,
                     'nomineeNo' => $nomination['nomineeNo'],
-                    'ApplicationId' => $nomination['ApplicationId'],
+                    'accountRoleId' => $nomination['accountRoleId'],
                     'status' => $status
                 ]);
             }
@@ -335,12 +336,12 @@ class ApplicationController extends Controller
             $foundInNew = false;
             // Iterate through new nominations
             foreach ($newNominations as $new) {
-                if ($new['ApplicationId'] == "MANAGER") {
+                if ($new['accountRoleId'] == "MANAGER") {
                     continue;
                 }
 
                 // Check if we can find the old data in the new
-                if ($old->nomineeNo == $new['nomineeNo'] && $old->ApplicationId == $new['ApplicationId']) {
+                if ($old->nomineeNo == $new['nomineeNo'] && $old->accountRoleId == $new['accountRoleId']) {
                     $foundInNew = true;
                     break;
                 }
@@ -351,7 +352,7 @@ class ApplicationController extends Controller
                 // Delete old nomination from database
                 Nomination::where('applicationNo', $applicationNo, "and")
                     ->where('nomineeNo', $old->nomineeNo, "and")
-                    ->where('ApplicationId', $old->ApplicationId)->delete();
+                    ->where('accountRoleId', $old->accountRoleId)->delete();
 
                 // create new array with nomineeNo as key inside removedNominations if it doesn't exist
                 // make sure not to add applicant to this array
@@ -360,8 +361,8 @@ class ApplicationController extends Controller
                         $removedNominations[$old->nomineeNo] = array();
                     }
     
-                    // Add to list of ApplicationIds the nominee was removed as a nominee for
-                    array_push($removedNominations[$old->nomineeNo], $old->ApplicationId);
+                    // Add to list of accountRoleIds the nominee was removed as a nominee for
+                    array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
                 }
             }
 
@@ -382,7 +383,7 @@ class ApplicationController extends Controller
             $foundInNew = false;
             // Iterate through new nominations
             foreach ($newNominations as $new) {
-                if ($new['ApplicationId'] != "MANAGER") {
+                if ($new['accountRoleId'] != "MANAGER") {
                     continue;
                 }
 
@@ -434,7 +435,7 @@ class ApplicationController extends Controller
     $oldNominations - Array of Nominations
     $newNominations - JSON Array of Nominations {
         'nomineeNo' => x,
-        'ApplicationId' => x,
+        'accountRoleId' => x,
     }
     */
     public function handleEditApplicationNonCancelledNominations($oldNominations, $oldManagerNominations, $newNominations, $applicationNo, $oldDates)
@@ -485,7 +486,7 @@ class ApplicationController extends Controller
                 
                 // Check if nomineeNo can be found in $remainingOldNominations
                 foreach ($remainingOldNominations as $old) {
-                    if ($new['ApplicationId'] == "MANAGER") { continue; }
+                    if ($new['accountRoleId'] == "MANAGER") { continue; }
                     if ($new['nomineeNo'] == $old->nomineeNo && $new['nomineeNo'] != $application->accountNo) {
                         if (!in_array($new['nomineeNo'], $shouldSendToNomineeAs_EditedSubsetOnly)) {
                             array_push($shouldSendToNomineeAs_EditedSubsetOnly, $new['nomineeNo']);
@@ -496,7 +497,7 @@ class ApplicationController extends Controller
 
                 // Check if nomineeNo can be found in $remainingOldManagerNominations
                 foreach ($remainingOldManagerNominations as $old) {
-                    if ($new['ApplicationId'] != "MANAGER") { continue; }
+                    if ($new['accountRoleId'] != "MANAGER") { continue; }
                     if ($new['nomineeNo'] == $old->nomineeNo && $new['nomineeNo'] != $application->accountNo) {
                         if (!in_array($new['nomineeNo'], $shouldSendToNomineeAs_EditedSubsetOnly)) {
                             array_push($shouldSendToNomineeAs_EditedSubsetOnly, $new['nomineeNo']);
@@ -524,10 +525,10 @@ class ApplicationController extends Controller
             $newInOld = false;
             // Iterate through remaining old nominations
             foreach ($remainingOldNominations as $old) {
-                if ($new['ApplicationId'] == "MANAGER") { continue; }
-                // Check if we can find entry that matches the ApplicationId AND nomineeNo of new
+                if ($new['accountRoleId'] == "MANAGER") { continue; }
+                // Check if we can find entry that matches the accountRoleId AND nomineeNo of new
                 // If so, then we need to update the existing entry
-                if ($old->ApplicationId == $new['ApplicationId'] && $old->nomineeNo == $new['nomineeNo']) {
+                if ($old->accountRoleId == $new['accountRoleId'] && $old->nomineeNo == $new['nomineeNo']) {
                     $newInOld = true;
                     break;
                 }
@@ -535,7 +536,7 @@ class ApplicationController extends Controller
 
             // Iterate through remaining old manager nominations
             foreach ($remainingOldManagerNominations as $old) {
-                if ($new['ApplicationId'] != "MANAGER") { continue; }
+                if ($new['accountRoleId'] != "MANAGER") { continue; }
                 // Check if we can find entry that matches the subordinateNo AND nomineeNo of new
                 // If so, then we need to update the existing entry
                 if ($old->subordinateNo == $new['subordinateNo'] && $old->nomineeNo == $new['nomineeNo']) {
@@ -545,15 +546,15 @@ class ApplicationController extends Controller
             }
 
             if ($newInOld) {
-                // ApplicationId found in both new nomination data AND old remaining nominations
+                // accountRoleId found in both new nomination data AND old remaining nominations
                 // see if we need to update the status
 
                 // Application period has been edited out of range, will need to confirm/reject via EditedSubstitionRequest
                 if ($isOutOfRange) {
                     // Find existing nomination and edit status
-                    if ($new['ApplicationId'] != "MANAGER") {
+                    if ($new['accountRoleId'] != "MANAGER") {
                         Nomination::where('applicationNo', $applicationNo)
-                        ->where('ApplicationId', $new['ApplicationId'])->update([
+                        ->where('accountRoleId', $new['accountRoleId'])->update([
                             'nomineeNo' => $new['nomineeNo'],
                             // status = 'Y' if self nominated, otherwise = 'U'
                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
@@ -579,14 +580,14 @@ class ApplicationController extends Controller
                     }
                 }
                 else if ($isSubset) {
-                    if ($new['ApplicationId'] == "MANAGER") {
+                    if ($new['accountRoleId'] == "MANAGER") {
                         foreach ($remainingOldNominations as $rem) {
-                            if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['ApplicationId'] == $new['ApplicationId']) {
+                            if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
                                 if ($rem->status == 'U' || $rem->status == 'N') {
                                     if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
                                         //Log::debug("D");
                                         Nomination::where('applicationNo', $applicationNo)
-                                        ->where('ApplicationId', $new['ApplicationId'])->update([
+                                        ->where('accountRoleId', $new['accountRoleId'])->update([
                                             'nomineeNo' => $new['nomineeNo'],
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
@@ -628,14 +629,14 @@ class ApplicationController extends Controller
 
                     //  Log::debug("Leftovers");
                     // Group under the eidted substiton request array IF all remaining old nominations not responded to 
-                    if ($new['ApplicationId'] != "MANAGER") {
+                    if ($new['accountRoleId'] != "MANAGER") {
                         foreach ($remainingOldNominations as $rem) {
-                            if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['ApplicationId'] == $new['ApplicationId']) {
+                            if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
                                 if ($rem->status == 'U' || $rem->status == 'N') {
                                     if (!in_array($new['nomineeNo'], $nomineesToSendAs_EditedSubstitutionRequest)) {
                                         //Log::debug("C");
                                         Nomination::where('applicationNo', $applicationNo)
-                                        ->where('ApplicationId', $new['ApplicationId'])->update([
+                                        ->where('accountRoleId', $new['accountRoleId'])->update([
                                             'nomineeNo' => $new['nomineeNo'],
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
@@ -672,7 +673,7 @@ class ApplicationController extends Controller
             }
             else {
                 // new NOT found in old remaining data, therefore nominated for an
-                // ApplicationId that previously was not assigned to a user or
+                // accountRoleId that previously was not assigned to a user or
                 // the old nomination was deleted
 
                 // Check if the nominee was previously nominated for the application
@@ -691,12 +692,12 @@ class ApplicationController extends Controller
                     }
                 }
 
-                if ($new['ApplicationId'] != "MANAGER") {
+                if ($new['accountRoleId'] != "MANAGER") {
                      // Create new nomination
                     Nomination::create([
                         'applicationNo' => $applicationNo,
                         'nomineeNo' => $new['nomineeNo'],
-                        'ApplicationId' => $new['ApplicationId'],
+                        'accountRoleId' => $new['accountRoleId'],
                         // status = 'Y' if self nominated, otherwise = 'U'
                         'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                     ]);
@@ -858,7 +859,7 @@ class ApplicationController extends Controller
         // EDIT APPLICATION
         $application = $this->handleEditApplication($data);
 
-        // Delete old nominations where nomineeNo and ApplicationId not found in new nominations
+        // Delete old nominations where nomineeNo and accountRoleId not found in new nominations
         $this->handleEditApplicationCancelledNominations($oldNominations, $oldManagerNominations, $data['nominations'], $applicationNo);
 
         // Handle nonedited, edited nominations and creation of new nominations
@@ -1103,7 +1104,7 @@ class ApplicationController extends Controller
             // Add to roles
             array_push(
                 $nominationsRaw[$nom->nomineeNo]["roles"],
-                app(RoleController::class)->getRoleFromApplicationId($nom->ApplicationId)
+                app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId)
             );
         }
 
