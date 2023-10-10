@@ -58,7 +58,7 @@ function handleCloseReviewApp() {
             <div class="w-full p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
-                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }} @curtin.edu.au</span></p>
+                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
                     <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
@@ -88,7 +88,7 @@ function handleCloseReviewApp() {
             <div class="w-full p-2 " :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <div>
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">{{ source.applicantName }} ({{ source.accountNo }}) has applied for leave from {{ source.sDate }} to {{ source.eDate }}</p>
-                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }} @curtin.edu.au</span></p>
+                    <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
                     <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>

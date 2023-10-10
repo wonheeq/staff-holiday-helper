@@ -140,7 +140,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
 
 <template>
     <Modal>
-        <div class="w-4/5 h=4/5 fixed rounded-md p-3" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && isMobile">
+        <div class="w-4/5 h-3/5 fixed rounded-md p-3" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && isMobile">
             <div class="flex h-[10%] items-center justify-between" :class="isDark?'text-white':''">
                 <p class="text-s font-bold">
                     Reviewing Application by {{ props.data.applicantName }}
@@ -203,11 +203,11 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                     @option:selected="(selectedOption) => handleSelection(selectedOption)"
                 />
             </div>
-            <div class="flex justify-between pt-5">
-                <button :class="buttonClass" class="bg-green-500 p-0 text-base"  @click="handleApproveApp()">
+            <div class="flex justify-between pt-5" style="align-items: center;">
+                <button :class="buttonClass" class="bg-green-500 text-base" style="padding: 0px; padding-top: 10px; padding-bottom: 10px;"  @click="handleApproveApp()">
                     Approve
                 </button>
-                <button :class="rejectReason=='' ? disabledClass : buttonClass + ' bg-red-500'" class="text-base p-0"
+                <button :class="rejectReason=='' ? disabledClass : buttonClass + ' bg-red-500'" class="text-base" style="padding: 0px; padding-top: 10px; padding-bottom: 10px;"
                     :disabled="!buttonActive"
                     @click="handleRejectApp()"
                 >
