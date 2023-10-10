@@ -4,13 +4,15 @@ import LandingInput from './LandingInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useDark } from "@vueuse/core";
+import { usePage } from '@inertiajs/vue3'
+const page = usePage();
 const isDark = useDark();
 
 axios.defaults.withCredentials = true;
 
 
 const formData = useForm({
-    accountNo: '',
+    accountNo: page.props.accountNo != null ? page.props.accountNo: '',
     password: ''
 });
 const errorMsg = ref('');

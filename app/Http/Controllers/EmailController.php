@@ -9,6 +9,7 @@ use App\Jobs\SendConfirmSubstitutions;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationDeclined;
 use App\Jobs\SendNominationEmail;
+use App\Jobs\SendWelcomeEmail;
 use App\Mail\MJML;
 use App\Models\UnsentEmail;
 use Illuminate\Support\Facades\Log;
@@ -158,6 +159,7 @@ class EmailController extends Controller
             $this->sortMail($email);
         }
     }
+    
 
 
     public function sortMail($email)
@@ -213,7 +215,23 @@ class EmailController extends Controller
             case "Confirmed Substitutions":
                 $this->attemptConfirmedSubstitutions($email);
             break;
+
+            case "Welcome to LeaveOnTime":
+                $this->sendWelcome($email);
+            break;
         }
+    }
+
+    private function sendWelcome($email)
+    {
+        $data = json_decode($email->data);
+        
+        SendWelcomeEmail::dispatch($data, true);
+
+        // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
+
+        // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
+        // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
     }
 
 

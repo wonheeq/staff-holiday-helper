@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendWelcomeEmail;
 use App\Models\Account;
 use App\Models\AccountRole;
 use App\Models\Role;
@@ -100,12 +101,13 @@ class DatabaseController extends Controller
             }
         }*/
 
+        $password = fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}');
         Account::create([
             'accountNo' => $attributes[0],
             'accountType' =>  $attributes[1]['db_name'],
             'lName' => $attributes[2],
             'fName' => $attributes[3],
-            'password' => Hash::make(fake()->regexify('[A-Za-z0-9#@$%^&*]{10,15}')), // Password created randomly
+            'password' => Hash::make($password), // Password created randomly
             'superiorNo' => $attributes[5]['accountNo'],
             'schoolId' => $attributes[4]['schoolId']
         ]);
@@ -113,6 +115,9 @@ class DatabaseController extends Controller
         EmailPreference::create([
             'accountNo' => $attributes[0],
         ]);
+
+        $data = $attributes[0];
+        SendWelcomeEmail::dispatch($data, false);
 
         return response()->json(['success' => 'success'], 200);
     }
@@ -423,9 +428,12 @@ class DatabaseController extends Controller
                 'schoolId' => $entries[$i]['School Code']
             ]);
 
-            /*EmailPreference::create([
+            $data = $entries[$i]['Account Number'];
+            SendWelcomeEmail::dispatch($data, false);
+
+            EmailPreference::create([
                 'accountNo' => $entries[$i]['Account Number']
-            ]);*/
+            ]);
         }
 
         return response()->json(['success' => $numEntries . ' entries added!'], 200);

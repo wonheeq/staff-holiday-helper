@@ -17,8 +17,10 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 use Throwable;
 use ErrorException;
+use Hash;
+use App\Models\WelcomeHash;
 
-class SendAppWaitingRev implements ShouldQueue
+class SendWelcomeEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,13 +32,15 @@ class SendAppWaitingRev implements ShouldQueue
      * Create a new job instance.
      */
     // public function __construct($data, $isUnsent)
-    public function __construct($email, $isUnsent)
+    public function __construct($data, $isUnsent)
 
     {
-        // $this->data = $data;
-        $this->$email = $email;
+        $this->data = $data;
+
+        // dd($data);
+        // $this->$email = $email;
         $this->isUnsent = $isUnsent;
-        $this->data = json_decode($email->data);
+        // $this->data = json_decode($email->data);
     }
 
     /**
@@ -45,24 +49,29 @@ class SendAppWaitingRev implements ShouldQueue
     public function handle(): void
     {
         $data = $this->data;
-        $reciever = Account::where('accountNo', $data[0])->first();
-        $creator = Account::where('accountNo', $data[1])->first();
-        $name = $reciever->getName();
+        $accountNo = $this->data;
+        // dd($accountNo);
+        $account = Account::where('accountNo', $accountNo)->first();
+        // dd($account);
+        $name = $account->getName();
+        // dd($name);
         try
         {
-            // Extract indexes into new array for formatting
-            $application = [];
-            for( $i = 0; $i < sizeof($data[2]) - 1; $i++)
-            {
-                array_push($application, $data[2][$i]);
-            }
+            $hash = md5($accountNo);
+            WelcomeHash::create([
+                'accountNo' => $accountNo,
+                'hash' => $hash
+            ]);
+            $link = 'localhost:8000/set-password/'.$hash;
+            // dd($link);
 
             $dynamicData = [
                 'name' => $name,
-                'applicantId' => $creator->accountNo,
-                'applicantName' => $creator->getName(),
-                'application' => $application,
-                'period' => $data[2][sizeof($data[2]) - 1], // last index
+                'accountNo' => $account->accountNo,
+                'link' => 'https://leaveontime.cyber.curtin.io/set-password/'.$hash,
+                // 'link' => 'test text',
+
+
             ];
 
             
@@ -71,11 +80,13 @@ class SendAppWaitingRev implements ShouldQueue
             // Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
             if ($this->isUnsent)
             {
-                $this->email->delete();
+                // dd("here");
+                
+                UnsentEmail::where('accountNo', $accountNo)->where('subject', 'Welcome to LeaveOnTime')->delete();
             }
             
             // $this->sendEmail($dynamicData);
@@ -90,8 +101,8 @@ class SendAppWaitingRev implements ShouldQueue
             {
                 // if error, encode data and create row
                 UnsentEmail::create([
-                    'accountNo' => $data[0],
-                    'subject' => 'Application Awaiting Review',
+                    'accountNo' => $data,
+                    'subject' => 'Welcome to LeaveOnTime',
                     'data' => $encoded,
                 ]);
             }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendWelcomeEmail;
+use App\Models\WelcomeHash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +16,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use App\Models\Account;
 use DateTimeZone;
 
 
@@ -198,5 +201,66 @@ class AuthenticationController extends Controller
                 'email' => 'Please wait before retrying',
             ]);
         }
+    }
+
+
+    public function newAccount(Request $request)
+    {
+        $request->validate([
+            'hash' => 'required',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $welcomeHash = WelcomeHash::where('hash', $request->only('hash'))->first();
+        if ( $welcomeHash == null)
+        {
+            throw ValidationException::withMessages([
+                'email' => 'Invalid Hash',
+            ]);
+        }
+
+        $accountNo = $welcomeHash->accountNo;
+        $password = $request->only('password')['password'];
+        $email = $accountNo . '@curtin.edu.au';
+
+        $user = Account::where('accountNo', $accountNo)->first();
+        // Check if there is already a reset token for this account
+        
+        // Manually generate a new token (normally done by the method that sends the
+        // password reset email)
+        $newToken = app('auth.password.broker')->createToken($user);
+        DB::table('password_reset_tokens')->insert([
+            'email' => $email,
+            'token' => Hash::make($newToken),
+            'created_at' => new DateTime('NOW')
+        ]);
+
+        // Make a mock request to send to the normal reset controller
+        $request = new Request([
+            'token' => $newToken,
+            'accountNo' => $accountNo,
+            'password' => $password,
+            'password_confirmation' => $password
+        ]);
+
+        // Send request
+        $this->store($request);
+
+        //Delete token afterwards
+        DB::table('password_reset_tokens')->where('email', '=', $email)->delete();
+        WelcomeHash::where('accountNo', $accountNo)->delete();
+
+        return redirect("/login");
+    }
+
+    public function test()
+    {
+        Account::where('accountNo', 'DDDDDDD')->delete();
+        Account::factory()->create([
+            'accountNo' => 'DDDDDDD',
+            'accountType' => 'staff'
+        ]);
+        $data = '000000a';
+        SendWelcomeEmail::dispatch($data, false);
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthenticationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
@@ -100,5 +101,5 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::post('getEmailFrequency', [EmailPreferenceController::class, 'getPreference']);
 });
 
-
+Route::post('set-password', [AuthenticationController::class, 'newAccount']);
 Route::post('getUnitDetails', [UnitController::class, 'getUnitDetails']);

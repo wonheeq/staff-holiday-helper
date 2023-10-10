@@ -14,6 +14,8 @@ const props = defineProps({
     },
 });
 
+
+
 const strArr = props.email.split("@");
 let accountNo = strArr[0];
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Middleware\EnsureUserIsManager;
 use App\Http\Controllers\MessageController;
+use App\Models\WelcomeHash;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +38,20 @@ Route::get('/reset', function () {
     return Inertia::render('Reset', []);
 });
 
+Route::get('/set-password/{hash}', function ($hash) {
+    $welcomeHash = WelcomeHash::where('hash', $hash)->first();
+    if ($welcomeHash) {
+        return Inertia::render('Welcome', []);
+    }
+
+    return redirect("/login");
+});
+
+
 
 
 // Home Page
-Route::middleware('auth:sanctum', 'web')->get('/home', function () {
+Route::middleware(['auth:sanctum', 'web'])->get('/home', function () {
     return Inertia::render('Home', []);
 });
 
@@ -151,9 +162,8 @@ Route::post(
     [AuthenticationController::class, 'homeStore']
 )->name('password.homeStore');
 
-
 Route::get(
     '/test',
     // [MessageController::class, 'demoSendDailyMessages']
-    [EmailController::class, 'test']
+    [AuthenticationController::class, 'test']
 );

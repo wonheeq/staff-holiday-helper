@@ -77,7 +77,9 @@
             reader.onload = (res) => {
                 csv = res.target.result;
                 //console.log(csv);
-                lines = csv.split("\r" + "\n");
+                // lines = csv.split("\r" + "\n");
+                lines = csv.split("\n");
+
                 headers = lines[1].split(",");
                 //console.log(headers.length);
                 //console.log(headers);
