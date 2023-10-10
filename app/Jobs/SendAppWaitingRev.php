@@ -9,24 +9,29 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Account;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MJML;
 use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
+use Throwable;
+use ErrorException;
 
 class SendAppWaitingRev implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
+    protected $isUnsent;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data)
+    public function __construct($data, $isUnsent)
     {
         $this->data = $data;
+        $this->isUnsent = $isUnsent;
     }
 
     /**
@@ -54,23 +59,40 @@ class SendAppWaitingRev implements ShouldQueue
                 'application' => $application,
                 'period' => $data[2][sizeof($data[2]) - 1], // last index
             ];
+            // $this->sendEmail();
 
-            // Mail::to($reciever->getEmail)->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // $this->sendEmail($dynamicData);
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {
-            // if error, encode data and create row
             $encoded = json_encode($data);
-            UnsentEmail::create([
-                'accountNo' => $data[0],
-                'subject' => 'Application Awaiting Review',
-                'data' => $encoded,
-            ]);
+
+            if ($this->isUnsent == false)
+            {
+                dd('if');
+                // if error, encode data and create row
+                UnsentEmail::create([
+                    'accountNo' => $data[0],
+                    'subject' => 'Application Awaiting Review',
+                    'data' => $encoded,
+                ]);
+            }
+            else if($this->isUnsent == true)
+            {
+                // dd('elseif');
+
+                throw new ErrorException("Re-sending failed");
+            }
+            else{
+                dd('else');
+            }
         }
+        
     }
 }

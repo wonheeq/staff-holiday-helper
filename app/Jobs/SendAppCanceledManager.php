@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use ErrorException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,13 +21,15 @@ class SendAppCanceledManager implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
+    protected $isUnsent;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data)
+    public function __construct($data, $isUnsent)
     {
         $this->data = $data;
+        $this->isUnsent = $isUnsent;
     }
 
     /**
@@ -47,21 +50,28 @@ class SendAppCanceledManager implements ShouldQueue
                 'applicantName' => $staffMember->getName(),
                 'period' => $data[1][1],
             ];
-            // Mail::to($reciever->getEmail)->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
-            UnsentEmail::create([ // create one if not
-                'accountNo' => $data[0],
-                'subject' => 'Application Cancelled',
-                'data' => $encoded,
-            ]);
+            if ( !UnsentEmail::where('accountNo', $data[0])->where('subject', 'Applilcation Cancelled')->where('data', $encoded)->first() )
+            {
+                UnsentEmail::create([ // create one if not
+                    'accountNo' => $data[0],
+                    'subject' => 'Application Cancelled',
+                    'data' => $encoded,
+                ]);
+            }
+            else if($this->isUnsent == true)
+            {
+                throw new ErrorException("Re-sending failed");
+            }
         }
     }
 }

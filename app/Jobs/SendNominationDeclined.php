@@ -55,12 +55,12 @@ class SendNominationDeclined implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 3], // 3rd last
             ];
 
-            // Mail::to($reciever->getEmail)->queue(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
         }
         catch(TransportException $e)
         {

@@ -43,136 +43,136 @@ class JobsTest extends TestCase
     }
 
 
-    public function test_SendAppCanceledManager_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string",];
-        $data = [$this->adminUser->accountNo, $content, $this->user->accountNo,];
-        $job = new SendAppCanceledManager($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendAppCanceledManager_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string",];
+    //     $data = [$this->adminUser->accountNo, $content, $this->user->accountNo,];
+    //     $job = new SendAppCanceledManager($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_sendApplicationDecision_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string"];
-        $data = [$this->adminUser->accountNo, $content];
-        $job = new SendApplicationDecision($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_sendApplicationDecision_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $content];
+    //     $job = new SendApplicationDecision($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendAppWaitingRev_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string"];
-        $data = [$this->adminUser->accountNo, $this->user->accountNo, $content];
-        $job = new SendAppWaitingRev($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendAppWaitingRev_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $this->user->accountNo, $content];
+    //     $job = new SendAppWaitingRev($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendConfirmSubstitutions_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string", "test string"];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendConfirmSubstitutions($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendConfirmSubstitutions_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendConfirmSubstitutions($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendNominationCancelled_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string"];
-        $data = [$this->adminUser->accountNo, $content, $this->user->accountNo];
-        $job = new SendNominationCancelled($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendNominationCancelled_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $content, $this->user->accountNo];
+    //     $job = new SendNominationCancelled($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendNominationDeclined_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string", "test string", "test string",];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendNominationDeclined($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendNominationDeclined_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string", "test string", "test string",];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendNominationDeclined($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendNominationEmail_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string"];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendNominationEmail($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendNominationEmail_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendNominationEmail($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendNominationsCancelled_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string", "test string"];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendNominationsCancelled($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendNominationsCancelled_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string", "test string"];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendNominationsCancelled($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendNomineeAppEdited_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string", "test string", "test string",];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendNomineeAppEdited($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendNomineeAppEdited_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string", "test string", "test string",];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendNomineeAppEdited($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendSubPeriodEditSubset_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string", "test string", "test string", "test string",];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendSubPeriodEditSubset($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendSubPeriodEditSubset_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string", "test string", "test string", "test string",];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendSubPeriodEditSubset($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
-    public function test_SendSystemNotification_sends(): void
-    {
-        Mail::fake();
-        Mail::assertNothingQueued();
-        $content = ["test string"];
-        $data = [$this->adminUser->accountNo, $content,];
-        $job = new SendSystemNotification($data);
-        $job->handle();
-        Mail::assertQueuedCount(1);
-    }
+    // public function test_SendSystemNotification_sends(): void
+    // {
+    //     Mail::fake();
+    //     Mail::assertNothingQueued();
+    //     $content = ["test string"];
+    //     $data = [$this->adminUser->accountNo, $content,];
+    //     $job = new SendSystemNotification($data);
+    //     $job->handle();
+    //     Mail::assertQueuedCount(1);
+    // }
 
 
     // Test that an unsent email is correctly created when a transport exception

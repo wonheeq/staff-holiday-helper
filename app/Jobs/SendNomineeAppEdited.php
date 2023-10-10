@@ -53,12 +53,12 @@ class SendNomineeAppEdited implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1],
             ];
 
-            // Mail::to($reciever->getEmail)->queue(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
         }
         catch(TransportException $e)
         {

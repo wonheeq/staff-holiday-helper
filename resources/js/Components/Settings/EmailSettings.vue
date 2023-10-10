@@ -14,7 +14,7 @@ let errors = reactive([]);
 const options = {
     default: "Daily",
     all: [
-        "Instantly",
+        // "Instantly",
         "Hourly",
         "Twice a day",
         "Daily",

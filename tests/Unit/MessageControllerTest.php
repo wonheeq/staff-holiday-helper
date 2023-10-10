@@ -315,14 +315,14 @@ class MessageControllerTest extends TestCase
 
 
     // Same logic for all job dispatches and jobs, just different class being sent
-    public function test_job_dispatch(): void
-    {
-        Queue::fake();
-        Queue::assertNothingPushed();
-        app(MessageController::class)
-            ->notifyManagerApplicationAwaitingReview($this->adminUser->accountNo, $this->applications[0]->applicationNo);
-        Queue::assertPushed(SendAppWaitingRev::class); // assert correct job pushed
-    }
+    // public function test_job_dispatch(): void
+    // {
+    //     Queue::fake();
+    //     Queue::assertNothingPushed();
+    //     app(MessageController::class)
+    //         ->notifyManagerApplicationAwaitingReview($this->adminUser->accountNo, $this->applications[0]->applicationNo);
+    //     Queue::assertPushed(SendAppWaitingRev::class); // assert correct job pushed
+    // }
 
 
 

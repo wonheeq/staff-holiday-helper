@@ -52,22 +52,28 @@ class SendConfirmSubstitutions implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
         }
         catch(TransportException $e)
         {
-            // if error, encode data and create row
             $encoded = json_encode($data);
-            UnsentEmail::create([
-                'accountNo' => $data[0],
-                'subject' => 'Confirmed Substitutions',
-                'data' => $encoded,
-            ]);
+
+            if ( !UnsentEmail::where('accountNo', $data[0])->where('subject', 'Confirmed Substitutions')->where('data', $encoded)->first() )
+            {
+                // if error, encode data and create row
+                UnsentEmail::create([
+                    'accountNo' => $data[0],
+                    'subject' => 'Confirmed Substitutions',
+                    'data' => $encoded,
+                ]);
+            }
+
         }
     }
 }

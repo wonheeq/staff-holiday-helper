@@ -54,12 +54,12 @@ class SendSubPeriodEditSubset implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
+            // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->queue(new MJML("Substitution Period Edited (Subset)", "email/applicationPeriodEditedSubset", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
         }
         catch(TransportException $e)
         {

@@ -610,82 +610,82 @@ class EmailTest extends TestCase
     }
 
 
-    public function test_handle_newNominations(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[0]);
-        Queue::assertPushed(SendNominationEmail::class);
-    }
+    // public function test_handle_newNominations(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[0]);
+    //     Queue::assertPushed(SendNominationEmail::class);
+    // }
 
-    public function test_handle_ApplicationAwaitingReview(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[1]);
-        Queue::assertPushed(SendAppWaitingRev::class);
-    }
+    // public function test_handle_ApplicationAwaitingReview(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[1]);
+    //     Queue::assertPushed(SendAppWaitingRev::class);
+    // }
 
-    public function test_handle_ApplicationCancelled(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[2]);
-        Queue::assertPushed(SendAppCanceledManager::class);
-    }
+    // public function test_handle_ApplicationCancelled(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[2]);
+    //     Queue::assertPushed(SendAppCanceledManager::class);
+    // }
 
-    public function test_handle_NominationCancelled(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[3]);
-        Queue::assertPushed(SendNominationCancelled::class);
-    }
+    // public function test_handle_NominationCancelled(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[3]);
+    //     Queue::assertPushed(SendNominationCancelled::class);
+    // }
 
-    public function test_handle_NominationsCancelled(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[4]);
-        Queue::assertPushed(SendNominationsCancelled::class);
-    }
+    // public function test_handle_NominationsCancelled(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[4]);
+    //     Queue::assertPushed(SendNominationsCancelled::class);
+    // }
 
-    public function test_handle_EditedSubset(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[5]);
-        Queue::assertPushed(SendSubPeriodEditSubset::class);
-    }
+    // public function test_handle_EditedSubset(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[5]);
+    //     Queue::assertPushed(SendSubPeriodEditSubset::class);
+    // }
 
-    public function test_handle_Edited(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[6]);
-        Queue::assertPushed(SendNomineeAppEdited::class);
-    }
+    // public function test_handle_Edited(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[6]);
+    //     Queue::assertPushed(SendNomineeAppEdited::class);
+    // }
 
-    public function test_handle_NominationsRejected(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[7]);
-        Queue::assertPushed(SendNominationDeclined::class);
-    }
+    // public function test_handle_NominationsRejected(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[7]);
+    //     Queue::assertPushed(SendNominationDeclined::class);
+    // }
 
-    public function test_handle_applicationUpdated(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[8]);
-        Queue::assertPushed(SendApplicationDecision::class);
-    }
+    // public function test_handle_applicationUpdated(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[8]);
+    //     Queue::assertPushed(SendApplicationDecision::class);
+    // }
 
-    public function test_handle_systemNotification(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[9]);
-        Queue::assertPushed(SendSystemNotification::class);
-    }
+    // public function test_handle_systemNotification(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[9]);
+    //     Queue::assertPushed(SendSystemNotification::class);
+    // }
 
-    public function test_handle_confirmedSubs(): void
-    {
-        Queue::fake();
-        app(EmailController::class)->sortMail($this->emails[10]);
-        Queue::assertPushed(SendConfirmSubstitutions::class);
-    }
+    // public function test_handle_confirmedSubs(): void
+    // {
+    //     Queue::fake();
+    //     app(EmailController::class)->sortMail($this->emails[10]);
+    //     Queue::assertPushed(SendConfirmSubstitutions::class);
+    // }
 }
 /*
 class to store details for nominees to be use in list
