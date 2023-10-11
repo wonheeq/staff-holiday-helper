@@ -25,14 +25,23 @@ let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
 
+
+const coeff = 1000 * 60 * 5;
+function initDate(minutes) {
+    // Get current date
+    // Add x minutes to the date
+    // Round down the date to the nearest 5 minutes
+    return new Date(Math.round(new Date(new Date().getTime() + minutes*60000).getTime() / coeff) * coeff);
+}
+
 let period = reactive({
-    start: new Date(),
-    end: new Date(),
+    start: initDate(10),
+    end: initDate(40),
 });
 
 function resetFields() {
-    period.start = new Date();
-    period.end = new Date();
+    period.start = initDate(10);
+    period.end = initDate(40);
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";

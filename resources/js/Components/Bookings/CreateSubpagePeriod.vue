@@ -53,6 +53,7 @@ let calcDuration = (dates) => {
 				<div class="flex mt-2 justify-between">
 					<VueDatePicker v-model="period.start"
 					time-picker-inline
+					minutes-increment="5"
 					:format="'dd/MM/yyyy HH:mm'"
 					auto-apply :clearable="false"
 					:dark="isDark"
@@ -64,6 +65,7 @@ let calcDuration = (dates) => {
 				<div class="flex mt-2 justify-between">
 					<VueDatePicker v-model="period.end"
 					time-picker-inline
+					minutes-increment="5"
 					:format="'dd/MM/yyyy HH:mm'"
 					auto-apply :clearable="false"
 					:dark="isDark"
