@@ -22,26 +22,27 @@ use Illuminate\Support\Facades\Storage;
 class DatabaseControllerTest extends TestCase
 {
     private Account $adminUser, $otherUser1, $otherUser2;
-    private string $adminSchoolId;
+    private School $tempSchoolMain;
     private Array $validEntry, $validCSVEntry;
 
     protected function setup(): void {
         parent::setup();
 
-        $this->adminUser = Account::factory()->create([
-            'accountType' => "sysadmin"
-        ]);
+        $this->tempSchoolMain = School::create(['name' => 'main test school']);
 
-        $this->adminSchoolId = $this->adminUser->schoolId;
+        $this->adminUser = Account::factory()->create([
+            'accountType' => "sysadmin",
+            'schoolId' => $this->tempSchoolMain->schoolId
+        ]);
 
         $this->otherUser1 = Account::factory()->create([
             'accountType' => "staff",
-            'schoolId' => $this->adminSchoolId
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
 
         $this->otherUser2 = Account::factory()->create([
             'accountType' => "lmanager",
-            'schoolId' => $this->adminSchoolId
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
 
         // Mock valid entry to be added to db
@@ -59,6 +60,7 @@ class DatabaseControllerTest extends TestCase
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
+        $this->tempSchoolMain->delete();
 
         Role::where('name', 'testRole')->delete();
 
@@ -87,7 +89,7 @@ class DatabaseControllerTest extends TestCase
         $accountNo1 = '123456j';
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
@@ -128,7 +130,7 @@ class DatabaseControllerTest extends TestCase
 
         $accountType1 = array('db_name' => 'staff', 'name' => 'Staff');
 
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
         $superiorNo1 = array('accountNo' => $this->otherUser2->accountNo, 'fullName' => 'Test Line Manager');
@@ -202,7 +204,7 @@ class DatabaseControllerTest extends TestCase
         $tempCourse = Course::create(['courseId' => 'MC-ABCDEFG', 'name' => 'Masters of Testing']);
         $courseObj = array('courseId' => $tempCourse->courseId, 'disName' => $tempCourse->name);
 
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $schoolObj = array('schoolId' => $tempSchool->schoolId, 'name' => $tempSchool->name);
 
 
@@ -376,8 +378,11 @@ class DatabaseControllerTest extends TestCase
     {
         $testName = 'School of Testing';
 
+        // Only super administrators can create new schools
+        $superUser = Account::where('schoolId', 1)->first();
+
         // Check for valid response to adding valid School
-        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$this->adminUser['accountNo']}", 
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addSingleEntry/{$superUser['accountNo']}", 
             array('fields' => 'schoolFields', 'newEntry' => array(0 => $testName))
         );
         $response->assertStatus(200);
@@ -495,7 +500,7 @@ class DatabaseControllerTest extends TestCase
 
     public function test_api_request_for_adding_valid_accounts_via_csv_entries(): void
     {
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $testSuperiorNo = $this->otherUser2->accountNo;
 
         $account1 = array(
@@ -564,12 +569,12 @@ class DatabaseControllerTest extends TestCase
         Account::where('accountNo', '123456f')->delete();
         Account::where('accountNo', '123456g')->delete();
         Account::where('accountNo', '123456h')->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     }
 
     public function test_api_request_for_adding_invalid_accounts_via_csv_entries(): void
     {
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $testSuperiorNo = $this->otherUser2->accountNo;
         $existingStaffAccountNo = $this->otherUser1->accountNo;
 
@@ -660,13 +665,13 @@ class DatabaseControllerTest extends TestCase
         Account::where('accountNo', $existingStaffAccountNo)->where('lName', 'testlast')->delete();
         Account::where('accountNo', '123456g')->delete();
         Account::where('accountNo', '123456h')->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     }
 
 
     public function test_api_request_for_adding_valid_accountroles_via_csv_entries(): void
     {
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $tempRole = Role::create(['name' => 'test role']);
         $tempUnit = Unit::create(['unitId' => 'ABCD1234','name' => 'test unit']);
         $tempMajor = Major::factory()->create();
@@ -743,12 +748,12 @@ class DatabaseControllerTest extends TestCase
         Unit::where('unitId', $tempUnit->unitId)->delete();
         Major::where('majorId', $tempMajor->majorId)->delete();
         Course::where('courseId', $tempCourse->courseId)->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     }
 
     public function test_api_request_for_adding_invalid_accountroles_via_csv_entries(): void
     {
-        $tempSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $tempSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
         $tempRole = Role::create(['name' => 'test role']);
         $tempUnit = Unit::create(['unitId' => 'ABCD1234','name' => 'test unit']);
         $tempMajor = Major::factory()->create();
@@ -841,7 +846,7 @@ class DatabaseControllerTest extends TestCase
         Unit::where('unitId', $tempUnit->unitId)->delete();
         Major::where('majorId', $tempMajor->majorId)->delete();
         Course::where('courseId', $tempCourse->courseId)->delete();
-        School::where('schoolId', $tempSchool->schoolId)->delete();
+        //School::where('schoolId', $tempSchool->schoolId)->delete();
     }
 
     public function test_api_request_for_adding_valid_roles_and_schools_via_csv_entries(): void
@@ -871,7 +876,7 @@ class DatabaseControllerTest extends TestCase
             Role::where('name', 'test role 2')->exists()     
         ); 
 
-        // Schoole
+        // Schools
         $testSchool1 = array(
             'School Name' => 'test school 1',         
         );
@@ -883,9 +888,12 @@ class DatabaseControllerTest extends TestCase
             0 => $testSchool1,
             1 => $testSchool2,
         ));
+
+        // Only super administrators can create new schools
+        $superUser = Account::where('schoolId', 1)->first();
     
         // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$superUser['accountNo']}", $testCSVEntry);
         $response->assertStatus(200);
 
         // Check entries have been added
@@ -932,9 +940,12 @@ class DatabaseControllerTest extends TestCase
         $testCSVEntry = array('table' => 'add_schools.csv', 'entries' => array(
             0 => $testSchool1
         ));
+
+        // Only super administrators can create new schools
+        $superUser = Account::where('schoolId', 1)->first();
     
         // Check for valid response
-        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$this->adminUser['accountNo']}", $testCSVEntry);
+        $response = $this->actingAs($this->adminUser)->postJson("/api/addEntriesFromCSV/{$superUser['accountNo']}", $testCSVEntry);
         $response->assertStatus(500);
 
         // Check entries have been added
@@ -1217,7 +1228,9 @@ class DatabaseControllerTest extends TestCase
     public function test_api_request_for_deleting_account(): void
     {
         // Mock valid account entry to be removed from db
-        $testAccount = Account::factory()->create();
+        $testAccount = Account::factory()->create([
+            'schoolId' => $this->tempSchoolMain->schoolId
+        ]);
 
         // Mock accountRole using testAccount for testing onDeleteCascade()
         $testAccountRole = AccountRole::factory()->create([
@@ -1265,12 +1278,14 @@ class DatabaseControllerTest extends TestCase
     {
         // Mock line manager account
         $testLMAccount = Account::factory()->create([
-            'accountType' => 'lmanager'
+            'accountType' => 'lmanager',
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
 
         $testStaffAccount = Account::factory()->create([
             'accountType' => 'staff',
-            'superiorNo' => $testLMAccount->accountNo
+            'superiorNo' => $testLMAccount->accountNo,
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
 
         $validRequest = array('table' => 'accounts', 'entryId' => $testLMAccount->accountNo);
@@ -1422,7 +1437,7 @@ class DatabaseControllerTest extends TestCase
     public function test_api_request_for_deleting_valid_and_invalid_school(): void
     {
         // Mock valid school entry to be removed from db
-        $testSchool = School::create('name', 'test school')->first();
+        $testSchool = School::create(['name' => 'test school']);
 
         $validRequest = array('table' => 'schools', 'entryId' => $testSchool->schoolId);
 
@@ -1434,7 +1449,7 @@ class DatabaseControllerTest extends TestCase
             School::where('schoolId', $testSchool->schoolId)->exists()     
         ); 
 
-        //$testSchool->delete();
+        $testSchool->delete();
 
         $inValidRequest = array('table' => 'schools', 'entryId' => 1); // School '1' should not be deleted
 
@@ -1484,14 +1499,12 @@ class DatabaseControllerTest extends TestCase
     {
         // Mock valid account to be edited in db
         $testAccount = Account::factory()->create([
-            'accountType' => 'staff'
+            'accountType' => 'staff',
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
         $tempLMAccount = Account::factory()->create([
-            'accountType' => 'lmanager'
-        ]);
-        $tempSchool = School::create([
-            'schoolId' => $this->adminSchoolId,
-            'name' => 'temp school'
+            'accountType' => 'lmanager',
+            'schoolId' => $this->tempSchoolMain->schoolId
         ]);
 
         $validRequest = array('table' => 'Accounts', 
@@ -1500,7 +1513,7 @@ class DatabaseControllerTest extends TestCase
             'Account Type' => 'lmanager',
             'Surname' => 'test surname',
             'First/Other Names' => 'test forename',
-            'School Code' => $tempSchool->schoolId,
+            'School Code' => $testAccount->schoolId,
             'Line Manager' => $tempLMAccount->accountNo
         ), 
         'initialEntry' => array(
@@ -1521,13 +1534,12 @@ class DatabaseControllerTest extends TestCase
                 ->where('accountType', 'lmanager')
                 ->where('lName', 'test surname')
                 ->where('fName', 'test forename')
-                ->where('schoolId', $tempSchool->schoolId)
+                ->where('schoolId', $testAccount->schoolId)
                 ->where('superiorNo', $tempLMAccount->accountNo)->exists()
         );
 
         $testAccount->delete();
         $tempLMAccount->delete();
-        //$tempSchool->delete();
     }
 
     public function test_api_request_for_edit_invalid_account(): void
@@ -1538,10 +1550,6 @@ class DatabaseControllerTest extends TestCase
         ]);
         $tempLMAccount = Account::factory()->create([
             'accountType' => 'lmanager'
-        ]);
-        $tempSchool = School::create([
-            'schoolId' => $this->adminSchoolId,
-            'name' => 'temp school'
         ]);
 
         // Identical to current account
@@ -1661,7 +1669,6 @@ class DatabaseControllerTest extends TestCase
 
         $testAccount->delete();
         $tempLMAccount->delete();
-        //$tempSchool->delete();
     }
 
     public function test_api_request_for_edit_valid_and_invalid_role(): void
@@ -1953,7 +1960,7 @@ class DatabaseControllerTest extends TestCase
     public function test_api_request_for_edit_valid_and_invalid_school(): void
     {
         // Mock valid school to be edited in db
-        $testSchool = School::where('schoolId', $this->adminSchoolId)->first();
+        $testSchool = School::where('schoolId', $this->tempSchoolMain->schoolId)->first();
 
         $validRequest = array('table' => 'Schools', 
         'entry' => array(
@@ -2066,6 +2073,6 @@ class DatabaseControllerTest extends TestCase
             School::where('schoolId', $testSchool->schoolId)->where('name', $testSchool->name)->exists()
         );
             
-        //$testSchool->delete();
+        $testSchool->delete();
     }
 }   

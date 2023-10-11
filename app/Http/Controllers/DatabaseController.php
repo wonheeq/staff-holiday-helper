@@ -135,7 +135,7 @@ class DatabaseController extends Controller
         //Log::info($attributes);
 
         // Check if system admin is allowed to create the account for the given schoolId
-        $admin = Account::where('accountNo', $adminNo)->first();
+        $admin = Account::where('accountNo', $accountNo)->first();
         if ($admin->schoolId != '1' && $admin->schoolId != Account::where('accountNo', $attributes[0]['accountNo'])->first()->schoolId) {
             return response()->json(['error' => 'Not authorised to create an account role for the given account - not part of same school.'], 500);
         }
@@ -254,13 +254,13 @@ class DatabaseController extends Controller
     /**
      * Adds new School to database
      */
-    private function addSchool(array $attributes) {
+    private function addSchool(array $attributes, $adminNo) {
         //Log::info($attributes);
-    // Check if system admin is allowed to create the account for the given schoolId
-    $admin = Account::where('accountNo', $adminNo)->first();
-    if ($admin->schoolId != '1') {
-        return response()->json(['error' => 'Not authorised to create a school - only the super administrator can create new schools.'], 500);
-    }
+        // Check if system admin is allowed to create the school (only super admins can create new schools).
+        $admin = Account::where('accountNo', $adminNo)->first();
+        if ($admin->schoolId != '1') {
+            return response()->json(['error' => 'Not authorised to create a school - only the super administrator can create new schools.'], 500);
+        }
         // No unrestricted attributes to check when manually adding to Schools
 
         School::create([
@@ -724,7 +724,6 @@ class DatabaseController extends Controller
         for ($i = 0; $i < $numEntries; $i++) {
 
             // Only super admin can create new schools.
-            // Checking that admin has authority of given accountNo
             if ($admin->schoolId != '1') {
                 return response()->json(['error' => 'Not authorised to create a new school - Only super administrator may create a new school.'], 500);
             }
