@@ -182,7 +182,7 @@ function createApplication(data) {
             />
         </div>
         <div v-else class="flex subpage-height">
-            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 rounded-r-md rounded-bl-md subpage-height" :class="isDark?'bg-gray-800':'bg-white'">
+            <div class="w-4/5 1080:w-[82%] 1440:w-5/6 flex flex-col p-4 mr-4 rounded-r-md rounded-bl-md subpage-height" :class="isDark?'bg-gray-800':'bg-white'">
                 <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
                     Create New Leave Application:
                 </p>
@@ -195,7 +195,7 @@ function createApplication(data) {
                         />
                 </div>
             </div>
-            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full"
+            <CalendarSmall class="w-1/5 1080:w-[17%] 1440:w-1/6 flex flex-col h-full"
                 disableEnlarge
             />
         </div>
