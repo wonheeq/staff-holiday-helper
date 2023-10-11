@@ -50,9 +50,11 @@ let calcDuration = (dates) => {
 		<div>
 			<div class="mb-2 laptop:mb-8">
 				<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Start date and time: </p>
-				<div class="flex mt-2 justify-between">
-					<VueDatePicker v-model="period.start"
+				<div class="flex mt-2 justify-between w-full">
+					<VueDatePicker
+					v-model="period.start"
 					time-picker-inline
+					minutes-increment="5"
 					:format="'dd/MM/yyyy HH:mm'"
 					auto-apply :clearable="false"
 					:dark="isDark"
@@ -64,6 +66,7 @@ let calcDuration = (dates) => {
 				<div class="flex mt-2 justify-between">
 					<VueDatePicker v-model="period.end"
 					time-picker-inline
+					minutes-increment="5"
 					:format="'dd/MM/yyyy HH:mm'"
 					auto-apply :clearable="false"
 					:dark="isDark"
@@ -75,31 +78,31 @@ let calcDuration = (dates) => {
 			<p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Application Details: </p>
 			<div class="mt-1 laptop:mt-4">
 				<span class="flex w-full">
-					<p class="w-20 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl" > Start Date: </p>
+					<p class="w-24 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl" > Start Date: </p>
 					<p class="ml-4 laptop:ml-0 laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl">
 						{{ formatDate(period.start) }}
 					</p>
 				</span>
 				<span class="flex w-full">
-					<p class="w-20 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> Start Time:</p>
+					<p class="w-24 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> Start Time:</p>
 					<p class="ml-4 laptop:ml-0 laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl">
 						{{ formatTime(period.start) }}
 					</p>
 				</span>
 				<span class="flex mt-4">
-					<p class="w-20 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> End Date:</p>
+					<p class="w-24 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> End Date:</p>
 					<p class="ml-4 laptop:ml-0 laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl">
 						{{ formatDate(period.end) }}
 					</p>
 				</span>
 				<span class="flex w-full">
-					<p class="w-20 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> End Time:</p>
+					<p class="w-24 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> End Time:</p>
 					<p class="ml-4 laptop:ml-0 laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl">
 						{{ formatTime(period.end) }}
 					</p>
 				</span>
 				<span class="flex mt-4 ">
-					<p class="w-20 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> Duration:</p>
+					<p class="w-24 laptop:w-32 font-bold laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl"> Duration:</p>
 					<p :class="{
                         'text-red-600': dayJS(period.end).diff(dayJS(period.start)) <= 0
                     }" class="ml-4 laptop:ml-0 laptop:text-xs 1080:text-lg 1440:text-xl 4k:text-2xl">

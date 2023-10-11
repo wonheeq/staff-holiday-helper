@@ -17,12 +17,14 @@ let emit = defineEmits(['nominationSelected']);
 </script>
 <template>
     <div v-if="isMobile" class="flex mb-2.5 mt-2.5 w-full">
-        <div class="mx-2 w-full justify-between">
+        <div class="mx-2 w-full justify-between border-b-4"
+            :class="isDark?'border-gray-700':''"
+        >
             <div class="w-full pr-2">
                 <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
                     <input type="checkbox"
                         class="w-8 h-8"
-                        :class="isDisabled ? isDark?'bg-gray-700 border-gray-600':'bg-gray-300 border-gray-100' : isDark?'bg-gray-800':''"
+                        :class="isDisabled ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800 border-gray-300':'border-gray-500'"
                         v-model="nomination.selected"
                         :disabled="isDisabled"   
                         @click="emit('nominationSelected', nomination.selected)" 
@@ -38,6 +40,7 @@ let emit = defineEmits(['nominationSelected']);
                 @option:selected="(selection) => nomination.nomination = selection"
                 :disabled="isDisabled"
             />
+            <div class="h-1"></div>
         </div>
     </div>
     <div v-else class="flex mb-2.5 mt-2.5 w-full">
@@ -46,7 +49,7 @@ let emit = defineEmits(['nominationSelected']);
                 <div class="flex space-x-3 w-full laptop:space-x-6 4k:space-x-8">
                     <input type="checkbox"
                         class="w-8 h-8"
-                        :class="isDisabled ? isDark?'bg-gray-700 border-gray-600':'bg-gray-300 border-gray-100' : isDark?'bg-gray-800':''"
+                        :class="isDisabled ? isDark?'border-gray-600 bg-gray-700':disabledClass : isDark?'bg-gray-800 border-gray-300':'border-gray-500'"
                         v-model="nomination.selected"
                         :disabled="isDisabled"   
                         @click="emit('nominationSelected', nomination.selected)" 

@@ -82,10 +82,10 @@ function formatDate(date) {
             <Shortcut class="bg-purple-200" href="/bookings/subs">
                 Your Substitutions
                 <template #content>
-                    <p class="text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                    <p class="px-2 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
                         {{ substitutions.length }} upcoming substitutions.
                     </p>
-                    <p v-if="substitutions.length" class="1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
+                    <p v-if="substitutions.length" class="px-2 1440:mt-4 mt-2 4k:mt-8 text-xs 1080:text-base 1440:text-lg 4k:text-4xl">
                         <!--Assume that the first element is the earliest date-->
                         Next: {{ formatDate(new Date(substitutions[0]['sDate'])) }}
                     </p>

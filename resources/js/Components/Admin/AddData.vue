@@ -255,9 +255,11 @@ const buttons = [
 
 
     <h1 class="mt-1.5 laptop:px-4 mt-3 laptop:mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
-    <div :class="isMobile?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')" :style="{ maxHeight: bHeight }">
+    <div :class="isMobile?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')"
+        :style="{ maxHeight: bHeight }"
+    >
         <div class="flex justify-between">
-            <div class="flex flex-col laptop:mt-4 mx-2 laptop:mx-4 laptop:mb-3 w-full laptop:w-fit">
+            <div class="flex flex-col laptop:mt-2 mx-2 laptop:mx-4 laptop:mb-3 w-full laptop:w-fit">
                 <!--<div>array: {{ fieldsList.accountFields }}</div>-->
                 <!--<div>array: {{ fieldsList[currentFields] }}</div>-->
                 <!--v-for="name in namesList[field.fk]""-->
@@ -267,7 +269,7 @@ const buttons = [
                 >
                     <div class="flex flex-row justify-between laptop:space-x-7 4k:space-x-11 w-full">
                         <span v-if="isMobile" class="w-[6.5rem] mt-4">{{ field.desc }}: </span>
-                        <span v-else class="mt-4 4k:mt-10 4k:text-2xl">{{ field.desc }}: </span>
+                        <span v-else class="mt-4 4k:mt-10 1080:text-lg 1440:text-xl 4k:text-2xl">{{ field.desc }}: </span>
                         <input v-if="field.fk === 'none'"
                                class="input_options" 
                                :class="isMobile?(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[35rem]':'w-[35rem]')"
@@ -277,7 +279,7 @@ const buttons = [
                             <option disabled value="" >{{ field.plhldr }}</option>
                             <option v-for="item in schools" :key="item.name" :value="item.name">{{ item.name }}</option>
                         </v-select>-->
-                        <form autocomplete="off" v-else >
+                        <form id="addDataForm" autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
                                 :class="isDark ? 'dropdown-dark':''"
                                 class="input_options"
@@ -305,12 +307,12 @@ const buttons = [
         </div>    
         <div v-else class="centeredRight">
             <button
-                class="px-6 py-2 mx-28 text-center text-xl font-bold 4k:text-4xl 4k:px-9 4k:py-4"
+                class="px-6 py-2 mx-28 text-center text-xl 4k:text-2xl font-bold 4k:text-4xl 4k:px-9 4k:py-4"
                 :class="isDark?'bg-gray-800':'bg-white'"
                 @click="addToDB()">
                 <span> Add </span>       
             </button>
-            <h4 class="mx-4 mt-3 text-center text-sm text-red-700" v-show="warning">
+            <h4 class="mx-4 mt-3 text-center text-sm 1440:text-base text-red-700" v-show="warning">
                 <span v-html="errorMsg"></span>
             </h4>
         </div>       
@@ -324,10 +326,8 @@ const buttons = [
         background-color: rgb(227 227 227);
         overflow: scroll; 
         margin-left: 1rem;
-        margin-right: 1rem;
         margin-top: 0.5rem;
         height: 80%;
-        width: 100%;
         position: relative;
     }
 
@@ -341,18 +341,16 @@ const buttons = [
     }
 
     .manualAreaDark {
-        background-color: rgb(75, 85, 99);
+        background-color: #324057;
         overflow: scroll; 
         margin-left: 1rem;
-        margin-right: 1rem;
         margin-top: 0.5rem;
         height: 80%;
-        width: 100%;
         position: relative;
     }
 
     .manualAreaDarkMobile {
-        background-color: rgb(75, 85, 99);
+        background-color: #324057;
         overflow: scroll; 
         margin-top: 0.5rem;
         height: 80%;
@@ -393,7 +391,7 @@ const buttons = [
 .input_options {
     height: 2rem; 
     margin-top: 0.75rem;
-    @apply 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-9 !important;
+    @apply 1080:text-lg 1440:text-xl 4k:text-2xl 4k:h-11 4k:w-drpdwn 4k:mt-9 !important;
 }
 
 </style>

@@ -25,14 +25,23 @@ let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
 
+
+const coeff = 1000 * 60 * 5;
+function initDate(minutes) {
+    // Get current date
+    // Add x minutes to the date
+    // Round down the date to the nearest 5 minutes
+    return new Date(Math.round(new Date(new Date().getTime() + minutes*60000).getTime() / coeff) * coeff);
+}
+
 let period = reactive({
-    start: new Date(),
-    end: new Date(),
+    start: initDate(10),
+    end: initDate(40),
 });
 
 function resetFields() {
-    period.start = new Date();
-    period.end = new Date();
+    period.start = initDate(10);
+    period.end = initDate(40);
 
     for (let nomination of nominations.value) {
         nomination.nomination = "";
@@ -169,15 +178,15 @@ function createApplication(data) {
             </div>
             <CalendarSmall
                 class="flex drop-shadow-md mt-2"
-                :disableEnlarge="true" 
+                disableEnlarge
             />
         </div>
         <div v-else class="flex subpage-height">
-            <div class="w-4/5 1080:w-[85%] 1440:w-5/6 flex flex-col p-4 mr-4 rounded-r-md rounded-bl-md subpage-height" :class="isDark?'bg-gray-800':'bg-white'">
+            <div class="w-4/5 1080:w-[82%] 1440:w-5/6 flex flex-col p-4 mr-4 rounded-r-md rounded-bl-md subpage-height" :class="isDark?'bg-gray-800':'bg-white'">
                 <p class="text-3xl 1080:text-4xl 1440:text-5xl 4k:text-6xl h-[8%] font-bold">
                     Create New Leave Application:
                 </p>
-                <div class="flex h-[92%]">
+                <div class="flex h-[92%] space-x-4">
                     <CreateSubpagePeriod :period="period" class="h-full w-1/3" />
                     <CreateSubpageNominations
                         class="w-2/3"
@@ -186,7 +195,9 @@ function createApplication(data) {
                         />
                 </div>
             </div>
-            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+            <CalendarSmall class="w-1/5 1080:w-[17%] 1440:w-1/6 flex flex-col h-full"
+                disableEnlarge
+            />
         </div>
         <div v-if="isMobile" class="h-2">
         </div>

@@ -168,7 +168,7 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
             <div class="laptop:w-[48.5rem] h-32 relative 4k:w-[74rem] 4k:h-[23rem] 4k:mt-5">
                 <textarea
                     class="w-full h-full 4k:text-2xl"
-                    :class="isDark?'bg-gray-600':''"
+                    :class="isDark?'darkModeTextArea':''"
                     v-model="systemNotificationContent">
                 </textarea>
                 <p class="absolute right-1 bottom-0 4k:text-xl"
@@ -225,7 +225,7 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
             <div class="w-[48.5rem] h-32 relative 4k:w-[74rem] 4k:h-[23rem] 4k:mt-5">
                 <textarea
                     class="w-full h-full 4k:text-2xl"
-                    :class="isDark?'bg-gray-600':''"
+                    :class="isDark?'darkModeTextArea':''"
                     v-model="systemNotificationContent">
                 </textarea>
                 <p class="absolute right-1 bottom-0 4k:text-xl"
@@ -252,6 +252,9 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
     textarea {
     resize: none;
     overflow: hidden;
+    }
+    .darkModeTextArea {
+        background-color: #324057;
     }
 </style>
 
