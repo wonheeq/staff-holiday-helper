@@ -152,7 +152,7 @@ function back() {
             />
         </button>
     </div>
-    <form @submit.prevent="">
+    <form id="changePasswordForm" @submit.prevent="">
         <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
             <div class="w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Current Password:</p>
@@ -163,6 +163,7 @@ function back() {
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.current.type"
+                        autocomplete="current-password"
                     >
                     <button @click.prevent="switchVis(fieldType.current)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.current.image"
@@ -181,6 +182,7 @@ function back() {
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.password.type"
+                        autocomplete="new-password"   
                     >
                     <button @click.prevent="switchVis(fieldType.password)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.password.image"
@@ -199,6 +201,7 @@ function back() {
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
+                        autocomplete="new-password"   
                     >
                     <button @click.prevent="switchVis(fieldType.confirm)" type="button" tabindex="-1" class="fixed right-5">
                         <img :src="fieldType.confirm.image"

@@ -277,7 +277,7 @@ const buttons = [
                             <option disabled value="" >{{ field.plhldr }}</option>
                             <option v-for="item in schools" :key="item.name" :value="item.name">{{ item.name }}</option>
                         </v-select>-->
-                        <form autocomplete="off" v-else >
+                        <form id="addDataForm" autocomplete="off" v-else >
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
                                 :class="isDark ? 'dropdown-dark':''"
                                 class="input_options"
