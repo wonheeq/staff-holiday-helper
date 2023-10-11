@@ -50,8 +50,9 @@ let calcDuration = (dates) => {
 		<div>
 			<div class="mb-2 laptop:mb-8">
 				<p class="laptop:text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl"> Start date and time: </p>
-				<div class="flex mt-2 justify-between">
-					<VueDatePicker v-model="period.start"
+				<div class="flex mt-2 justify-between w-full">
+					<VueDatePicker
+					v-model="period.start"
 					time-picker-inline
 					minutes-increment="5"
 					:format="'dd/MM/yyyy HH:mm'"
