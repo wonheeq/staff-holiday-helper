@@ -370,7 +370,7 @@ class DatabaseController extends Controller
 
         for ($i = 0; $i < $numEntries; $i++) {
             // checking new primary keys
-            $curID = $entries[$i]['Account Number'];
+            $curID = $entries[$i]['Account Number (Staff ID)'];
             if (Account::where('accountNo', $curID)->exists())
             {
                 return response()->json(['error' => 'Account ID ' . $curID . ' already in use.'], 500);
@@ -439,7 +439,7 @@ class DatabaseController extends Controller
             }
 
             Account::create([
-                'accountNo' => $entries[$i]['Account Number'],
+                'accountNo' => $entries[$i]['Account Number (Staff ID)'],
                 'accountType' =>  $entries[$i]['Account Type'],
                 'lName' => $entries[$i]['Surname'],
                 'fName' => $entries[$i]['First/Other Names'],
@@ -448,11 +448,11 @@ class DatabaseController extends Controller
                 'schoolId' => $entries[$i]['School Code']
             ]);
 
-            $data = $entries[$i]['Account Number'];
+            $data = $entries[$i]['Account Number (Staff ID)'];
             SendWelcomeEmail::dispatch($data, false);
 
             EmailPreference::create([
-                'accountNo' => $entries[$i]['Account Number']
+                'accountNo' => $data
             ]);
         }
 

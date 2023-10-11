@@ -504,7 +504,7 @@ class DatabaseControllerTest extends TestCase
         $testSuperiorNo = $this->otherUser2->accountNo;
 
         $account1 = array(
-            'Account Number' => '123456f',
+            'Account Number (Staff ID)' => '123456f',
             'Account Type' => 'staff',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -512,7 +512,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account2 = array(
-            'Account Number' => '123456g',
+            'Account Number (Staff ID)' => '123456g',
             'Account Type' => 'lmanager',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -520,7 +520,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account3 = array(
-            'Account Number' => '123456h',
+            'Account Number (Staff ID)' => '123456h',
             'Account Type' => 'sysadmin',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -580,7 +580,7 @@ class DatabaseControllerTest extends TestCase
 
         // Each account invalid in a different way.
         $account1 = array(
-            'Account Number' => $existingStaffAccountNo, // Account number already in use
+            'Account Number (Staff ID)' => $existingStaffAccountNo, // Account number already in use
             'Account Type' => 'staff',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -588,7 +588,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account2 = array(
-            'Account Number' => '123456g',
+            'Account Number (Staff ID)' => '123456g',
             'Account Type' => 'invalidtype', // Invalid account type
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
@@ -596,7 +596,7 @@ class DatabaseControllerTest extends TestCase
             'Line Manager\'s ID' => $testSuperiorNo,
         );
         $account3 = array(
-            'Account Number' => '123456h',
+            'Account Number (Staff ID)' => '123456h',
             'Account Type' => 'sysadmin',
             'Surname' => 'testlast',
             'First/Other Names' => 'test fore',
