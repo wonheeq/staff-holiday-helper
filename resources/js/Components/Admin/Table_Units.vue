@@ -30,7 +30,7 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 354;
+        let defaultC = 324;
         return {
             columns: [
             {
@@ -179,7 +179,7 @@ let onSearch = () => {
                         perPageDropdown: pageDropdown
                     }">
                     <template #table-actions>
-                        <p class="w-[8.5rem] mt-1 4k:text-xl">
+                        <p class="w-[8.9rem] mt-1 4k:mt-3 4k:w-[17rem] 4k:text-3xl">
                             Click a row to edit
                         </p>
                     </template>

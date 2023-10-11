@@ -30,7 +30,7 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 354;
+        let defaultC = 324;
         return {
             columns: [
                 {
@@ -82,7 +82,7 @@ export default {
         axios.get("/api/allApplications/" + this.user)
         .then((response) => {
             this.applications = response.data;
-            console.log(response.data);
+            //console.log(response.data);
         })
         .catch((error) => {
             console.log(error);

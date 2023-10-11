@@ -30,7 +30,7 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 354;
+        let defaultC = 324;
         return {
             columns: [
                 {
