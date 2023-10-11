@@ -20,7 +20,6 @@ let applicationStore = useApplicationStore();
 const { filteredApplications, viewing } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
 const dataReady = ref(false);
-const managingStaff = ref(false);
 
 onMounted(async () => {
     await fetchManagerApplications(user.value.accountNo);
