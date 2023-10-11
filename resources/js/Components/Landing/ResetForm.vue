@@ -56,13 +56,14 @@ async function handleReset() {
             <!-- Logo -->
             <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5"  :class="isDark?'darkModeImage':''">
 
-            <form action="#" @submit.prevent="handleReset">
+            <form id="resetForm" action="#" @submit.prevent="handleReset">
                 <!-- Staff ID -->
                 <div class="mb-5">
                     <landing-input
                         title="Staff ID"
                         v-model="staffID"
-                        inType="textType"   
+                        inType="textType"
+                        autocomplete="username"  
                     >
                     </landing-input>
                 </div>

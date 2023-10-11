@@ -39,7 +39,7 @@ async function handleLogin() {
             <!-- Logo -->
             <img src="/images/logo-horizontal.svg" class="logo mx-auto mb-5" :class="isDark?'darkModeImage':''">
 
-            <form action="#" @submit.prevent="handleLogin">
+            <form id="loginForm" action="#" @submit.prevent="handleLogin">
                 <!-- Username and Password Input -->
                 <landing-input
                     title="Staff ID"

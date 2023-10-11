@@ -46,7 +46,7 @@ const isDark = useDark();
          <!-- Logo -->
          <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" :class="isDark?'darkModeImage':''">
 
-         <form action="#" @submit.prevent="handleSearch">
+         <form id="unitLookupForm" autocomplete="off" action="#" @submit.prevent="handleSearch">
              <!-- Unit name/ID input -->
              <landing-input
                  title="Unit ID"

@@ -10,18 +10,26 @@
             <!-- Logo -->
             <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" >
 
-            <form action="#" @submit.prevent="handleReset">
+            <form id="passwordForm" action="#" @submit.prevent="handleReset">
                 <!-- Password Input 1 -->
                 <div class="mb-5">
                     <landing-input
-                        v-model="passOne" title="New Password" inType="passwordType" >
+                        v-model="passOne"
+                        title="New Password"
+                        inType="passwordType"
+                        autocomplete="new-password"
+                    >
                     </landing-input>
                 </div>
 
                 <!-- Password Input 2 -->
                 <div class="mb-5">
                     <landing-input
-                        v-model="passTwo" title="Confirm New Password" inType="passwordType" >
+                        v-model="passTwo"
+                        title="Confirm New Password"
+                        inType="passwordType"
+                        autocomplete="new-password"    
+                    >
                     </landing-input>
                 </div>
 
