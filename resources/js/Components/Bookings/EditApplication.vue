@@ -215,7 +215,9 @@ function handleEditApplication(data) {
                 />
             </div>
         </div>
-        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-[20%] flex flex-col" :disableEnlarge="true"/>
+        <CalendarSmall class="mt-2 laptop:mt-0 laptop:w-[20%] flex flex-col"
+            disableEnlarge
+        />
     </div>
 </Modal>
 </template>

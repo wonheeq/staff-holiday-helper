@@ -178,7 +178,7 @@ function createApplication(data) {
             </div>
             <CalendarSmall
                 class="flex drop-shadow-md mt-2"
-                :disableEnlarge="true" 
+                disableEnlarge
             />
         </div>
         <div v-else class="flex subpage-height">
@@ -195,7 +195,9 @@ function createApplication(data) {
                         />
                 </div>
             </div>
-            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full" :disableEnlarge="true"/>
+            <CalendarSmall class="w-1/5 1080:w-[15%] 1440:w-1/6 flex flex-col h-full"
+                disableEnlarge
+            />
         </div>
         <div v-if="isMobile" class="h-2">
         </div>

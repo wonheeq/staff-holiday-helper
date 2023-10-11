@@ -127,7 +127,7 @@ fetchSubstitutions(user.value.accountNo);
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
                         <CalendarSmall
                             class="flex drop-shadow-md mt-2"
-                            disableEnlarge="true"  
+                            disableEnlarge 
                         />
                         <HomeMessages
                             class="mt-2 drop-shadow-md"
