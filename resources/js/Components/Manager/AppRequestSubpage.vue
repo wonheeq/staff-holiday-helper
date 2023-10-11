@@ -4,7 +4,7 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 const page = usePage();
 import {computed} from 'vue';
@@ -19,9 +19,11 @@ const { isMobile } = storeToRefs(screenSizeStore);
 let applicationStore = useApplicationStore();
 const { filteredApplications, viewing } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
+const dataReady = ref(false);
 
-onMounted(() => {
-    fetchManagerApplications(user.value.accountNo);
+onMounted(async () => {
+    await fetchManagerApplications(user.value.accountNo);
+    dataReady.value = true;
 });
 
 const deadAreaColor = computed(() => {
@@ -75,7 +77,7 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="dataReady" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -139,7 +141,7 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="dataReady" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
