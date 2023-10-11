@@ -35,7 +35,7 @@ class AuthenticationController extends Controller
         // Validate credentials, create a session and redirect the user to the home page
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended("/home");
+            return redirect("/home");//->intended("/home");
         }
 
         // If credentials could not be validated, redirect them back with an error
