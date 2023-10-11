@@ -160,7 +160,7 @@ class MessageController extends Controller
                 $name = "";
                 
                 if ($nomineeNo == $application->accountNo) {
-                    $name = "• Self Nomination";
+                    $name = "Self Nomination";
                 }
                 else {
                     $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
