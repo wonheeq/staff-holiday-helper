@@ -336,7 +336,8 @@ const disabledClass = "bg-gray-300 border-gray-100";
                 </div>
             </div>
         </div>
-        <div class="flex border border-black h-[67%] 1080:h-[76%]">
+        <div class="flex border-2 h-[67%] 1080:h-[76%]"
+        :class="isDark?'border-gray-600':'border-gray-200'">
             <VueScrollingTable
                 class="scrollTable"
                 :deadAreaColor="deadAreaColor"
