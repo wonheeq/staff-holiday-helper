@@ -57,10 +57,19 @@ class ForeignKeyController extends Controller
             $courseFK = Course::select("courseId",DB::raw("CONCAT(name, ' (', courseId, ')') AS disName"))->get();
             //$courseFK->makeHidden(['created_at','updated_at']);
 
-            $schoolFK = School::where('schoolId', '!=', 1)->get();
-            $schoolFK->makeHidden(['created_at','updated_at']);
+            $userAccount = Account::where('accountNo', $accountNo)->first();
 
-            $result = array($roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);
+            // Super admin can view all schools.
+            if ($userAccount->schoolId == 1) {
+                $schoolFK = School::get();
+            }
+            else {
+                $schoolFK = School::where('schoolId', $userAccount->schoolId)->get();
+            }
+
+            $schoolFK->makeHidden(['created_at','updated_at']);               
+
+            $result = array($roleFK, $unitFK, $majorFK, $courseFK, $schoolFK);  
 
             return response()->json($result);
         }  

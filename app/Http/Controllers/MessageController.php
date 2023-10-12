@@ -846,21 +846,51 @@ class MessageController extends Controller
     }
 
 
-     /*
-    Returns all Messages
-     */
-    public function getAllMessages(Request $request, String $accountNo)
-    {
-        // Check if user exists for given accountNo
-        if (!Account::where('accountNo', $accountNo)->first()) {
-            // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
-            $messages = Message::get();
-            return response()->json($messages);
-        }
-    }
+    /*
+   Returns all Messages
+    */
+   public function getAllMessages(Request $request, String $accountNo)
+   {
+       // Check if user exists for given accountNo
+       if (!Account::where('accountNo', $accountNo)->first()) {
+           // User does not exist, return exception
+           return response()->json(['error' => 'Account does not exist.'], 500);
+       }
 
+
+       // Super admin can view all messages.
+       if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
+           $messages = Message::get();
+       }
+       else {
+           // Get schoolId of user
+           $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
+           //Log::info($schoolCode);
+          
+           $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
+                                               ->select('applications.applicationNo')
+                                               ->where('schoolId', $schoolCode->schoolId)->get();
+
+
+           Log::info($additionalApplications);
+
+
+           $messages = Message::join('accounts', function($join) {
+                                   $join->on('messages.receiverNo', '=', 'accounts.accountNo')
+                                   ->orOn('messages.senderNo', '=', 'accounts.accountNo');
+                               })
+                               ->join('applications', 'messages.applicationNo', '=', 'applications.applicationNo')
+                               ->select('messages.*')
+                               ->distinct()
+                               ->where('schoolId', $schoolCode->schoolId)
+                               //->where('schoolId', 9) // For testing
+                               ->orWhere(function ($query) use ($additionalApplications) {
+                                   $query->whereIn('messages.applicationNo', $additionalApplications);
+                               })->get();
+       }
+      
+       return response()->json($messages);
+   }
 
     // For each account, check if it's time to send an archive email,
     // and if so, send it.
@@ -889,7 +919,6 @@ class MessageController extends Controller
         }
     }
 
-
     // check if an account has any messages, and send an archive email if so
     private function sendEmail($account, $preferences)
     {
@@ -911,7 +940,6 @@ class MessageController extends Controller
             sleep(2); // to get around mailtrap emails per second limit
         }
     }
-
 
     // demo function for manually testing daily message functionality without emailing all accounts.
     public function demoSendDailyMessages()

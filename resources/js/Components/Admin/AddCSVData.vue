@@ -8,7 +8,7 @@
     import { storeToRefs } from 'pinia';
     import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
     const screenSizeStore = useScreenSizeStore();
-    // const { $isMobile() } = storeToRefs(screenSizeStore);
+    const { isMobile } = storeToRefs(screenSizeStore);
     const isDark = useDark();
     let emit = defineEmits(['close']);
     var uploadedFile = null;
@@ -171,7 +171,8 @@
                     </p>
                     <!--Add full ui then worry about implementation-->
                     <button class="h-full" @click="$emit('close')">
-                        <img src="/images/close.svg" class="h-2/3 w-2/3" :class="isDark?'darkModeImage':''"/>
+                        <img src="/images/close.svg" 
+                    class="close-button h-full" :class="isDark?'darkModeImage':''"/>
                     </button>
                 </div> 
                 <div class="mt-6 4k:ml-6">

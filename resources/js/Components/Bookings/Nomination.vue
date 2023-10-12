@@ -6,7 +6,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 let props = defineProps({
     nomination: Object,
     options: Object,
@@ -14,9 +14,10 @@ let props = defineProps({
 });
 
 let emit = defineEmits(['nominationSelected']);
+const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div v-if="$isMobile()" class="flex mb-2.5 mt-2.5 w-full">
+    <div v-if="isMobile" class="flex mb-2.5 mt-2.5 w-full">
         <div class="mx-2 w-full justify-between border-b-4"
             :class="isDark?'border-gray-700':''"
         >

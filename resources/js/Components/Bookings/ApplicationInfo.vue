@@ -10,7 +10,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({ source: Object });
@@ -73,7 +73,7 @@ function handleEditApplication() {
 }
 </script>
 <template>
-    <div v-if="$isMobile()" class="flex flex-col">
+    <div v-if="isMobile" class="flex flex-col">
         <div class="flex flex-col p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">
@@ -87,10 +87,7 @@ function handleEditApplication() {
                 :processedBy="source.processedBy"
             />
             <div v-show="toggleContent">
-                <div class="flex flex-row text-sm">
-                    <p class="text-sm font-medium mr-2">Application ID:</p>
-                    {{ source.applicationNo }}
-                </div>                
+                <p class="text-sm font-medium">Application ID: {{ source.applicationNo }}</p>
                 <div>
                     <p class="text-sm font-medium">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
@@ -135,10 +132,7 @@ function handleEditApplication() {
         <div class="flex flex-col w-5/6 p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-xl font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <div v-show="toggleContent">
-                <div class="flex flex-row text-lg">
-                    <p class="font-medium mr-2 text-lg">Application ID:</p>
-                    {{ source.applicationNo }}
-                </div>
+                <p class="font-medium text-lg">Application ID: {{ source.applicationNo }}</p>
                 <div>
                     <p class="font-medium text-lg">Substitute/s:</p>
                     <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">

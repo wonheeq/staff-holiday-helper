@@ -15,7 +15,7 @@
     import { storeToRefs } from 'pinia';
     import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
     const screenSizeStore = useScreenSizeStore();
-    // const { $isMobile() } = storeToRefs(screenSizeStore);
+    const { isMobile } = storeToRefs(screenSizeStore);
     const isDark = useDark();
     const page = usePage();
     const user = computed(() => page.props.auth.user);
@@ -207,7 +207,7 @@
 </script>
 
 <template>
-    <div v-if="$isMobile()" class="flex flex-col screen-mobile mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
+    <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 laptop:mt-4 laptop:mx-4 drop-shadow-md">
         <SubpageNavbar
             class="h-[5%]"
             :options="options"
@@ -226,7 +226,7 @@
             <h1 class="text-2xl laptop:px-4 4k:text-5xl 4k:py-4">Database Data:</h1>
             
             <!-- To switch between tables -->
-            <div v-if="$isMobile()">
+            <div v-if="isMobile">
                 <vSelect
                     :clearable="false"
                     :searchable="false"

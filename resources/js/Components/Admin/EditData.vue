@@ -6,7 +6,7 @@
     import { storeToRefs } from 'pinia';
     import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
     const screenSizeStore = useScreenSizeStore();
-    // const { $isMobile() } = storeToRefs(screenSizeStore);
+    const { isMobile } = storeToRefs(screenSizeStore);
     const isDark = useDark();
     let emit = defineEmits(['close']);
 
@@ -60,7 +60,8 @@
 
                 <!--Add full ui then worry about implementation-->
                 <button class="h-full" @click="$emit('close')">
-                    <img src="/images/close.svg" class="h-full w-full" :class="isDark?'darkModeImage':''"/>
+                    <img src="/images/close.svg" 
+                    class="close-button h-full" :class="isDark?'darkModeImage':''"/>
                 </button>
             </div>
             <p class="4k:text-2xl 4k:ml-6 4k:mt-3">             

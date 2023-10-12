@@ -18,9 +18,20 @@ class AccountRoleController extends Controller
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
+        } 
+
+        // Super admin can view all account roles.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $accountRoles = AccountRole::get();
-            return response()->json($accountRoles);
         }
+        else {
+            // Get schoolId of user
+            $thisAccount = Account::where('accountNo', $accountNo)->first();
+
+            //$accountRoles = AccountRole::where('schoolId', $thisAccount->schoolId)->get();   
+            $accountRoles = AccountRole::join('accounts', 'account_roles.accountNo', '=', 'accounts.accountNo')->select('account_roles.*')->where('accounts.schoolId', $thisAccount->schoolId)->orWhere('account_roles.schoolId', $thisAccount->schoolId)->get();           
+        }
+        
+        return response()->json($accountRoles); 
     }
 }

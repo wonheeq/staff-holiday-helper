@@ -18,9 +18,19 @@ class SchoolController extends Controller
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
+        } 
+
+        // Super admin can view all schools.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $schools = School::get();
-            return response()->json($schools);
         }
+        else {
+            // Get schoolId of user
+            $thisAccount = Account::where('accountNo', $accountNo)->first();
+
+            $schools = School::where('schoolId', $thisAccount->schoolId)->get();
+        }
+        
+        return response()->json($schools);
     }
 }

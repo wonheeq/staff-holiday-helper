@@ -16,7 +16,7 @@ const managerStore = useManagerStore();
 const { staffRoles, staffInfo, allUnits } = storeToRefs(managerStore);
 const { fetchRolesForStaff } = managerStore;
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 
 let emit = defineEmits(['close', 'removeRole']);
 
@@ -125,7 +125,7 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
 </script>
 <template>
 <Modal>
-    <div class="fixed w-4/5 h-3/5 rounded-md p-2" :class="isDark?'bg-gray-800':'bg-white'" v-if="staffInfo[0] && $isMobile()">
+    <div class="fixed w-4/5 h-3/5 rounded-md p-2" :class="isDark?'bg-gray-800':'bg-white'" v-if="staffInfo[0] && isMobile">
         <div class="flex items-center justify-between">
             <div class="flex flex-col" :class="isDark?'text-white':''">
               <p style="font-size: 15px;"><b>Staff Name: {{staffInfo[0].fName}} {{staffInfo[0].lName}} </b> </p>
@@ -134,7 +134,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
             </div>
             <button @click="handleClose()">
               <img src="/images/close.svg" 
-              style="width: 20px; height: 30px;"
+             
+              class="close-button h-full"
               :class="isDark?'darkModeImage':''"/>
             </button>
           </div>
@@ -184,7 +185,7 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
             </div>
         </div>
     </div>
-    <div class="w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" :class="isDark?'bg-gray-800':'bg-white'" v-if="staffInfo[0] && !$isMobile()">
+    <div class="w-4/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4 pt-10" :class="isDark?'bg-gray-800':'bg-white'" v-if="staffInfo[0] && !isMobile">
         <div class="flex h-[10%] items-center justify-between">
             <div class="flex flex-col" :class="isDark?'text-white':''">
               <p style="font-size: 25px;"><b>Staff Name: {{staffInfo[0].fName}} {{staffInfo[0].lName}} </b> </p>
@@ -193,7 +194,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
             </div>
             <button class="h-full" @click="handleClose()">
               <img src="/images/close.svg" 
-              class="h-full w-full"
+              
+              class="close-button h-full"
               :class="isDark?'darkModeImage':''"/>
             </button>
           </div>

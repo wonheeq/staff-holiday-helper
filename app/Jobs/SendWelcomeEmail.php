@@ -50,11 +50,8 @@ class SendWelcomeEmail implements ShouldQueue
     {
         $data = $this->data;
         $accountNo = $this->data;
-        // dd($accountNo);
         $account = Account::where('accountNo', $accountNo)->first();
-        // dd($account);
         $name = $account->getName();
-        // dd($name);
         try
         {
             $hash = md5($accountNo);
@@ -62,36 +59,26 @@ class SendWelcomeEmail implements ShouldQueue
                 'accountNo' => $accountNo,
                 'hash' => $hash
             ]);
-            $link = 'localhost:8000/set-password/'.$hash;
-            // dd($link);
 
             $dynamicData = [
                 'name' => $name,
                 'accountNo' => $account->accountNo,
                 'link' => 'https://leaveontime.cyber.curtin.io/set-password/'.$hash,
-                // 'link' => 'test text',
-
-
+                // 'link' => 'http://127.0.0.1:8000/set-password/'.$hash,
             ];
 
-            
-            // $this->sendEmail();
+            // Mail::to($reciever->getEmail)->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
-            // Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
             if ($this->isUnsent)
-            {
-                // dd("here");
-                
+            {   
                 UnsentEmail::where('accountNo', $accountNo)->where('subject', 'Welcome to LeaveOnTime')->delete();
             }
-            
-            // $this->sendEmail($dynamicData);
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            // Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {
@@ -106,16 +93,6 @@ class SendWelcomeEmail implements ShouldQueue
                     'data' => $encoded,
                 ]);
             }
-            else if($this->isUnsent == true)
-            {
-                // dd('elseif');
-
-                //
-            }
-            else{
-                dd('else');
-            }
         }
-        
     }
 }

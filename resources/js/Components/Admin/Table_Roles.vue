@@ -8,13 +8,13 @@ import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { computed } from 'vue';
 const pageDropdown = computed(() => {
-    if ($isMobile().value) {
+    if (isMobile.value) {
         return [10,20,30];
     }
     return [10,20,30,40,50];
 });
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 </script>
 
@@ -30,7 +30,7 @@ export default {
         }
     },
     data: function() {
-        let defaultC = 354;
+        let defaultC = 324;
         return {
             columns: [
             {
@@ -164,7 +164,7 @@ export default {
                     :columns="columns"
                     v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
-                    :fixed-header="!$isMobile()"
+                    :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Roles',
@@ -176,7 +176,7 @@ export default {
                         perPageDropdown: pageDropdown
                     }">
                     <template #table-actions>
-                        <p class="w-[8.5rem] mt-1 4k:text-xl">
+                        <p class="w-[8.9rem] mt-1 4k:mt-3 4k:w-[17rem] 4k:text-3xl">
                             Click a row to edit
                         </p>
                     </template>

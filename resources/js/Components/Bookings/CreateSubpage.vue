@@ -20,7 +20,7 @@ const { fetchCalendarData } = calendarStore;
 const applicationStore = useApplicationStore();
 const { addNewApplication } = applicationStore;
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 let nominationStore = useNominationStore();
 const { nominations } = storeToRefs(nominationStore);
 let props = defineProps({ subpageClass: String });
@@ -163,7 +163,7 @@ function createApplication(data) {
 </script>
 <template>
     <div>
-        <div v-if="$isMobile()" class="w-full">
+        <div v-if="isMobile" class="w-full">
             <div class="w-full rounded-b-md p-2" :class="isDark?'bg-gray-800':'bg-white'">
                 <p class="text-xl font-bold">
                     Create New Leave Application:
@@ -199,7 +199,7 @@ function createApplication(data) {
                 disableEnlarge
             />
         </div>
-        <div v-if="$isMobile()" class="h-2">
+        <div v-if="isMobile" class="h-2">
         </div>
     </div>
     

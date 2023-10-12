@@ -5,7 +5,7 @@ import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 let props = defineProps({
     source: Object,
@@ -17,7 +17,10 @@ let copyEmail = (e) => {
     let email = e + "@curtin.edu.au";
     navigator.clipboard.writeText(email); 
     
-    Swal.fire("Email address copied to clipboard.");
+    Swal.fire({
+        'title':"Email address copied to clipboard.",
+        'icon':'info'
+    }); 
 };
 
 function handleAcceptSomeNominations() {
@@ -33,7 +36,7 @@ const textClass = "text-sm 1080:text-lg 1440:text-xl 4k:text-2xl";
 <template>
     <div class="flex flex-row justify-between p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
         <div v-if="props.source.subject !== 'System Notification'" class="flex flex-col w-[75%] laptop:w-full pr-2">
-            <div v-if="$isMobile() && props.source.subject !== 'System Notification'" class="flex-row items-center">
+            <div v-if="isMobile && props.source.subject !== 'System Notification'" class="flex-row items-center">
                 <p class="text-sm 1080:text-lg 1440:text-xl 4k:text-2xl font-bold">
                     {{ props.source.subject }}
                 </p>
@@ -56,7 +59,7 @@ const textClass = "text-sm 1080:text-lg 1440:text-xl 4k:text-2xl";
                     />
                 </div>
             </div>
-            <div v-if="!$isMobile() && props.source.subject !== 'System Notification'" class="flex flex-row items-center">
+            <div v-if="!isMobile && props.source.subject !== 'System Notification'" class="flex flex-row items-center">
                 <p class="font-bold" :class="textClass">
                     {{ props.source.subject }}
                 </p>

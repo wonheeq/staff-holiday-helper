@@ -9,7 +9,7 @@ import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 
 const page = usePage();
@@ -130,7 +130,7 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
 });
 </script>
 <template>
-    <div v-if="$isMobile()"
+    <div v-if="isMobile"
         class="space-y-4">
         <div>
             <div class="flex flex-col laptop:flex-row laptop:h-[2rem] laptop:space-x-4 laptop:items-center 4k:mt-5 4k:ml-5">
@@ -140,7 +140,7 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
                 <vSelect :options="options.all" :clearable="false"
                     class="timeframe_options" 
                     :class="isDark ? 'dropdown-dark':''"
-                    :style="$isMobile()?'width:100%;':''"
+                    :style="isMobile?'width:100%;':''"
                     v-model="reminderTimeframe"
                 />
                 <button v-show="showReminderApplyButton"

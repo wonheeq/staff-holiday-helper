@@ -155,19 +155,48 @@ class NominationController extends Controller
     }
 
     /*
-    Returns all nominations
-     */
-    public function getAllNominations(Request $request, String $accountNo)
-    {
-        // Check if user exists for given accountNo
-        if (!Account::where('accountNo', $accountNo)->first()) {
-            // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
-            $nominations = Nomination::get();
-            return response()->json($nominations);
-        }
-    }
+   Returns all nominations
+    */
+   public function getAllNominations(Request $request, String $accountNo)
+   {
+       // Check if user exists for given accountNo
+       if (!Account::where('accountNo', $accountNo)->first()) {
+           // User does not exist, return exception
+           return response()->json(['error' => 'Account does not exist.'], 500);
+       }
+
+
+       // Super admin can view all nominations.
+       if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
+           $nominations = Nomination::get();
+       }
+       else {
+           // Get schoolId of user
+           $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
+           //Log::info($schoolCode);
+          
+           $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
+                                                ->select('applications.applicationNo')
+                                                ->where('schoolId', $schoolCode->schoolId)->get();
+
+
+           //Log::info($additionalApplications);
+
+
+           $nominations = Nomination::join('accounts', 'nominations.nomineeNo', '=', 'accounts.accountNo')
+                                    ->join('applications', 'nominations.applicationNo', '=', 'applications.applicationNo')
+                                    ->select('nominations.*')
+                                    ->where('schoolId', $schoolCode->schoolId)
+                                    //->where('schoolId', 9) // For testing
+                                    ->orWhere(function ($query) use ($additionalApplications) {
+                                       $query->whereIn('nominations.applicationNo', $additionalApplications);
+                                    })->get();
+       }
+      
+       return response()->json($nominations);
+   }
+
+
 
 
     /*

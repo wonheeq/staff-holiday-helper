@@ -22,7 +22,7 @@ class AccountController extends Controller
      * Handle the incoming request.
      */
     /*
-    Returns all Accounts
+    Returns all Accounts the admin is allowed to see.
      */
     public function getAllAccounts(Request $request, String $accountNo)
     {
@@ -30,10 +30,20 @@ class AccountController extends Controller
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
+        } 
+
+        // Super admin can view all accounts.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $Accounts = Account::get();
-            return response()->json($Accounts);
         }
+        else {
+            // Get schoolId of user
+            $thisAccount = Account::where('accountNo', $accountNo)->first();
+
+            $Accounts = Account::where('schoolId', $thisAccount->schoolId)->get();
+        }
+        
+        return response()->json($Accounts);
     }
 
     /*

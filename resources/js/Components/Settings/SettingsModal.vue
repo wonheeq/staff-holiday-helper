@@ -51,7 +51,7 @@ const options = [
             <div v-if="activeScreen==''" class="flex flex-row items-center justify-between">
                 <button :disabled="true">
                     <img src="/images/back.svg"
-                        class="close-button p-4 invisible"
+                        class="close-button p-2 invisible"
                     />
                 </button>
                 <p class="text-xl 1080:text-3xl 1440:text-4xl 4k:text-5xl font-bold">
@@ -59,7 +59,7 @@ const options = [
                 </p>
                 <button @click="resetView();">
                     <img src="/images/close.svg"
-                        class="close-button p-4"
+                        class="close-button p-2"
                         :class="isDark?'darkModeImage':''"
                     />
                 </button>

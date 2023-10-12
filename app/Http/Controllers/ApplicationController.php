@@ -55,20 +55,33 @@ class ApplicationController extends Controller
 
 
 
-    /*
-    Returns all applications
-     */
+   /*
+   Returns all applications
+    */
     public function getAllApplications(Request $request, String $accountNo)
     {
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
             return response()->json(['error' => 'Account does not exist.'], 500);
-        } else {
-            $applications = Application::get();
-            return response()->json($applications);
         }
+ 
+ 
+        // Super admin can view all applications.
+        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
+            $applications = Application::get();
+        }
+        else {
+            // Get schoolId of user
+            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
+            //Log::info($schoolCode);
+           
+            $applications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')->select('applications.*')->where('schoolId', $schoolCode->schoolId)->get();          
+        }
+       
+        return response()->json($applications);
     }
+ 
     /*
     public function getAllApplications(Request $request)
     {

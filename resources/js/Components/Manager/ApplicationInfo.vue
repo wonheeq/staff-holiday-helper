@@ -9,7 +9,7 @@ import { useApplicationStore } from '@/stores/ApplicationStore';
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 let applicationStore = useApplicationStore();
 const { fetchManagerApplications } = applicationStore;
@@ -52,7 +52,7 @@ function handleCloseReviewApp() {
 
 </script>
 <template>
-    <div v-if="$isMobile()">
+    <div v-if="isMobile">
         <!-- Render for undecided applications -->
         <div v-if="source.status == 'U'" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="w-full p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">

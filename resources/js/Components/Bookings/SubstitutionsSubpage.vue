@@ -8,7 +8,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const substitutionStore = useSubstitutionStore();
 const { substitutions } = storeToRefs(substitutionStore);
 const deadAreaColor = computed(() => {
@@ -16,7 +16,7 @@ const deadAreaColor = computed(() => {
 });
 </script>
 <template>
-    <div v-if="$isMobile()" class="subpage-height-mobile laptop:subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="isMobile" class="subpage-height-mobile laptop:subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[11%]">
             <p class="font-bold text-3xl laptop:text-5xl">
                 Your Substitutions

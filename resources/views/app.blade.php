@@ -37,7 +37,6 @@
 .dropdown-dark .vs__selected,
 .dropdown-dark .vs__dropdown-menu {
   background: #1f2937;
-  color: #FFFFFF;
 }
 .dropdown-dark .vs__dropdown-toggle {
     border-color: #FFFFFF;
@@ -49,6 +48,10 @@
     border-color: #ffffff;
     border-width: 1px;
     border-radius: 0px;
+}
+
+.dropdown-dark .vs__selected {
+    color: white;
 }
 
 .vs__dropdown-toggle {
