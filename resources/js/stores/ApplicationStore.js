@@ -59,7 +59,7 @@ export let useApplicationStore = defineStore('applications', {
             }
             else
             {
-                return this.managerApplications;
+                return this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E');
             }
         },
     },

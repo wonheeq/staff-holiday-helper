@@ -26,7 +26,6 @@ onMounted(async () => {
     dataReady.value = true;
 });
 
-const totalApplications = Object.keys(filteredApplications).length;
 const deadAreaColor = computed(() => {
     return isDark.value ? '#1f2937': '#FFFFFF';
 })
@@ -89,6 +88,7 @@ const deadAreaColor = computed(() => {
                         <ApplicationInfo
                             :source="item"
                         ></ApplicationInfo>
+                       
                     </div>
                     
                 </template>
