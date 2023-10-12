@@ -3,12 +3,10 @@
 <template>
     <div class="w-screen h-screen flex flex-col justify-center items-center ">
         <!-- Box/White Backgorund -->
-        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit bg-white p-5 drop-shadow-md ">
-        <!-- <div class="bg-white w-1/5 min-w-[320px] 1080:min-w-[420px] h-fit rounded-md drop-shadow-md pl-2 pb-2 1440:pl-4 1440:pb-4"> -->
-
+        <div class="w-[80%] laptop:w-[25%] 1080:w-[20%] 1440:w-[17%] 4k:w-[14%] h-fit p-5 drop-shadow-md rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
 
             <!-- Logo -->
-            <img src="/images/logo-horizontal.svg" alt="Logo Horizontal" class="logo mx-auto mb-5" >
+            <img src="/images/logo-horizontal.svg" class="logo mx-auto mb-5" :class="isDark?'darkModeImage':''">
 
             <form id="welcomeForm" action="#" @submit.prevent="handleReset">
                 <!-- Password Input 1 -->
@@ -37,9 +35,9 @@
 
                 <button
                     type="submit"
+                    class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2"
                     :disabled="!buttonActive"
-                    class="w-full font-bold text-2xl 4k:text-3xl bg-blue-300 p-2 mb-2">
-
+                    :class="isDark?'bg-blue-800':'bg-blue-300'">
                     Set Password
                 </button>
             </form>
@@ -52,20 +50,27 @@
                                     {{ error }}
                                 </li>
                             </ul>
-                        </div>
+            </div>
+
+            <!-- Bottom Links -->
+            <div class="flex justify-between mt-5">
+                <!-- Back Button -->
+                <button @click="goToLanding" class="underline font-bold 4k:text-xl">Back to Login</button>
+            </div>
 
 
         </div>
 
         <!-- Confirmation Message -->
-        <div v-show="showConf" class ="max-w-[90%] 4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
+        <div v-show="showConf" class="4k:text-2xl 1440:w-fit h-fit mt-2 1440:mt-4 p-4 border border-black rounded-md font-bold"
+                :class="isDark?'bg-cyan-600 text-blue-200':'bg-cyan-100 text-blue-800'">
             <p class="text-center">Your password has been successfully changed!</p>
         </div>
 
     </div>
-    </template>
+</template>
 
-    <style>
+<style>
     @media
     (max-width: 1360px) {
 
@@ -74,12 +79,18 @@
             width: 60%;
         }
     }
-    </style>
+</style>
 
-    <script setup>
+<script setup>
     import axios from 'axios';
     import LandingInput from './LandingInput.vue';
     import { ref, watch, reactive } from "vue";
+    import { useDark } from "@vueuse/core";
+    import { usePage } from '@inertiajs/vue3'
+    import { useForm } from '@inertiajs/vue3';
+    const page = usePage();
+    const isDark = useDark();
+
 
     const props = defineProps({
         hash: {
@@ -97,11 +108,9 @@
             password_confirmation: passTwo.value,
 
         }).then( function(response) {
-            // goToLanding();
-            // showConf.value = true;
-            // errors.length = 0;
-            // buttonActive.value = false;
-
+            showConf.value = true;
+            errors.length = 0;
+            buttonActive.value = false;
 
         }).catch(error => {
             if(error.response) {
@@ -180,7 +189,7 @@
         validatePasswords();
     });
 
-    </script>
+</script>
 
 
 
