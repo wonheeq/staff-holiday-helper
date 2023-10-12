@@ -36,6 +36,7 @@
                 <button
                     type="submit"
                     class="w-full font-bold text-2xl 4k:text-3xl p-2 mb-2"
+                    :disabled="!buttonActive"
                     :class="isDark?'bg-blue-800':'bg-blue-300'">
                     Set Password
                 </button>
@@ -49,7 +50,13 @@
                                     {{ error }}
                                 </li>
                             </ul>
-                        </div>
+            </div>
+
+            <!-- Bottom Links -->
+            <div class="flex justify-between mt-5">
+                <!-- Back Button -->
+                <button @click="goToLanding" class="underline font-bold 4k:text-xl">Back to Login</button>
+            </div>
 
 
         </div>
@@ -61,9 +68,9 @@
         </div>
 
     </div>
-    </template>
+</template>
 
-    <style>
+<style>
     @media
     (max-width: 1360px) {
 
@@ -72,17 +79,17 @@
             width: 60%;
         }
     }
-    </style>
+</style>
 
-    <script setup>
+<script setup>
     import axios from 'axios';
     import LandingInput from './LandingInput.vue';
     import { ref, watch, reactive } from "vue";
     import { useDark } from "@vueuse/core";
-import { usePage } from '@inertiajs/vue3'
-import { useForm } from '@inertiajs/vue3';
-const page = usePage();
-const isDark = useDark();
+    import { usePage } from '@inertiajs/vue3'
+    import { useForm } from '@inertiajs/vue3';
+    const page = usePage();
+    const isDark = useDark();
 
 
     const props = defineProps({
@@ -101,11 +108,9 @@ const isDark = useDark();
             password_confirmation: passTwo.value,
 
         }).then( function(response) {
-            // goToLanding();
-            // showConf.value = true;
-            // errors.length = 0;
-            // buttonActive.value = false;
-
+            showConf.value = true;
+            errors.length = 0;
+            buttonActive.value = false;
 
         }).catch(error => {
             if(error.response) {
@@ -184,7 +189,7 @@ const isDark = useDark();
         validatePasswords();
     });
 
-    </script>
+</script>
 
 
 
