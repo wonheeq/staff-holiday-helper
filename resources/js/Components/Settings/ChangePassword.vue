@@ -138,7 +138,7 @@ function back() {
     <div class="flex flex-row items-center justify-between">
         <button @click="back(); emit('close-password');">
             <img src="/images/back.svg"
-                class="close-button p-4"
+                class="close-button p-2"
                 :class="isDark?'darkModeImage':''"
             />
         </button>
@@ -147,7 +147,7 @@ function back() {
         </p>
         <button @click="resetView(); emit('close-settings');">
             <img src="/images/close.svg"
-                class="close-button p-4"
+                class="close-button p-2"
                 :class="isDark?'darkModeImage':''"
             />
         </button>
