@@ -243,7 +243,7 @@ const buttons = [
     </div>
 
     <!-- To import .csv file -->
-    <div class="flex flex-row mt-4 laptop:mt-8 laptop:mx-4 4k:mt-10">
+    <div class="flex flex-row mt-4 laptop:mt-8 mx-4 4k:mt-10">
         <h2 class="mt-1.5 4k:text-3xl 4k:mt-3">Add By CSV:</h2>
         <button
             :class="isDark?'tableButtonOffDark':'tableButtonOff'"
@@ -254,12 +254,12 @@ const buttons = [
     </div>
 
 
-    <h1 class="mt-1.5 laptop:px-4 mt-3 laptop:mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
+    <h1 class="mt-1.5 mx-4 mt-3 laptop:mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
     <div :class="$isMobile()?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')"
         :style="{ maxHeight: bHeight }"
     >
         <div class="flex justify-between">
-            <div class="flex flex-col laptop:mt-2 mx-2 laptop:mx-4 laptop:mb-3 w-full laptop:w-fit">
+            <div class="flex flex-col laptop:mt-4 mx-2 laptop:mx-4 laptop:mb-3 w-fit">
                 <!--<div>array: {{ fieldsList.accountFields }}</div>-->
                 <!--<div>array: {{ fieldsList[currentFields] }}</div>-->
                 <!--v-for="name in namesList[field.fk]""-->

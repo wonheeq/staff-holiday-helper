@@ -83,7 +83,7 @@ class DatabaseController extends Controller
         // Check if system admin is allowed to create the account for the given schoolId
         $admin = Account::where('accountNo', $adminNo)->first();
         if ($admin->schoolId != '1' && $admin->schoolId != $attributes[4]['schoolId']) {
-            return response()->json(['error' => 'Not authorised to create an account for the given schoolId.'], 500);
+            return response()->json(['error' => 'Not authorised to create an account for the given school.'], 500);
         }
 
         // Check that un-restricted attributes are valid

@@ -7,7 +7,7 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Account Type",attr:"accountType",plhldr:"e.g. Staff",fk:"acctTypes",fkAttr:"name"},
             {desc:"Surname",attr:"lName",plhldr:"Fill",fk:"none",fkAttr:""},
             {desc:"First/Other Names",attr:"fName",plhldr:"Fill",fk:"none",fkAttr:""},
-            {desc:"School Name",attr:"school",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"},
+            {desc:"School Name",attr:"school",plhldr:"Select School",fk:"schools",fkAttr:"name"},
             {desc:"Line Manager's ID",attr:"superiorNo",plhldr:"Select Account or \"None\"",fk:"lmanagers",fkAttr:"fullName"}
         ],
         accountRoleFields: [
@@ -16,7 +16,7 @@ export let useDataFieldsStore = defineStore('fields', {
             {desc:"Unit",attr:"unitId",plhldr:"Select Unit or \"None\"",fk:"units",fkAttr:"disName"},
             {desc:"Major",attr:"majorId",plhldr:"Select Major or \"None\"",fk:"majors",fkAttr:"disName"},
             {desc:"Course",attr:"courseId",plhldr:"Select Course or \"None\"",fk:"courses",fkAttr:"disName"},
-            {desc:"School",attr:"schoolId",plhldr:"e.g. Curtin Law School",fk:"schools",fkAttr:"name"}
+            {desc:"School",attr:"schoolId",plhldr:"Select School",fk:"schools",fkAttr:"name"}
         ],
         roleFields: [
             {desc:"Role Name",attr:"name",plhldr:"New Role Name",fk:"none",fkAttr:""}
