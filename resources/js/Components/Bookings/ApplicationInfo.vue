@@ -10,7 +10,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({ source: Object });
@@ -73,7 +73,7 @@ function handleEditApplication() {
 }
 </script>
 <template>
-    <div v-if="isMobile" class="flex flex-col">
+    <div v-if="$isMobile()" class="flex flex-col">
         <div class="flex flex-col p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
             <p class="text-base font-bold">{{ source.sDate }} - {{ source.eDate }}</p>
             <p :class="statusColour[source.status]">

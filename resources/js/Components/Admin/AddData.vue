@@ -6,7 +6,7 @@ import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 
 const buttons = [
@@ -211,7 +211,7 @@ const buttons = [
     <h1 class="text-2xl laptop:px-4 4k:text-5xl 4k:py-4">Add Data:</h1>
 
     <!-- To select table -->
-    <div v-if="isMobile">
+    <div v-if="$isMobile()">
         <vSelect
             :clearable="false"
             :searchable="false"
@@ -255,7 +255,7 @@ const buttons = [
 
 
     <h1 class="mt-1.5 laptop:px-4 mt-3 laptop:mt-6 4k:text-3xl 4k:mt-10">Add Manually:</h1>
-    <div :class="isMobile?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')"
+    <div :class="$isMobile()?(isDark?'manualAreaDarkMobile':'manualAreaMobile'):(isDark?'manualAreaDark':'manualArea')"
         :style="{ maxHeight: bHeight }"
     >
         <div class="flex justify-between">
@@ -268,11 +268,11 @@ const buttons = [
                     class="w-full"
                 >
                     <div class="flex flex-row justify-between laptop:space-x-7 4k:space-x-11 w-full">
-                        <span v-if="isMobile" class="w-[6.5rem] mt-4">{{ field.desc }}: </span>
+                        <span v-if="$isMobile()" class="w-[6.5rem] mt-4">{{ field.desc }}: </span>
                         <span v-else class="mt-4 4k:mt-10 1080:text-lg 1440:text-xl 4k:text-2xl">{{ field.desc }}: </span>
                         <input v-if="field.fk === 'none'"
                                class="input_options" 
-                               :class="isMobile?(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[35rem]':'w-[35rem]')"
+                               :class="$isMobile()?(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[35rem]':'w-[35rem]')"
                                type="text" autocomplete="off" :placeholder="field.plhldr" 
                                v-model="attributeEntries[index]" />
                         <!--<v-select v-else v-model="selected" style="width: 35rem; height: 2rem; margin-top: 0.75rem;">
@@ -283,7 +283,7 @@ const buttons = [
                             <vSelect :options="getArray(field.fk)" :label="field.fkAttr" 
                                 :class="isDark ? 'dropdown-dark':''"
                                 class="input_options"
-                                :style="isMobile?'width: 14rem; font-size: 0.75rem;':'width: 35rem; font-size: 1rem;'"                     
+                                :style="$isMobile()?'width: 14rem; font-size: 0.75rem;':'width: 35rem; font-size: 1rem;'"                     
                                 :placeholder="field.plhldr"
                                 v-model="attributeEntries[index]" >
                             </vSelect>
@@ -294,7 +294,7 @@ const buttons = [
             </div>        
                
         </div><!--<div class="flex flex-col self-center">-->
-        <div v-if="isMobile" class="w-full p-2">
+        <div v-if="$isMobile()" class="w-full p-2">
             <button
                 class="w-full py-2 text-center text-xl font-bold"
                 :class="isDark?'bg-gray-800':'bg-white'"

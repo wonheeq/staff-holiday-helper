@@ -5,7 +5,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const props = defineProps({
     results: { type: Object, required: true },
 });
@@ -43,7 +43,7 @@ function getList()
 </script>
 
 <template>
-<div v-if="isMobile">
+<div v-if="$isMobile()">
     <div class="w-screen h-screen flex justify-center items-center ">
         <!-- Box/Background -->
         <div class="w-[80%] p-5 drop-shadow-md rounded-md max-h-[75%] flex flex-col"

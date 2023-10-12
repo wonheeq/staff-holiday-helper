@@ -8,13 +8,13 @@ import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { computed } from 'vue';
 const pageDropdown = computed(() => {
-    if (isMobile.value) {
+    if ($isMobile().value) {
         return [10,20,30];
     }
     return [10,20,30,40,50];
 });
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 </script>
 
@@ -174,7 +174,7 @@ export default {
                     :rows="Messages"
                     :columns="columns"
                     v-bind:max-height= tHeight
-                    :fixed-header="!isMobile"
+                    :fixed-header="!$isMobile()"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Messages',

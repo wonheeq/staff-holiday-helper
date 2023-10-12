@@ -30,6 +30,7 @@
         "sweetalert2": "^11.7.31",
         "v-calendar": "^3.0.3",
         "vue-good-table-next": "^0.2.1",
+        "vue-mobile-detection": "^2.0.1",
         "vue-screen-utils": "^1.0.0-beta.13",
         "vue-scrolling-table": "^2.0.0",
         "vue-select": "^4.0.0-beta.6",

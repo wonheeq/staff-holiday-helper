@@ -4,7 +4,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const props = defineProps({
     options: Object,
     activeScreen: String,
@@ -12,7 +12,7 @@ const props = defineProps({
 const emit = defineEmits(['screen-changed']);
 </script>
 <template>
-    <div v-if="isMobile"  class="flex space-x-4">
+    <div v-if="$isMobile()"  class="flex space-x-4">
         <button class="w-1/3 h-full laptop:w-80 px-2 rounded-tl-md rounded-tr-md text-xs"
             :class="{
                 'bg-white': activeScreen===option.id && !isDark,

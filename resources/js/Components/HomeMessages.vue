@@ -8,7 +8,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 import { usePage } from '@inertiajs/vue3'
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -30,7 +30,7 @@ const deadAreaColor = computed(() => {
 <template>
     <div class="laptop:rounded-md w-full"
     :class="isDark?'bg-transparent laptop:bg-gray-800':'bg-transparent laptop:bg-white'">
-        <div v-if="isMobile" class="w-full mb-2 rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="$isMobile()" class="w-full mb-2 rounded-md" :class="isDark?'bg-gray-800':'bg-white'">
             <div class="h-[0.25rem]"></div>
             <div v-if="unreadMessages.length" class="flex flex-row justify-between px-2 text-lg mx-1 bg-red-400 text-white p-1 rounded-3xl items-center">
                 <img src="/images/warning.svg"/>
