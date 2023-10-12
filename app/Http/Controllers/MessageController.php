@@ -15,7 +15,7 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
 use App\Http\Controllers\EmailController;
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendNominationCancelled;
 use App\Jobs\SendNominationDeclined;
@@ -79,6 +79,61 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
+    /*
+    Get Sub Request message for applicationNo
+    */
+    public function getMessageForApplication(Request $request, String $accountNo, String $applicationNo)
+    {
+        // Check if Account exists for given accountNo
+        if (!Account::where('accountNo', $accountNo)->first()) {
+            // Account does not exist, return exception
+            return response()->json(['error' => 'Account does not exist.'], 500);
+        }
+
+        $message = Message::where('receiverNo', $accountNo)
+        ->where('applicationNo', $applicationNo)
+        ->where('subject', 'Edited Substitution Request')
+        ->first();
+
+        if (!$message) {
+            $message = Message::where('receiverNo', $accountNo)
+            ->where('applicationNo', $applicationNo)
+            ->where('subject', 'Substitution Request')
+            ->first();
+        }
+
+
+        // Add in sendername of each message
+        if ($message['senderNo'] != null) {
+            // if sender is not null, then sender is a user
+            $sender = app(UserController::class)->getUser($message["senderNo"]);
+            $message["senderName"] = "{$sender['fName']} {$sender['lName']}";
+        } else {
+            // senderNo is null, therefore sender is the system
+            $message["senderName"] = "SYSTEM";
+        }
+
+
+        // get nominations if subject is Substitution Request or Edited Substitution Request
+        if ($message['subject'] == "Substitution Request"
+            || $message['subject'] == "Edited Substitution Request") {
+            // applicationNo SHOULD exist
+            // Get all nominations for the application where the nomineeNo == accountNo
+
+            $nominations = Nomination::where('applicationNo', $message['applicationNo'], 'and')
+                ->where('nomineeNo', $accountNo)->get();
+            $managerNominations = ManagerNomination::where('applicationNo', $message['applicationNo'], 'and')
+                ->where('nomineeNo', $accountNo)->get();
+
+            $count = count($nominations) + count($managerNominations);
+            if ($count > 1) {
+                // add isNominatedMultiple flag to message data
+                $message["isNominatedMultiple"] = true;
+            }
+        }
+
+        return response()->json($message);
+    }
 
     /*
     Set the acknowledged status of a message to true
@@ -158,7 +213,7 @@ class MessageController extends Controller
 
                 // add name to content
                 $name = "";
-                
+
                 if ($nomineeNo == $application->accountNo) {
                     $name = "Self Nomination";
                 }
@@ -166,7 +221,7 @@ class MessageController extends Controller
                     $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
                     $isSelfNominatedAll = false;
                 }
-                
+
                 array_push(
                     $content,
                     "• {$name}"
@@ -219,13 +274,13 @@ class MessageController extends Controller
         ]);
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // If user is on instant notifications
-        // {
-        //     // collect require data, and queue an email
-        //     $data = [$superiorNo, $application->accountNo, $content];
-        //     SendAppWaitingRev::dispatch($data, false);
-        // }
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // If user is on instant notifications
+        {
+            // collect require data, and queue an email
+            $data = [$superiorNo, $application->accountNo, $content, $applicationNo];
+            SendAppWaitingRev::dispatch($data, false, -1);
+        }
     }
 
 
@@ -310,14 +365,107 @@ class MessageController extends Controller
                     'acknowledged' => false,
                 ]);
 
-                // $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
-                // $hours = $preferences->hours;
-                // if( $hours == 0 ) // If user is on instant notificaitons
-                // {
-                //     // Collect data and queue an email
-                //     $data = [$nomineeNo, $content];
-                //     SendNominationEmail::dispatch($data);
-                // }
+                $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 ) // If user is on instant notificaitons
+                {
+                    // Collect data and queue an email
+                    $data = [$nomineeNo, $content, $applicationNo];
+                    SendNominationEmail::dispatch($data, false, -1);
+                }
+            }
+        }
+    }
+
+
+     /*
+    Notifies specific nominees that they have been nominated for a newly created application
+    */
+    public function notifyNomineeApplicationCreatedSpecific($applicationNo, $nomineeNos)
+    {
+        $application = Application::where('applicationNo', $applicationNo)->first();
+
+        // List of processed nomineeNo's
+        $processed = [
+        ];
+
+        $arr1 = Nomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $arr2 = ManagerNomination::where('applicationNo', $applicationNo)
+        ->where('nomineeNo', '!=', $application->accountNo)->get();
+        $toProcess = [];
+        foreach ($arr1 as $a) {
+            array_push($toProcess, $a);
+        }
+        foreach ($arr2 as $a) {
+            array_push($toProcess, $a);
+        }
+
+        // Process each nomination
+        foreach ($nomineeNos as $nomineeNo) {
+
+            // Check if nomineeNo is not in processed nomineeNo's
+            if (!in_array($nomineeNo, $processed)) {
+                array_push($processed, $nomineeNo);
+                $content = [];
+
+                $nominationsForNominee = Nomination::where('applicationNo', $applicationNo, "and")
+                    ->where('nomineeNo', $nomineeNo)->get();
+                $managerNominationsForNominee = ManagerNomination::where('applicationNo', $applicationNo, "and")
+                    ->where('nomineeNo', $nomineeNo)->get();
+
+
+                $count = count($nominationsForNominee->toArray()) + count($managerNominationsForNominee->toArray());
+
+                array_push(
+                    $content,
+                    "You have been nominated for {$count} roles:"
+                );
+
+                // Add nominated roles of all nominations for nominee to content
+                foreach ($nominationsForNominee as $nom) {
+                    $roleName = app(RoleController::class)->getRoleFromAccountRoleId($nom->accountRoleId);
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                // Add nominated roles of all manager nominations for nominee to content
+                foreach ($managerNominationsForNominee as $nom) {
+                    $subordinate = Account::where('accountNo', $nom->subordinateNo)->first();
+                    $roleName = "Line Manager for ({$nom['subordinateNo']}) {$subordinate['fName']} {$subordinate['lName']}";
+
+                    array_push(
+                        $content,
+                        "→{$roleName}"
+                    );
+                }
+
+                array_push(
+                    $content,
+                    "Duration: {$application['sDate']} - {$application['eDate']}"
+                );
+
+                // Create message for nominee
+                Message::create([
+                    'applicationNo' => $applicationNo,
+                    'receiverNo' => $nomineeNo,
+                    'senderNo' => $application->accountNo,
+                    'subject' => 'Substitution Request',
+                    'content' => json_encode($content),
+                    'acknowledged' => false,
+                ]);
+
+                $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 ) // If user is on instant notificaitons
+                {
+                    // Collect data and queue an email
+                    $data = [$nomineeNo, $content, $applicationNo];
+                    SendNominationEmail::dispatch($data, false, -1);
+                }
             }
         }
     }
@@ -345,14 +493,14 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        // $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // If on instant notifications
-        // {
-        //     // Collect data and queue an email
-        //     $data = [$superiorNo, $content, $application->accountNo];
-        //     SendAppCanceledManager::dispatch($data);
-        // }
+        $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // If on instant notifications
+        {
+            // Collect data and queue an email
+            $data = [$superiorNo, $content, $application->accountNo];
+            SendAppCancelledManager::dispatch($data, false, -1);
+        }
     }
 
     /*
@@ -377,14 +525,14 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        // $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // If user on instant notificatoins
-        // {
-        //     // Collect data and queue an email
-        //     $data = [$nomineeNo, $content, $application->accountNo];
-        //     SendNominationCancelled::dispatch($data);
-        // }
+        $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // If user on instant notificatoins
+        {
+            // Collect data and queue an email
+            $data = [$nomineeNo, $content, $application->accountNo];
+            SendNominationCancelled::dispatch($data, false, -1);
+        }
     }
 
     /*
@@ -394,7 +542,7 @@ class MessageController extends Controller
     public function notifyNomineeNominationCancelled(array $removedNominations, array $removedManagerNominations, String $applicationNo)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
- 
+
         //combine into array of nomineeNos
         $nomineeNos = array();
 
@@ -415,7 +563,7 @@ class MessageController extends Controller
                 foreach ($removedNominations[$nomineeNo] as $accountRoleId) {
                     // Get role name
                     $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
-    
+
                     array_push(
                         $content,
                         "→{$roleName}",
@@ -451,14 +599,14 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            // $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
-            // $hours = $preferences->hours;
-            // if( $hours == 0 ) // if on instant notifications
-            // {
-            //     // Collect data and queue an email
-            //     $data = [$nomineeNo, $content, ];
-            //     SendNominationsCancelled::dispatch($data);
-            // }
+            $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 ) // if on instant notifications
+            {
+                // Collect data and queue an email
+                $data = [$nomineeNo, $content, ];
+                SendNominationsCancelled::dispatch($data, false, -1);
+            }
         }
     }
 
@@ -531,6 +679,16 @@ class MessageController extends Controller
                     'content' => json_encode($content),
                     'acknowledged' => false,
                 ]);
+
+
+                $preferences = EmailPreference::where('accountNo', $nomination->nomineeNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 ) // on instant notifications
+                {
+                    // Collect data and queue an email
+                    $data = [$nomination->nomineeNo, $content, ];
+                    SendConfirmSubstitutions::dispatch($data, false, -1);
+                }
             }
         }
     }
@@ -610,14 +768,14 @@ class MessageController extends Controller
                     'acknowledged' => false,
                 ]);
 
-                // $preferences = EmailPreference::where('accountNo', $nom->nomineeNo)->first();
-                // $hours = $preferences->hours;
-                // if( $hours == 0 ) // on instant notifications
-                // {
-                //     // Collect data and queue an email
-                //     $data = [$nom->nomineeNo, $content, ];
-                //     SendSubPeriodEditSubset::dispatch($data);
-                // }
+                $preferences = EmailPreference::where('accountNo', $nom->nomineeNo)->first();
+                $hours = $preferences->hours;
+                if( $hours == 0 ) // on instant notifications
+                {
+                    // Collect data and queue an email
+                    $data = [$nom->nomineeNo, $content, ];
+                    SendSubPeriodEditSubset::dispatch($data, false, -1);
+                }
             }
         }
     }
@@ -678,14 +836,14 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            // $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
-            // $hours = $preferences->hours;
-            // if( $hours == 0 ) // on instant notifications
-            // {
-            //     // Collect data and queue an email
-            //     $data = [$nomineeNo, $content, ];
-            //     SendNomineeAppEdited::dispatch($data);
-            // }
+            $preferences = EmailPreference::where('accountNo', $nomineeNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 ) // on instant notifications
+            {
+                // Collect data and queue an email
+                $data = [$nomineeNo, $content, $applicationNo];
+                SendNomineeAppEdited::dispatch($data, false, -1);
+            }
         }
     }
 
@@ -730,14 +888,14 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        // $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // if on instant notifications
-        // {
-        //     // Collect data and queue an email
-        //     $data = [$application->accountNo, $content, ];
-        //     SendApplicationDecision::dispatch($data);
-        // }
+        $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // if on instant notifications
+        {
+            // Collect data and queue an email
+            $data = [$application->accountNo, $content, ];
+            SendApplicationDecision::dispatch($data, false, -1);
+        }
     }
 
     /*
@@ -784,14 +942,14 @@ class MessageController extends Controller
             'acknowledged' => false,
         ]);
 
-        // $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // on instant notifications
-        // {
-        //     // Collect data and queue an email
-        //     $data = [$application->accountNo, $content, ];
-        //     SendNominationDeclined::dispatch($data);
-        // }
+        $preferences = EmailPreference::where('accountNo', $application->accountNo)->first();
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // on instant notifications
+        {
+            // Collect data and queue an email
+            $data = [$application->accountNo, $content, ];
+            SendNominationDeclined::dispatch($data, false, -1);
+        }
     }
 
 
@@ -832,14 +990,14 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            // $preferences = EmailPreference::where('accountNo', $account->accountNo)->first();
-            // $hours = $preferences->hours;
-            // if( $hours == 0 ) // if user is on instant notifications
-            // {
-            //     // Collect data and queue an email
-            //     $data = [$account->accountNo, $content];
-            //     SendSystemNotification::dispatch($data);
-            // }
+            $preferences = EmailPreference::where('accountNo', $account->accountNo)->first();
+            $hours = $preferences->hours;
+            if( $hours == 0 ) // if user is on instant notifications
+            {
+                // Collect data and queue an email
+                $data = [$account->accountNo, $content];
+                SendSystemNotification::dispatch($data, false, -1);
+            }
         }
 
         return response()->json(['success'], 200);
@@ -866,7 +1024,7 @@ class MessageController extends Controller
            // Get schoolId of user
            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
            //Log::info($schoolCode);
-          
+
            $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
                                                ->select('applications.applicationNo')
                                                ->where('schoolId', $schoolCode->schoolId)->get();
@@ -888,7 +1046,7 @@ class MessageController extends Controller
                                    $query->whereIn('messages.applicationNo', $additionalApplications);
                                })->get();
        }
-      
+
        return response()->json($messages);
    }
 
@@ -924,7 +1082,7 @@ class MessageController extends Controller
     {
         $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
         if ($messages->count() != 0) { // if Has messages
-  
+
             $result = $account->sendDailyMessageNotification($messages);
             if( !$result )
             {

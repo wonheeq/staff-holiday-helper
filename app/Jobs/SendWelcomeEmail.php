@@ -31,16 +31,11 @@ class SendWelcomeEmail implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    // public function __construct($data, $isUnsent)
     public function __construct($data, $isUnsent)
 
     {
         $this->data = $data;
-
-        // dd($data);
-        // $this->$email = $email;
         $this->isUnsent = $isUnsent;
-        // $this->data = json_decode($email->data);
     }
 
     /**

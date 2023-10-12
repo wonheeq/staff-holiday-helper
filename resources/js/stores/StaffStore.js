@@ -15,7 +15,6 @@ export let useStaffStore = defineStore('staffMembers', {
                 this.staffMembers = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         }

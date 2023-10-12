@@ -20,13 +20,17 @@ class SendApplicationDecision implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
+    protected $isUnsent;
+    protected $unsentId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data)
+    public function __construct($data, $isUnsent, $unsentId)
     {
         $this->data = $data;
+        $this->isUnsent = $isUnsent;
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -53,20 +57,31 @@ class SendApplicationDecision implements ShouldQueue
             ];
 
             // Mail::to($reciever->getEmail)->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
+
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
+
+            if ($this->isUnsent)
+            {
+                UnsentEmail::where('accountNo', $reciever->accountNo)
+                    ->where('subject', 'Application Updated')
+                    ->where('id', $this->unsentId)->delete();
+            }
         }
         catch(TransportException $e)
         {
             // if error, encode data and create row
             $encoded = json_encode($data);
-            UnsentEmail::create([
-                'accountNo' => $data[0],
-                'subject' => 'Application Updated',
-                'data' => $encoded,
-            ]);
+            if($this->isUnsent == false)
+            {
+                UnsentEmail::create([
+                    'accountNo' => $data[0],
+                    'subject' => 'Application Updated',
+                    'data' => $encoded,
+                ]);
+            }
         }
     }
 }

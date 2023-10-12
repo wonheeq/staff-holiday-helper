@@ -54,12 +54,20 @@
             </mj-text>
 
             <mj-text color="#637381" font-size="16px">
-                  To accept or reject these nominations, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
-              </mj-text>
+                To accept or reject these nominations, please select an available option below:
+            </mj-text>
+          <mj-button background-color="#00A611" color="#ffffff" font-size="16px" font-weight="bold"  href="{{ $dynamicData['acceptLink'] }}" width="240px">
+            Accept All
+          </mj-button>
 
-              <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="https://leaveontime.cyber.curtin.io" width="240px" padding-bottom="30px" padding-top="30px">
-                View in App
-            </mj-button>
+           <mj-button background-color="#eac234" color="#ffffff" font-size="16px" font-weight="bold"  href="{{ $dynamicData['acceptSomeLink'] }}" width="240px">
+            Accept Some
+          </mj-button>
+
+          </mj-button>
+          <mj-button background-color="#EF665B" color="#ffffff" font-size="16px" font-weight="bold" href="{{ $dynamicData['rejectLink'] }}" width="240px">
+            Reject All
+          </mj-button>
 
 
             <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold" padding-top="0px">

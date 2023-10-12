@@ -12,13 +12,12 @@ export let useRolesStore = defineStore('roles', {
                 this.roles = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         },
     },
 
     getters: {
-        
+
     }
 });

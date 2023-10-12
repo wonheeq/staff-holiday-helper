@@ -35,7 +35,7 @@ class AuthenticationController extends Controller
         // Validate credentials, create a session and redirect the user to the home page
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect("/home");//->intended("/home");
+            return redirect()->intended("/home");
         }
 
         // If credentials could not be validated, redirect them back with an error
@@ -225,7 +225,7 @@ class AuthenticationController extends Controller
 
         $user = Account::where('accountNo', $accountNo)->first();
         // Check if there is already a reset token for this account
-        
+
         // Manually generate a new token (normally done by the method that sends the
         // password reset email)
         $newToken = app('auth.password.broker')->createToken($user);

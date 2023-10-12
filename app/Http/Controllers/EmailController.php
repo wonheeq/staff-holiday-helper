@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendConfirmSubstitutions;
@@ -159,7 +159,7 @@ class EmailController extends Controller
             $this->sortMail($email);
         }
     }
-    
+
 
 
     public function sortMail($email)
@@ -167,270 +167,64 @@ class EmailController extends Controller
         // switch case used here for expandability to other email types
         // that might be added later
         $subject = $email->subject;
+        $data = json_decode($email->data);
+        $id = $email->id;
         switch($subject){
             case "Unacknowledged Messages":
                 $this->attemptUnackMsg($email);
             break;
 
             case "New Nominations":
-                $this->attemptNewNominations($email);
+                SendNominationEmail::dispatch($data, true, $id);
             break;
 
             case "Application Awaiting Review":
-                $this->attemptAppReview($email);
+                SendAppWaitingRev::dispatch($data, true, $id);
             break;
 
             case "Application Cancelled":
-                $this->attemptAppCancelled($email);
+                SendAppCancelledManager::dispatch($data, true, $id);
             break;
 
             case "Nomination Cancelled":
-                $this->attemptNominationCancelled($email);
+                SendNominationCancelled::dispatch($data, true, $id);
             break;
 
             case "Nomination/s Cancelled":
-                $this->attemptNominationsCancelled($email);
+                SendNominationsCancelled::dispatch($data, true, $id);
             break;
 
             case "Substitution Period Edited (Subset)":
-                $this->attemptSubPeriodEditedSubset($email);
+                SendSubPeriodEditSubset::dispatch($data, true, $id);
             break;
 
             case "Edited Substitution Request":
-                $this->attemptEditedSubRequest($email);
+                SendNomineeAppEdited::dispatch($data, true, $id);
             break;
 
             case "Nomination/s Rejected":
-                $this->attemptNominationsRejected($email);
+                SendNominationDeclined::dispatch($data, true, $id);
             break;
 
             case "Application Updated":
-                $this->attemptAppUpdated($email);
+                SendApplicationDecision::dispatch($data, true, $id);
             break;
 
             case "System Notification":
-                $this->attemptSystemNotification($email);
+                SendSystemNotification::dispatch($data, true, $id);
             break;
 
             case "Confirmed Substitutions":
-                $this->attemptConfirmedSubstitutions($email);
+                SendConfirmSubstitutions::dispatch($data, true, $id);
             break;
 
             case "Welcome to LeaveOnTime":
-                $this->sendWelcome($email);
+                $data = json_decode($email->data);
+                SendWelcomeEmail::dispatch($data, true);
             break;
         }
     }
 
-    private function sendWelcome($email)
-    {
-        $data = json_decode($email->data);
-        
-        SendWelcomeEmail::dispatch($data, true);
-
-        // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-
-        // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-        // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-    }
-
-
-    // Attempt to send an unsent "Confirmed Substitutions email
-    // private function attemptConfirmedSubstitutions($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendConfirmSubstitutions::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent System announcement email
-    // private function attemptSystemNotification($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendSystemNotification::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Application Updated" Email
-    // private function attemptAppUpdated($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendApplicationDecision::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsetn "Nomination/s Rejected" Email
-    // private function attemptNominationsRejected($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendNominationDeclined::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Edited Substitution Request" Email
-    // private function attemptEditedSubRequest($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendNomineeAppEdited::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //     }
-    // }
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Substituion Period Edited (Subset)" Email
-    // private function attemptSubPeriodEditedSubset($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendSubPeriodEditSubset::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Nomination/s Cancelled" Email
-    // private function attemptNominationsCancelled($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendNominationsCancelled::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Nomination Cancelled" Email
-    // private function attemptNominationCancelled($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendNominationCancelled::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // // Attempt to send an unsent "Application Cancelled" Email
-    // private function attemptAppCancelled($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendAppCanceledManager::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch( TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
-
-
-    // Attempt to send an unsent "Application Awaiting Review" Email
-    // private function attemptAppReview($email)
-    // {
-    //     // dd('here in the function');
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendAppWaitingRev::dispatch($data, true);
-    //         // $email->delete();
-    //     }
-    //     catch(ErrorException $e)
-    //     {
-
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //         dd($e);
-    //         Log::debug('test');
-    //     }
-    // }
-
-    // public function test()
-    // {
-    //     $this->attemptBacklog();
-    // }
-
-
-    // // Attempt to send an unsent "New Nomination" Type email
-    // private function attemptNewNominations($email)
-    // {
-    //     try
-    //     {
-    //         $data = json_decode($email->data);
-    //         SendNominationEmail::dispatch($data);
-    //         $email->delete();
-    //     }
-    //     catch(TransportException $e)
-    //     {
-    //         // Do nothing, email stays in backlog
-    //         error_log($e);
-    //     }
-    // }
 
 
     // Handles the attempted resending of an archive email
@@ -470,7 +264,7 @@ class EmailController extends Controller
                     // Do Nothing, email stays in backlog
                 }
             }
-        
+
     }
 
 }

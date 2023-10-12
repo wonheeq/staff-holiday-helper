@@ -16,20 +16,23 @@ use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
-class SendAppCanceledManager implements ShouldQueue
+class SendAppCancelledManager implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
     protected $isUnsent;
+    protected $unsentId;
+
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data, $isUnsent)
+    public function __construct($data, $isUnsent, $unsentId)
     {
         $this->data = $data;
         $this->isUnsent = $isUnsent;
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -53,24 +56,27 @@ class SendAppCanceledManager implements ShouldQueue
             // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+
+            if ($this->isUnsent)
+            {
+                UnsentEmail::where('accountNo', $accountNo)
+                    ->where('subject', 'Staff Cancelled Application')
+                    ->where('id', $this->unsentId)->delete();
+            }
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
-            if ( !UnsentEmail::where('accountNo', $data[0])->where('subject', 'Applilcation Cancelled')->where('data', $encoded)->first() )
+            if ($this->isUnsent == false)
             {
                 UnsentEmail::create([ // create one if not
                     'accountNo' => $data[0],
                     'subject' => 'Application Cancelled',
                     'data' => $encoded,
                 ]);
-            }
-            else if($this->isUnsent == true)
-            {
-                throw new ErrorException("Re-sending failed");
             }
         }
     }

@@ -168,7 +168,7 @@ class ManagerController extends Controller
                                         return response()->json(['success' => 'success'], 200);
                     }
             }
-        } 
+        }
         //Check if it is a course, then remove
         if((AccountRole::where('accountNo', $staffNo, "and")
         ->where('courseId', $unitCode)->get()) && $roleName == 'Course Coordinator'){
@@ -184,7 +184,7 @@ class ManagerController extends Controller
                     }
             }
         }
-        return response()->json(['error' => 'Role for the unit does not exist.'], 500); 
+        return response()->json(['error' => 'Role for the unit does not exist.'], 500);
     }
     /**
      * Get all staff members under a particular line manger
@@ -213,7 +213,7 @@ class ManagerController extends Controller
         /* Get Temporary subordinates */
         // Get all ManagerNominations where the superiorNo is the temporary manager
         $managerNominations = ManagerNomination::where('nomineeNo', $superiorNo)->get();
-        
+
         // Iterate though manager nominations
         foreach ($managerNominations as $nomination) {
             $application = Application::where('applicationNo', $nomination->applicationNo)->first();
@@ -252,7 +252,7 @@ class ManagerController extends Controller
         return response()->json($staff);
     }
     public function getRolesForStaffs(Request $request, String $staffNo){
-        
+
         $roleList = array();
         $staffRoles = AccountRole::where('accountNo', $staffNo)->get();
         foreach($staffRoles as $staffRole){
@@ -269,7 +269,6 @@ class ManagerController extends Controller
     {
         $managerApplications = array();
         //Check if there is any applications for the line manager
-        $applications = [];
 
         // get regular applications if the usual accountType of the user is not staff
         $account = Account::where('accountNo', $accountNo)->first();
@@ -278,33 +277,41 @@ class ManagerController extends Controller
             foreach ($users as $user) {
                 $userApps = Application::where('accountNo', $user->accountNo)->get();
                 foreach ($userApps as $app) {
-                    array_push($applications, $app);
-                }
-            }
-        
-            foreach ($applications as $application) {
-                // Add in applicant name for each application
-                if ($application['accountNo'] != null && $application['status'] != 'P') {
-                    // if application account number is not null, then applicant is a user
-                    $applicant = app(UserController::class)->getUser($application["accountNo"]);
-                    $application['applicantName'] = "{$applicant['fName']} {$applicant['lName']}";
-                    $nominations = app(NominationController::class)->getNominations($application["applicationNo"]);
-
+                    $applicant = app(UserController::class)->getUser($app["accountNo"]);
+                    $app['applicantName'] = "{$applicant['fName']} {$applicant['lName']}";
+                    $nominations = app(NominationController::class)->getNominations($app["applicationNo"]);
                     // check if is self nominated for all
                     if ($this->isSelfNominatedAll($nominations, $accountNo)) {
-                        $application['isSelfNominatedAll'] = true;
+                        $app['isSelfNominatedAll'] = true;
                     } else {
-                        $application["nominations"] = $nominations;
+                        $app["nominations"] = $nominations;
                     }
-                    array_push($managerApplications, $application);
+                    array_push($managerApplications, $app);
                 }
             }
-        }
+
+            // foreach ($applications as $application) {
+            //     // Add in applicant name for each application
+            //     if ($application['accountNo'] != null && $application['status'] != 'P') {
+            //         // if application account number is not null, then applicant is a user
+            //         $applicant = app(UserController::class)->getUser($application["accountNo"]);
+            //         $application['applicantName'] = "{$applicant['fName']} {$applicant['lName']}";
+            //         $nominations = app(NominationController::class)->getNominations($application["applicationNo"]);
+
+            //         // check if is self nominated for all
+            //         if ($this->isSelfNominatedAll($nominations, $accountNo)) {
+            //             $application['isSelfNominatedAll'] = true;
+            //         } else {
+            //             $application["nominations"] = $nominations;
+            //         }
+            //         array_push($managerApplications, $application);
+            //     }
+            }
 
         /* Get Applications from Temporary subordinates */
         // Get all ManagerNominations where the nomineeNo is the temporary manager
         $managerNominations = ManagerNomination::where('nomineeNo', $accountNo)->get();
-        
+
         // Iterate though manager nominations
         foreach ($managerNominations as $nomination) {
             $application = Application::where('applicationNo', $nomination->applicationNo)->first();
@@ -338,7 +345,7 @@ class ManagerController extends Controller
                 }
             }
         }
-        
+
         return response()->json($managerApplications);
     }
     public function getUCM(){
@@ -360,5 +367,10 @@ class ManagerController extends Controller
             array_push($allUnits, $course->courseId);
         }
         return $allUnits;
+    }
+
+    public function acceptApplication(WelcomeHash $hash)
+    {
+        dd($hash);
     }
 }

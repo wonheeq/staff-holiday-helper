@@ -14,7 +14,6 @@ export let useMessageStore = defineStore('messages', {
                 this.messages = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         }
