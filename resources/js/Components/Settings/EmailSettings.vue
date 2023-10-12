@@ -14,7 +14,7 @@ let errors = reactive([]);
 const options = {
     default: "Daily",
     all: [
-        // "Instantly",
+        "Instantly",
         "Hourly",
         "Twice a day",
         "Daily",
@@ -103,7 +103,7 @@ axios.post('/api/getEmailFrequency/', {
         </div>
         <div class="text-base 1080:lg 1440:text-xl 4k:text-2xl">
             <p>By default, you'll recieve an email once a day if you have unacknowledged messages.</p>
-            <!-- <p>Picking "Instantly" means you will immediately recieve emails for events, such as applications being accepted, or being nominated for a role.</p> -->
+            <p>Picking "Instantly" means you will immediately recieve emails for events, such as applications being accepted, or being nominated for a role.</p>
         </div>
         <div class="pt-8 pb-2 text-lg 1080:xl 1440:text-2xl 4k:text-4xl">
             <p >Email Frequency:</p>

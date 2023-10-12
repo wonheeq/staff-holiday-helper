@@ -20,13 +20,17 @@ class SendConfirmSubstitutions implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
+    protected $isUnsent;
+    protected $unsentId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data)
+    public function __construct($data, $isUnsent, $unsentId)
     {
         $this->data = $data;
+        $this->isUnsent = $isUnsent;
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -55,16 +59,22 @@ class SendConfirmSubstitutions implements ShouldQueue
             // Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-
             Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
             //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+
+            if ($this->isUnsent)
+            {
+                UnsentEmail::where('accountNo', $reciever->accountNo)
+                    ->where('subject', 'Confirmed Substitutions')
+                    ->where('id', $this->unsentId)->delete();
+            }
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
 
-            if ( !UnsentEmail::where('accountNo', $data[0])->where('subject', 'Confirmed Substitutions')->where('data', $encoded)->first() )
+            if ($this->isUnsent == false)
             {
                 // if error, encode data and create row
                 UnsentEmail::create([

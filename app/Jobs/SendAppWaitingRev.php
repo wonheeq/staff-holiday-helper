@@ -24,19 +24,16 @@ class SendAppWaitingRev implements ShouldQueue
 
     protected $data;
     protected $isUnsent;
-    protected $email;
+    protected $unsentId;
 
     /**
      * Create a new job instance.
      */
-    // public function __construct($data, $isUnsent)
-    public function __construct($email, $isUnsent)
-
+    public function __construct($data, $isUnsent, $unsentId)
     {
-        // $this->data = $data;
-        $this->$email = $email;
+        $this->data = $data;
         $this->isUnsent = $isUnsent;
-        $this->data = json_decode($email->data);
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -65,46 +62,33 @@ class SendAppWaitingRev implements ShouldQueue
                 'period' => $data[2][sizeof($data[2]) - 1], // last index
             ];
 
-            
-            // $this->sendEmail();
 
             // Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
             if ($this->isUnsent)
             {
-                $this->email->delete();
+                UnsentEmail::where('accountNo', $reciever->accountNo)
+                    ->where('subject', 'Application Awaiting Review')
+                    ->where('id', $this->unsentId)->delete();
             }
-            
-            // $this->sendEmail($dynamicData);
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
-            // Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
-
             if ($this->isUnsent == false)
             {
-                // if error, encode data and create row
-                UnsentEmail::create([
+                UnsentEmail::create([ // create one if not
                     'accountNo' => $data[0],
                     'subject' => 'Application Awaiting Review',
                     'data' => $encoded,
                 ]);
             }
-            else if($this->isUnsent == true)
-            {
-                // dd('elseif');
-
-                //
-            }
-            else{
-                dd('else');
-            }
         }
-        
+
     }
 }

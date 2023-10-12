@@ -17,6 +17,8 @@ use App\Models\ManagerNomination;
 use App\Http\Controllers\AccountController;
 use DateTime;
 use DateTimeZone;
+use Illuminate\support\Stringable;
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -52,7 +54,10 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $emailController = new EmailController();
             $emailController->attemptBacklog();
-        })->everyFifteenSeconds();
+        })->everyFifteenSeconds()
+        ->onFailure(function (Stringable $error){
+            Log::info($error);
+        });
 
 
         // check all unresponded nominations every day
@@ -68,11 +73,11 @@ class Kernel extends ConsoleKernel
 
 
 
-        // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
-        $schedule->call(function () {
-            $this->processManagerNominations();
-        })//->everyFifteenMinutes();
-        ->everyTenSeconds(); // Ten seconds for testing purposes
+        // // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
+        // $schedule->call(function () {
+        //     $this->processManagerNominations();
+        // })//->everyFifteenMinutes();
+        // ->everyTenSeconds(); // Ten seconds for testing purposes
     }
 
     // Gets all approved applications
@@ -131,7 +136,7 @@ class Kernel extends ConsoleKernel
             }
         }
     }
-    
+
     /*
     Sets the application's status to Expired
     Revokes the temporary line manager status from an account
@@ -169,7 +174,7 @@ class Kernel extends ConsoleKernel
 
             foreach ($messages as $message) {
                 $currentLineManager = app(AccountController::class)->getCurrentLineManager($message->senderNo);
-                
+
                 $createdTime = new DateTime();
                 $message->update([
                     // Change receiverNo to the current line manager

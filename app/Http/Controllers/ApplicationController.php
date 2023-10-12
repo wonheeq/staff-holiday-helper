@@ -23,7 +23,7 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         $applications = Application::orderBy('created_at', 'desc')->where('accountNo', $accountNo)->get();
@@ -63,10 +63,10 @@ class ApplicationController extends Controller
         // Check if user exists for given accountNo
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
- 
- 
+
+
         // Super admin can view all applications.
         if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {
             $applications = Application::get();
@@ -75,13 +75,13 @@ class ApplicationController extends Controller
             // Get schoolId of user
             $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
             //Log::info($schoolCode);
-           
-            $applications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')->select('applications.*')->where('schoolId', $schoolCode->schoolId)->get();          
+
+            $applications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')->select('applications.*')->where('schoolId', $schoolCode->schoolId)->get();
         }
-       
+
         return response()->json($applications);
     }
- 
+
     /*
     public function getAllApplications(Request $request)
     {
@@ -360,7 +360,7 @@ class ApplicationController extends Controller
                     if (!array_key_exists($old->nomineeNo, $removedNominations)) {
                         $removedNominations[$old->nomineeNo] = array();
                     }
-    
+
                     // Add to list of accountRoleIds the nominee was removed as a nominee for
                     array_push($removedNominations[$old->nomineeNo], $old->accountRoleId);
                 }
@@ -407,7 +407,7 @@ class ApplicationController extends Controller
                     if (!array_key_exists($old->nomineeNo, $removedManagerNominations)) {
                         $removedManagerNominations[$old->nomineeNo] = array();
                     }
-    
+
                     // Add to list of subordinateNos the nominee was removed as a manager for
                     array_push($removedManagerNominations[$old->nomineeNo], $old->subordinateNo);
                 }
@@ -483,7 +483,7 @@ class ApplicationController extends Controller
                 // assume that nominees in new nominations should receive as editedsubset
                 // unless they were a part of the deleted nominations in
                 // handleEditApplicationCancelledNominations
-                
+
                 // Check if nomineeNo can be found in $remainingOldNominations
                 foreach ($remainingOldNominations as $old) {
                     if ($new['accountRoleId'] == "MANAGER") { continue; }
@@ -519,7 +519,7 @@ class ApplicationController extends Controller
 
         $nomineesToSendAs_SubstitutionRequest = [];
         $nomineesToSendAs_EditedSubstitutionRequest = [];
-        
+
         // Iterate through new nomination data
         foreach ($newNominations as $new) {
             $newInOld = false;
@@ -568,7 +568,7 @@ class ApplicationController extends Controller
                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                         ]);
                     }
-                     
+
 
                     // Ensure applicant is not added to this array
                     if ($new['nomineeNo'] != $application->accountNo) {
@@ -592,7 +592,7 @@ class ApplicationController extends Controller
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                                         ]);
-    
+
                                         //Log::debug("B");
                                         array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                     }
@@ -614,7 +614,7 @@ class ApplicationController extends Controller
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                                         ]);
-    
+
                                         //Log::debug("B");
                                         array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                     }
@@ -628,7 +628,7 @@ class ApplicationController extends Controller
                     // leftovers
 
                     //  Log::debug("Leftovers");
-                    // Group under the eidted substiton request array IF all remaining old nominations not responded to 
+                    // Group under the eidted substiton request array IF all remaining old nominations not responded to
                     if ($new['accountRoleId'] != "MANAGER") {
                         foreach ($remainingOldNominations as $rem) {
                             if ($rem['nomineeNo'] == $new['nomineeNo'] && $rem['accountRoleId'] == $new['accountRoleId']) {
@@ -641,7 +641,7 @@ class ApplicationController extends Controller
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                                         ]);
-    
+
                                         array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                     }
                                 }
@@ -661,7 +661,7 @@ class ApplicationController extends Controller
                                             // status = 'Y' if self nominated, otherwise = 'U'
                                             'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                                         ]);
-    
+
                                         array_push($nomineesToSendAs_EditedSubstitutionRequest, $new['nomineeNo']);
                                     }
                                 }
@@ -712,7 +712,7 @@ class ApplicationController extends Controller
                         'status' => $new['nomineeNo'] == $application->accountNo ? 'Y' : 'U',
                     ]);
                 }
-               
+
 
                 // Ensure applicant is not added to these arrays
                 if ($new['nomineeNo'] != $application->accountNo) {
@@ -819,7 +819,7 @@ class ApplicationController extends Controller
             return response()->json('Account does not exist.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth"); 
+        date_default_timezone_set("Australia/Perth");
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
@@ -947,7 +947,7 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         $application = Application::where('applicationNo', $applicationNo, "and")
@@ -956,10 +956,10 @@ class ApplicationController extends Controller
         // Check if application exists and belongs to the user
         if (!$application) {
             // Application does not exist or does not belong to accountNo, return exception
-            return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
+            return response()->json('Application does not exist or does not belong to account.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth"); 
+        date_default_timezone_set("Australia/Perth");
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
@@ -1058,32 +1058,32 @@ class ApplicationController extends Controller
         $account = Account::where('accountNo', $accountNo)->first();
         if (!$account) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         $application = Application::where('applicationNo', $applicationNo, "and")->first();
 
         // Check that the application exists for the given applicationNo
         if (!$application) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+            return response()->json('Application does not exist.', 500);
         }
 
         // Check that the application status is Undecided
         if ($application->status != 'U') {
-            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
+            return response()->json('Application cannot be reviewed - nominee responses outstanding.', 500);
         }
 
         // Check if applicant exists for given application
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Applicant does not exist.'], 500);
+            return response()->json('Applicant does not exist.', 500);
         }
 
         // Check if the user is the superior or substitute superior of the account
         $substituteManager = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
         if ($accountNo != $substituteManager->accountNo && $accountNo != $applicant->superiorNo) {
-            return response()->json(['error' => 'Invalid permissions to review application'], 500);
+            return response()->json('Invalid permissions to review application', 500);
         }
 
         $nominationsRaw = [];
@@ -1158,33 +1158,33 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $superiorNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         // Check if application exists for the given applicationNo
         $application = Application::where('applicationNo', $applicationNo)->first();
         if (!$application) {
 
-            return response()->json(['error' => 'Application does not exist.'], 500);
+            return response()->json('Application does not exist.', 500);
         }
 
         // Check that the application status is Undecided
         if ($application->status != 'U') {
 
-            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
+            return response()->json('Application cannot be reviewed - nominee responses outstanding.', 500);
         }
 
         // Check if applicant exists
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
 
-            return response()->json(['error' => 'Applicant does not exist.'], 500);
+            return response()->json('Applicant does not exist.', 500);
         }
 
         // Check if the applicant's superior or expected substitute is the given superiorNo
         $expectedSubstitute = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
         if ($superiorNo != $applicant->superiorNo && $superiorNo != $expectedSubstitute->accountNo) {
-            return response()->json(['error' => 'Account is not the superior of applicant.'], 500);
+            return response()->json('Account is not the superior of applicant.', 500);
         }
 
         // // Confirm that all nominees agreed
@@ -1232,35 +1232,35 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $superiorNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         // Check if application exists for hte given applicationNo
         $application = Application::where('applicationNo', $applicationNo)->first();
         if (!$application) {
-            return response()->json(['error' => 'Application does not exist.'], 500);
+            return response()->json('Application does not exist.', 500);
         }
 
         // Check that the application status is Undecided
         if ($application->status != 'U') {
-            return response()->json(['error' => 'Application cannot be reviewed - nominee responses outstanding.'], 500);
+            return response()->json('Application cannot be reviewed - nominee responses outstanding.', 500);
         }
 
         // Check if the superior is the superior of the applicant
         $applicant = Account::where('accountNo', $application->accountNo)->first();
         if (!$applicant) {
-            return response()->json(['error' => 'Applicant does not exist.'], 500);
+            return response()->json('Applicant does not exist.', 500);
         }
 
         // Check if the applicant's superior or expected substitute is the given superiorNo
         $expectedSubstitute = app(AccountController::class)->getCurrentLineManager($applicant->accountNo);
         if ($superiorNo != $applicant->superiorNo && $superiorNo != $expectedSubstitute->accountNo) {
-            return response()->json(['error' => 'Account is not the superior of applicant.'], 500);
+            return response()->json('Account is not the superior of applicant.', 500);
         }
 
         // Confirm that reject reason is not null or empty
         if ($rejectReason == null || $rejectReason == "") {
-            return response()->json(['error' => 'Reject message cannot be empty.'], 500);
+            return response()->json('Reject message cannot be empty.', 500);
         }
 
         // set application status to 'N'
