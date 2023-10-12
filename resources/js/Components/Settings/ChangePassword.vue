@@ -197,7 +197,6 @@ function back() {
                 <div class="flex items-center h-full w-full">
                     <input v-model="password.confirm"
                         @submit.prevent
-                        @keypress.enter.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
                         :class="isDark?'bg-black':''"
                         :type="fieldType.confirm.type"
@@ -218,13 +217,7 @@ function back() {
                     </li>
                 </ul>
             </div>
-            <!-- <div class="w-full pt-2 1440:pt-4" v-show="errors.length > 0">
-                <p class="text-xs 1440:text-base 4k:text-xl text-red-500 w-full text-center"
-                    v-for="msg in errors"
-                >
-                    {{ msg }}
-                </p>
-            </div> -->
+            
             <button class="w-full rounded py-2 1440:py-4 4k:py-6 mt-2 1440:mt-4 font-bold text-lg 1440:text-2xl 4k:text-4xl"
                 :class="{
                     'bg-blue-300': buttonActive && !isDark,
@@ -233,6 +226,7 @@ function back() {
                     'bg-gray-900 text-white': !buttonActive && isDark,
                 }"
                 :disabled="!buttonActive"
+                type="submit"
                 @click="handleChangePassword"
             >
                 Change Password
