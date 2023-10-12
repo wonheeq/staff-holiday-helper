@@ -947,7 +947,7 @@ class ApplicationController extends Controller
         // Check if user exists for given user id
         if (!Account::where('accountNo', $accountNo)->first()) {
             // User does not exist, return exception
-            return response()->json(['error' => 'Account does not exist.'], 500);
+            return response()->json('Account does not exist.', 500);
         }
 
         $application = Application::where('applicationNo', $applicationNo, "and")
@@ -956,7 +956,7 @@ class ApplicationController extends Controller
         // Check if application exists and belongs to the user
         if (!$application) {
             // Application does not exist or does not belong to accountNo, return exception
-            return response()->json(['error' => 'Application does not exist or does not belong to account.'], 500);
+            return response()->json('Application does not exist or does not belong to account.', 500);
         }
 
         date_default_timezone_set("Australia/Perth"); 
