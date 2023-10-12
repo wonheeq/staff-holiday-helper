@@ -3,6 +3,12 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\NominationController;
+use App\Http\Controllers\AccountController;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Account;
+use App\Models\Application as ModelApplication;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,6 +19,13 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Middleware\EnsureUserIsManager;
 use App\Http\Controllers\MessageController;
 use App\Models\WelcomeHash;
+use App\Models\ApplicationReviewHash;
+use App\Models\NewNominationsHash;
+use App\Models\EditedNominationsHash;
+use App\Models\Nomination;
+use App\Models\Message;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +58,6 @@ Route::get('/set-password/{hash}', function ($hash) {
     }
 
     return redirect("/login");
-
 
 });
 
@@ -84,6 +96,145 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
             'activeScreen' => 'subs'
         ]);
     });
+
+
+    Route::get('rejectNewNominations/{hash}/{appNo}', function ($hash, $appNo) {
+        $newNomsHash = NewNominationsHash::where('hash', $hash)->first();
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+
+        if( $newNomsHash) {
+            // check if message exists
+            $message = Message::where('receiverNo', $newNomsHash->accountNo)
+            ->where('senderNo', $app->accountNo)
+            ->where('subject', "Substitution Request")->first();
+
+            if (!$message) {
+                return redirect("/home")->with([
+                    'customError' => "Already responded to nomination/s"
+                ]);
+            }
+            $request = new Request([
+                'accountNo' => $newNomsHash->accountNo,
+                'messageId' => $message->messageId,
+                'applicationNo' => $appNo,
+            ]);
+            app(NominationController::class)->rejectNominations($request);
+            return redirect("/home")->with([
+                'successMessage' => "Successfully rejected nominations"
+            ]);
+        }
+
+        return redirect("/home");
+    });
+
+    Route::get('acceptNewNominations/{hash}/{appNo}', function ($hash, $appNo) {
+        $newNomsHash = NewNominationsHash::where('hash', $hash)->first();
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+
+        if( $newNomsHash) {
+            // check if message exists
+            $message = Message::where('receiverNo', $newNomsHash->accountNo)
+            ->where('senderNo', $app->accountNo)
+            ->where('subject', "Substitution Request")->first();
+
+            if (!$message) {
+                return redirect("/home")->with([
+                    'customError' => "Already responded to nomination/s"
+                ]);
+            }
+            $request = new Request([
+                'accountNo' => $newNomsHash->accountNo,
+                'messageId' => $message->messageId,
+                'applicationNo' => $appNo,
+            ]);
+            app(NominationController::class)->acceptNominations($request);
+            return redirect("/home")->with([
+                'successMessage' => "Successfully accepted nominations"
+            ]);
+        }
+
+        return redirect("/home");
+    });
+
+    Route::get('acceptEditedNominations/{hash}/{appNo}', function ($hash, $appNo) {
+        $editedNomsHash = EditedNominationsHash::where('hash', $hash)->first();
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+
+        if( $editedNomsHash) {
+            // check if message exists
+            $message = Message::where('receiverNo', $editedNomsHash->accountNo)
+            ->where('senderNo', $app->accountNo)
+            ->where('subject', "Substitution Request")->first();
+
+            if (!$message) {
+                return redirect("/home")->with([
+                    'customError' => "Already responded to nomination/s"
+                ]);
+            }
+            $request = new Request([
+                'accountNo' => $editedNomsHash->accountNo,
+                'messageId' => $message->messageId,
+                'applicationNo' => $appNo,
+            ]);
+            app(NominationController::class)->acceptNominations($request);
+            return redirect("/home")->with([
+                'successMessage' => "Successfully accepted nominations"
+            ]);
+        }
+
+        return redirect("/home");
+    });
+
+    Route::get('rejectEditedNominations/{hash}/{appNo}', function ($hash, $appNo) {
+        $editedNomsHash = EditedNominationsHash::where('hash', $hash)->first();
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+
+        if( $editedNomsHash) {
+            // check if message exists
+            $message = Message::where('receiverNo', $editedNomsHash->accountNo)
+            ->where('senderNo', $app->accountNo)
+            ->where('subject', "Substitution Request")->first();
+
+            if (!$message) {
+                return redirect("/home")->with([
+                    'customError' => "Already responded to nomination/s"
+                ]);
+            }
+            $request = new Request([
+                'accountNo' => $editedNomsHash->accountNo,
+                'messageId' => $message->messageId,
+                'applicationNo' => $appNo,
+            ]);
+            app(NominationController::class)->rejectNominations($request);
+            return redirect("/home")->with([
+                'successMessage' => "Successfully rejected nominations"
+            ]);
+        }
+
+        return redirect("/home");
+    });
+
+    Route::get('reviewNominations/{appNo}', function ($appNo) {
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+        $creator = Account::where('accountNo', $app->accountNo)->first();
+        $user = Auth::user();
+        $noms = Nomination::where('applicationNo', $appNo)
+        ->where('nomineeNo', $user->accountNo)->get();
+
+        if( count($noms) > 0 )
+        {
+            return redirect("/home")->with([
+                'nomsToReview' => $appNo,
+            ]);
+        }
+        else
+        {
+            return redirect("/home")->with([
+                'customError' => 'Not authorised to review these nominations'
+            ]);
+
+        }
+    });
 });
 
 
@@ -107,6 +258,43 @@ Route::middleware(['auth:sanctum', 'lmanager', 'web'])->group(function () {
         return Inertia::render('Manager', [
             'activeScreen' => 'manage'
         ]);
+    });
+
+    Route::get('reviewApplication/{appNo}', function ($appNo) {
+        $app = ModelApplication::where('applicationNo', $appNo)->first();
+        $creator = Account::where('accountNo', $app->accountNo)->first();
+        $lineManager = app(AccountController::class)->getCurrentLineManager($creator->accountNo);
+        $user = Auth::user();
+        if( $user->accountNo == $lineManager->accountNo)
+        {
+            return redirect("/home")->with([
+                'appToReview' => $appNo,
+            ]);
+        }
+        else
+        {
+            return redirect("/home")->with([
+                'customError' => 'Not authorised to review this application'
+            ]);
+
+        }
+    });
+
+
+    Route::get('acceptApplication/{hash}/{appNo}', function ($hash, $appNo) {
+        $appReviewHash = ApplicationReviewHash::where('hash', $hash)->first();
+        if( $appReviewHash) {
+            $request = new Request([
+                'accountNo' => $appReviewHash->accountNo,
+                'applicationNo' => $appNo,
+            ]);
+            app(ApplicationController::class)->acceptApplication($request);
+            return redirect("/home")->with([
+                'successMessage' => "Successfully approved application"
+            ]);
+        }
+
+        return redirect("/home");
     });
 });
 

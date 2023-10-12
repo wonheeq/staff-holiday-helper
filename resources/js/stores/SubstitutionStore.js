@@ -13,7 +13,6 @@ export let useSubstitutionStore = defineStore('substitutions', {
                 this.substitutions = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         }

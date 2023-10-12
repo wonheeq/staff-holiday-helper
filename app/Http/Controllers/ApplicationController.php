@@ -8,6 +8,7 @@ use App\Models\Nomination;
 use App\Models\Account;
 use App\Models\Message;
 use App\Models\ManagerNomination;
+use App\Models\ApplicationReviewHash;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Log;
@@ -799,7 +800,8 @@ class ApplicationController extends Controller
         }
         if (count($nomineesToSendAs_SubstitutionRequest) > 0) {
             //Log::debug("SENT Substition Request messages");
-            app(MessageController::class)->notifyNomineeApplicationEdited_NewNominee($applicationNo, $nomineesToSendAs_SubstitutionRequest);
+            // app(MessageController::class)->notifyNomineeApplicationEdited_NewNominee($applicationNo, $nomineesToSendAs_SubstitutionRequest);
+            app(MessageController::class)->notifyNomineeApplicationCreatedSpecific($applicationNo, $nomineesToSendAs_SubstitutionRequest);
         }
     }
 
@@ -1216,6 +1218,8 @@ class ApplicationController extends Controller
         // Message nominees that the application was approved.
         app(MessageController::class)->notifyNomineesApplicationApproved($applicationNo);
 
+        ApplicationReviewHash::where('accountNo', $superiorNo)->delete();
+
         return response()->json(['success' => 'success'], 200);
     }
 
@@ -1280,6 +1284,8 @@ class ApplicationController extends Controller
 
         // Message applicant that their application was approved.
         app(MessageController::class)->notifyApplicantApplicationDecision($superiorNo, $applicationNo, false, $rejectReason);
+
+        ApplicationReviewHash::where('accountNo', $superiorNo)->delete();
 
         return response()->json(['success' => 'success'], 200);
     }

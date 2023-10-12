@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\EmailController;
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendConfirmSubstitutions;
@@ -361,7 +361,9 @@ class EmailTest extends TestCase
             'applicantId' => 'message2',
             'applicantName' => 'Pan',
             'application' => ['role1', 'role2'],
-            'period' => 'test'
+            'period' => 'test',
+            'acceptLink'=>'',
+            'viewLink'=>''
         ];
         $mailable = new MJML("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData);
         Mail::to('testEmail@gmail.com')->send($mailable);
@@ -450,7 +452,7 @@ class EmailTest extends TestCase
             'messageOne' => 'message1',
             'roles' => ['role1', 'role2'],
             'messageTwo' => 'message2',
-            'period' => 'test'
+            'period' => 'test',
         ];
         $mailable = new MJML("Nomination/s Cancelled", "email/nomination_sCancelled", $dynamicData);
         Mail::to('testEmail@gmail.com')->send($mailable);
@@ -472,7 +474,10 @@ class EmailTest extends TestCase
             'name' => 'Peter',
             'message' => 'message',
             'roles' => ['role1', 'role2'],
-            'period' => 'test'
+            'period' => 'test',
+            'acceptLink'=>'',
+            'rejectLink'=>'',
+            'acceptSomeLink'=>''
         ];
         $mailable = new MJML("New Nominations", "email/nomination", $dynamicData);
         Mail::to('testEmail@gmail.com')->send($mailable);
@@ -540,7 +545,10 @@ class EmailTest extends TestCase
             'name' => 'Peter',
             'messageOne' => 'message',
             'roles' => ['role1', 'role2'],
-            'duration' => 'test'
+            'duration' => 'test',
+            'acceptLink'=>'',
+            'rejectLink'=>'',
+            'acceptSomeLink'=>''
         ];
         $mailable = new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData);
         Mail::to('testEmail@gmail.com')->send($mailable);
@@ -628,7 +636,7 @@ class EmailTest extends TestCase
     // {
     //     Queue::fake();
     //     app(EmailController::class)->sortMail($this->emails[2]);
-    //     Queue::assertPushed(SendAppCanceledManager::class);
+    //     Queue::assertPushed(SendAppCancelledManager::class);
     // }
 
     // public function test_handle_NominationCancelled(): void

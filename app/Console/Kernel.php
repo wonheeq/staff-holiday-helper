@@ -73,10 +73,10 @@ class Kernel extends ConsoleKernel
 
 
 
-        // // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
-        // $schedule->call(function () {
-        //     $this->processManagerNominations();
-        // })//->everyFifteenMinutes();
+        // Checks manager nominations every 15 minutes (15 minutes seems like the most reasonable balance between too frequent and not frequent enough)
+        $schedule->call(function () {
+            $this->processManagerNominations();
+        })->everyFifteenMinutes();
         // ->everyTenSeconds(); // Ten seconds for testing purposes
     }
 

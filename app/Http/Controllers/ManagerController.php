@@ -168,7 +168,7 @@ class ManagerController extends Controller
                                         return response()->json(['success' => 'success'], 200);
                     }
             }
-        } 
+        }
         //Check if it is a course, then remove
         if((AccountRole::where('accountNo', $staffNo, "and")
         ->where('courseId', $unitCode)->get()) && $roleName == 'Course Coordinator'){
@@ -184,7 +184,7 @@ class ManagerController extends Controller
                     }
             }
         }
-        return response()->json(['error' => 'Role for the unit does not exist.'], 500); 
+        return response()->json(['error' => 'Role for the unit does not exist.'], 500);
     }
     /**
      * Get all staff members under a particular line manger
@@ -213,7 +213,7 @@ class ManagerController extends Controller
         /* Get Temporary subordinates */
         // Get all ManagerNominations where the superiorNo is the temporary manager
         $managerNominations = ManagerNomination::where('nomineeNo', $superiorNo)->get();
-        
+
         // Iterate though manager nominations
         foreach ($managerNominations as $nomination) {
             $application = Application::where('applicationNo', $nomination->applicationNo)->first();
@@ -252,7 +252,7 @@ class ManagerController extends Controller
         return response()->json($staff);
     }
     public function getRolesForStaffs(Request $request, String $staffNo){
-        
+
         $roleList = array();
         $staffRoles = AccountRole::where('accountNo', $staffNo)->get();
         foreach($staffRoles as $staffRole){
@@ -289,7 +289,7 @@ class ManagerController extends Controller
                     array_push($managerApplications, $app);
                 }
             }
-        
+
             // foreach ($applications as $application) {
             //     // Add in applicant name for each application
             //     if ($application['accountNo'] != null && $application['status'] != 'P') {
@@ -311,7 +311,7 @@ class ManagerController extends Controller
         /* Get Applications from Temporary subordinates */
         // Get all ManagerNominations where the nomineeNo is the temporary manager
         $managerNominations = ManagerNomination::where('nomineeNo', $accountNo)->get();
-        
+
         // Iterate though manager nominations
         foreach ($managerNominations as $nomination) {
             $application = Application::where('applicationNo', $nomination->applicationNo)->first();
@@ -345,7 +345,7 @@ class ManagerController extends Controller
                 }
             }
         }
-        
+
         return response()->json($managerApplications);
     }
     public function getUCM(){
@@ -367,5 +367,10 @@ class ManagerController extends Controller
             array_push($allUnits, $course->courseId);
         }
         return $allUnits;
+    }
+
+    public function acceptApplication(WelcomeHash $hash)
+    {
+        dd($hash);
     }
 }

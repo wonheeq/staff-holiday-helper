@@ -10,9 +10,11 @@ use App\Models\Application;
 use App\Models\Nomination;
 use App\Models\AccountRole;
 use App\Models\Message;
+use App\Models\EmailPreference;
 use App\Http\Controllers\ApplicationController;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+
 
 class Kernel_ProcessManagerNominationsTest extends TestCase
 {
@@ -48,6 +50,11 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
             'superiorNo' => $this->manager->accountNo,
         ]);
 
+        EmailPreference::factory()->create(['accountNo' => $this->admin->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->manager->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->tempManager->accountNo]);
+        EmailPreference::factory()->create(['accountNo' => $this->staff->accountNo]);
+
         // Create AccountRoles for staff account
         $this->accountRoles = [];
         for ($i = 0; $i < 3; $i++) {
@@ -70,7 +77,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
             ->delete();
             $accountRole->delete();
         }
-        
+
         // Iterate through applications array
         foreach ($this->applications as $application) {
             // Delete ManagerNominations with the applicationNo
@@ -88,6 +95,12 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
         Message::where('senderNo', $this->manager->accountNo)->delete();
 
         Application::where('accountNo', $this->staff->accountNo)->delete();
+
+
+        EmailPreference::where('accountNo', $this->admin->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->manager->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->tempManager->accountNo)->delete();
+        EmailPreference::where('accountNo', $this->staff->accountNo)->delete();
 
         // Delete accounts
         $this->staff->delete();
@@ -226,7 +239,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
 
         /* The tempManager account has successfully been promoted */
         /* Now we create a fully self nominated application from the staff account */
-        
+
         $response = $this->actingAs($this->staff)->postJson("/api/createApplication", [
             'accountNo' => $this->staff->accountNo,
             'selfNominateAll' => true,
@@ -285,7 +298,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
 
         /* The tempManager account has successfully been promoted */
         /* Now we create a fully self nominated application from the staff account */
-        
+
         $response = $this->actingAs($this->staff)->postJson("/api/createApplication", [
             'accountNo' => $this->staff->accountNo,
             'selfNominateAll' => true,
@@ -359,7 +372,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
 
         /* The tempManager account has successfully been promoted */
         /* Now we create a fully self nominated application from the staff account */
-        
+
         $response = $this->actingAs($this->staff)->postJson("/api/createApplication", [
             'accountNo' => $this->staff->accountNo,
             'selfNominateAll' => true,
@@ -434,7 +447,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
 
         /* The tempManager account has successfully been promoted */
         /* Now we create a fully self nominated application from the staff account */
-        
+
         $response = $this->actingAs($this->staff)->postJson("/api/createApplication", [
             'accountNo' => $this->staff->accountNo,
             'selfNominateAll' => true,
@@ -477,10 +490,10 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
         // After we call processManagerNominations on the now expired application,
         // the application's status should be set to 'E'
         $this->assertTrue(Application::where('applicationNo', $application->applicationNo)->first()->status == 'E');
-  
+
         // The tempManager should no longer have the "Application Awaiting Review" message from the staff account
         $this->assertTrue(count(Message::where('receiverNo', $this->tempManager->accountNo)->where('subject', 'Application Awaiting Review')->where('senderNo', $this->staff->accountNo)->get())==0);
- 
+
         // The "Application Awaiting Review" message from the staff account should now be back with the original manager
         $this->assertTrue(count(Message::where('receiverNo', $this->manager->accountNo)->where('subject', 'Application Awaiting Review')->where('senderNo', $this->staff->accountNo)->get())==1);
     }

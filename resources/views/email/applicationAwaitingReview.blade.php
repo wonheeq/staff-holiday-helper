@@ -50,11 +50,16 @@
               {{ $dynamicData['period'] }}
             </mj-text>
 
-            <mj-text color="#637381" font-size="16px">
-                To accept or reject this application, please log in to LeaveOnTime by pressing the button below or following the link at the end of this email.
+            <mj-button background-color="#00A611" color="#ffffff" font-size="16px" font-weight="bold"  href="{{ $dynamicData['acceptLink'] }}" width="240px">
+            Accept Application
+          </mj-button>
+
+
+            <mj-text color="#637381" align="center" font-size="16px">
+                To reject, you can view the application in the app with the link below.
             </mj-text>
 
-            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="https://leaveontime.cyber.curtin.io" width="240px" padding-bottom="30px" padding-top="30px">
+            <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="{{ $dynamicData['viewLink'] }}" width="240px" padding-bottom="30px" padding-top="30px">
                 View in App
             </mj-button>
 

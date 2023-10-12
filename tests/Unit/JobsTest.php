@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Jobs\EmailExceptionTestJob;
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendConfirmSubstitutions;
@@ -43,13 +43,13 @@ class JobsTest extends TestCase
     }
 
 
-    // public function test_SendAppCanceledManager_sends(): void
+    // public function test_SendAppCancelledManager_sends(): void
     // {
     //     Mail::fake();
     //     Mail::assertNothingQueued();
     //     $content = ["test string", "test string",];
     //     $data = [$this->adminUser->accountNo, $content, $this->user->accountNo,];
-    //     $job = new SendAppCanceledManager($data);
+    //     $job = new SendAppCancelledManager($data);
     //     $job->handle();
     //     Mail::assertQueuedCount(1);
     // }

@@ -16,7 +16,6 @@ export let useApplicationStore = defineStore('applications', {
                 this.applications = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         },

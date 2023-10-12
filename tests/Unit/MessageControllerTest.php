@@ -8,7 +8,7 @@ use App\Models\Message;
 use App\Notifications\NewMessages;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\MessageController;
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendConfirmSubstitutions;
 use App\Jobs\SendNominationCancelled;

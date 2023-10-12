@@ -61,7 +61,7 @@ function submitResponses() {
         'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
         'responses': responses
-    };   
+    };
 
     axios.post('/api/acceptSomeNominations', data)
         .then(res => {
@@ -74,8 +74,11 @@ function submitResponses() {
                 console.log(res);
             }
             else {
-                props.data.acknowledged = 1;
-                props.data.updated_at = new Date();
+                if (props.data.acknowledged != null) {
+
+                    props.data.acknowledged = 1;
+                    props.data.updated_at = new Date();
+                }
                 fetchMessages(user.value.accountNo);
                 Swal.fire({
                     icon: "success",
@@ -89,6 +92,7 @@ function submitResponses() {
         Swal.fire({
             icon: "error",
             title: 'Failed to respond to nominations, please try again.',
+            text: err.response.data['error']
         });
     });
 }
@@ -105,7 +109,7 @@ function handleClose() {
         <div class="flex h-[10%] items-center justify-between">
             <p class="text-xl font-bold" :class="isDark?'text-white':''">
                 <!-- Filter for content element that contains 'Duration' and get the first element
-                    Assumes that there is Duration in one of the content elements    
+                    Assumes that there is Duration in one of the content elements
                 -->
                 {{ props.data.content && JSON.parse(props.data.content).filter(content => content.includes('Duration:'))[0] }}
             </p>
@@ -161,7 +165,7 @@ function handleClose() {
         <div class="flex h-[10%] items-center justify-between">
             <p class="text-2xl 1080:text-3xl 4k:text-5xl font-bold" :class="isDark?'text-white':''">
                 <!-- Filter for content element that contains 'Duration' and get the first element
-                    Assumes that there is Duration in one of the content elements    
+                    Assumes that there is Duration in one of the content elements
                 -->
                 {{ props.data.content && JSON.parse(props.data.content).filter(content => content.includes('Duration:'))[0] }}
             </p>
@@ -222,7 +226,7 @@ function handleClose() {
     width: auto;
 }
 /* laptop */
-@media 
+@media
 (min-width: 1360) {
     .close-button {
         height: 50px;
@@ -230,7 +234,7 @@ function handleClose() {
     }
 }
 /* 1080p */
-@media 
+@media
 (min-width: 1920px) {
     .close-button {
         height: 70px;
@@ -238,7 +242,7 @@ function handleClose() {
     }
 }
 /* 1440p */
-@media 
+@media
 (min-width: 2560px) {
     .close-button {
         height: 80px;
@@ -246,7 +250,7 @@ function handleClose() {
     }
 }
 /* 2160p */
-@media 
+@media
 (min-width: 3840px) {
     .close-button {
         height: 110px;
