@@ -14,6 +14,7 @@ let props = defineProps({
 });
 
 let emit = defineEmits(['nominationSelected']);
+const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
     <div v-if="isMobile" class="flex mb-2.5 mt-2.5 w-full">
