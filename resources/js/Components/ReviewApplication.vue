@@ -194,7 +194,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                 <p class="text-sm h-[20%]pb-8" :class="isDark?'text-white':''"> 
                     Select Reject Reason or Enter Custom Message:
                 </p>
-                <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2 text-xs" :class="isDark?'text-white bg-gray-800':''"/>
+                <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2 text-xs  mb-1" :class="isDark?'text-white bg-gray-800':''"/>
                 <vSelect :options="options" :clearable="false" :class="isDark ? 'dropdown-dark':''"
                     style="width: 100%; height: 2rem; background-color: white;
                     font-size: 10px; 
@@ -266,7 +266,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                 <p class="h-[20%] text-lg 1080:text-xl 4k:text-2xl pb-8" :class="isDark?'text-white':''">
                     Select Reject Reason or Enter Custom Message:
                 </p>
-                <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2" :class="isDark?'text-white bg-gray-800':''"/>
+                <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2 mb-2" :class="isDark?'text-white bg-gray-800':''"/>
                 <vSelect :options="options" :clearable="false" :class="isDark ? 'dropdown-dark':''"
                     style="width: 100%; height: 2rem; background-color: white; 
                     border: solid; border-color: #6b7280; border-width: 1px;
