@@ -3,13 +3,13 @@ import { storeToRefs } from 'pinia';
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 let props = defineProps({ source: Object });
 let emit = defineEmits(['editRoles']);
 </script>
 <template>
-    <div v-if="isMobile" class="text-sm" :class="isDark?'bg-gray-800':'bg-white'" >
+    <div v-if="$isMobile()" class="text-sm" :class="isDark?'bg-gray-800':'bg-white'" >
         <div>
             <p class="staff-text"><strong>Name: </strong>{{ source.fName }} {{ source.lName }}</p>
         </div>

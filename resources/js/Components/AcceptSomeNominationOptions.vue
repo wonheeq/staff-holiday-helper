@@ -4,7 +4,7 @@ import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 
 let status = ref('U');
@@ -39,7 +39,7 @@ function buttonClass(isAccept) {
 }
 </script>
 <template>
-    <div v-if="isMobile" class="space-y-2">
+    <div v-if="$isMobile()" class="space-y-2">
         <button class="rounded-md border w-full border-black p-1 px-2"
             :class="buttonClass(true)"
             @click="status = 'Y'; emit('statusUpdated', status)"

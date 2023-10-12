@@ -15,7 +15,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let emit = defineEmits(['close']);
@@ -101,7 +101,7 @@ function handleClose() {
 </script>
 <template>
 <Modal>
-    <div v-if="isMobile" class="h-fit rounded-md p-2 mx-2" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="$isMobile()" class="h-fit rounded-md p-2 mx-2" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="flex h-[10%] items-center justify-between">
             <p class="text-xl font-bold" :class="isDark?'text-white':''">
                 <!-- Filter for content element that contains 'Duration' and get the first element

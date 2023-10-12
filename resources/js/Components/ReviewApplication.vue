@@ -12,7 +12,7 @@ import { usePage } from '@inertiajs/vue3'
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -140,7 +140,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
 
 <template>
     <Modal>
-        <div class="w-4/5 h-3/5 fixed rounded-md p-3" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && isMobile">
+        <div class="w-4/5 h-3/5 fixed rounded-md p-3" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && $isMobile()">
             <div class="flex h-[10%] items-center justify-between" :class="isDark?'text-white':''">
                 <p class="text-s font-bold">
                     Reviewing Application by {{ props.data.applicantName }}
@@ -215,7 +215,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                 </button>
             </div>
         </div>
-        <div class="w-3/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && !isMobile">
+        <div class="w-3/5 1080:w-1/2 1440:w-2/6 h-[32rem] 1080:h-[48rem] rounded-md p-4" :class="isDark?'bg-gray-800':'bg-white'" v-if="props.data && !$isMobile()">
             <div class="flex h-[10%] items-center justify-between" :class="isDark?'text-white':''">
                 <p class="text-lg laptop:text-base 1080:text-3xl 1440:text-2xl 4k:text-4xl font-bold" :class="isDark?'text-white':''">
                     Reviewing Application by {{ props.data.applicantName }}

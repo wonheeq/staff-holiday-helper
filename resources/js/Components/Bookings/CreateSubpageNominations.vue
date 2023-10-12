@@ -13,7 +13,7 @@ import { usePage } from '@inertiajs/vue3';
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -187,7 +187,7 @@ function submitApplication() {
 const disabledClass = "bg-gray-300 border-gray-100";
 </script>
 <template>
-    <div v-if="isMobile && dataReady" class="flex flex-col w-full justify-between">
+    <div v-if="$isMobile() && dataReady" class="flex flex-col w-full justify-between">
         <div class="flex flex-col w-full">
             <p class="text-lg 1080:text-2xl 1440:text-4xl 4k:text-5xl">
                 Nominate Substitutes:

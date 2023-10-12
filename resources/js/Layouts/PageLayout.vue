@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const { updateWidth } = screenSizeStore;
 onMounted(() => {
     window.onresize = () => {
@@ -17,7 +17,7 @@ onMounted(() => {
 
 </script>
 <template>
-<main :class="isMobile ? isDark?'bg-mobile-dark':'bg-mobile' : isDark?'bg-desktop-dark scrollbar-dark':'bg-desktop'">
+<main :class="$isMobile() ? isDark?'bg-mobile-dark':'bg-mobile' : isDark?'bg-desktop-dark scrollbar-dark':'bg-desktop'">
     <slot/>
 </main>
 </template>
