@@ -45,6 +45,8 @@ Route::get('/set-password/{hash}', function ($hash) {
     }
 
     return redirect("/login");
+
+
 });
 
 
