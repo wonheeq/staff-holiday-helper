@@ -1,7 +1,7 @@
 <mjml>
     <mj-head>
       <mj-title>AppEditedSubset</mj-title>
-      <mj-preview>Application Edited</mj-preview>
+      <mj-preview>Application Edited (Subset)</mj-preview>
       <mj-attributes>
         <mj-all font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-all>
         <mj-text font-weight="400" font-size="16px" color="#000000" line-height="24px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-text>
@@ -22,7 +22,7 @@
           </mj-column>
           <mj-column vertical-align="middle" width="80%" background-color="#FFFFFF">
             <mj-text color="#212b35" font-weight="bold" font-size="20px" align="center">
-              Nomination Update
+              Nomination Update (Subset)
             </mj-text>
             <mj-text color="#637381" font-size="16px">
               Hi {{ $dynamicData['name'] }},
