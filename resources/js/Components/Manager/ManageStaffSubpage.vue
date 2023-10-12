@@ -20,7 +20,7 @@ let staffStore = useStaffStore();
 const { staffValue, searchStaff, allUnits} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 onMounted(() => {
     fetchStaffMembers(user.value.accountNo);
 });
@@ -37,7 +37,7 @@ let deadAreaColor = computed(() => {
 });
 </script>
 <template>
-    <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="$isMobile()" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
             <p class="font-bold text-2xl ">
                 Your Staff Members:

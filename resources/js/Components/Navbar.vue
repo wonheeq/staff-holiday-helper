@@ -10,7 +10,7 @@ const user = computed(() => page.props.auth.user);
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 
 let emit = defineEmits(['open-settings', 'log-out']);
 let options = {
@@ -76,7 +76,7 @@ function shouldDisplayOption(minPerm) {
     <div class="flex flex-row justify-between border-2 rounded-md drop-shadow-md" :class="isDark?'bg-gray-800 border-gray-700':'bg-white'">
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
             <img src="/images/logo.svg" class="logo mr-2" :class="isDark ? 'darkModeImage':''"/>
-            <div v-if="!isMobile" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
+            <div v-if="!$isMobile()" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
                     <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">

@@ -7,7 +7,7 @@ import { useApplicationStore } from '@/stores/ApplicationStore';
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 const dayJS = inject("dayJS");
 let applicationStore = useApplicationStore();
@@ -37,7 +37,7 @@ function formatDate(date) {
 <template>
     <div class="flex flex-col items-center" v-if="props.welcomeData">
         <div class="flex flex-row w-full">
-            <div class="flex flex-col w-full items-center" :class="isMobile ? isDark ? 'bg-gray-800 rounded-md py-2 mb-1 drop-shadow-md':'bg-white rounded-md py-2 mb-1 drop-shadow-md':''">
+            <div class="flex flex-col w-full items-center" :class="$isMobile() ? isDark ? 'bg-gray-800 rounded-md py-2 mb-1 drop-shadow-md':'bg-white rounded-md py-2 mb-1 drop-shadow-md':''">
                 <p class="text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
                     Welcome {{ props.welcomeData.name }},
                 </p>

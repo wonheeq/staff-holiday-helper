@@ -13,7 +13,7 @@ import { useDark } from "@vueuse/core";
 const isDark = useDark();
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 
 
 let applicationStore = useApplicationStore();
@@ -32,7 +32,7 @@ const deadAreaColor = computed(() => {
 })
 </script>
 <template>
-    <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="$isMobile()" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
             <p class="font-bold text-2xl">
                 Leave Applications ({{ (Object.keys(filteredApplications).length) }}): 

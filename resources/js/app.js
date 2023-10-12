@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { setupCalendar } from 'v-calendar';
 import { createPinia } from 'pinia';
+import VueMobileDetection from "vue-mobile-detection";
 import dayjs from 'dayjs';
 import vTitle from 'vuejs-title'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
@@ -25,6 +26,7 @@ createInertiaApp({
                 transitionDelay: 0,
                 transitionDuration: 100,
             })
+            .use(VueMobileDetection)
             .provide('dayJS', dayjs)
             .mount(el);
     },

@@ -10,7 +10,7 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let calendarStore = useCalendarStore();
@@ -61,7 +61,7 @@ onMounted(() => {
         >
         </Calendar>
         <div class="absolute flex items-center bottom-2 1440:bottom-4 px-4 space-x-4">
-            <div v-if="isMobile">
+            <div v-if="$isMobile()">
                 <p class="text-lg 1080:text-xl 1440:text-3xl 4k:text-4xl font-bold">Legend:</p>
                 <div class="grid grid-cols-2">
                     <div>

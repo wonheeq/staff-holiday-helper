@@ -7,7 +7,7 @@ import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 </script>
 
@@ -157,7 +157,7 @@ export default {
                     :columns="columns"
                     v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
-                    :fixed-header="!isMobile"
+                    :fixed-header="!$isMobile()"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Courses',

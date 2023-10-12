@@ -16,7 +16,7 @@ import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const dayJS = inject("dayJS");
 const screenSizeStore = useScreenSizeStore();
-const { isMobile } = storeToRefs(screenSizeStore);
+// const { $isMobile() } = storeToRefs(screenSizeStore);
 let calendarStore = useCalendarStore();
 const { fetchCalendarData } = calendarStore;
 let applicationStore = useApplicationStore();
@@ -170,7 +170,7 @@ function handleEditApplication(data) {
 <template>
 <Modal>
     <div class="flex flex-col laptop:flex-row bg-transparent w-screen px-2 mt-2 mb-2 laptop:px-4 laptop:mt-auto laptop:mb-4">
-        <div v-if="isMobile" class="w-full p-2 rounded-md"
+        <div v-if="$isMobile()" class="w-full p-2 rounded-md"
         :class="isDark?'bg-gray-800':'bg-white'">
             <div class="h-[4%] flex justify-between w-full">
                 <p class="text-xl font-bold">
