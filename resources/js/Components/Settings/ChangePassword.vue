@@ -156,7 +156,7 @@ function back() {
         <div class="pr-2 pt-2 1440:pr-4 1440:pt-4 flex flex-col items-center">
             <div class="w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Current Password:</p>
-                <div class="flex items-center h-full w-full">
+                <div class="flex items-center h-full w-full relative">
                     <input v-model="password.current"
                         @submit.prevent
                         @keypress.enter.prevent
@@ -165,7 +165,7 @@ function back() {
                         :type="fieldType.current.type"
                         autocomplete="current-password"
                     >
-                    <button @click.prevent="switchVis(fieldType.current)" type="button" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.current)" type="button" tabindex="-1" class="absolute right-2">
                         <img :src="fieldType.current.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -175,7 +175,7 @@ function back() {
             </div>
             <div class="pt-2 1440:pt-4 w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">New Password:</p>
-                <div class="flex items-center h-full w-full">
+                <div class="flex items-center h-full w-full relative">
                     <input v-model="password.password"
                         @submit.prevent
                         @keypress.enter.prevent
@@ -184,7 +184,7 @@ function back() {
                         :type="fieldType.password.type"
                         autocomplete="new-password"   
                     >
-                    <button @click.prevent="switchVis(fieldType.password)" type="button" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.password)" type="button" tabindex="-1" class="absolute right-2">
                         <img :src="fieldType.password.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
@@ -194,7 +194,7 @@ function back() {
             </div>
             <div class="pt-2 1440:pt-4 w-full">
                 <p class="text-lg 1080:xl 1440:text-2xl 4k:text-4xl">Confirm New Password:</p>
-                <div class="flex items-center h-full w-full">
+                <div class="flex items-center h-full w-full relative">
                     <input v-model="password.confirm"
                         @submit.prevent
                         class="w-full 4k:h-16 4k:text-2xl"
@@ -202,7 +202,7 @@ function back() {
                         :type="fieldType.confirm.type"
                         autocomplete="new-password"   
                     >
-                    <button @click.prevent="switchVis(fieldType.confirm)" type="button" tabindex="-1" class="fixed right-5">
+                    <button @click.prevent="switchVis(fieldType.confirm)" type="button" tabindex="-1" class="absolute right-2">
                         <img :src="fieldType.confirm.image"
                             class="h-full w-full"
                             :class="isDark?'darkModeImage':''"
