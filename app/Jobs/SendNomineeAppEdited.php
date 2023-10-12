@@ -20,13 +20,17 @@ class SendNomineeAppEdited implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $data;
+    protected $isUnsent;
+    protected $unsentId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data)
+    public function __construct($data, $isUnsent, $unsentId)
     {
         $this->data = $data;
+        $this->isUnsent = $isUnsent;
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -45,7 +49,6 @@ class SendNomineeAppEdited implements ShouldQueue
                 array_push($roles, $data[1][$i]);
             }
 
-
             $dynamicData = [
                 'name' => $name,
                 'messageOne' => $data[1][1],
@@ -59,17 +62,25 @@ class SendNomineeAppEdited implements ShouldQueue
             Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
             //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+
+            if ($this->isUnsent)
+            {
+                UnsentEmail::where('accountNo', $reciever->accountNo)
+                    ->where('subject', 'Edited Substitution Request')
+                    ->where('id', $this->unsentId)->delete();
+            }
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
-            UnsentEmail::create([ // create one if not
-                'accountNo' => $data[0],
-                'subject' => 'Edited Substitution Request',
-                'data' => $encoded,
-            ]);
+            if($this->isUnsent == false)
+            {
+                UnsentEmail::create([ // create one if not
+                    'accountNo' => $data[0],
+                    'subject' => 'Edited Substitution Request',
+                    'data' => $encoded,
+                ]);
+            }
         }
-
-
     }
 }

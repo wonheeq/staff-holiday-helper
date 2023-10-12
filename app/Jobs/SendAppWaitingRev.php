@@ -30,7 +30,6 @@ class SendAppWaitingRev implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct($data, $isUnsent, $unsentId)
-
     {
         $this->data = $data;
         $this->isUnsent = $isUnsent;

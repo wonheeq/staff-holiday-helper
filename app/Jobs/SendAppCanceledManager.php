@@ -22,14 +22,17 @@ class SendAppCanceledManager implements ShouldQueue
 
     protected $data;
     protected $isUnsent;
+    protected $unsentId;
+
 
     /**
      * Create a new job instance.
      */
-    public function __construct($data, $isUnsent)
+    public function __construct($data, $isUnsent, $unsentId)
     {
         $this->data = $data;
         $this->isUnsent = $isUnsent;
+        $this->unsentId = $unsentId;
     }
 
     /**
@@ -57,13 +60,11 @@ class SendAppCanceledManager implements ShouldQueue
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
             Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
-            $encoded = json_encode($data);
-
             if ($this->isUnsent)
             {
                 UnsentEmail::where('accountNo', $accountNo)
                     ->where('subject', 'Staff Cancelled Application')
-                    ->where('data', $encoded)->delete();
+                    ->where('id', $this->unsentId)->delete();
             }
         }
         catch(TransportException $e)
