@@ -21,16 +21,16 @@
     <!-- Password Input -->
     <div v-if="inType === 'passwordType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
-        <div class="flex items-center relative">
+        <div class="flex border border-solid items-center border-black ">
             <input
+                class="border-none w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
-                class="border-black w-full 4k:text-xl"
                 :class="isDark?'bg-gray-800 border-white':''"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button @click.prevent="switchVis" tabindex="-1" type="button" class="absolute right-2">
+            <button @click.prevent="switchVis" tabindex="-1" type="button" class="fixed right-7">
                 <img :src="fieldType.image" :class="isDark?'darkModeImage':''">
             </button>
         </div>
@@ -65,6 +65,11 @@ let switchVis = () => {
     }
 };
 </script>
-
+<style>
+input::-ms-reveal,
+input::-ms-clear {
+    display:none;
+}
+</style>
 
 
