@@ -71,8 +71,6 @@ class SendAppWaitingRev implements ShouldQueue
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
             Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
-            $encoded = json_encode($data);
-
             if ($this->isUnsent)
             {
                 UnsentEmail::where('accountNo', $reciever->accountNo)
