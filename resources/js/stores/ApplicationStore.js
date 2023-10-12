@@ -45,22 +45,17 @@ export let useApplicationStore = defineStore('applications', {
         }
     },
     getters: {
-        filteredApplications(){
-            if(this.viewing === 'unAcknowledged'){
-                return this.managerApplications.filter(application => application.status === 'U');
-            }
-            else if(this.viewing === 'accepted')
-            {
-                return this.managerApplications.filter(application => application.status === 'Y');
-            }
-            else if(this.viewing === 'rejected')
-            {
-                return this.managerApplications.filter(application => application.status ==='N');
-            }
-            else
-            {
-                return this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E');
-            }
+        allApplications(){
+            return this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E');
+        },
+        acceptedApplications(){
+            return this.managerApplications.filter(application => application.status === 'Y');
+        },
+        rejectedApplications(){
+            return this.managerApplications.filter(application => application.status === 'N');
+        },
+        unacknowledgeApplications(){
+            return this.managerApplications.filter(application => application.status === 'U');
         },
     },
     persist: {

@@ -4,10 +4,9 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 const page = usePage();
-import {computed} from 'vue';
 const user = computed(() => page.props.auth.user);
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
@@ -15,9 +14,8 @@ import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 
-
 let applicationStore = useApplicationStore();
-const { filteredApplications, viewing } = storeToRefs(applicationStore);
+const { allApplications, acceptedApplications, rejectedApplications, unacknowledgeApplications, viewing } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
 const dataReady = ref(false);
 
@@ -28,16 +26,29 @@ onMounted(async () => {
 
 const deadAreaColor = computed(() => {
     return isDark.value ? '#1f2937': '#FFFFFF';
-})
+});
+
+const appCount = computed(() => {
+    if (viewing.value == 'all') {
+        return (allApplications.value.length);
+    }else if(viewing.value == 'accepted'){
+        return (acceptedApplications.value.length);
+    }else if(viewing.value == 'rejected'){
+        return (rejectedApplications.value.length);
+    }
+    else{
+        return (unacknowledgeApplications.value.length);
+    }
+});
 </script>
 <template>
     <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
             <p class="font-bold text-2xl">
-                Leave Applications ({{ (Object.keys(filteredApplications).length) }}): 
+                Leave Applications ({{ appCount }}): 
             </p>
         </div>
-        <div class="h-[3%] text-xs">
+        <div class="h-[3%] text-xs flex items-center">
             <input 
                 type="radio" 
                 id="allApplications" 
@@ -77,20 +88,67 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div v-if="dataReady" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="dataReady && viewing==='all'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
                 :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
-                    <div v-for="item in filteredApplications" :key="item.id" class="mb-1">
+                    <div v-for="item in allApplications" :key="item.id" class="mb-1">
                         <ApplicationInfo
                             :source="item"
                         ></ApplicationInfo>
                        
                     </div>
-                    
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='accepted'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in acceptedApplications" :key="item.id" class="mb-1">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                       
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='rejected'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in rejectedApplications" :key="item.id" class="mb-1">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                       
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='unAcknowledged'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in unacknowledgeApplications" :key="item.id" class="mb-1">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                       
+                    </div>
                 </template>
             </VueScrollingTable>
         </div>
@@ -98,10 +156,10 @@ const deadAreaColor = computed(() => {
     <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
             <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
-                Leave Applications ({{ (Object.keys(filteredApplications).length) }}): 
+                Leave Applications ({{ appCount }}): 
             </p>
         </div>
-        <div class="h-[5%] mx-1 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-5xl laptop:mx-2 1080:mx-2 1440:mx-5 4k:mx-5">
+        <div class="h-[5%] mx-1 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-5xl laptop:mx-2 1080:mx-2 1440:mx-5 4k:mx-5 flex items-center">
             <input 
                 type="radio" 
                 id="allApplications" 
@@ -142,14 +200,62 @@ const deadAreaColor = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div v-if="dataReady" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div>
+            
+        </div>
+        <div v-if="dataReady && viewing==='all'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
                 :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
-                    <div v-for="item in filteredApplications" :key="item.id" class="mb-2">
+                    <div v-for="item in allApplications" :key="item.id" class="mb-2">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='unAcknowledged'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in unacknowledgeApplications" :key="item.id" class="mb-2">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='accepted'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in acceptedApplications" :key="item.id" class="mb-2">
+                        <ApplicationInfo
+                            :source="item"
+                        ></ApplicationInfo>
+                    </div>
+                </template>
+            </VueScrollingTable>
+        </div>
+        <div v-if="dataReady && viewing==='rejected'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+            <VueScrollingTable
+                :deadAreaColor="deadAreaColor"
+                :scrollHorizontal="false"
+                :class="isDark?'scrollbar-dark':''"
+            >
+                <template #tbody>
+                    <div v-for="item in rejectedApplications" :key="item.id" class="mb-2">
                         <ApplicationInfo
                             :source="item"
                         ></ApplicationInfo>
