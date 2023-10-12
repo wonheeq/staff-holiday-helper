@@ -26,7 +26,7 @@
                 :type="fieldType.type"
                 :value="modelValue"
                 class="border-black w-full 4k:text-xl"
-            :class="isDark?'bg-gray-800 border-white':''"
+                :class="isDark?'bg-gray-800 border-white':''"
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
