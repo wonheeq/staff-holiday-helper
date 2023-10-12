@@ -88,7 +88,7 @@ const appCount = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div v-if="dataReady && viewing==='all'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='all'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -104,7 +104,7 @@ const appCount = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <div v-if="dataReady && viewing==='accepted'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='accepted'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -120,7 +120,7 @@ const appCount = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <div v-if="dataReady && viewing==='rejected'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='rejected'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -203,7 +203,7 @@ const appCount = computed(() => {
         <div>
             
         </div>
-        <div v-if="dataReady && viewing==='all'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='all'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -218,7 +218,7 @@ const appCount = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <div v-if="dataReady && viewing==='unAcknowledged'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='unAcknowledged'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -233,7 +233,7 @@ const appCount = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <div v-if="dataReady && viewing==='accepted'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='accepted'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
@@ -248,7 +248,7 @@ const appCount = computed(() => {
                 </template>
             </VueScrollingTable>
         </div>
-        <div v-if="dataReady && viewing==='rejected'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-show="dataReady && viewing==='rejected'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"

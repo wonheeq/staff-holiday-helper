@@ -5,6 +5,7 @@ export let useApplicationStore = defineStore('applications', {
     state: () => ({
         applications: [],
         managerApplications: [],
+        allManagerApplications: [],
         viewing: 'all'
     }),
 
@@ -24,6 +25,11 @@ export let useApplicationStore = defineStore('applications', {
             try {
                 const resp = await axios.get('/api/managerApplications/' + accountNo);
                 this.managerApplications = resp.data;
+                this.allManagerApplications = [];
+                for(const app of this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E'))
+                {
+                    this.allManagerApplications.push(app);
+                }
               }
               catch (error) {
                 console.log(error)
@@ -46,7 +52,7 @@ export let useApplicationStore = defineStore('applications', {
     },
     getters: {
         allApplications(){
-            return this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E');
+            return this.allManagerApplications;
         },
         acceptedApplications(){
             return this.managerApplications.filter(application => application.status === 'Y');
