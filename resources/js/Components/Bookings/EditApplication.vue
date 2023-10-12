@@ -211,14 +211,14 @@ function handleEditApplication(data) {
                     class="close-button h-full" :class="isDark?'darkModeImage':''"/>
                 </button>
             </div>
-            <div class="grid grid-cols-3 h-[92%]">
-                <CreateSubpagePeriod :period="props.period" :isEditing="true" class="h-full" />
+            <div class="flex space-x-4 h-[92%]">
+                <CreateSubpagePeriod :period="props.period" :isEditing="true" class="h-full w-1/3" />
                 <CreateSubpageNominations
                     :isEditing="true"
                     :applicationNo="applicationNo"
                     @resetFields="resetFields()"
                     @submitApplication="(data) => handleEditApplication(data)"
-                    class="col-span-2"
+                    class="w-2/3"
                 />
             </div>
         </div>
