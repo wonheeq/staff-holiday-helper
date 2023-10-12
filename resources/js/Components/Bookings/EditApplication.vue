@@ -180,7 +180,8 @@ function handleEditApplication(data) {
                     @click="resetFields(); $emit('close')"
                 >
                     <img src="/images/close.svg"
-                        class="h-full w-full"
+                        
+                    class="close-button h-full"
                         :class="isDark?'darkModeImage':''"
                     />
                 </button>
@@ -206,7 +207,8 @@ function handleEditApplication(data) {
                 <button class="h-full"
                     @click="resetFields(); $emit('close')"
                 >
-                    <img src="/images/close.svg" class="h-full w-full" :class="isDark?'darkModeImage':''"/>
+                    <img src="/images/close.svg" 
+                    class="close-button h-full" :class="isDark?'darkModeImage':''"/>
                 </button>
             </div>
             <div class="grid grid-cols-3 h-[92%]">

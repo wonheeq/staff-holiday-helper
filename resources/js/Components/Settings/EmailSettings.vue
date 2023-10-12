@@ -83,7 +83,7 @@ axios.post('/api/getEmailFrequency/', {
     <div class="flex flex-row items-center justify-between">
         <button @click="emit('close-email');">
             <img src="/images/back.svg"
-                class="close-button p-4"
+                class="close-button p-2"
                 :class="isDark?'darkModeImage':''"
             />
         </button>
@@ -92,7 +92,7 @@ axios.post('/api/getEmailFrequency/', {
         </p>
         <button @click="emit('close-settings');">
             <img src="/images/close.svg"
-                class="close-button p-4"
+                class="close-button p-2"
                 :class="isDark?'darkModeImage':''"
             />
         </button>

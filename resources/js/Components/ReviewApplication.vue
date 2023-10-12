@@ -147,7 +147,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                 </p>
                 <button @click="handleClose()">
                     <img src="/images/close.svg" 
-                    style="width: 30px; height: 30px;" 
+                    class="close-button h-full"
                     :class="isDark?'darkModeImage':''"
                     />
                 </button>

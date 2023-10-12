@@ -134,7 +134,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
             </div>
             <button @click="handleClose()">
               <img src="/images/close.svg" 
-              style="width: 20px; height: 30px;"
+             
+              class="close-button h-full"
               :class="isDark?'darkModeImage':''"/>
             </button>
           </div>
@@ -193,7 +194,8 @@ const buttonClassMobile = "w-full rounded-md text-white text-s font-bold";
             </div>
             <button class="h-full" @click="handleClose()">
               <img src="/images/close.svg" 
-              class="h-full w-full"
+              
+              class="close-button h-full"
               :class="isDark?'darkModeImage':''"/>
             </button>
           </div>
