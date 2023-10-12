@@ -53,24 +53,29 @@ class SendAppCanceledManager implements ShouldQueue
             // Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
-            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+
+            $encoded = json_encode($data);
+
+            if ($this->isUnsent)
+            {
+                UnsentEmail::where('accountNo', $accountNo)
+                    ->where('subject', 'Staff Cancelled Application')
+                    ->where('data', $encoded)->delete();
+            }
         }
         catch(TransportException $e)
         {
             $encoded = json_encode($data);
-            if ( !UnsentEmail::where('accountNo', $data[0])->where('subject', 'Applilcation Cancelled')->where('data', $encoded)->first() )
+            if ($this->isUnsent == false)
             {
                 UnsentEmail::create([ // create one if not
                     'accountNo' => $data[0],
                     'subject' => 'Application Cancelled',
                     'data' => $encoded,
                 ]);
-            }
-            else if($this->isUnsent == true)
-            {
-                throw new ErrorException("Re-sending failed");
             }
         }
     }

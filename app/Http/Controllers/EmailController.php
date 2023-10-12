@@ -159,7 +159,7 @@ class EmailController extends Controller
             $this->sortMail($email);
         }
     }
-    
+
 
 
     public function sortMail($email)
@@ -167,6 +167,8 @@ class EmailController extends Controller
         // switch case used here for expandability to other email types
         // that might be added later
         $subject = $email->subject;
+        $data = json_decode($email->data);
+        $id = $email->id;
         switch($subject){
             case "Unacknowledged Messages":
                 $this->attemptUnackMsg($email);
@@ -177,7 +179,8 @@ class EmailController extends Controller
             break;
 
             case "Application Awaiting Review":
-                $this->attemptAppReview($email);
+
+                SendAppWaitingRev::dispatch($data, true, $id);
             break;
 
             case "Application Cancelled":
@@ -217,16 +220,15 @@ class EmailController extends Controller
             break;
 
             case "Welcome to LeaveOnTime":
-                $this->sendWelcome($email);
+                $data = json_decode($email->data);
+                SendWelcomeEmail::dispatch($data, true);
             break;
         }
     }
 
     private function sendWelcome($email)
     {
-        $data = json_decode($email->data);
-        
-        SendWelcomeEmail::dispatch($data, true);
+
 
         // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
 
@@ -470,7 +472,7 @@ class EmailController extends Controller
                     // Do Nothing, email stays in backlog
                 }
             }
-        
+
     }
 
 }

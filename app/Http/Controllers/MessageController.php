@@ -158,7 +158,7 @@ class MessageController extends Controller
 
                 // add name to content
                 $name = "";
-                
+
                 if ($nomineeNo == $application->accountNo) {
                     $name = "Self Nomination";
                 }
@@ -166,7 +166,7 @@ class MessageController extends Controller
                     $name = "{$nominee->fName} {$nominee->lName} - {$nomineeNo}@curtin.edu.au";
                     $isSelfNominatedAll = false;
                 }
-                
+
                 array_push(
                     $content,
                     "• {$name}"
@@ -219,13 +219,13 @@ class MessageController extends Controller
         ]);
 
         $preferences = EmailPreference::where('accountNo', $superiorNo)->first();
-        // $hours = $preferences->hours;
-        // if( $hours == 0 ) // If user is on instant notifications
-        // {
-        //     // collect require data, and queue an email
-        //     $data = [$superiorNo, $application->accountNo, $content];
-        //     SendAppWaitingRev::dispatch($data, false);
-        // }
+        $hours = $preferences->hours;
+        if( $hours == 0 ) // If user is on instant notifications
+        {
+            // collect require data, and queue an email
+            $data = [$superiorNo, $application->accountNo, $content];
+            SendAppWaitingRev::dispatch($data, false, -1);
+        }
     }
 
 
@@ -394,7 +394,7 @@ class MessageController extends Controller
     public function notifyNomineeNominationCancelled(array $removedNominations, array $removedManagerNominations, String $applicationNo)
     {
         $application = Application::where('applicationNo', $applicationNo)->first();
- 
+
         //combine into array of nomineeNos
         $nomineeNos = array();
 
@@ -415,7 +415,7 @@ class MessageController extends Controller
                 foreach ($removedNominations[$nomineeNo] as $accountRoleId) {
                     // Get role name
                     $roleName = app(RoleController::class)->getRoleFromAccountRoleId($accountRoleId);
-    
+
                     array_push(
                         $content,
                         "→{$roleName}",
@@ -866,7 +866,7 @@ class MessageController extends Controller
            // Get schoolId of user
            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
            //Log::info($schoolCode);
-          
+
            $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
                                                ->select('applications.applicationNo')
                                                ->where('schoolId', $schoolCode->schoolId)->get();
@@ -888,7 +888,7 @@ class MessageController extends Controller
                                    $query->whereIn('messages.applicationNo', $additionalApplications);
                                })->get();
        }
-      
+
        return response()->json($messages);
    }
 
@@ -924,7 +924,7 @@ class MessageController extends Controller
     {
         $messages = Message::where('receiverNo', $account->accountNo)->where('acknowledged', 0)->get();
         if ($messages->count() != 0) { // if Has messages
-  
+
             $result = $account->sendDailyMessageNotification($messages);
             if( !$result )
             {
