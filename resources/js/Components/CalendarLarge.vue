@@ -37,7 +37,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div ref="divRef" class="rounded-md flex flex-col" :class="isDark?'bg-gray-800':'bg-white'">
+    <div ref="divRef" class="rounded-md flex flex-col relative" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="flex mx-4 mt-2 1440:mt-4 items-center">
             <button class="absolute">
                 <img src="/images/fullscreen-exit.svg"
