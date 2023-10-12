@@ -32,7 +32,15 @@ const isDark = useDark();
          emit("gotResults", response);
      }).catch(error => {
          if(error.response) {
-             errorMsg.value = "Please enter a valid unit ID";
+            if( error.response.data.error == "Unit not found")
+            {
+                errorMsg.value = "Unit not found";
+            }
+            else
+            {
+                errorMsg.value = "Please enter a valid unit ID";
+
+            }
          }
      });
  }
