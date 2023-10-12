@@ -272,7 +272,7 @@ const buttons = [
                         <span v-else class="mt-4 4k:mt-10 1080:text-lg 1440:text-xl 4k:text-2xl">{{ field.desc }}: </span>
                         <input v-if="field.fk === 'none'"
                                class="input_options" 
-                               :class="isMobile?(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white placeholder:text-white w-[35rem]':'w-[35rem]')"
+                               :class="isMobile?(isDark?'bg-gray-800 border-white text-white w-[14rem]':'w-[14rem]'):(isDark?'bg-gray-800 border-white text-white w-[35rem]':'w-[35rem]')"
                                type="text" autocomplete="off" :placeholder="field.plhldr" 
                                v-model="attributeEntries[index]" />
                         <!--<v-select v-else v-model="selected" style="width: 35rem; height: 2rem; margin-top: 0.75rem;">
