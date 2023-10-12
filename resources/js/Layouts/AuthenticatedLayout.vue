@@ -5,13 +5,13 @@ import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 
 let settingsVisible = ref(false);
 </script>
 <template>
     <div class="w-full h-[100vh]">
-        <div v-if="$isMobile()">
+        <div v-if="isMobile">
             <div class="margin-fix-mobile"></div>
             <Navbar
             class="h-[7vh] mx-2"

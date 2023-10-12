@@ -11,7 +11,7 @@ const { fetchMessages } = messageStore;
 import { useDark } from "@vueuse/core";
 const isDark = useDark();
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let props = defineProps({
@@ -127,7 +127,7 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg 4k:text-2xl";
 
 <template>
 <div class="flex flex-col justify-evenly border-l-4" :class="isDark?'border-gray-800':'border-white'">
-    <div v-if="$isMobile()" class="pl-2 h-full">
+    <div v-if="isMobile" class="pl-2 h-full">
         <!--Substitution Request - Not Acknowledged Options-->
         <div v-if="props.source.subject.includes('Substitution Request') && props.source.acknowledged == 0" class="h-full">
             <!--Substitution Request for a single nomination-->

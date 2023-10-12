@@ -16,7 +16,7 @@ import { useSubstitutionStore } from '@/stores/SubstitutionStore';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const substitutionStore = useSubstitutionStore();
 const { fetchSubstitutions } = substitutionStore;
 let applicationStore = useApplicationStore();
@@ -121,7 +121,7 @@ fetchSubstitutions(user.value.accountNo);
 <template>
     <PageLayout>
         <AuthenticatedLayout>
-            <div v-if="$isMobile()">
+            <div v-if="isMobile">
                 <div class="flex screen-mobile mx-2 my-2" v-show="!calendarLarge" v-if="dataReady">
                     <div class="flex flex-col w-full">
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />

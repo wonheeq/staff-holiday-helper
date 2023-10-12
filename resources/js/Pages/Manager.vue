@@ -7,7 +7,7 @@ import ManageStaffSubpage from '@/Components/Manager/ManageStaffSubpage.vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 import { ref } from 'vue';
 
 const options = [
@@ -48,7 +48,7 @@ function handleActiveScreenChanged(screen) {
 <template>
     <PageLayout>
         <AuthenticatedLayout>
-            <div v-if="$isMobile()" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
+            <div v-if="isMobile" class="flex flex-col screen-mobile mt-2 mx-2 drop-shadow-md">
                 <SubpageNavbar
                     class="h-[5%]"
                     :options="options"

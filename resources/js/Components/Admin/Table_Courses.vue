@@ -14,7 +14,7 @@ const pageDropdown = computed(() => {
     return [10,20,30,40,50];
 });
 const screenSizeStore = useScreenSizeStore();
-// const { $isMobile() } = storeToRefs(screenSizeStore);
+const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
 </script>
 
@@ -164,7 +164,7 @@ export default {
                     :columns="columns"
                     v-on:cell-click="editAttribute"
                     v-bind:max-height= tHeight
-                    :fixed-header="!$isMobile()"
+                    :fixed-header="!isMobile"
                     :search-options="{
                         enabled: true,
                         placeholder: 'Search Courses',
