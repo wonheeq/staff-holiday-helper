@@ -26,6 +26,7 @@ onMounted(async () => {
     dataReady.value = true;
 });
 
+const totalApplications = Object.keys(filteredApplications).length;
 const deadAreaColor = computed(() => {
     return isDark.value ? '#1f2937': '#FFFFFF';
 })
@@ -34,7 +35,7 @@ const deadAreaColor = computed(() => {
     <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
             <p class="font-bold text-2xl">
-                Leave Applications:
+                Leave Applications ({{ (Object.keys(filteredApplications).length) }}): 
             </p>
         </div>
         <div class="h-[3%] text-xs">
@@ -97,7 +98,7 @@ const deadAreaColor = computed(() => {
     <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
             <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
-                Leave Applications:
+                Leave Applications ({{ (Object.keys(filteredApplications).length) }}): 
             </p>
         </div>
         <div class="h-[5%] mx-1 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-5xl laptop:mx-2 1080:mx-2 1440:mx-5 4k:mx-5">
@@ -153,7 +154,6 @@ const deadAreaColor = computed(() => {
                             :source="item"
                         ></ApplicationInfo>
                     </div>
-                    
                 </template>
             </VueScrollingTable>
         </div>
