@@ -65,11 +65,11 @@ let switchVis = () => {
     }
 };
 </script>
-<style>
-input::-ms-reveal,
-input::-ms-clear {
-    display:none;
-}
+<style> 
+input::-ms-reveal, input::-ms-clear 
+{     
+    display:none; 
+} 
 </style>
 
 
