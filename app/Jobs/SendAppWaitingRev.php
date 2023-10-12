@@ -17,6 +17,8 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 use Throwable;
 use ErrorException;
+use App\Models\ApplicationReviewHash;
+
 
 class SendAppWaitingRev implements ShouldQueue
 {
@@ -25,6 +27,7 @@ class SendAppWaitingRev implements ShouldQueue
     protected $data;
     protected $isUnsent;
     protected $unsentId;
+    protected $hash;
 
     /**
      * Create a new job instance.
@@ -45,21 +48,36 @@ class SendAppWaitingRev implements ShouldQueue
         $reciever = Account::where('accountNo', $data[0])->first();
         $creator = Account::where('accountNo', $data[1])->first();
         $name = $reciever->getName();
+        $accountNo = $reciever->accountNo;
         try
         {
+            if(ApplicationReviewHash::where('accountNo', $accountNo)->first())
+            {
+                ApplicationReviewHash::where('accountNo', $accountNo)->delete();
+            }
+            $this->hash = md5($accountNo);
+            ApplicationReviewHash::create([
+                'accountNo' => $accountNo,
+                'hash' => $this->hash
+            ]);
+
             // Extract indexes into new array for formatting
             $application = [];
             for( $i = 0; $i < sizeof($data[2]) - 1; $i++)
             {
                 array_push($application, $data[2][$i]);
             }
-
+            $applicationNo = $data[3];
             $dynamicData = [
                 'name' => $name,
                 'applicantId' => $creator->accountNo,
                 'applicantName' => $creator->getName(),
                 'application' => $application,
                 'period' => $data[2][sizeof($data[2]) - 1], // last index
+                // 'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptApplication/'.$hash,
+                'acceptLink' => 'http://127.0.0.1:8000/acceptApplication/'.$this->hash . '/'. $applicationNo,
+                'viewLink' => 'http://127.0.0.1:8000/reviewApplication/'. $applicationNo,
+                // 'viewLink' => 'https://leaveontime.cyber.curtin.io/reviewApplication/'. $applicationNo,
             ];
 
 
@@ -79,6 +97,11 @@ class SendAppWaitingRev implements ShouldQueue
         }
         catch(TransportException $e)
         {
+            ApplicationReviewHash::where([
+                'accountNo' => $this->data[0],
+                'hash' => $this->hash
+            ]);
+
             $encoded = json_encode($data);
             if ($this->isUnsent == false)
             {

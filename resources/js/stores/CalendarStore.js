@@ -20,7 +20,6 @@ export let useCalendarStore = defineStore('calendar', {
                 });
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendAppCanceledManager;
+use App\Jobs\SendAppCancelledManager;
 use App\Jobs\SendApplicationDecision;
 use App\Jobs\SendAppWaitingRev;
 use App\Jobs\SendConfirmSubstitutions;
@@ -183,7 +183,7 @@ class EmailController extends Controller
             break;
 
             case "Application Cancelled":
-                SendAppCanceledManager::dispatch($data, true, $id);
+                SendAppCancelledManager::dispatch($data, true, $id);
             break;
 
             case "Nomination Cancelled":

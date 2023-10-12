@@ -27,15 +27,44 @@ const user = computed(() => page.props.auth.user);
 let welcomeData = reactive([]);
 let dataReady = ref(false);
 
+let showReviewAppModal = ref(false);
+let reviewAppModalData = reactive([
+]);
 
-// Error if insufficient permissions to visit a page
-const customError =  page.props.errors;
-if (customError != null) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: customError
-    });
+let showNominationModal = ref(false);
+let nominationModalData = reactive([]);
+let roles = reactive([]);
+
+let fetchApplicationForReviewFromEmail = async(appNo) => {
+    try {
+        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo);
+        reviewAppModalData = resp.data;
+        console.log(reviewAppModalData);
+        return true;
+    } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: "Unable to review application - did you review this application already?"
+        });
+        return false;
+    }
+};
+
+let fetchMessageForApplication = async(appNo) => {
+    try {
+        const resp = await axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo);
+        return resp.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
+
+async function handleAcceptSomeNominationsFromEmail(appNo) {
+    nominationModalData = await fetchMessageForApplication(appNo);
+    await fetchRoles();
+    showNominationModal.value = true;
 }
 
 let fetchWelcomeMessageData = async() => {
@@ -48,10 +77,6 @@ let fetchWelcomeMessageData = async() => {
         console.log(error);
     }
 }
-
-let showNominationModal = ref(false);
-let nominationModalData = reactive([]);
-let roles = reactive([]);
 async function handleAcceptSomeNominations(message) {
     nominationModalData = message;
     await fetchRoles();
@@ -74,7 +99,7 @@ let fetchRoles = async() => {
         });
         console.log(error);
     }
-}; 
+};
 
 function handleCloseNominations() {
     roles = [];
@@ -82,9 +107,6 @@ function handleCloseNominations() {
     showNominationModal.value = false;
 }
 
-let showReviewAppModal = ref(false);
-let reviewAppModalData = reactive([
-]);
 async function handleReviewApplication(message) {
     let shouldShow = await fetchApplicationForReview(message);
     showReviewAppModal.value = shouldShow;
@@ -104,7 +126,7 @@ let fetchApplicationForReview = async(message) => {
         });
         return false;
     }
-}; 
+};
 
 function handleCloseReviewApp() {
     reviewAppModalData = [];
@@ -112,10 +134,51 @@ function handleCloseReviewApp() {
 }
 
 let calendarLarge = ref(false);
-
 fetchWelcomeMessageData();
 fetchApplications(user.value.accountNo);
 fetchSubstitutions(user.value.accountNo);
+
+// Error if insufficient permissions to visit a page
+const customError =  page.props.errors;
+if (customError != null) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: customError
+    });
+}
+
+// Error if success message
+const successMessage =  page.props.successMessage;
+if (successMessage != null) {
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: successMessage
+    });
+}
+
+
+
+//  if application to review
+async function handleAppToReviewFromEmail(appNo) {
+    let shouldShow = await fetchApplicationForReviewFromEmail(appToReview);
+    if(shouldShow)
+    {
+        showReviewAppModal.value = true;
+    }
+}
+
+const appToReview =  page.props.appToReview;
+if (appToReview != null) {
+    handleAppToReviewFromEmail(appToReview);
+}
+
+
+const nomsToReview =  page.props.nomsToReview;
+if (nomsToReview != null) {
+    handleAcceptSomeNominationsFromEmail(nomsToReview);
+}
 </script>
 
 <template>
@@ -127,7 +190,7 @@ fetchSubstitutions(user.value.accountNo);
                         <HomeShortcuts :welcomeData="welcomeData" class="w-full" />
                         <CalendarSmall
                             class="flex drop-shadow-md mt-2"
-                            disableEnlarge 
+                            disableEnlarge
                         />
                         <HomeMessages
                             class="mt-2 drop-shadow-md"
@@ -149,7 +212,7 @@ fetchSubstitutions(user.value.accountNo);
                     </div>
                     <CalendarSmall
                         class="flex w-1/5 1080:2/6 1440:w-2/12 drop-shadow-md"
-                        @enlarge-calendar="calendarLarge=true"    
+                        @enlarge-calendar="calendarLarge=true"
                     />
                 </div>
                 <CalendarLarge

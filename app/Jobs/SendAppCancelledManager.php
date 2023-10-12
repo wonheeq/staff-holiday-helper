@@ -16,7 +16,7 @@ use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
-class SendAppCanceledManager implements ShouldQueue
+class SendAppCancelledManager implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

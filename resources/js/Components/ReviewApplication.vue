@@ -54,7 +54,7 @@ function handleApproveApp() {
     let data = {
         'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
-    };   
+    };
     axios.post('/api/acceptApplication', data)
         .then(res => {
             if (res.status == 500) {
@@ -71,7 +71,7 @@ function handleApproveApp() {
                     props.data.message.updated_at = new Date();
                     props.data.status = 'Y';
                 }
-                
+
                 Swal.fire({
                     icon: "success",
                     title: 'Successfully approved the application.',
@@ -94,7 +94,7 @@ function handleRejectApp() {
         'accountNo': user.value.accountNo,
         'applicationNo': props.data.applicationNo,
         'rejectReason': rejectReason.value
-    };   
+    };
     axios.post('/api/rejectApplication', data)
         .then(res => {
             if (res.status == 500) {
@@ -146,7 +146,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                     Reviewing Application by {{ props.data.applicantName }}
                 </p>
                 <button @click="handleClose()">
-                    <img src="/images/close.svg" 
+                    <img src="/images/close.svg"
                     class="close-button h-full"
                     :class="isDark?'darkModeImage':''"
                     />
@@ -191,7 +191,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                 </VueScrollingTable>
             </div>
             <div class="h-[29%] py-4">
-                <p class="text-sm h-[20%]pb-8" :class="isDark?'text-white':''"> 
+                <p class="text-sm h-[20%]pb-8" :class="isDark?'text-white':''">
                     Select Reject Reason or Enter Custom Message:
                 </p>
                 <input type="text" v-model="rejectReason" class="h-[40%] w-full border-gray-300 border-2 rounded-md p-2 text-xs  mb-1" :class="isDark?'text-white bg-gray-800':''"/>
@@ -292,7 +292,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
     width: auto;
 }
 /* 1080p */
-@media 
+@media
 (min-width: 1920px) {
     .close-button {
         height: 70px;
@@ -300,7 +300,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
     }
 }
 /* 1440p */
-@media 
+@media
 (min-width: 2560px) {
     .close-button {
         height: 80px;
@@ -308,7 +308,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
     }
 }
 /* 2160p */
-@media 
+@media
 (min-width: 3840px) {
     .close-button {
         height: 110px;

@@ -10,6 +10,8 @@ use App\Models\AccountRole;
 use App\Models\Message;
 use App\Models\Account;
 use App\Models\Role;
+use App\Models\NewNominationsHash;
+use App\Models\EditedNominationsHash;
 use Illuminate\Support\Facades\Log;
 
 class NominationController extends Controller
@@ -70,7 +72,7 @@ class NominationController extends Controller
             // get name of nominee from user controller
             $nominee_user = app(UserController::class)->getUser($nomineeNo);
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
-            
+
             $noms = ManagerNomination::where('applicationNo', $appNo)
             ->where('nomineeNo', $nomineeNo)->get();
 
@@ -174,7 +176,7 @@ class NominationController extends Controller
            // Get schoolId of user
            $schoolCode = Account::select('schoolId')->where('accountNo', $accountNo)->first();
            //Log::info($schoolCode);
-          
+
            $additionalApplications = Application::join('accounts', 'applications.accountNo', '=', 'accounts.accountNo')
                                                 ->select('applications.applicationNo')
                                                 ->where('schoolId', $schoolCode->schoolId)->get();
@@ -192,7 +194,7 @@ class NominationController extends Controller
                                        $query->whereIn('nominations.applicationNo', $additionalApplications);
                                     })->get();
        }
-      
+
        return response()->json($nominations);
    }
 
@@ -275,7 +277,7 @@ class NominationController extends Controller
                 $rejectedRoles,
                 "Line Manager for ({$sub->accountNo}) {$sub->fName} {$sub->lName}"
             );
-        } 
+        }
 
         // Send message to applicant informing them that a nominee declined a nomination
         app(MessageController::class)->notifyApplicantNominationDeclined($applicationNo, $accountNo, $rejectedRoles);
@@ -285,6 +287,9 @@ class NominationController extends Controller
         $application->processedBy = null;
         $application->rejectReason = "At least one nomination was rejected.";
         $application->save();
+
+        NewNominationsHash::where('accountNo', $accountNo)->delete();
+        EditedNominationsHash::where('accountNo', $accountNo)->delete();
 
         return response()->json(['success'], 200);
     }
@@ -371,6 +376,9 @@ class NominationController extends Controller
             // Notify line manager of new application to review
             app(MessageController::class)->notifyManagerApplicationAwaitingReview($superiorNo, $applicationNo);
         }
+
+        NewNominationsHash::where('accountNo', $accountNo)->delete();
+        EditedNominationsHash::where('accountNo', $accountNo)->delete();
 
         return response()->json(['success'], 200);
     }
@@ -506,7 +514,9 @@ class NominationController extends Controller
             $application->rejectReason = "At least one nomination was rejected.";
             $application->save();
         }
-        
+
+        NewNominationsHash::where('accountNo', $accountNo)->delete();
+        EditedNominationsHash::where('accountNo', $accountNo)->delete();
 
         return response()->json(['success'], 200);
     }

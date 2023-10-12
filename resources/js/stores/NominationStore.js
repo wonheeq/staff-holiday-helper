@@ -13,7 +13,6 @@ export let useNominationStore = defineStore('nominations', {
                 this.nominations = resp.data;
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         },
@@ -21,7 +20,7 @@ export let useNominationStore = defineStore('nominations', {
             try {
                 const resp = await axios.get('/api/getNominationsForApplication/' + accountNo + "/" + applicationNo);
                 this.nominations = resp.data;
-                
+
                 this.isSelfNominateAll = true;
                 for (let nom of this.nominations) {
                     if (nom.nomination != "Self Nomination") {
@@ -32,14 +31,13 @@ export let useNominationStore = defineStore('nominations', {
 
               }
               catch (error) {
-                alert(error)
                 console.log(error)
             }
         }
     },
 
     getters: {
-        
+
     },
     persist: {
         storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.

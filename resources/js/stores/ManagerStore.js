@@ -16,7 +16,6 @@ export let useManagerStore = defineStore('manager', {
                 this.staffInfo = resp2.data;
                 console.log(resp2.data);
             } catch (error) {
-                alert("Failed to load data: Please try again");
                 console.log(error);
             }
         },
@@ -25,12 +24,11 @@ export let useManagerStore = defineStore('manager', {
                 const resp = await axios.get('/api/getUCM/')
                 this.allUnits = resp.data;
             } catch (error){
-                alert("Failed to load data: Please try again");
                 console.log(error);
             }
         }
     },
     getters: {
-        
+
     }
 });
