@@ -91,11 +91,12 @@ async function handleReset() {
 
         <!-- Confirmation Popup -->
         <div class="max-w-[90%]">
-            <div v-show="showConf === true" class="4k:text-2xl 1440:w-fit h-fit bg-blue-100 border border-black p-5 mt-7 rounded-lg">
-            <p class="text-center">A confirmation email has been sent to the email address linked to
-                this account if it exists!</p>
-            <p class="text-center">Please follow the steps in the email to proceed with the password
-                reset</p>
+            <div v-show="showConf === true" class="4k:text-2xl 1440:w-fit h-fit mt-2 1440:mt-4 p-4 border border-black rounded-md font-bold"
+                :class="isDark?'bg-cyan-600 text-blue-200':'bg-cyan-100 text-blue-800'">
+                <p class="text-center">A confirmation email has been sent to the email address linked to
+                    this account if it exists!</p>
+                <p class="text-center">Please follow the steps in the email to proceed with the password
+                    reset</p>
             </div>
         </div>
 
