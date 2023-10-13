@@ -166,7 +166,7 @@ class NominationController extends Controller
            // User does not exist, return exception
            return response()->json(['error' => 'Account does not exist.'], 500);
        }
-
+       $nominations = [];
 
        // Super admin can view all nominations.
        if (Account::where('accountNo', $accountNo)->where('schoolId', 1)->exists()) {

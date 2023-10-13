@@ -10,6 +10,7 @@ use App\Models\AccountRole;
 use App\Models\EmailPreference;
 use App\Models\Nomination;
 use App\Models\Message;
+use App\Models\School;
 use Illuminate\Support\Facades\Log;
 
 class NominationControllerTest extends TestCase
@@ -24,23 +25,30 @@ class NominationControllerTest extends TestCase
     {
         parent::setup();
 
+        $schoolId = School::where('schoolId', "!=", 1)->first();
+
         // create temp user
-        $this->user = Account::factory()->create();
+        $this->user = Account::factory()->create([
+            'schoolId' => $schoolId
+        ]);
         // create temp application
         $this->application = Application::factory()->create([
             'accountNo' => $this->user->accountNo,
         ]);
 
         $this->adminUser = Account::factory()->create([
-            'accountType' => "sysadmin"
+            'accountType' => "sysadmin",
+            'schoolId' => $schoolId
         ]);
 
         $this->otherUser1 = Account::factory()->create([
-            'accountType' => "staff"
+            'accountType' => "staff",
+            'schoolId' => $schoolId
         ]);
 
         $this->otherUser2 = Account::factory()->create([
-            'accountType' => "lmanager"
+            'accountType' => "lmanager",
+            'schoolId' => $schoolId
         ]);
 
         AccountRole::factory(3)->create([
@@ -225,26 +233,35 @@ class NominationControllerTest extends TestCase
         $response->assertStatus(302);
     }
 
-    public function test_api_request_for_accounts_content_is_json(): void
+    public function test_api_request_for_all_nominations_content_is_json(): void
     {
         // Check if response is json
         $response = $this->actingAs($this->adminUser)->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
         $this->assertJson($response->content());
     }
 
-    public function test_api_request_for_accounts_content_is_valid(): void
+    public function test_api_request_for_all_nominations_content_is_valid(): void
     {
         // Check if correct structure
         $response = $this->actingAs($this->adminUser)->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
-        $response->assertJsonStructure([
-            0 => [
-                'applicationNo',
-                'nomineeNo',
-                'accountRoleId',
-                'status',
-                'updated_at'
-            ],
-        ]);
+        
+        $accountsOfSameSchool = Account::where('schoolId', $this->adminUser->schoolId)->pluck('accountNo');
+        $applicationsOfTheSameSchool = Application::whereIn('accountNo', $accountsOfSameSchool)->get();
+        if (count($applicationsOfTheSameSchool) > 0) {
+            $response->assertJsonStructure([
+                0 => [
+                    'applicationNo',
+                    'nomineeNo',
+                    'accountRoleId',
+                    'status',
+                    'updated_at'
+                ],
+            ]);
+        }
+        else {
+            $this->assertTrue($response->content() == []);
+        }
+        
     }
 
 
