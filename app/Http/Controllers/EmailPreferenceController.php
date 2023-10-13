@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\EmailPreference;
+use Illuminate\Support\Facades\Auth;
 
 class EmailPreferenceController extends Controller
 {
@@ -12,10 +14,8 @@ class EmailPreferenceController extends Controller
     // get the interval for a users archive email
     public function getPreference(Request $request)
     {
-        $request->validate([
-            'accountNo' => ['required'],
-        ]);
-        $accountNo = $request->accountNo;
+        $user = Auth::user();
+        $accountNo = $user->accountNo;
         if(!EmailPreference::where('accountNo', $accountNo)->first())
         {
             return response()->json(['error' => 'Account does not exist.'], 500);
