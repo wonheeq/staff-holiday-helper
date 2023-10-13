@@ -4,10 +4,28 @@ import SettingsModal from "@/Components/Settings/SettingsModal.vue";
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useEmailFrequencyStore } from '@/stores/EmailFrequencyStore';
+import { useReminderTimeframeStore } from '@/stores/ReminderTimeframeStore';
+import { usePage } from '@inertiajs/vue3';
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+const reminderTimeframeStore = useReminderTimeframeStore();
+const { getReminderTimeframe } = reminderTimeframeStore;
+const { reminderTimeframe } = storeToRefs(reminderTimeframeStore);
+const emailFrequencyStore = useEmailFrequencyStore();
+const { getFrequency } = emailFrequencyStore;
+const { frequency } = storeToRefs(emailFrequencyStore);
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 
 let settingsVisible = ref(false);
+
+if (frequency.value == null) {
+    getFrequency();
+}
+if (reminderTimeframe.value == null) {
+    getReminderTimeframe(user.value.accountNo);
+}
 </script>
 <template>
     <div class="w-full h-[100vh]">
