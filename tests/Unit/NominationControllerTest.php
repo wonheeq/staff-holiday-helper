@@ -236,7 +236,6 @@ class NominationControllerTest extends TestCase
     {
         // Check if correct structure
         $response = $this->actingAs($this->adminUser)->getJson("/api/allNominations/{$this->adminUser['accountNo']}");
-        // dd($response);
         if($response->status() == 200 )
         {
             $response->assertJsonStructure([
