@@ -72,12 +72,12 @@ class SendNomineeAppEdited implements ShouldQueue
                 'messageOne' => $data[1][1],
                 'roles' => $roles,
                 'duration' => $data[1][sizeof($data[1]) - 1],
-                'acceptLink' => 'http://127.0.0.1:8000/acceptEditedNominations/'. $this->hash . '/'. $applicationNo  ,
-                // 'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptEditedNominations/'. $this->hash . '/'. $applicationNo  ,
-                'acceptSomeLink' => 'http://127.0.0.1:8000/reviewNominations/'. $applicationNo  ,
-                // 'acceptSomeLink' => 'https://leaveontime.cyber.curtin.io/reviewNominations/'. $applicationNo  ,
-                'rejectLink' => 'http://127.0.0.1:8000/rejectEditedNominations/'. $this->hash . '/'. $applicationNo  ,
-                // 'rejectLink' => 'https://leaveontime.cyber.curtin.io/rejectEditedNominations/'. $this->hash . '/'. $applicationNo  ,
+                // 'acceptLink' => 'http://127.0.0.1:8000/acceptEditedNominations/'. $this->hash . '/'. $applicationNo  ,
+                'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptEditedNominations/'. $this->hash . '/'. $applicationNo  ,
+                // 'acceptSomeLink' => 'http://127.0.0.1:8000/reviewNominations/'. $applicationNo  ,
+                'acceptSomeLink' => 'https://leaveontime.cyber.curtin.io/reviewNominations/'. $applicationNo  ,
+                // 'rejectLink' => 'http://127.0.0.1:8000/rejectEditedNominations/'. $this->hash . '/'. $applicationNo  ,
+                'rejectLink' => 'https://leaveontime.cyber.curtin.io/rejectEditedNominations/'. $this->hash . '/'. $applicationNo  ,
             ];
 
             // Mail::to($reciever->getEmail)->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
