@@ -27,5 +27,9 @@ export let useStaffStore = defineStore('staffMembers', {
                 (staff.accountNo.includes(this.staffValue))
             );
         }
-    }
+    },
+
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });

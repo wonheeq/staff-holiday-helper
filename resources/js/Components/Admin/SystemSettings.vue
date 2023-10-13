@@ -8,6 +8,10 @@ import { usePage } from '@inertiajs/vue3'
 import { useDark } from "@vueuse/core";
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+import { useReminderTimeframeStore } from '@/stores/ReminderTimeframeStore';
+const reminderTimeframeStore = useReminderTimeframeStore();
+const { setReminderTimeframe } = reminderTimeframeStore;
+const { reminderTimeframe } = storeToRefs(reminderTimeframeStore);
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
@@ -15,27 +19,24 @@ const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const MAX_SYSTEM_NOTIFICATION_LENGTH = 300;
-const options = {
-    default: "2 days",
-    all: [
-        "1 day",
-        "2 days",
-        "3 days",
-        "4 days",
-        "5 days",
-        "6 days",
-        "1 week"
-    ]
-}
-let oldReminderTimeframe = ref(options.default);
-let reminderTimeframe = ref(options.default);
+const options = [
+    "1 day",
+    "2 days",
+    "3 days",
+    "4 days",
+    "5 days",
+    "6 days",
+    "1 week"
+];
+
+let newReminderTimeframe = ref(reminderTimeframe.value);
 let systemNotificationContent = ref("");
 
 let showReminderApplyButton = ref(false);
 let showSystemNotificationButton = ref(false);
 
-watch(reminderTimeframe, () => {
-    if (reminderTimeframe.value != oldReminderTimeframe.value) {
+watch(newReminderTimeframe, () => {
+    if (newReminderTimeframe.value != reminderTimeframe.value) {
         showReminderApplyButton.value = true;
     }
     else {
@@ -45,34 +46,8 @@ watch(reminderTimeframe, () => {
 
 function changeReminderTimeframe() {
     showReminderApplyButton.value = false;
-    oldReminderTimeframe.value = reminderTimeframe.value;
 
-    let data = {
-        'timeframe': reminderTimeframe.value,
-        'accountNo': user.value.accountNo,
-    };
-
-    axios.post('/api/setReminderTimeframe', data)
-        .then(res => {
-            if (res.status == 500) {
-                Swal.fire({
-                    icon: "error",
-                    title: 'Failed to change reminder timeframe, please try again',
-                });
-            }
-            else {
-                Swal.fire({
-                    icon: "success",
-                    title: 'Successfully changed reminder timeframe',
-                });
-            }
-        }).catch(err => {
-        console.log(err);
-        Swal.fire({
-            icon: "error",
-            title: 'Failed to change reminder timeframe, please try again',
-        });
-    });
+    setReminderTimeframe(user.value.accountNo, newReminderTimeframe.value);
 }
 
 watch(systemNotificationContent, () => {
@@ -115,19 +90,6 @@ function createSystemNotification() {
         });
     });
 }
-
-axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
-.then(res => {
-    if (res.status == 200) {
-        reminderTimeframe.value = res.data;
-        oldReminderTimeframe.value = res.data;
-    }
-    else {
-        console.log("Failed to getReminderTimeframe");
-    }
-}).catch(err => {
-    console.log(err);
-});
 </script>
 <template>
     <div v-if="isMobile"
@@ -137,11 +99,11 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
                 <p class="text-xl laptop:text-2xl h-full 4k:text-3xl">
                     Reminder Timeframe:
                 </p>
-                <vSelect :options="options.all" :clearable="false"
+                <vSelect :options="options" :clearable="false"
                     class="timeframe_options" 
                     :class="isDark ? 'dropdown-dark':''"
                     :style="isMobile?'width:100%;':''"
-                    v-model="reminderTimeframe"
+                    v-model="newReminderTimeframe"
                 />
                 <button v-show="showReminderApplyButton"
                     class="mt-2"
@@ -196,10 +158,10 @@ axios.get('/api/getReminderTimeframe/' + user.value.accountNo)
                 <p class="text-2xl h-full 4k:text-3xl">
                     Reminder Timeframe:
                 </p>
-                <vSelect :options="options.all" :clearable="false"
+                <vSelect :options="options" :clearable="false"
                     class="timeframe_options" 
                     :class="isDark ? 'dropdown-dark':''"
-                    v-model="reminderTimeframe"
+                    v-model="newReminderTimeframe"
                 />
                 <button v-show="showReminderApplyButton"
                     :class="{

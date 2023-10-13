@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export let useRolesStore = defineStore('roles', {
     state: () => ({
@@ -19,5 +20,9 @@ export let useRolesStore = defineStore('roles', {
 
     getters: {
 
-    }
+    },
+
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });
