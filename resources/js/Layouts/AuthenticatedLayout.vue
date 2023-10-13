@@ -1,7 +1,7 @@
 <script setup>
 import Navbar from "@/Components/Navbar.vue";
 import SettingsModal from "@/Components/Settings/SettingsModal.vue";
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 import { useEmailFrequencyStore } from '@/stores/EmailFrequencyStore';
