@@ -56,9 +56,9 @@ class SendNominationCancelled implements ShouldQueue
             // Mail::to($reciever->getEmail)->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
 
             // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-            Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
+            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-            //Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
+            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
 
             if ($this->isUnsent)
             {

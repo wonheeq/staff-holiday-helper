@@ -35,32 +35,9 @@ class EmailPreferenceControllerTest extends TestCase
 
     public function test_get_preference_valid_account(): void
     {
-        $response = $this->actingAs($this->user)->post('/api/getEmailFrequency', [
-            'accountNo' => $this->user->accountNo
-        ]);
+        $response = $this->actingAs($this->user)->get('/api/getEmailFrequency');
         $response->assertStatus(200);
         $this->assertTrue($response->content() == "Daily");
-    }
-
-
-
-    public function test_get_preference_invalid_account(): void
-    {
-        $response = $this->actingAs($this->user)->post('/api/getEmailFrequency', [
-            'accountNo' => 'AAAAAAA'
-        ]);
-        $response->assertStatus(500);
-        $this->assertTrue(str_contains($response->content(), "Account does not exist."));
-    }
-
-
-
-    public function test_get_preference_no_account(): void
-    {
-        $response = $this->actingAs($this->user)->post('/api/getEmailFrequency', [
-            'accountNo' => ''
-        ]);
-        $response->assertStatus(302);
     }
 
 

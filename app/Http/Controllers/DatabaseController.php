@@ -931,6 +931,8 @@ class DatabaseController extends Controller
             }
         }
 
+
+
         if ($initialEntry['Line Manager'] != $entry['Line Manager']) {
             if ($entry['Line Manager'] == "") {
                 // Line manager is null
@@ -940,6 +942,9 @@ class DatabaseController extends Controller
                 if ($entry['Line Manager'] != 'none') {
                     return response()->json(['error' => 'Invalid: Line Manager \'' . $entry['Line Manager'] . '\' does not exist in database. Check syntax or if you didn\'t fill in an attribute.'], 500);
                 }
+            }
+            else if ($entry['Line Manager'] == $entry['Account Number']) {
+                return response()->json(['error' => 'Invalid: An account is not allowed to have itself as its own line manager.'], 500);
             }
         }
 

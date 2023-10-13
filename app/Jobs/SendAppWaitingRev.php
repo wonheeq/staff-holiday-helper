@@ -74,10 +74,10 @@ class SendAppWaitingRev implements ShouldQueue
                 'applicantName' => $creator->getName(),
                 'application' => $application,
                 'period' => $data[2][sizeof($data[2]) - 1], // last index
-                // 'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptApplication/'.$hash,
-                'acceptLink' => 'http://127.0.0.1:8000/acceptApplication/'.$this->hash . '/'. $applicationNo,
-                'viewLink' => 'http://127.0.0.1:8000/reviewApplication/'. $applicationNo,
-                // 'viewLink' => 'https://leaveontime.cyber.curtin.io/reviewApplication/'. $applicationNo,
+                'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptApplication/'.$this->hash . '/'. $applicationNo,
+                // 'acceptLink' => 'http://127.0.0.1:8000/acceptApplication/'.$this->hash . '/'. $applicationNo,
+                // 'viewLink' => 'http://127.0.0.1:8000/reviewApplication/'. $applicationNo,
+                'viewLink' => 'https://leaveontime.cyber.curtin.io/reviewApplication/'. $applicationNo,
             ];
 
 
