@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
         $accounts = Account::get();
 
 
-        // Each Account needs and EmailPreference 
+        // Each Account needs and EmailPreference
         // Each account gets 5 random AccountRoles
         foreach ($accounts as $account) {
             /*EmailPreference::create([
@@ -353,22 +353,22 @@ class DatabaseSeeder extends Seeder
             }
 
             // create message for this application
-            Message::factory()->create([
-                'applicationNo' => $nomMultiApp->applicationNo,
-                'receiverNo' => $test_id,
-                'senderNo' => $otherUser->accountNo,
-                'subject' => 'Substitution Request',
-                'content' => json_encode([
-                    '(testing) You have been nominated for 5 roles:' . strval($nomMultiApp->applicationNo),
-                    "ROLENAME 1",
-                    "ROLENAME 2",
-                    "ROLENAME 3",
-                    "ROLENAME 4",
-                    "ROLENAME 5",
-                    "Duration: {$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
-                ]),
-                'acknowledged' => false
-            ]);
+            // Message::factory()->create([
+            //     'applicationNo' => $nomMultiApp->applicationNo,
+            //     'receiverNo' => $test_id,
+            //     'senderNo' => $otherUser->accountNo,
+            //     'subject' => 'Substitution Request',
+            //     'content' => json_encode([
+            //         '(testing) You have been nominated for 5 roles:' . strval($nomMultiApp->applicationNo),
+            //         "ROLENAME 1",
+            //         "ROLENAME 2",
+            //         "ROLENAME 3",
+            //         "ROLENAME 4",
+            //         "ROLENAME 5",
+            //         "Duration: {$nomMultiApp['sDate']->format('Y-m-d H:i')} - {$nomMultiApp['eDate']->format('Y-m-d H:i')}",
+            //     ]),
+            //     'acknowledged' => false
+            // ]);
         }
 
 
@@ -385,29 +385,29 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // create message for this application
-        Message::factory()->create([
-            'applicationNo' => $nomSingleApp->applicationNo,
-            'receiverNo' => $test_id,
-            'senderNo' => $otherUser->accountNo,
-            'subject' => 'Substitution Request',
-            'content' => json_encode([
-                '(testing) You have been nominated for ROLENAME',
-                "Duration: {$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
-            ]),
-            'acknowledged' => false
-        ]);
+        // Message::factory()->create([
+        //     'applicationNo' => $nomSingleApp->applicationNo,
+        //     'receiverNo' => $test_id,
+        //     'senderNo' => $otherUser->accountNo,
+        //     'subject' => 'Substitution Request',
+        //     'content' => json_encode([
+        //         '(testing) You have been nominated for ROLENAME',
+        //         "Duration: {$nomSingleApp['sDate']->format('Y-m-d H:i')} - {$nomSingleApp['eDate']->format('Y-m-d H:i')}",
+        //     ]),
+        //     'acknowledged' => false
+        // ]);
 
         // generate "acknowledgeable" messages
-        Message::factory()->create([
-            'applicationNo' => null,
-            'receiverNo' => $test_id,
-            'senderNo' => $otherUser->accountNo,
-            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
-            'content' => json_encode([
-                'asdfasdfasdf',
-            ]),
-            'acknowledged' => false
-        ]);
+        // Message::factory()->create([
+        //     'applicationNo' => null,
+        //     'receiverNo' => $test_id,
+        //     'senderNo' => $otherUser->accountNo,
+        //     'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
+        //     'content' => json_encode([
+        //         'asdfasdfasdf',
+        //     ]),
+        //     'acknowledged' => false
+        // ]);
 
 
         $accounts = Account::get();
