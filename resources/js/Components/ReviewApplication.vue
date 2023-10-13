@@ -183,7 +183,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                                     class="text-xs"
                                     :class="isDark?'text-white':''"
                                 >
-                                    →{{ role }}
+                                      →{{ role }}
                                 </p>
                             </div>
                         </div>
@@ -253,7 +253,7 @@ const buttonClass = "p-3 w-1/3 rounded-md text-white text-2xl font-bold";
                             </p>
                             <div>
                                 <p :class="isDark?'text-white':''" v-for="role in nomination.roles">
-                                    →{{ role }}
+                                      →{{ role }}
                                 </p>
                             </div>
                         </div>

@@ -42,7 +42,7 @@ export default {
                 field: 'name',
                 },
                 {
-                label: 'Created/Last Updated (UTC)',
+                label: 'Created/Last Updated',
                 field: 'updated_at',
                 },
                 {

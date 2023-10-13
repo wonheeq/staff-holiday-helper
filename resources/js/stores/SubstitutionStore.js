@@ -8,13 +8,14 @@ export let useSubstitutionStore = defineStore('substitutions', {
 
     actions: {
         async fetchSubstitutions(accountNo) {
-            try {
-                const resp = await axios.get('/api/getSubstitutionsForUser/' + accountNo);
+            axios.get('/api/getSubstitutionsForUser/' + accountNo)
+            .then(resp => {
+                this.substitutions.length = 0;
                 this.substitutions = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch (error => {
+                console.log(error);
+            });
         }
     },
     persist: {

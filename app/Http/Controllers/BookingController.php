@@ -244,7 +244,6 @@ class BookingController extends Controller
                 // application exists, application is accepted, application endDate later than now
                 $endDateTime = new DateTime($application['eDate']);
                 $nowTime = new DateTime();
-                $nowTime->setTimezone(new DateTimeZone("Australia/Perth"));
 
                 if ($application != null && $application['status'] == 'Y' && $endDateTime > $nowTime) {
                     // Get details of accepted application

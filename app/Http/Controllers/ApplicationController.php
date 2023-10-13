@@ -31,8 +31,9 @@ class ApplicationController extends Controller
 
         foreach ($applications as $val) {
             // get nominations for application and insert
-            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
-            $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($val["applicationNo"]);
+            $nomQuery = app(NominationController::class)->getNominations($val["applicationNo"]);
+            $nominationsToDisplay = $nomQuery['text'];
+            $nominations = $nomQuery['data'];
 
             // check if is self nominated for all
             if ($this->isSelfNominatedAll($nominations, $accountNo)) {
@@ -118,7 +119,6 @@ class ApplicationController extends Controller
         $startDate = new DateTime($data['sDate']);
         $endDate = new DateTime($data['eDate']);
         $currentDate = new DateTime();
-        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
 
         // End date is earlier or equal to start date
         if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {
@@ -284,8 +284,9 @@ class ApplicationController extends Controller
         $applicationNo = $application->applicationNo;
         $result = Application::where('applicationNo', $applicationNo)->first();
         // get nominations for application and insert
-        $nominations = app(NominationController::class)->getNominations($applicationNo);
-        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
+        $nomQuery = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = $nomQuery['text'];
+        $nominations = $nomQuery['data'];
 
         // check if is self nominated for all
         if ($this->isSelfNominatedAll($nominations, $accountNo)) {
@@ -821,13 +822,12 @@ class ApplicationController extends Controller
             return response()->json('Account does not exist.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth");
+        
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
         $nowDate = new DateTime();
 
-        date_default_timezone_set("UTC");
         /*
         Log::debug($startDate->format('Y-m-d H:i:s'));
         Log::debug($nowDate->format('Y-m-d H:i:s'));
@@ -926,8 +926,9 @@ class ApplicationController extends Controller
 
         $result = Application::where('applicationNo', $applicationNo)->first();
         // get nominations for application and insert
-        $nominations = app(NominationController::class)->getNominations($applicationNo);
-        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
+        $nomQuery = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = $nomQuery['text'];
+        $nominations = $nomQuery['data'];
 
         // check if is self nominated for all
         if ($this->isSelfNominatedAll($nominations, $accountNo)) {
@@ -936,6 +937,7 @@ class ApplicationController extends Controller
             $result["nominations"] = $nominations;
             $result["nominationsToDisplay"] = $nominationsToDisplay;
         }
+        
         return response()->json($result);
     }
 
@@ -961,12 +963,11 @@ class ApplicationController extends Controller
             return response()->json('Application does not exist or does not belong to account.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth");
+        
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
         $nowDate = new DateTime();
-        date_default_timezone_set("UTC");
         /*
         Log::debug($startDate->format('Y-m-d H:i:s'));
         Log::debug($nowDate->format('Y-m-d H:i:s'));

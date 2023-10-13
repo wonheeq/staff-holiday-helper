@@ -4,47 +4,84 @@ import VueScrollingTable from "vue-scrolling-table";
 import "/node_modules/vue-scrolling-table/dist/style.css";
 import { storeToRefs } from 'pinia';
 import { useApplicationStore } from '@/stores/ApplicationStore';
-import { onMounted, ref, computed } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import ReviewApplication from '@/Components/ReviewApplication.vue';
+import { useDark } from "@vueuse/core";
+import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
+const isDark = useDark();
 const page = usePage();
 const user = computed(() => page.props.auth.user);
-import { useDark } from "@vueuse/core";
-const isDark = useDark();
-import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 
 let applicationStore = useApplicationStore();
-const { allApplications, acceptedApplications, rejectedApplications, unacknowledgeApplications, viewing } = storeToRefs(applicationStore);
+const { viewing, managerApplications } = storeToRefs(applicationStore);
 const { fetchManagerApplications } = applicationStore;
-const dataReady = ref(false);
+
+let reviewAppModalData = reactive([]);
+let showReviewAppModal = ref(false);
+    
+async function handleReviewApplication(appNo) {
+    let response = await fetchApplicationForReview(appNo);
+    showReviewAppModal.value = response;
+}
+let fetchApplicationForReview = async(appNo) => {
+    await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo)
+    .then (resp => {
+        reviewAppModalData = resp.data;
+        return true;
+    })
+    .catch (error => {
+        reviewAppModalData = [];
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to review application',
+            text: 'Invalid permissions to review application'
+        });
+        console.log(error);
+        return false;
+    });
+}; 
+
+function handleCloseReviewApp() {
+    reviewAppModalData = [];
+    showReviewAppModal.value = false;
+    fetchManagerApplications(user.value.accountNo);
+}
+
+
 
 onMounted(async () => {
-    await fetchManagerApplications(user.value.accountNo);
-    dataReady.value = true;
-});
+    fetchManagerApplications(user.value.accountNo);
+})
 
 const deadAreaColor = computed(() => {
     return isDark.value ? '#1f2937': '#FFFFFF';
 });
 
 const appCount = computed(() => {
-    if (viewing.value == 'all') {
-        return (allApplications.value.length);
-    }else if(viewing.value == 'accepted'){
-        return (acceptedApplications.value.length);
-    }else if(viewing.value == 'rejected'){
-        return (rejectedApplications.value.length);
+    if (managerApplications.value.length > 0) {
+        if (viewing.value == 'all') {
+            return managerApplications.value.length;
+        }
+        else if(viewing.value == 'accepted'){
+            return managerApplications.value.filter(application => application.status === 'Y').length;
+        }
+        else if(viewing.value == 'rejected'){
+            return managerApplications.value.filter(application => application.status === 'N').length;
+        }
+        else{
+            return managerApplications.value.filter(application => application.status === 'U').length;
+        }
     }
-    else{
-        return (unacknowledgeApplications.value.length);
-    }
+    return 0;
 });
 </script>
 <template>
-    <div v-if="isMobile" class="subpage-heightMobile2 w-full" :class="isDark?'bg-gray-800':'bg-white'">
+    <div v-if="isMobile" class="subpage-height-mobile w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[5%]">
-            <p class="font-bold text-2xl">
+            <p class="font-bold text-2xl p-2">
                 Leave Applications ({{ appCount }}): 
             </p>
         </div>
@@ -88,63 +125,21 @@ const appCount = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div v-show="dataReady && viewing==='all'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="managerApplications" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
                 :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
-                    <div v-for="item in allApplications" :key="item.id" class="mb-1">
+                    <div v-for="item in managerApplications" :key="item.id" class="mb-1"
+                        v-show="viewing == 'all'
+                        || (item.status == 'Y' && viewing == 'accepted')
+                        || (item.status == 'N' && viewing == 'rejected')
+                        || (item.status == 'U' && viewing == 'unAcknowledged')
+                    ">
                         <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
-                       
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-show="dataReady && viewing==='accepted'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in acceptedApplications" :key="item.id" class="mb-1">
-                        <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
-                       
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-show="dataReady && viewing==='rejected'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in rejectedApplications" :key="item.id" class="mb-1">
-                        <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
-                       
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-if="dataReady && viewing==='unAcknowledged'" class="h-[92%] pb-1" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in unacknowledgeApplications" :key="item.id" class="mb-1">
-                        <ApplicationInfo
+                            @reviewApplication="handleReviewApplication(item.applicationNo)"
                             :source="item"
                         ></ApplicationInfo>
                        
@@ -155,7 +150,7 @@ const appCount = computed(() => {
     </div>
     <div v-else class="subpage-height w-full" :class="isDark?'bg-gray-800':'bg-white'">
         <div class="h-[7%]">
-            <p class="font-bold text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
+            <p class="font-bold p-4 text-2xl laptop:text-base 1080:text-3xl 1440:text-5xl 4k:text-7xl">
                 Leave Applications ({{ appCount }}): 
             </p>
         </div>
@@ -200,78 +195,38 @@ const appCount = computed(() => {
                 >
             <label for="rejected" class="filter-text">Rejected</label>
         </div>
-        <div>
-            
-        </div>
-        <div v-show="dataReady && viewing==='all'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
+        <div v-if="managerApplications" class="h-[88%] mx-2 1440:mx-4 scroller pb-4" :class="isDark?'bg-gray-800':'bg-white'">
             <VueScrollingTable
                 :deadAreaColor="deadAreaColor"
                 :scrollHorizontal="false"
                 :class="isDark?'scrollbar-dark':''"
             >
                 <template #tbody>
-                    <div v-for="item in allApplications" :key="item.id" class="mb-2">
+                    <div v-for="item in managerApplications" :key="item.id" class="mb-2"
+                        v-show="viewing == 'all'
+                        || (item.status == 'Y' && viewing == 'accepted')
+                        || (item.status == 'N' && viewing == 'rejected')
+                        || (item.status == 'U' && viewing == 'unAcknowledged')
+                    ">
                         <ApplicationInfo
+                            @reviewApplication="handleReviewApplication(item.applicationNo)"
                             :source="item"
                         ></ApplicationInfo>
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-show="dataReady && viewing==='unAcknowledged'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in unacknowledgeApplications" :key="item.id" class="mb-2">
-                        <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-show="dataReady && viewing==='accepted'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in acceptedApplications" :key="item.id" class="mb-2">
-                        <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
-                    </div>
-                </template>
-            </VueScrollingTable>
-        </div>
-        <div v-show="dataReady && viewing==='rejected'" class="h-[88%] mx-2 1440:mx-4 1440:mb-4 scroller pb-2" :class="isDark?'bg-gray-800':'bg-white'">
-            <VueScrollingTable
-                :deadAreaColor="deadAreaColor"
-                :scrollHorizontal="false"
-                :class="isDark?'scrollbar-dark':''"
-            >
-                <template #tbody>
-                    <div v-for="item in rejectedApplications" :key="item.id" class="mb-2">
-                        <ApplicationInfo
-                            :source="item"
-                        ></ApplicationInfo>
+                       
                     </div>
                 </template>
             </VueScrollingTable>
         </div>
     </div>
+    <Teleport to="#modals">
+        <ReviewApplication
+            v-if="showReviewAppModal"
+            :data="reviewAppModalData"
+            @close="handleCloseReviewApp()"
+        />
+    </Teleport>
 </template>
 <style>
-.subpage-height {
-    height: calc(0.95 * 93vh - 3rem);
-}
-.subpage-heightMobile2 {
-    height: calc(0.95 * 93vh - 1.5rem);
-}
 .filter-radio {
     transform: scale(0.6);
     margin-right: 2px;

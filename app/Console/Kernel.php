@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        date_default_timezone_set("Australia/Perth");
+        
 
         // ON THE ACTUAL SERVER, ADD THIS CRON COMMAND:
         /*
@@ -56,7 +56,6 @@ class Kernel extends ConsoleKernel
         // after the reminder timeframe has passed...
         //    the system will send a reminder every day until the nominations are responded to
         $schedule->call(function () {
-            // now timestamp UTC
             $now = new DateTime();
             $reminderLists = $this->getReminderLists($now);
             $this->sendReminders($reminderLists);
@@ -85,7 +84,6 @@ class Kernel extends ConsoleKernel
 
         foreach ($applications as $application) {
             $now = new DateTime();
-            $now->setTimezone(new DateTimeZone("Australia/Perth"));
             $startDate = new DateTime($application->sDate);
             $endDate = new DateTime($application->eDate);
             /*
@@ -227,7 +225,7 @@ class Kernel extends ConsoleKernel
                 $split = explode(" ", $reminderTimeframe);
                 $reminderValue = intval($split[0]);
                 $reminderPeriod = $split[1];
-                $created = new DateTime($nomination->created_at); // UTC
+                $created = new DateTime($nomination->created_at);
 
                 $diff = date_diff($created, $now);
 

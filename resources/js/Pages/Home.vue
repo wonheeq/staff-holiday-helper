@@ -36,29 +36,32 @@ let nominationModalData = reactive([]);
 let roles = reactive([]);
 
 let fetchApplicationForReviewFromEmail = async(appNo) => {
-    try {
-        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo);
+    axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo)
+    .then (resp => {
         reviewAppModalData = resp.data;
         console.log(reviewAppModalData);
         return true;
-    } catch (error) {
+    })
+    .catch (error => {
+        console.log(error);
         Swal.fire({
             icon: "error",
             title: 'Error',
             text: "Unable to review application - did you review this application already?"
         });
         return false;
-    }
+    });
 };
 
 let fetchMessageForApplication = async(appNo) => {
-    try {
-        const resp = await axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo);
+    axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
+    .then(resp => {
         return resp.data;
-    } catch (error) {
+    })
+    .catch (error => {
         console.log(error);
         return null;
-    }
+    });
 };
 
 async function handleAcceptSomeNominationsFromEmail(appNo) {
@@ -68,14 +71,15 @@ async function handleAcceptSomeNominationsFromEmail(appNo) {
 }
 
 let fetchWelcomeMessageData = async() => {
-    try {
-        const resp = await axios.get("/api/getWelcomeMessageData/" + user.value.accountNo);
+    axios.get("/api/getWelcomeMessageData/" + user.value.accountNo)
+    .then(resp => {
         welcomeData = resp.data;
         dataReady.value = true;
-    } catch (error) {
+    })
+    .catch (error => {
         //silently fail
         console.log(error);
-    }
+    });
 }
 async function handleAcceptSomeNominations(message) {
     nominationModalData = message;
@@ -237,13 +241,3 @@ if (nomsToReview != null) {
         </AuthenticatedLayout>
     </PageLayout>
 </template>
-
-<style>
-.screen {
-    height: calc(93vh - 3rem);
-}
-.screen-mobile {
-    /* mobile screen uses 0.5rem for margins */
-    height: calc(93vh - 1.5rem);
-}
-</style>

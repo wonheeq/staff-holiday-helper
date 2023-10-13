@@ -1,55 +1,19 @@
 <script setup>
-import ReviewApplication from '@/Components/ReviewApplication.vue';
-import axios from 'axios';
-import Swal from 'sweetalert2';
 import { storeToRefs } from 'pinia';
 import { usePage } from '@inertiajs/vue3'
-import {computed, reactive, ref} from 'vue';
-import { useApplicationStore } from '@/stores/ApplicationStore';
+import {computed } from 'vue';
 import { useDark } from "@vueuse/core";
 import { useScreenSizeStore } from '@/stores/ScreenSizeStore';
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
 const isDark = useDark();
-let applicationStore = useApplicationStore();
-const { fetchManagerApplications } = applicationStore;
 
+const emit = defineEmits(['reviewApplication']);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
 
 let props = defineProps({ source: Object });
-let reviewAppModalData = reactive([]);
-let showReviewAppModal = ref(false);
-    
-async function handleReviewApplication() {
-    let response = await fetchApplicationForReview();
-    showReviewAppModal.value = response;
-}
-let fetchApplicationForReview = async() => {
-    try {
-        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + props.source.applicationNo);
-        reviewAppModalData = resp.data;
-        return true;
-    } catch (error) {
-        reviewAppModalData = [];
-        Swal.fire({
-            icon: 'error',
-            title: 'Failed to review application',
-            text: 'Invalid permissions to review application'
-        });
-        console.log(error);
-        return false;
-    }
-}; 
-
-function handleCloseReviewApp() {
-    reviewAppModalData = [];
-    showReviewAppModal.value = false;
-    fetchManagerApplications(user.value.accountNo);
-}
-
-
 </script>
 <template>
     <div v-if="isMobile">
@@ -61,17 +25,15 @@ function handleCloseReviewApp() {
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
-                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} ({{ nomination.nomineeNo }}) - {{ nomination.task }} - {{ nomination.nomineeNo }}@curtin.edu.au
-                        </p>
-                    </div>
+                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes:</p>
+                    <p class="whitespace-pre-wrap text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                        {{ source.nominationsToDisplay }}
+                    </p>
                 </div>
             </div>          
             <div class="w-full text-3xl flex justify-center items-center pt-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <button
-                    @click="handleReviewApplication()"
+                    @click="$emit('reviewApplication');"
                     class="flex flex-col items-center"
                 >
                     <img src="/images/review-app.svg" 
@@ -91,12 +53,10 @@ function handleCloseReviewApp() {
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl ml-auto pr-5 pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
-                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} ({{ nomination.nomineeNo }}) - {{ nomination.task }} - {{ nomination.nomineeNo }}@curtin.edu.au
-                        </p>
-                    </div>
+                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes:</p>
+                    <p class="whitespace-pre-wrap text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                        {{ source.nominationsToDisplay }}
+                    </p>
                 </div>
             </div>  
             <div class="w-full text-3xl p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
@@ -121,17 +81,15 @@ function handleCloseReviewApp() {
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
-                    <p class="pt-2 text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p class="text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} ({{ nomination.nomineeNo }}) - {{ nomination.task }} - {{ nomination.nomineeNo }}@curtin.edu.au
-                        </p>
-                    </div>
+                    <p class="pt-2 text-sm laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes:</p>
+                    <p class="whitespace-pre-wrap text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                        {{ source.nominationsToDisplay }}
+                    </p>
                 </div>
             </div>          
             <div class="flex flex-col w-1/6 text-3xl ml-2 p-2 justify-center items-center" :class="isDark?'bg-gray-700':'bg-gray-200'">
                 <button class="flex flex-col items-center"
-                    @click="handleReviewApplication()"
+                    @click="$emit('reviewApplication');"
                 >
                     <img src="/images/review-app.svg" 
                     class="review"
@@ -149,12 +107,10 @@ function handleCloseReviewApp() {
                     <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl pt-2 pb-2">Applicant email: <span class="underline">{{ source.accountNo }}@curtin.edu.au</span></p>
                 </div>
                 <div>
-                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes (The following staffs have agreed to substitute for the following roles):</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomination in source.nominations">
-                        <p class="text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl" v-if="nomination.nomineeNo != user.accountNo">
-                            → {{ nomination.name }} ({{ nomination.nomineeNo }}) - {{ nomination.task }} - {{ nomination.nomineeNo }}@curtin.edu.au
-                        </p>
-                    </div>
+                    <p class="pt-2 text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">Substitutes:</p>
+                    <p class="whitespace-pre-wrap text-xs laptop:text-base 1080:text-xl 1440:text-2xl 4k:text-4xl">
+                        {{ source.nominationsToDisplay }}
+                    </p>
                 </div>
             </div>  
             <div class="flex flex-col w-2/5 text-3xl p-2" :class="isDark?'bg-gray-700':'bg-gray-200'">
@@ -170,15 +126,6 @@ function handleCloseReviewApp() {
             </div>
         </div>
     </div>
-    
-    <Teleport to="#modals">
-        <ReviewApplication
-            v-show="showReviewAppModal"
-            :data="reviewAppModalData"
-            @close="handleCloseReviewApp()"
-        />
-    </Teleport>
-
 </template>
 
 <style>

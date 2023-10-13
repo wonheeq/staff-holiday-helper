@@ -10,6 +10,7 @@ import { createPinia } from 'pinia';
 import dayjs from 'dayjs';
 import vTitle from 'vuejs-title'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
+import { useDark } from "@vueuse/core";
 const appName = "LeaveOnTime";
 
 createInertiaApp({
@@ -25,6 +26,7 @@ createInertiaApp({
                 transitionDelay: 0,
                 transitionDuration: 100,
             })
+            .use(useDark)
             .provide('dayJS', dayjs)
             .mount(el);
     },

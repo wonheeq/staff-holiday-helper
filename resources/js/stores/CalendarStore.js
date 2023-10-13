@@ -8,20 +8,19 @@ export let useCalendarStore = defineStore('calendar', {
 
     actions: {
         async fetchCalendarData(accountNo) {
-            try {
-                const resp = await axios.get('/api/calendar/' + accountNo);
+            axios.get('/api/calendar/' + accountNo)
+            .then(resp => {
+                this.calendarData.length = 0;
                 this.calendarData = resp.data;
-
-                // Use unshift to push to front
-                this.calendarData.unshift({
+                 // Use unshift to push to front
+                 this.calendarData.unshift({
                     key: 'today',
                     bar: true,
                     dates: new Date(),
                 });
-              }
-              catch (error) {
-                console.log(error)
-            }
+            }).catch(error => {
+                console.log(error);
+            });
         }
     },
     persist: {

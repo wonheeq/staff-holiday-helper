@@ -24,7 +24,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
     protected function setup(): void {
         parent::setup();
 
-        date_default_timezone_set("Australia/Perth");
+        
 
         // Create admin
         $this->admin = Account::factory()->create([
@@ -559,6 +559,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
         $response = $this->actingAs($this->tempManager)->get("/api/managerApplications/{$this->tempManager->accountNo}");
         $response->assertStatus(200);
         // this should return an array with 1 element
+
         $this->assertTrue(count($response->getData()) == 1);
 
         $response = $this->actingAs($this->tempManager)->get("/api/getSpecificStaffMember/{$this->staff->accountNo}");

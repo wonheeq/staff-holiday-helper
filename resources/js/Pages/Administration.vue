@@ -18,9 +18,3 @@
     </AuthenticatedLayout>
 </PageLayout>
 </template>
-
-<style>
-    .screen {
-        height: calc(93vh - 3rem);
-    }
-</style>

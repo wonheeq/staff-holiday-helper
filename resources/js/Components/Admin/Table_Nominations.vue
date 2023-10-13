@@ -51,7 +51,7 @@ export default {
                 field: 'status',
                 },
                 {
-                label: 'Created/Last Updated (UTC)',
+                label: 'Created/Last Updated',
                 field: 'updated_at',
                 },
                 {

@@ -41,12 +41,13 @@ let multiSelectNominee = ref("");
 
 
 let fetchStaffMembers = async() => {
-    try {
-        const resp = await axios.get('/api/getBookingOptions/' + user.value.accountNo);
+    axios.get('/api/getBookingOptions/' + user.value.accountNo)
+    .then(resp => {
         staffMembers = resp.data;
-    } catch (error) {
+    })
+    .catch (error => {
         console.log(error);
-    }
+    });
 }; 
 
 const dataReady = ref(false);

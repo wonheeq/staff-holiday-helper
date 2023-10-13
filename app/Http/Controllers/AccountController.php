@@ -132,7 +132,6 @@ class AccountController extends Controller
 
             // Iterate through each application and check if current date is inside the period
             $currentDate = new DateTime();
-            $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
             foreach ($applications as $app) {
                 $startDate = new DateTime($app['sDate']);
                 $endDate = new DateTime($app['eDate']);
@@ -178,11 +177,10 @@ class AccountController extends Controller
         // Get all approved applications of user
         $applications = Application::where('accountNo', $accountNo, "and")
             ->where('status', 'Y')->get();
-        date_default_timezone_set("Australia/Perth");
+        
 
         // Iterate through each application and check if current date is inside the period
         $currentDate = new DateTime();
-        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
         foreach ($applications as $app) {
             $startDate = new DateTime($app['sDate']);
             $endDate = new DateTime($app['eDate']);
@@ -192,7 +190,6 @@ class AccountController extends Controller
                 return true;
             }
         }
-        date_default_timezone_set("UTC");
         return false;
     }
 

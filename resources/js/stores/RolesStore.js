@@ -8,13 +8,14 @@ export let useRolesStore = defineStore('roles', {
 
     actions: {
         async fetchRolesForStaff(staffNo) {
-            try {
-                const resp = await axios.get('/api/getRolesForStaffs/' + staffNo);
+            axios.get('/api/getRolesForStaffs/' + staffNo)
+            .then(resp => {
+                this.roles.length = 0;
                 this.roles = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch (error => {
+                console.log(error);
+            });
         },
     },
 

@@ -336,10 +336,6 @@
 </template>
 
 <style lang="postcss">
-.screen-mobile {
-    /* mobile screen uses 0.5rem for margins */
-    height: calc(93vh - 1.5rem);
-}
     .tableButtonOn {
         min-width: 13%;
         font-size: 1rem;
@@ -418,9 +414,6 @@
         /*space-x-4*/
     }
 
-    .screen {
-        height: calc(93vh - 3rem);
-    }
 
     body {
         font-family: "PT Sans", sans-serif;
