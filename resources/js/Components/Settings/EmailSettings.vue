@@ -63,9 +63,7 @@ async function handleChangePreference() {
 
 }
 
-axios.get('/api/getEmailFrequency/', {
-    accountNo: user.value.accountNo
-})
+axios.get('/api/getEmailFrequency/' + user.value.accountNo)
 .then(res => {
     if (res.status == 200) {
         reminderTimeframe.value = res.data;

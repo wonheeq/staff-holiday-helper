@@ -12,10 +12,8 @@ class EmailPreferenceController extends Controller
 {
 
     // get the interval for a users archive email
-    public function getPreference(Request $request)
+    public function getPreference(Request $request, $accountNo)
     {
-        $user = Auth::user();
-        $accountNo = $user->accountNo;
         if(!EmailPreference::where('accountNo', $accountNo)->first())
         {
             return response()->json(['error' => 'Account does not exist.'], 500);

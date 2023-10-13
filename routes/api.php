@@ -98,7 +98,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::get('getWelcomeMessageData/{accountNo}', [AccountController::class, 'getWelcomeMessageData']);
     Route::get('getReminderTimeframe/{accountNo}', [AdminController::class, 'getReminderTimeframe']);
     Route::post('setEmailFrequency', [EmailPreferenceController::class, 'setPreference']);
-    Route::get('getEmailFrequency', [EmailPreferenceController::class, 'getPreference']);
+    Route::get('getEmailFrequency/{accountNo}', [EmailPreferenceController::class, 'getPreference']);
     Route::get('getMessageForApplication/{accountNo}/{applicationNo}', [MessageController::class, 'getMessageForApplication']);
 });
 
