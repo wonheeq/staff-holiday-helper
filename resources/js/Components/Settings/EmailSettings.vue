@@ -2,42 +2,41 @@
 import { ref, watch, reactive, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 import { useDark } from '@vueuse/core';
-const isDark = useDark();
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-import axios from "axios";
-import Swal from "sweetalert2";
+import { storeToRefs } from 'pinia';
+import { useEmailFrequencyStore } from '@/stores/EmailFrequencyStore';
+const emailFrequencyStore = useEmailFrequencyStore();
+const { setFrequency } = emailFrequencyStore;
+const { frequency } = storeToRefs(emailFrequencyStore);
+const isDark = useDark();
 let emit = defineEmits(['close-settings', 'close-email']);
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 let errors = reactive([]);
-const options = {
-    default: "Daily",
-    all: [
-        "Instantly",
-        "Hourly",
-        "Twice a day",
-        "Daily",
-        "Every 2 days",
-        "Every 3 days",
-        "Every 4 days",
-        "Every 5 days",
-        "Every 6 days",
-        "Once a week"
-    ]
-}
+const options = [
+    "Instantly",
+    "Hourly",
+    "Twice a day",
+    "Daily",
+    "Every 2 days",
+    "Every 3 days",
+    "Every 4 days",
+    "Every 5 days",
+    "Every 6 days",
+    "Once a week"
+];
 
 
-let oldReminderTimeframe = ref(options.default);
-let reminderTimeframe = ref(options.default);
+let newFrequency = ref(frequency.value);
 
 
 let showReminderApplyButton = ref(false);
 let displaySuccess = ref(false);
 
-watch(reminderTimeframe, () => {
-    displaySuccess = false;
-    if (reminderTimeframe.value != oldReminderTimeframe.value) {
+watch(newFrequency, () => {
+    displaySuccess.value = false;
+    if (newFrequency.value != frequency.value) {
         showReminderApplyButton.value = true;
     }
     else {
@@ -46,37 +45,13 @@ watch(reminderTimeframe, () => {
 });
 
 async function handleChangePreference() {
-    displaySuccess = false;
+    displaySuccess.value = false;
     errors.length = 0;
-    await axios.post("/api/setEmailFrequency", {
-        accountNo: user.value.accountNo,
-        frequency: reminderTimeframe.value
-
-    }).then(function(response) {
-        displaySuccess = true;
-        showReminderApplyButton.value = false;
-        oldReminderTimeframe.value = reminderTimeframe.value;
-    }).catch(error => {
-        errors.push("Something went wrong");
-        console.log(error);
-    })
-
+    let success = await setFrequency(user.value.accountNo, newFrequency.value);
+    if (success) {
+        displaySuccess.value = true;
+    }
 }
-
-axios.get('/api/getEmailFrequency/', {
-    accountNo: user.value.accountNo
-})
-.then(res => {
-    if (res.status == 200) {
-        reminderTimeframe.value = res.data;
-        oldReminderTimeframe.value = res.data;
-    }
-    else {
-        console.log("Failed to getEmailFrequency");
-    }
-}).catch(err => {
-    console.log(err);
-});
 </script>
 <template>
 <div>
@@ -110,9 +85,9 @@ axios.get('/api/getEmailFrequency/', {
         </div>
         <div class="flex flex-row h-fit space-x-4 items-center">
             <div class="w-[75%]">
-                <vSelect :options="options.all" :clearable="false" :class="isDark ? 'dropdown-dark':''"
+                <vSelect :options="options" :clearable="false" :class="isDark ? 'dropdown-dark':''"
                         style="width: 100%; height: 2rem; background-color: inherit;"
-                v-model="reminderTimeframe"
+                v-model="newFrequency"
 
                 />
 

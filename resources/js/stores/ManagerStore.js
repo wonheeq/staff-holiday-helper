@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export let useManagerStore = defineStore('manager', {
     state: () => ({
@@ -30,5 +31,9 @@ export let useManagerStore = defineStore('manager', {
     },
     getters: {
 
-    }
+    },
+
+    persist: {
+        storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
+    },
 });

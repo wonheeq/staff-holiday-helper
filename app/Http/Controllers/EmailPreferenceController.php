@@ -25,7 +25,7 @@ class EmailPreferenceController extends Controller
             $user = EmailPreference::where('accountNo', $accountNo)->first();
             $hours = $user->hours;
 
-            return $this->getFrequencyFromHours($hours);
+            return response()->json($this->getFrequencyFromHours($hours));
         }
 
     }
