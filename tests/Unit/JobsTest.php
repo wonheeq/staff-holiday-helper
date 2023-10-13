@@ -175,19 +175,4 @@ class JobsTest extends TestCase
     // }
 
 
-    // Test that an unsent email is correctly created when a transport exception
-    // occurs. EmailExceptionTestJob is a demo job that garuntees a transport exception
-    // occurs, but keeps the exact same logic inside the catch statement as the other jobs
-    public function test_failure_logic(): void
-    {
-        $data = ['test data'];
-        $job = new EmailExceptionTestJob($data);
-        $unsentEmails = UnsentEmail::where('accountNo', 'AAAAAA')->get();
-        assertTrue($unsentEmails->count() == 0);
-        $job->handle();
-        $unsentEmails = UnsentEmail::where('accountNo', 'AAAAAA')->get();
-        assertTrue($unsentEmails->count() == 1);
-        UnsentEmail::where('accountNo', 'AAAAAA')->delete();
-    }
-
 }

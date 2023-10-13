@@ -990,14 +990,14 @@ class MessageController extends Controller
                 'acknowledged' => false,
             ]);
 
-            $preferences = EmailPreference::where('accountNo', $account->accountNo)->first();
-            $hours = $preferences->hours;
-            if( $hours == 0 ) // if user is on instant notifications
-            {
-                // Collect data and queue an email
-                $data = [$account->accountNo, $content];
-                SendSystemNotification::dispatch($data, false, -1);
-            }
+            // $preferences = EmailPreference::where('accountNo', $account->accountNo)->first();
+            // $hours = $preferences->hours;
+            // if( $hours == 0 ) // if user is on instant notifications
+            // {
+            //     // Collect data and queue an email
+            //     $data = [$account->accountNo, $content];
+            //     SendSystemNotification::dispatch($data, false, -1);
+            // }
         }
 
         return response()->json(['success'], 200);

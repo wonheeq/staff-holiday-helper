@@ -41,23 +41,15 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $msgController = new MessageController();
             $msgController->checkArchiveMessages();
-        })->everyFifteenMinutes();
-
+        })->hourly();
 
 
 
         $schedule->call(function () {
             $emailController = new EmailController();
             $emailController->attemptBacklog();
-        })->everyFifteenMinutes();
+        })->hourly();
 
-        $schedule->call(function () {
-            $emailController = new EmailController();
-            $emailController->attemptBacklog();
-        })->everyFifteenSeconds()
-        ->onFailure(function (Stringable $error){
-            Log::info($error);
-        });
 
 
         // check all unresponded nominations every day

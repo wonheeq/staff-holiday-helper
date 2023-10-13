@@ -63,7 +63,7 @@ async function handleChangePreference() {
 
 }
 
-axios.post('/api/getEmailFrequency/', {
+axios.get('/api/getEmailFrequency/', {
     accountNo: user.value.accountNo
 })
 .then(res => {

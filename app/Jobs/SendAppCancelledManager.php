@@ -44,6 +44,7 @@ class SendAppCancelledManager implements ShouldQueue
         $reciever = Account::where('accountNo', $data[0])->first();
         $staffMember = Account::where('accountNo', $data[2])->first();
         $name = $reciever->getName();
+        $accountNo = $reciever->accountNo;
         try
         {
             $dynamicData = [
