@@ -50,6 +50,7 @@ async function handleChangePreference() {
     let success = await setFrequency(user.value.accountNo, newFrequency.value);
     if (success) {
         displaySuccess.value = true;
+        showReminderApplyButton.value = false;
     }
 }
 </script>

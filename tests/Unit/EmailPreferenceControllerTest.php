@@ -37,7 +37,7 @@ class EmailPreferenceControllerTest extends TestCase
     {
         $response = $this->actingAs($this->user)->get('/api/getEmailFrequency');
         $response->assertStatus(200);
-        $this->assertTrue($response->content() == "Daily");
+        $this->assertTrue(json_decode($response->content()) == "Daily");
     }
 
 
