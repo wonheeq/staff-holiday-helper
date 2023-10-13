@@ -118,7 +118,6 @@ class ApplicationController extends Controller
         $startDate = new DateTime($data['sDate']);
         $endDate = new DateTime($data['eDate']);
         $currentDate = new DateTime();
-        $currentDate->setTimezone(new DateTimeZone("Australia/Perth"));
 
         // End date is earlier or equal to start date
         if ($endDate->getTimestamp() - $startDate->getTimestamp() <= 0) {
@@ -821,7 +820,7 @@ class ApplicationController extends Controller
             return response()->json('Account does not exist.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth");
+        
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
@@ -935,6 +934,7 @@ class ApplicationController extends Controller
             $result["nominations"] = $nominations;
             $result["nominationsToDisplay"] = $nominationsToDisplay;
         }
+        
         return response()->json($result);
     }
 
@@ -960,7 +960,7 @@ class ApplicationController extends Controller
             return response()->json('Application does not exist or does not belong to account.', 500);
         }
 
-        date_default_timezone_set("Australia/Perth");
+        
         // Make sure application is not ongoing
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);

@@ -5,7 +5,6 @@ export let useApplicationStore = defineStore('applications', {
     state: () => ({
         applications: [],
         managerApplications: [],
-        allManagerApplications: [],
         viewing: 'all'
     }),
 
@@ -21,18 +20,14 @@ export let useApplicationStore = defineStore('applications', {
         },
         // To do, dynamically added current user account id to replace 0000002L
         async fetchManagerApplications(accountNo){
-            try {
-                const resp = await axios.get('/api/managerApplications/' + accountNo);
+            axios.get('/api/managerApplications/' + accountNo)
+            .then((resp) => {
+                this.managerApplications.length = 0;
                 this.managerApplications = resp.data;
-                this.allManagerApplications = [];
-                for(const app of this.managerApplications.filter(application => (application.status ==='N' || application.status ==='Y' || application.status ==='U') && application.status !=='C' && application.status !== 'E'))
-                {
-                    this.allManagerApplications.push(app);
-                }
-              }
-              catch (error) {
+            })
+            .catch ((error) =>  {
                 console.log(error)
-            }
+            });
         },
 
         addNewApplication(app, oldAppNo) {
@@ -48,20 +43,6 @@ export let useApplicationStore = defineStore('applications', {
             }
             this.applications.unshift(app);
         }
-    },
-    getters: {
-        allApplications(){
-            return this.allManagerApplications;
-        },
-        acceptedApplications(){
-            return this.managerApplications.filter(application => application.status === 'Y');
-        },
-        rejectedApplications(){
-            return this.managerApplications.filter(application => application.status === 'N');
-        },
-        unacknowledgeApplications(){
-            return this.managerApplications.filter(application => application.status === 'U');
-        },
     },
     persist: {
         storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.

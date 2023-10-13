@@ -90,7 +90,7 @@ function handleEditApplication() {
                 <p class="text-sm font-medium">Application ID: {{ source.applicationNo }}</p>
                 <div>
                     <p class="text-sm font-medium">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                    <!-- <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
                         <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
                             • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
@@ -99,12 +99,15 @@ function handleEditApplication() {
                         </p>
                         <div v-for="task in nomineeArray.tasks">
                             <p class="text-xs laptop:text-base">
-                                →{{ task }}
+                                  →{{ task }}
                             </p>
                         </div>
                     </div>
                     <p v-else>
                         • Self nominated for all roles
+                    </p> -->
+                    <p class="whitespace-pre-wrap text-xs laptop:text-base">
+                        {{ source.nominationsToDisplay }}
                     </p>
                 </div>
                 <div class="flex flex-row text-sm">
@@ -135,7 +138,7 @@ function handleEditApplication() {
                 <p class="font-medium text-lg">Application ID: {{ source.applicationNo }}</p>
                 <div>
                     <p class="font-medium text-lg">Substitute/s:</p>
-                    <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
+                    <!-- <div v-if="!source.isSelfNominatedAll" v-for="nomineeArray in source.nominationsToDisplay">
                         <p class="text-xs laptop:text-base" v-if="nomineeArray.nomineeNo != user.accountNo">
                             • {{ nomineeArray.nomineeName }} - {{ nomineeArray.nomineeNo }}@curtin.edu.au
                         </p>
@@ -144,12 +147,15 @@ function handleEditApplication() {
                         </p>
                         <div v-for="task in nomineeArray.tasks">
                             <p class="text-xs laptop:text-base">
-                                →{{ task }}
+                                  →{{ task }}
                             </p>
                         </div>
                     </div>
                     <p v-else>
                         • Self nominated for all roles
+                    </p> -->
+                    <p class="whitespace-pre-wrap text-base">
+                        {{ source.nominationsToDisplay }}
                     </p>
                 </div>
                 <div class="flex flex-row">

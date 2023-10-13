@@ -266,7 +266,6 @@ class BookingControllerTest extends TestCase
 
         foreach ($arr as $a) {
             $nowTime = new DateTime();
-            $nowTime->setTimezone(new DateTimeZone("Australia/Perth"));
             $endTime = new DateTime($a['eDate']);
             $this->assertTrue($endTime >= $nowTime);
         }

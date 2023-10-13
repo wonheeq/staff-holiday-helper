@@ -140,12 +140,3 @@ function handleActiveScreenChanged(screen) {
     />
 </PageLayout>
 </template>
-
-<style>
-.screen {
-    height: calc(93vh - 3rem);
-}
-.screen-mobile {
-    height: calc(93vh - 1.5rem);
-}
-</style>

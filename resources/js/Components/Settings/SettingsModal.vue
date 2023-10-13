@@ -22,7 +22,6 @@ function changeSweetalertTheme() {
         document.head.querySelector('#swal2-theme').setAttribute('href', "http://" + document.location.host + "/@sweetalert2/theme-default/default.css");
     }
 }
-
 changeSweetalertTheme();
 
 const options = [

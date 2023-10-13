@@ -45,7 +45,7 @@ const deadAreaColor = computed(() => {
                                 Duration: {{ item.sDate }} - {{ item.eDate }}
                             </p>
                             <p class="" v-for="task in item.tasks">
-                                →{{ task }} 
+                                  →{{ task }} 
                             </p>
                         </div>
                     </div>
@@ -82,7 +82,7 @@ const deadAreaColor = computed(() => {
                                 Duration: {{ item.sDate }} - {{ item.eDate }}
                             </p>
                             <p class="text-lg 1080:text-xl" v-for="task in item.tasks">
-                                →{{ task }} 
+                                  →{{ task }} 
                             </p>
                         </div>
                     </div>
@@ -91,13 +91,3 @@ const deadAreaColor = computed(() => {
         </div>
     </div>
 </template>
-
-<style>
-.subpage-height {
-    height: calc(0.95 * 93vh - 3rem);
-    height: calc(0.95 * 93vh - 3rem);
-}
-.subpage-height-mobile {
-    height: calc(0.95 * 93vh - 1.5rem);
-}
-</style>

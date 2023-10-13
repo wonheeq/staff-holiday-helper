@@ -27,6 +27,8 @@ class NominationController extends Controller
         $result = [];
         $processedNomineeNos = [];
         $processedManagerNomineeNos = [];
+        $app = Application::where('applicationNo', $appNo)->first();
+        $selfNominatedForAll = true;
 
         // iteration through each nomination
         foreach ($nominations as $all) {
@@ -34,6 +36,10 @@ class NominationController extends Controller
             $nomineeNo = $all['nomineeNo'];
 
             if (in_array($nomineeNo, $processedNomineeNos)) { continue; }
+
+            if ($nomineeNo == $app->accountNo) {
+                $selfNominatedForAll = false;
+            }
             array_push($processedNomineeNos, $nomineeNo);
 
             // get name of nominee from user controller
@@ -67,6 +73,9 @@ class NominationController extends Controller
             $nomineeNo = $nomination['nomineeNo'];
 
             if (in_array($nomineeNo, $processedManagerNomineeNos)) { continue; }
+            if ($nomineeNo == $app->accountNo) {
+                $selfNominatedForAll = false;
+            }
             array_push($processedManagerNomineeNos, $nomineeNo);
 
             // get name of nominee from user controller
@@ -94,10 +103,24 @@ class NominationController extends Controller
             }
         }
 
-        // send without string index
-        $finalResult = array();
-        foreach ($result as $key => $value) {
-            array_push($finalResult, $value);
+        // convert to string
+        $finalResult = "";
+        if ($selfNominatedForAll) {
+            $finalResult = "• Self Nominated for all roles";
+        }
+        else {
+            foreach ($result as $nomineeNo => $value) {
+                if ($nomineeNo == $app->accountNo) {
+                    $finalResult = $finalResult."• Self Nomination\n";
+                }
+                else {
+                    $finalResult = $finalResult."• {$value['nomineeName']} {$nomineeNo}@curtin.edu.au\n";
+                }
+    
+                foreach ($value['tasks'] as $task) {
+                    $finalResult = $finalResult."\t→{$task}\n";
+                }
+            }
         }
 
         return $finalResult;
@@ -119,7 +142,7 @@ class NominationController extends Controller
             $nomineeNo = $nomination['nomineeNo'];
 
             // get name of nominee from user controller
-            $nominee_user = app(UserController::class)->getUser($nomineeNo);
+            $nominee_user = Account::where('accountNo', $nomineeNo)->first();
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
 
             // Get name of role associated with the account role
@@ -133,13 +156,13 @@ class NominationController extends Controller
             ));
         }
 
-         // iteration through each manager nomination
-         foreach ($managerNominations as $nomination) {
+        // iteration through each manager nomination
+        foreach ($managerNominations as $nomination) {
             // get nominee id from nomination
             $nomineeNo = $nomination['nomineeNo'];
 
             // get name of nominee from user controller
-            $nominee_user = app(UserController::class)->getUser($nomineeNo);
+            $nominee_user = Account::where('accountNo', $nomineeNo)->first();
             $name = "{$nominee_user['fName']} {$nominee_user['lName']}";
 
             $sub = Account::where('accountNo', $nomination['subordinateNo'])->first();

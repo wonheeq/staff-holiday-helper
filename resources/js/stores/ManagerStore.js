@@ -5,28 +5,35 @@ export let useManagerStore = defineStore('manager', {
     state: () => ({
         staffRoles: [],
         staffInfo: [],
-        allUnits: []
+        allUnits: null
     }),
 
     actions: {
         async fetchRolesForStaff(accountNo) {
-            try {
-                const resp = await axios.get('/api/getRolesForStaffs/' + accountNo);
-                const resp2 = await axios.get('/api/getSpecificStaffMember/' + accountNo);
+            axios.get('/api/getRolesForStaffs/' + accountNo)
+            .then((resp) => {
                 this.staffRoles = resp.data;
-                this.staffInfo = resp2.data;
-                console.log(resp2.data);
-            } catch (error) {
+            })
+            .catch((error) => {
                 console.log(error);
-            }
+            });
+            axios.get('/api/getSpecificStaffMember/' + accountNo)
+            .then((resp) => {
+                this.staffInfo = resp.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         },
         async fetchAllUnits(){
-            try{
-                const resp = await axios.get('/api/getUCM/')
+
+            axios.get('/api/getUCM/')
+            .then((resp) => {
                 this.allUnits = resp.data;
-            } catch (error){
+            })
+            .catch((error) => {
                 console.log(error);
-            }
+            });
         }
     },
     getters: {

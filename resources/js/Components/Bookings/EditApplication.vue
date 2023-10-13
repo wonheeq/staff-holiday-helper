@@ -228,8 +228,3 @@ function handleEditApplication(data) {
     </div>
 </Modal>
 </template>
-<style>
-.subpage-height {
-    height: calc(0.95 * 93vh - 3rem);
-}
-</style>

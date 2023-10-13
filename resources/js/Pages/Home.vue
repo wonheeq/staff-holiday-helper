@@ -237,13 +237,3 @@ if (nomsToReview != null) {
         </AuthenticatedLayout>
     </PageLayout>
 </template>
-
-<style>
-.screen {
-    height: calc(93vh - 3rem);
-}
-.screen-mobile {
-    /* mobile screen uses 0.5rem for margins */
-    height: calc(93vh - 1.5rem);
-}
-</style>

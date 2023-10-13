@@ -57,12 +57,12 @@ function handleActiveScreenChanged(screen) {
                 />
                 <AppRequestSubpage
                     class="p-2 h-[95%]"
-                    v-show="activeScreen === 'appRequest'" 
+                    v-if="activeScreen === 'appRequest'" 
                     :class="subpageClass"
                 />
                 <ManageStaffSubpage
                     class="p-2 h-[95%]"
-                    v-show="activeScreen === 'manage'" 
+                    v-if="activeScreen === 'manage'" 
                     :class="subpageClass"
                 />
             </div>
@@ -75,24 +75,15 @@ function handleActiveScreenChanged(screen) {
                 />
                 <AppRequestSubpage
                     class="p-4 h-[95%]"
-                    v-show="activeScreen === 'appRequest'" 
+                    v-if="activeScreen === 'appRequest'" 
                     :class="subpageClass"
                 />
                 <ManageStaffSubpage
                     class="p-4 h-[95%]"
-                    v-show="activeScreen === 'manage'" 
+                    v-if="activeScreen === 'manage'" 
                     :class="subpageClass"
                 />
             </div>
         </AuthenticatedLayout>
     </PageLayout>   
 </template>
-
-<style>
-.screen {
-    height: calc(93vh - 3rem);
-}
-.screen-mobile {
-    height: calc(93vh - 1.5rem);
-}
-</style>

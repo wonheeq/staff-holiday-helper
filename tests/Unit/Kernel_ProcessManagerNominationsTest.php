@@ -24,7 +24,7 @@ class Kernel_ProcessManagerNominationsTest extends TestCase
     protected function setup(): void {
         parent::setup();
 
-        date_default_timezone_set("Australia/Perth");
+        
 
         // Create admin
         $this->admin = Account::factory()->create([

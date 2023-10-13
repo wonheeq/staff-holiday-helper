@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        date_default_timezone_set("Australia/Perth");
+        
 
         // ON THE ACTUAL SERVER, ADD THIS CRON COMMAND:
         /*
@@ -84,7 +84,6 @@ class Kernel extends ConsoleKernel
 
         foreach ($applications as $application) {
             $now = new DateTime();
-            $now->setTimezone(new DateTimeZone("Australia/Perth"));
             $startDate = new DateTime($application->sDate);
             $endDate = new DateTime($application->eDate);
             /*

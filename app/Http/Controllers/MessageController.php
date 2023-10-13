@@ -233,7 +233,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
 
@@ -244,7 +244,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
             }
@@ -254,7 +254,7 @@ class MessageController extends Controller
         if ($isSelfNominatedAll) {
             array_push(
                 $content,
-                "→Applicant has noted that this period of leave will not affect their ability to handle their responsibilities"
+                "\t→Applicant has noted that this period of leave will not affect their ability to handle their responsibilities"
             );
         }
 
@@ -334,7 +334,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
 
@@ -345,7 +345,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
 
@@ -427,7 +427,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
 
@@ -438,7 +438,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}"
+                        "\t→{$roleName}"
                     );
                 }
 
@@ -565,7 +565,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}",
+                        "\t→{$roleName}",
                     );
                 }
             }
@@ -578,7 +578,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$role}",
+                        "\t→{$role}",
                     );
                 }
             }
@@ -649,7 +649,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}",
+                        "\t→{$roleName}",
                     );
                 }
 
@@ -661,7 +661,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$role}",
+                        "\t→{$role}",
                     );
                 }
 
@@ -737,7 +737,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$roleName}",
+                        "\t→{$roleName}",
                     );
                 }
 
@@ -749,7 +749,7 @@ class MessageController extends Controller
 
                     array_push(
                         $content,
-                        "→{$role}",
+                        "\t→{$role}",
                     );
                 }
 
@@ -806,7 +806,7 @@ class MessageController extends Controller
 
                 array_push(
                     $content,
-                    "→{$roleName}",
+                    "\t→{$roleName}",
                 );
             }
 
@@ -817,7 +817,7 @@ class MessageController extends Controller
 
                 array_push(
                     $content,
-                    "→{$role}",
+                    "\t→{$role}",
                 );
             }
 
@@ -864,7 +864,7 @@ class MessageController extends Controller
             );
             array_push(
                 $content,
-                "→{$rejectReason}"
+                "\t→{$rejectReason}"
             );
         } else {
             array_push(
@@ -921,7 +921,7 @@ class MessageController extends Controller
         foreach ($rejectedRoles as $role) {
             array_push(
                 $content,
-                "→{$role}"
+                "\t→{$role}"
             );
         }
 

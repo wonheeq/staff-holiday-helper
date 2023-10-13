@@ -82,7 +82,7 @@ const textClass = "text-sm 1080:text-lg 1440:text-xl 4k:text-2xl";
                         />
                 </div>
             </div>
-            <p v-if="props.source.subject !== 'System Notification'" class="text-xs 1080:text-base 1440:text-lg 4k:text-xl"
+            <p v-if="props.source.subject !== 'System Notification'" class="whitespace-pre-wrap text-xs 1080:text-base 1440:text-lg 4k:text-xl"
                 v-for="content in JSON.parse(props.source.content)"
             >
                 {{ content }}
@@ -95,7 +95,7 @@ const textClass = "text-sm 1080:text-lg 1440:text-xl 4k:text-2xl";
                     <b>{{ props.source.subject }}</b>
                 </p>
             </div>
-            <p class="text-xs 1080:text-base 1440:text-lg 4k:text-xl">
+            <p class="whitespace-pre-wrap text-xs 1080:text-base 1440:text-lg 4k:text-xl">
                 {{ JSON.parse(props.source.content) }}
             </p>
             <p class="text-xs 1080:text-sm 1440:text-base 4k:text-xl">Message created at {{ new Date(props.source.created_at).toLocaleString() }}</p>

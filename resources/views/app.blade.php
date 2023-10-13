@@ -25,6 +25,19 @@
     </body>
 </html>
 <style>
+.screen {
+    height: calc(93vh - 3rem);
+}
+.screen-mobile {
+    height: calc(93vh - 1.5rem);
+}
+.subpage-height {
+    height: calc(0.95 * (93vh - 3rem));
+}
+.subpage-height-mobile {
+    height: calc(0.95 * (93vh - 1.5rem));
+}
+
 .dropdown-dark .vs__dropdown-toggle {
     border-color: white;
 }

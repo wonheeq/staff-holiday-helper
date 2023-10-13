@@ -204,8 +204,3 @@ function createApplication(data) {
     </div>
     
 </template>
-<style>
-.subpage-height {
-    height: calc(0.95 * 93vh - 3rem);
-}
-</style>

@@ -21,7 +21,7 @@ const { staffValue, searchStaff, allUnits} = storeToRefs(staffStore);
 const { fetchStaffMembers } = staffStore;
 const screenSizeStore = useScreenSizeStore();
 const { isMobile } = storeToRefs(screenSizeStore);
-onMounted(() => {
+onMounted(async () => {
     fetchStaffMembers(user.value.accountNo);
 });
 let props = defineProps({ source: Object });
@@ -29,7 +29,9 @@ let showEditModal = ref(false);
 
 async function handleEditRoles(accountNo) {
     await fetchRolesForStaff(accountNo);
-    await fetchAllUnits();
+    if ( allUnits.value == null) {
+        await fetchAllUnits();
+    }
     showEditModal.value = true;
 }
 let deadAreaColor = computed(() => {
@@ -137,9 +139,6 @@ let deadAreaColor = computed(() => {
     </div>
 </template>
 <style>
-.subpage-height {
-    height: calc(0.95 * 93vh - 3rem);
-}
 .scroll {
     overflow-y: auto;
     height: 70%;
