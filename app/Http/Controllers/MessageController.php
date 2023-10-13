@@ -263,7 +263,6 @@ class MessageController extends Controller
             "Duration: {$application['sDate']} - {$application['eDate']}"
         );
 
-        date_default_timezone_set("UTC");
         Message::create([
             'applicationNo' => $applicationNo,
             'receiverNo' => $superiorNo,

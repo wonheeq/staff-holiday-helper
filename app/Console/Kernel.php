@@ -56,7 +56,6 @@ class Kernel extends ConsoleKernel
         // after the reminder timeframe has passed...
         //    the system will send a reminder every day until the nominations are responded to
         $schedule->call(function () {
-            // now timestamp UTC
             $now = new DateTime();
             $reminderLists = $this->getReminderLists($now);
             $this->sendReminders($reminderLists);
@@ -227,7 +226,7 @@ class Kernel extends ConsoleKernel
                 $split = explode(" ", $reminderTimeframe);
                 $reminderValue = intval($split[0]);
                 $reminderPeriod = $split[1];
-                $created = new DateTime($nomination->created_at); // UTC
+                $created = new DateTime($nomination->created_at);
 
                 $diff = date_diff($created, $now);
 

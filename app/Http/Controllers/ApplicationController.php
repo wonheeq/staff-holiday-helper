@@ -827,7 +827,6 @@ class ApplicationController extends Controller
         $endDate = new DateTime($application->eDate);
         $nowDate = new DateTime();
 
-        date_default_timezone_set("UTC");
         /*
         Log::debug($startDate->format('Y-m-d H:i:s'));
         Log::debug($nowDate->format('Y-m-d H:i:s'));
@@ -966,7 +965,6 @@ class ApplicationController extends Controller
         $startDate = new DateTime($application->sDate);
         $endDate = new DateTime($application->eDate);
         $nowDate = new DateTime();
-        date_default_timezone_set("UTC");
         /*
         Log::debug($startDate->format('Y-m-d H:i:s'));
         Log::debug($nowDate->format('Y-m-d H:i:s'));

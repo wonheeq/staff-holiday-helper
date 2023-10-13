@@ -192,7 +192,6 @@ class AccountController extends Controller
                 return true;
             }
         }
-        date_default_timezone_set("UTC");
         return false;
     }
 

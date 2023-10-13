@@ -63,7 +63,7 @@ export default {
                 field: 'schoolId',
                 },
                 {
-                label: 'Created/Last Updated (UTC)',
+                label: 'Created/Last Updated',
                 field: 'updated_at',
                 },
                 {
