@@ -10,13 +10,14 @@ export let useApplicationStore = defineStore('applications', {
 
     actions: {
         async fetchApplications(accountNo) {
-            try {
-                const resp = await axios.get('/api/applications/' + accountNo);
+            axios.get('/api/applications/' + accountNo)
+            .then(resp => {
+                this.applications.length = 0;
                 this.applications = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
         // To do, dynamically added current user account id to replace 0000002L
         async fetchManagerApplications(accountNo){

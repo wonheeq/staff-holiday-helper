@@ -8,28 +8,26 @@ export let useEmailFrequencyStore = defineStore('emailFrequency', {
 
     actions: {
         async getFrequency() {
-            try {
-                const resp = await axios.get('/api/getEmailFrequency');
+            axios.get('/api/getEmailFrequency')
+            .then(resp => {
                 this.frequency = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
         async setFrequency(accountNo, freq) {
-            try {
-                const resp = await axios.post("/api/setEmailFrequency", {
-                    accountNo: accountNo,
-                    frequency: freq
-                });
-
-                if (resp.status == 200) {
-                    this.frequency = freq;
-                    return true;
-                }
-            }
-            catch (error) {}
-            return false;
+            axios.post("/api/setEmailFrequency", {
+                accountNo: accountNo,
+                frequency: freq
+            })
+            .then(_ => {
+                this.frequency = freq;
+                return true;
+            })
+            .catch(_ => {
+                return false;
+            });
         }
     },
 

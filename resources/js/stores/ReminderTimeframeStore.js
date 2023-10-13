@@ -9,34 +9,33 @@ export let useReminderTimeframeStore = defineStore('reminderTimeframe', {
 
     actions: {
         async getReminderTimeframe(accountNo) {
-            try {
-                const resp = await axios.get('/api/getReminderTimeframe/' + accountNo);
+            axios.get('/api/getReminderTimeframe/' + accountNo)
+            .then(resp => {
                 this.reminderTimeframe = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
         async setReminderTimeframe(accountNo, rtf) {
-            try {
-                    await axios.post("/api/setReminderTimeframe", {
-                        accountNo: accountNo,
-                        timeframe: rtf
-                    });
-
-                    this.reminderTimeframe = rtf;
-                    Swal.fire({
-                        icon: "success",
-                        title: 'Successfully changed reminder timeframe',
-                    });
-            }
-            catch (error) {
-                console.log(err);
+            axios.post("/api/setReminderTimeframe", {
+                accountNo: accountNo,
+                timeframe: rtf
+            })
+            .then(_ => {
+                this.reminderTimeframe = rtf;
+                Swal.fire({
+                    icon: "success",
+                    title: 'Successfully changed reminder timeframe',
+                });
+            })
+            .catch(error => {
+                console.log(error);
                 Swal.fire({
                     icon: "error",
                     title: 'Failed to change reminder timeframe, please try again',
                 });
-            }
+            });
         }
     },
 

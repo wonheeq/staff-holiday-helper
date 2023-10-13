@@ -31,8 +31,9 @@ class ApplicationController extends Controller
 
         foreach ($applications as $val) {
             // get nominations for application and insert
-            $nominations = app(NominationController::class)->getNominations($val["applicationNo"]);
-            $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($val["applicationNo"]);
+            $nomQuery = app(NominationController::class)->getNominations($val["applicationNo"]);
+            $nominationsToDisplay = $nomQuery['text'];
+            $nominations = $nomQuery['data'];
 
             // check if is self nominated for all
             if ($this->isSelfNominatedAll($nominations, $accountNo)) {
@@ -283,8 +284,9 @@ class ApplicationController extends Controller
         $applicationNo = $application->applicationNo;
         $result = Application::where('applicationNo', $applicationNo)->first();
         // get nominations for application and insert
-        $nominations = app(NominationController::class)->getNominations($applicationNo);
-        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
+        $nomQuery = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = $nomQuery['text'];
+        $nominations = $nomQuery['data'];
 
         // check if is self nominated for all
         if ($this->isSelfNominatedAll($nominations, $accountNo)) {
@@ -924,8 +926,9 @@ class ApplicationController extends Controller
 
         $result = Application::where('applicationNo', $applicationNo)->first();
         // get nominations for application and insert
-        $nominations = app(NominationController::class)->getNominations($applicationNo);
-        $nominationsToDisplay = app(NominationController::class)->getNominationsToDisplay($applicationNo);
+        $nomQuery = app(NominationController::class)->getNominations($applicationNo);
+        $nominationsToDisplay = $nomQuery['text'];
+        $nominations = $nomQuery['data'];
 
         // check if is self nominated for all
         if ($this->isSelfNominatedAll($nominations, $accountNo)) {

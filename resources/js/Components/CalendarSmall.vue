@@ -14,7 +14,7 @@ let calendarStore = useCalendarStore();
 const { calendarData } = storeToRefs(calendarStore);
 const { fetchCalendarData } = calendarStore;
 
-onMounted(() => {
+onMounted(async() => {
     fetchCalendarData(user.value.accountNo);
 })
 

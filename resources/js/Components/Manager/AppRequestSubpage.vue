@@ -27,11 +27,12 @@ async function handleReviewApplication(appNo) {
     showReviewAppModal.value = response;
 }
 let fetchApplicationForReview = async(appNo) => {
-    try {
-        const resp = await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo);
+    await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo)
+    .then (resp => {
         reviewAppModalData = resp.data;
         return true;
-    } catch (error) {
+    })
+    .catch (error => {
         reviewAppModalData = [];
         Swal.fire({
             icon: 'error',
@@ -40,7 +41,7 @@ let fetchApplicationForReview = async(appNo) => {
         });
         console.log(error);
         return false;
-    }
+    });
 }; 
 
 function handleCloseReviewApp() {
@@ -219,7 +220,7 @@ const appCount = computed(() => {
     </div>
     <Teleport to="#modals">
         <ReviewApplication
-            v-show="showReviewAppModal"
+            v-if="showReviewAppModal"
             :data="reviewAppModalData"
             @close="handleCloseReviewApp()"
         />

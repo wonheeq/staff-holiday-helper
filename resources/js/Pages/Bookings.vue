@@ -89,18 +89,18 @@ function handleActiveScreenChanged(screen) {
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
             />
             <ApplicationsSubpage
-                v-show="activeScreen === 'apps'" 
+                v-if="activeScreen === 'apps'" 
                 :class="subpageClass"
                 class="p-2 h-[95%]"
                 @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
                 class="h-[95%]"
-                v-show="activeScreen === 'create'" 
+                v-if="activeScreen === 'create'" 
                 :subpageClass="subpageClass"
             />
             <SubstitutionsSubpage
-                v-show="activeScreen === 'subs'" 
+                v-if="activeScreen === 'subs'" 
                 :class="subpageClass"
                 class="p-2 h-[95%]"
             />
@@ -114,25 +114,25 @@ function handleActiveScreenChanged(screen) {
                 @screen-changed="screen => handleActiveScreenChanged(screen)"
             />
             <ApplicationsSubpage
-                v-show="activeScreen === 'apps'" 
+                v-if="activeScreen === 'apps'" 
                 :class="subpageClass"
                 class="p-4 h-[95%]"
                 @editApplication="(applicationNo) => handleEditApplication(applicationNo)"
             />
             <CreateSubpage
                 class="h-[95%]"
-                v-show="activeScreen === 'create'" 
+                v-if="activeScreen === 'create'" 
                 :subpageClass="subpageClass"
             />
             <SubstitutionsSubpage
-                v-show="activeScreen === 'subs'" 
+                v-if="activeScreen === 'subs'" 
                 :class="subpageClass"
                 class="p-4 h-[95%]"
             />
         </div>
     </AuthenticatedLayout>
     <EditApplication
-        v-show="isEditing"
+        v-if="isEditing"
         :applicationNo="applicationNo"
         :subpageClass="subpageClass"
         :period="period"

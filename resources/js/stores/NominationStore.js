@@ -9,17 +9,19 @@ export let useNominationStore = defineStore('nominations', {
 
     actions: {
         async fetchNominations(accountNo) {
-            try {
-                const resp = await axios.get('/api/getRolesForNominations/' + accountNo);
+            axios.get('/api/getRolesForNominations/' + accountNo)
+            .then(resp => {
+                this.nominations.length = 0;
                 this.nominations = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch (error => {
+                console.log(error);
+            });
         },
         async fetchNominationsForApplicationNo(applicationNo, accountNo)  {
-            try {
-                const resp = await axios.get('/api/getNominationsForApplication/' + accountNo + "/" + applicationNo);
+            axios.get('/api/getNominationsForApplication/' + accountNo + "/" + applicationNo)
+            .then(resp => {
+                this.nominations.length = 0;
                 this.nominations = resp.data;
 
                 this.isSelfNominateAll = true;
@@ -29,11 +31,10 @@ export let useNominationStore = defineStore('nominations', {
                         break;
                     }
                 }
-
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch(error => {
+                console.log(error);
+            });
         }
     },
 

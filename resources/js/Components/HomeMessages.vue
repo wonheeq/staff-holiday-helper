@@ -18,7 +18,7 @@ const { fetchMessages } = messageStore;
 
 let emit = defineEmits(['acceptSomeNominations', 'reviewApplication']);
 
-onMounted(() => {
+onMounted(async() => {
     fetchMessages(user.value.accountNo);
 });
 

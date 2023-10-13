@@ -9,13 +9,14 @@ export let useMessageStore = defineStore('messages', {
 
     actions: {
         async fetchMessages(accountNo) {
-            try {
-                const resp = await axios.get('/api/messages/' + accountNo);
+            axios.get('/api/messages/' + accountNo)
+            .then(resp => {
+                this.messages.length = 0;
                 this.messages = resp.data;
-              }
-              catch (error) {
-                console.log(error)
-            }
+            })
+            .catch(error => {
+                console.log(error);
+            })
         }
     },
 

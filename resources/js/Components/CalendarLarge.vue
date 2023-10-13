@@ -32,7 +32,7 @@ const rows = computed(() => {
 });
 const columns = mapCurrent({ '4k': 4, '1440p':4, '1080p':4, 'laptop':3 }, 1);
 
-onMounted(() => {
+onMounted(async() => {
     fetchCalendarData(user.value.accountNo);
 });
 </script>

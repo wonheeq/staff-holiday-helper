@@ -184,14 +184,13 @@ class NominationControllerTest extends TestCase
 
     public function test_call_getNominations_successful(): void
     {
-        $result = app(NominationController::class)->getNominations($this->application->applicationNo);
         $this->assertTrue($this->nominations != null && gettype($this->nominations) == "array");
     }
 
     public function test_getNominations_returns_correct_amount(): void
     {
         $result = app(NominationController::class)->getNominations($this->application->applicationNo);
-        $this->assertTrue(count($result) == count($this->nominations));
+        $this->assertTrue(count($result['data']) == count($this->nominations));
     }
 
     public function test_getNominations_content_is_valid(): void
@@ -202,7 +201,7 @@ class NominationControllerTest extends TestCase
         $names = array();
         $nomineeNos = array();
         $statuses = array();
-        foreach ($result as $index => $element) {
+        foreach ($result['data'] as $index => $element) {
             $user = Account::where('accountNo', $this->nominations[$index]->nomineeNo)->first();
 
             array_push($names, "{$user->fName} {$user->lName}");
@@ -210,7 +209,7 @@ class NominationControllerTest extends TestCase
             array_push($statuses, $this->nominations[$index]->status);
         }
 
-        foreach ($result as $element) {
+        foreach ($result['data'] as $element) {
             $this->assertTrue(in_array($element['name'], $names));
             $this->assertTrue(in_array($element['nomineeNo'], $nomineeNos));
             $this->assertTrue(in_array($element['status'], $statuses));
