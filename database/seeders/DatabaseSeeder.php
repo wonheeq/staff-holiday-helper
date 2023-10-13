@@ -300,7 +300,8 @@ class DatabaseSeeder extends Seeder
         // CREATE messages for 000002L for DBSeederTest
         Message::factory(1)->create([
             'receiverNo' => "000002L",
-            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"])
+            'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
+            'acknowledged' => true
         ]);
 
 
