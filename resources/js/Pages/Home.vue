@@ -54,14 +54,16 @@ let fetchApplicationForReviewFromEmail = async(appNo) => {
 };
 
 let fetchMessageForApplication = async(appNo) => {
+    let result = null;
     await axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
     .then(resp => {
-        return resp.data;
+        result = resp.data;
     })
     .catch (error => {
         console.log(error);
-        return null;
+        result = null;
     });
+    return result;
 };
 
 async function handleAcceptSomeNominationsFromEmail(appNo) {
@@ -88,10 +90,9 @@ async function handleAcceptSomeNominations(message) {
 }
 
 let fetchRoles = async() => {
-    console.log(nominationModalData.value);
     let data = {
         'accountNo': user.value.accountNo,
-        'applicationNo': nominationModalData.value.applicationNo,
+        'applicationNo': nominationModalData.applicationNo,
     };
     await axios.post('/api/getRolesForNominee', data)
     .then(resp => {
