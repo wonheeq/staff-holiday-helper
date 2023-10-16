@@ -25,8 +25,10 @@
     </body>
 </html>
 <style>
-html {
-    text-size-adjust: none;
+body,
+p {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 .screen {
     height: calc(93vh - 3rem);
