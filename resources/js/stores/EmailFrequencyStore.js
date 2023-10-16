@@ -17,17 +17,19 @@ export let useEmailFrequencyStore = defineStore('emailFrequency', {
             });
         },
         async setFrequency(accountNo, freq) {
-            axios.post("/api/setEmailFrequency", {
+            let result = false;
+            await axios.post("/api/setEmailFrequency", {
                 accountNo: accountNo,
                 frequency: freq
             })
-            .then(_ => {
+            .then(resp => {
                 this.frequency = freq;
-                return true;
+                result = true;
             })
             .catch(_ => {
-                return false;
+                result = false;
             });
+            return result;
         }
     },
 
