@@ -21,7 +21,7 @@
     <!-- Password Input -->
     <div v-if="inType === 'passwordType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
-        <div class="flex border border-solid items-center border-black ">
+        <div class="relative flex border border-solid items-center border-black ">
             <input
                 class="border-none w-full 4k:text-xl"
                 :type="fieldType.type"
@@ -30,7 +30,7 @@
                 @input="$emit('update:modelValue', $event.target.value)"
             />
 
-            <button @click.prevent="switchVis" tabindex="-1" type="button" class="fixed right-7">
+            <button @click.prevent="switchVis" tabindex="-1" type="button" class="absolute right-2">
                 <img :src="fieldType.image" :class="isDark?'darkModeImage':''">
             </button>
         </div>

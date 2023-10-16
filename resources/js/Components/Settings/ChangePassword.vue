@@ -242,7 +242,10 @@ function back() {
 </div>
 </template>
 <style>
-
+input::-ms-reveal, input::-ms-clear 
+{     
+    display:none; 
+} 
 .close-button {
     height: 40px;
     width: auto;
