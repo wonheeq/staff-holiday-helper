@@ -61,7 +61,7 @@
           </mj-button>
 
            <mj-button background-color="#eac234" color="#ffffff" font-size="16px" font-weight="bold"  href="{{ $dynamicData['acceptSomeLink'] }}" width="240px">
-            Accept Some
+            Accept/Reject Some
           </mj-button>
 
           </mj-button>

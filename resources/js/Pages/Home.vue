@@ -54,7 +54,7 @@ let fetchApplicationForReviewFromEmail = async(appNo) => {
 };
 
 let fetchMessageForApplication = async(appNo) => {
-    axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
+    await axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
     .then(resp => {
         return resp.data;
     })
@@ -181,6 +181,7 @@ if (appToReview != null) {
 
 const nomsToReview =  page.props.nomsToReview;
 if (nomsToReview != null) {
+    alert(nomsToReview);
     handleAcceptSomeNominationsFromEmail(nomsToReview);
 }
 </script>
