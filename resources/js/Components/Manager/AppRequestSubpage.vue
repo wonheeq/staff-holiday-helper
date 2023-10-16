@@ -27,10 +27,11 @@ async function handleReviewApplication(appNo) {
     showReviewAppModal.value = response;
 }
 let fetchApplicationForReview = async(appNo) => {
+    let result = false;
     await axios.get('/api/getApplicationForReview/' + user.value.accountNo + "/" + appNo)
     .then (resp => {
         reviewAppModalData = resp.data;
-        return true;
+        result = true;
     })
     .catch (error => {
         reviewAppModalData = [];
@@ -40,8 +41,9 @@ let fetchApplicationForReview = async(appNo) => {
             text: 'Invalid permissions to review application'
         });
         console.log(error);
-        return false;
+        result =  false;
     });
+    return result;
 }; 
 
 function handleCloseReviewApp() {

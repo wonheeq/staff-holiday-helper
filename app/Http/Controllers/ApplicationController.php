@@ -839,7 +839,7 @@ class ApplicationController extends Controller
         }
 
         // Make sure application is not expired
-        if ($application->status == "E" || $nowDate >= $endDate) {
+        if ($application->status == "E" || ($nowDate >= $endDate && $application->status =='Y')) {
             return response()->json("Cannot edit an expired application.", 500);
         }
 
@@ -979,7 +979,7 @@ class ApplicationController extends Controller
         }
 
         // Make sure application is not expired
-        if ($application->status == "E" || $nowDate >= $endDate) {
+        if ($application->status == "E" || ($nowDate >= $endDate && $application->status =='Y')) {
             return response()->json("Cannot edit an expired application.", 500);
         }
 

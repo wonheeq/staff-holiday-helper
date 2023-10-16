@@ -29,7 +29,7 @@ let showEditModal = ref(false);
 
 async function handleEditRoles(accountNo) {
     await fetchRolesForStaff(accountNo);
-    if ( allUnits.value == null) {
+    if ( allUnits == null) {
         await fetchAllUnits();
     }
     showEditModal.value = true;

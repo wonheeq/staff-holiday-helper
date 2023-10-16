@@ -21,9 +21,9 @@
     <!-- Password Input -->
     <div v-if="inType === 'passwordType'" class="mb-5">
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
-        <div class="relative flex border border-solid items-center border-black ">
+        <div class="relative flex items-center ">
             <input
-                class="border-none w-full 4k:text-xl"
+                class="border-black w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
                 :class="isDark?'bg-gray-800 border-white':''"
