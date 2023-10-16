@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://leaveontime.australiaeast.cloudapp.azure.com'),
+    'url' => env('APP_URL', 'https://leaveontime.cyber.curtin.io'),
 
     'asset_url' => env('ASSET_URL'),
 

@@ -58,7 +58,7 @@ class SendWelcomeEmail implements ShouldQueue
             $dynamicData = [
                 'name' => $name,
                 'accountNo' => $account->accountNo,
-                'link' => 'https://leaveontime.australiaeast.cloudapp.azure.com/set-password/'.$hash,
+                'link' => 'https://leaveontime.cyber.curtin.io/set-password/'.$hash,
                 // 'link' => 'http://127.0.0.1:8000/set-password/'.$hash,
             ];
 

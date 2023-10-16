@@ -62,7 +62,7 @@
           </mj-button>
 
           <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold">
-            <a class="text-link" href="{{ $dynamicData['link'] }}">leaveontime.australiaeast.cloudapp.azure.com</a>
+            <a class="text-link" href="{{ $dynamicData['link'] }}">leaveontime.cyber.curtin.io</a>
           </mj-text>
           
         </mj-column>

@@ -58,11 +58,11 @@
           <mj-text color="#637381" font-size="16px">
             To get started, please log in to LeaveOnTime with the details provided by pressing the button below or following the link at the end of this email.
           </mj-text>
-          <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="https://leaveontime.australiaeast.cloudapp.azure.com" width="240px" padding-bottom="30px" padding-top="30px">
+          <mj-button background-color="#A9D1DA" color="#000000" font-size="16px" font-weight="bold" href="https://leaveontime.cyber.curtin.io" width="240px" padding-bottom="30px" padding-top="30px">
             Get Started
           </mj-button>
           <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold">
-            <a class="text-link" href="https://leaveontime.australiaeast.cloudapp.azure.com">leaveontime.australiaeast.cloudapp.azure.com</a>
+            <a class="text-link" href="https://leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
           </mj-text>
         </mj-column>
         <mj-column width="90%">
