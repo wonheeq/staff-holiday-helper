@@ -23,6 +23,7 @@
         <h1 class="font-bold text-xl 1080:text-2xl 1440:text-2xl 4k:text-4xl">{{ title }}</h1>
         <div class="relative flex items-center ">
             <input
+                autocomplete="current-password"
                 class="border-black w-full 4k:text-xl"
                 :type="fieldType.type"
                 :value="modelValue"
