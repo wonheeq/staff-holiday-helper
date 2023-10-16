@@ -88,21 +88,22 @@ async function handleAcceptSomeNominations(message) {
 }
 
 let fetchRoles = async() => {
-    try {
-        let data = {
-            'accountNo': user.value.accountNo,
-            'applicationNo': nominationModalData.applicationNo,
-        };
-        const resp = await axios.post('/api/getRolesForNominee', data);
+    let data = {
+        'accountNo': user.value.accountNo,
+        'applicationNo': nominationModalData.applicationNo,
+    };
+    await axios.post('/api/getRolesForNominee', data)
+    .then(resp => {
         roles = resp.data;
-    } catch (error) {
+    })
+    .catch (error => {
         Swal.fire({
             icon: "error",
             title: 'Failed to load data',
-            text: 'Please try again later.'
+            text: error.response.data['error']
         });
         console.log(error);
-    }
+    });
 };
 
 function handleCloseNominations() {
@@ -181,7 +182,6 @@ if (appToReview != null) {
 
 const nomsToReview =  page.props.nomsToReview;
 if (nomsToReview != null) {
-    alert(nomsToReview);
     handleAcceptSomeNominationsFromEmail(nomsToReview);
 }
 </script>
