@@ -82,10 +82,10 @@ class SendNomineeAppEdited implements ShouldQueue
 
             // Mail::to($reciever->getEmail)->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
 
             if ($this->isUnsent)
             {

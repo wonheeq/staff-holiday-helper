@@ -70,10 +70,10 @@ class NewMessages extends Notification
             // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
             
             // uncomment / comment so that it goes to you
-            // return $mailable->to("wonhee.qin@student.curtin.edu.au");
+            // return $mailable->to("hannes.herrmann@curtin.edu.au");
             return $mailable->to("b.lee20@student.curtin.edu.au");
             // return $mailable->to("aden.moore@student.curtin.edu.au");
-            // return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
+            // return $mailable->to("hannes.herrmann@curtin.edu.au");
 
         
     }

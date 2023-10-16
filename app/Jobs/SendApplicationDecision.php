@@ -58,10 +58,10 @@ class SendApplicationDecision implements ShouldQueue
 
             // Mail::to($reciever->getEmail)->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
+            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
+            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Application Updated","email/applicationUpdated", $dynamicData));
 
             if ($this->isUnsent)
             {

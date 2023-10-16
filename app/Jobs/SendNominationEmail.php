@@ -83,10 +83,10 @@ class SendNominationEmail implements ShouldQueue
 
             // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
 
-            // Mail::to("wonhee.qin@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
+            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
             // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
             // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-            Mail::to("ellis.jansonferrall@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
+            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
 
             if ($this->isUnsent)
             {
