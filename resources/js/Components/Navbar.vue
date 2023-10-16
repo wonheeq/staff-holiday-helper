@@ -81,14 +81,14 @@ function shouldDisplayOption(minPerm) {
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
                     <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center navbar-option">
                         <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
-                        <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
+                        <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl navbar-text">{{ option.caption }}</p>
                     </NavLink>
                 </div>
             </div>
         </div>
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
-                <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center navbar-option">
+                <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center navbar-option navbar-text">
                     <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
                     {{ option.caption }}
                 </NavLink>
@@ -97,7 +97,7 @@ function shouldDisplayOption(minPerm) {
                     @click="option.noLink()"
                 >
                     <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
-                    <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
+                    <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl navbar-text">{{ option.caption }}</p>
                 </NavOption>
             </div>
         </div>
@@ -107,6 +107,10 @@ function shouldDisplayOption(minPerm) {
 <style>
 .navbar-option {
     max-height: 5000em;
+}
+.navbar-text {
+    float: left;
+    width: 100%;
 }
 img{
     height: 16px;
