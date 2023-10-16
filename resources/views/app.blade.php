@@ -25,10 +25,12 @@
     </body>
 </html>
 <style>
-body,
-p {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
+html, body{
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    height:100%;
 }
 .screen {
     height: calc(93vh - 3rem);
@@ -89,10 +91,6 @@ p {
 :root {
     --vs-disabled-bg:;
 }
-html,body{
-height:100%;
-}
-
 
 @media
 (min-width: 768px) {
