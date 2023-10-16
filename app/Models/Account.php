@@ -60,14 +60,15 @@ class Account extends Authenticatable
     public function getEmailForPasswordReset()
     {
         // $email = $this->accountNo . '@curtin.edu.au';
-        $email = $this->accountNo . '@test.com.au';
+        // $email = $this->accountNo . '@test.com.au';
+        $email = '20562768@student.curtin.edu.au';
         return $email;
     }
 
     public function getEmail()
     {
         // $email = $this->accountNo . '@curtin.edu.au';
-        $email = $this->accountNo . '@test.com.au';
+        $email = '20562768@student.curtin.edu.au';
         return $email;
     }
 
