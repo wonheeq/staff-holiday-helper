@@ -71,7 +71,7 @@
 
 
             <mj-text color="#212b35" font-size="12px" align="center" text-transform="lowercase" font-weight="bold" padding-top="0px">
-                <a class="text-link" href="https://leaveontime.cyber.curtin.io">leaveontime.cyber.curtin.io</a>
+                <a class="text-link" href="https://leaveontime.australiaeast.cloudapp.azure.com">leaveontime.australiaeast.cloudapp.azure.com</a>
               </mj-text>
           </mj-column>
           <mj-column width="90%">

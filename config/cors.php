@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000', 'https://leaveontime.cyber.curtin.io')],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000', 'https://leaveontime.australiaeast.cloudapp.azure.com')],
 
     'allowed_origins_patterns' => [],
 

@@ -74,11 +74,11 @@ class SendNominationEmail implements ShouldQueue
                 'roles' => $roles,
                 'period' => $data[1][sizeof($data[1]) - 1],
                 // 'acceptLink' => 'http://127.0.0.1:8000/acceptNewNominations/'. $this->hash . '/'. $applicationNo  ,
-                'acceptLink' => 'https://leaveontime.cyber.curtin.io/acceptNewNominations/'. $this->hash . '/'. $applicationNo  ,
+                'acceptLink' => 'https://leaveontime.australiaeast.cloudapp.azure.com/acceptNewNominations/'. $this->hash . '/'. $applicationNo  ,
                 // 'acceptSomeLink' => 'http://127.0.0.1:8000/reviewNominations/'. $applicationNo  ,
-                'acceptSomeLink' => 'https://leaveontime.cyber.curtin.io/reviewNominations/'. $applicationNo  ,
+                'acceptSomeLink' => 'https://leaveontime.australiaeast.cloudapp.azure.com/reviewNominations/'. $applicationNo  ,
                 // 'rejectLink' => 'http://127.0.0.1:8000/rejectNewNominations/'. $this->hash . '/'. $applicationNo  ,
-                'rejectLink' => 'https://leaveontime.cyber.curtin.io/rejectNewNominations/'. $this->hash . '/'. $applicationNo  ,
+                'rejectLink' => 'https://leaveontime.australiaeast.cloudapp.azure.com/rejectNewNominations/'. $this->hash . '/'. $applicationNo  ,
             ];
 
             // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
