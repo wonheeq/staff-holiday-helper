@@ -60,7 +60,8 @@ class CalendarController extends Controller
             // Grab application details of accepted nominations
             // Only generate calendar data for accepted nominations
             if ($nomination['status'] == 'Y') {
-                $application = Application::where("applicationNo", "=", $nomination['applicationNo'])->first();
+                $application = Application::where("applicationNo", "=", $nomination['applicationNo'])
+                ->where('accountNo', '!=', $accountNo)->first();
                 
                 if ($application != null && $application['status'] == 'Y') {
                     // Get details of accepted application

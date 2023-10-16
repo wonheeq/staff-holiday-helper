@@ -41,7 +41,7 @@ let multiSelectNominee = ref("");
 
 
 let fetchStaffMembers = async() => {
-    axios.get('/api/getBookingOptions/' + user.value.accountNo)
+    await axios.get('/api/getBookingOptions/' + user.value.accountNo)
     .then(resp => {
         staffMembers = resp.data;
     })
