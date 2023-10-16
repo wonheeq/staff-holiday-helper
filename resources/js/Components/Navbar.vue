@@ -79,7 +79,7 @@ function shouldDisplayOption(minPerm) {
             <div v-if="!isMobile" class="inline-block h-[100%] min-h-[1em] w-0.5 self-stretch bg-neutral-200 opacity-100 dark:opacity-50"></div>
             <div class="flex flex-row laptop:space-x-2 1440:space-x-4">
                 <div class="flex flex-col items-center justify-center" v-for="option in options.left" >
-                    <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
+                    <NavLink v-if="shouldDisplayOption(option.minPerm)" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center navbar-option">
                         <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
                         <p class="text-xs 1080:text-sm 1440:text-sm 4k:text-2xl">{{ option.caption }}</p>
                     </NavLink>
@@ -88,12 +88,12 @@ function shouldDisplayOption(minPerm) {
         </div>
         <div class="flex flex-row laptop:space-x-4 ml-2 laptop:ml-4 my-2 items-center">
             <div class="flex flex-col items-center justify-center" v-for="option in options.right" >
-                <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center">
+                <NavLink v-if="option.noLink == null" :href="formatLink(option.caption)" class="flex flex-col justify-center items-center navbar-option">
                     <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
                     {{ option.caption }}
                 </NavLink>
                 <NavOption v-if="option.noLink"
-                    class="flex flex-col justify-center items-center"
+                    class="flex flex-col justify-center items-center navbar-option"
                     @click="option.noLink()"
                 >
                     <img :src="option.source" :class="isDark ? 'darkModeImage':''"/>
@@ -105,6 +105,9 @@ function shouldDisplayOption(minPerm) {
 </template>
 
 <style>
+.navbar-option {
+    max-height: 5000em;
+}
 img{
     height: 16px;
     width: 16px;
