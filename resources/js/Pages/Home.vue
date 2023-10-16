@@ -54,14 +54,16 @@ let fetchApplicationForReviewFromEmail = async(appNo) => {
 };
 
 let fetchMessageForApplication = async(appNo) => {
-    axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
+    let result = null;
+    await axios.get('/api/getMessageForApplication/' + user.value.accountNo + "/" + appNo)
     .then(resp => {
-        return resp.data;
+        result = resp.data;
     })
     .catch (error => {
         console.log(error);
-        return null;
+        result = null;
     });
+    return result;
 };
 
 async function handleAcceptSomeNominationsFromEmail(appNo) {
@@ -88,21 +90,22 @@ async function handleAcceptSomeNominations(message) {
 }
 
 let fetchRoles = async() => {
-    try {
-        let data = {
-            'accountNo': user.value.accountNo,
-            'applicationNo': nominationModalData.applicationNo,
-        };
-        const resp = await axios.post('/api/getRolesForNominee', data);
+    let data = {
+        'accountNo': user.value.accountNo,
+        'applicationNo': nominationModalData.applicationNo,
+    };
+    await axios.post('/api/getRolesForNominee', data)
+    .then(resp => {
         roles = resp.data;
-    } catch (error) {
+    })
+    .catch (error => {
         Swal.fire({
             icon: "error",
             title: 'Failed to load data',
-            text: 'Please try again later.'
+            text: error.response.data['error']
         });
         console.log(error);
-    }
+    });
 };
 
 function handleCloseNominations() {

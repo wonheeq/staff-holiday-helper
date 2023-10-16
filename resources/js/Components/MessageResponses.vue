@@ -157,7 +157,7 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg 4k:text-2xl";
                     @click="handleAcceptSome()"
                 >
                     <img src="/images/accept-some.svg" class="w-full"/>
-                    <p :class="textSizeClass">Accept Some</p>
+                    <p :class="textSizeClass">Accept/Reject Some</p>
                 </button>
                 <button class="flex flex-col items-center"
                     @click="handleReject()"
@@ -234,7 +234,7 @@ const textSizeClass = "text-xs laptop:text-sm 1440:text-lg 4k:text-2xl";
                         @click="handleAcceptSome()"
                     >
                         <img src="/images/accept-some.svg"/>
-                        <p :class="textSizeClass">Accept Some</p>
+                        <p :class="textSizeClass">Accept/Reject Some</p>
                     </button>
                 </div>
                 <div class="flex flex-col justify-center">
