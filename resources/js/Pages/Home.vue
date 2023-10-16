@@ -88,9 +88,10 @@ async function handleAcceptSomeNominations(message) {
 }
 
 let fetchRoles = async() => {
+    console.log(nominationModalData.value);
     let data = {
         'accountNo': user.value.accountNo,
-        'applicationNo': nominationModalData.applicationNo,
+        'applicationNo': nominationModalData.value.applicationNo,
     };
     await axios.post('/api/getRolesForNominee', data)
     .then(resp => {
