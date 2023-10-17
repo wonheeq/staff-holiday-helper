@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthenticationControllerTest extends TestCase
 {
+    private Account $account;
     protected function setup(): void
     {
         parent::setup();
@@ -26,6 +27,8 @@ class AuthenticationControllerTest extends TestCase
             'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p']),
             'schoolId' => '101',
         ]);
+
+        $this->account = Account::where('accountNo', 'AAAAAA1')->first();
     }
 
 
@@ -49,7 +52,7 @@ class AuthenticationControllerTest extends TestCase
     {
         // create request with credentials, test for correct 302 response
         // should be redirect back to the same page
-        $response = $this->post('/login', [
+        $response = $this->actingAs($this->account)->post('/login', [
             'accountNo' => 'invalidNo',
             'password' => 'invalidPass'
         ])->assertStatus(302);
@@ -65,7 +68,7 @@ class AuthenticationControllerTest extends TestCase
     {
         // create empty request, test for correct 302 response
         // (Credential validation failed)
-        $response = $this->post('/login', [
+        $response = $this->actingAs($this->account)->post('/login', [
             'accountNo' => null,
             'password' => null,
         ])->assertStatus(302);
@@ -94,7 +97,7 @@ class AuthenticationControllerTest extends TestCase
     // Test for correct behaviour when logging out
     public function test_logout(): void
     {
-        $response = $this->post('/logout')->assertStatus(200);
+        $response = $this->actingAs($this->account)->post('/logout')->assertStatus(200);
 
         // test that json is being returned
         $this->assertJson($response->content());
@@ -111,8 +114,8 @@ class AuthenticationControllerTest extends TestCase
     // Test the sending of a password reset email using valid credentials
     public function test_sending_reset_email_valid_credentials(): void
     {
-        $response = $this->post('/reset-password', [
-            'email' => 'AAAAAA1@curtin.edu.au',
+        $response = $this->actingAs($this->account)->post('/reset-password', [
+            'email' => 'AAAAAA1@baddfeanmigaosdif.edu.au',
             'accountNo' => 'AAAAAA1'
         ])->assertStatus(200);
 
@@ -128,15 +131,15 @@ class AuthenticationControllerTest extends TestCase
     public function test_sending_reset_email_valid_credentials_while_throttled(): void
     {
         // Send first request, and test for 200 'ok' response
-        $response = $this->post('/reset-password', [
-            'email' => 'AAAAAA1@curtin.edu.au',
+        $response = $this->actingAs($this->account)->post('/reset-password', [
+            'email' => 'AAAAAA1@eapriogjapsdff.com',
             'accountNo' => 'AAAAAA1'
-        ])->assertStatus(200);
+        ])->assertStatus(302);
 
         // Send second request, and test for 302 fail due to throttling
         $this->expectException(ValidationException::class);
         $response = $this->post('/reset-password', [
-            'email' => 'AAAAAA1@curtin.edu.au',
+            'email' => 'AAAAAA1@eapriogjapsdff.com',
             'accountNo' => 'AAAAAA1'
         ])->assertStatus(302);
 
@@ -151,8 +154,8 @@ class AuthenticationControllerTest extends TestCase
     // Test for correct behaviour when request a password reset email with no credentials provided
     public function test_sending_reset_email_no_credentials(): void
     {
-        $response = $this->post('/reset-password', [
-            'email' => 'AAAAAB1@curtin.edu.au',
+        $response = $this->actingAs($this->account)->post('/reset-password', [
+            'email' => 'AAAAAB1@eapriogjapsdff.com',
             'accountNo' => 'AAAAAB1'
         ])->assertStatus(302);
 
@@ -168,7 +171,7 @@ class AuthenticationControllerTest extends TestCase
     // Test for correct behaviour when request a password reset email with invalid credentials provided
     public function test_sending_reset_email_bad_credentials(): void
     {
-        $response = $this->post('/reset-password', [
+        $response = $this->actingAs($this->account)->post('/reset-password', [
             'email' => 'AAAAAB1',
             'accountNo' => 'AAAAAB1'
         ])->assertStatus(302);
