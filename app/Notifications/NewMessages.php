@@ -66,16 +66,16 @@ class NewMessages extends Notification
             $mailName = $this->getMailName();
             // create and return mailable object
             $mailable = new MJML($subject, $mailName, $dynamicData);
-            
+
             // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
-            
+
             // uncomment / comment so that it goes to you
             // return $mailable->to("hannes.herrmann@curtin.edu.au");
-            return $mailable->to("b.lee20@student.curtin.edu.au");
+            // return $mailable->to("b.lee20@student.curtin.edu.au");
             // return $mailable->to("aden.moore@student.curtin.edu.au");
-            // return $mailable->to("hannes.herrmann@curtin.edu.au");
+            return $mailable->to("hannes.herrmann@curtin.edu.au");
 
-        
+
     }
 
 
@@ -134,7 +134,7 @@ class NewMessages extends Notification
                 }
                 array_push($appRevMessages, $messageString);
 
-            } 
+            }
             else if ($message->subject == "Application Awaiting Review") {
 
                 $this->numAppRev++;
