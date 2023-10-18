@@ -1094,6 +1094,13 @@ class MessageController extends Controller
                     ]);
                 }
             }
+            else
+            {
+                $preference = EmailPreference::where('accountNo', $account->accountNo);
+                $now = new DateTime('NOW');
+                $preference->timeLastSent = $now;
+                $preference->save();
+            }
             sleep(2); // to get around mailtrap emails per second limit
         }
     }
