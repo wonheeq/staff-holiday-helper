@@ -1096,7 +1096,7 @@ class MessageController extends Controller
             }
             else
             {
-                $preference = EmailPreference::where('accountNo', $account->accountNo);
+                $preference = EmailPreference::where('accountNo', $account->accountNo)->first();
                 $now = new DateTime('NOW');
                 $preference->timeLastSent = $now;
                 $preference->save();

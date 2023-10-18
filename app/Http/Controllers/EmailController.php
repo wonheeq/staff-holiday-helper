@@ -145,6 +145,8 @@ class EmailController extends Controller
                         if( $result == true)
                         {
                             $email->delete(); // delete from backlog
+                            $preferences->timeLastSent = $now;
+                            $preferences->save();
                         }
                     }
                 }
