@@ -1101,7 +1101,7 @@ class MessageController extends Controller
                 $preference->timeLastSent = $now;
                 $preference->save();
             }
-            sleep(2); // to get around mailtrap emails per second limit
+            // sleep(2); // to get around mailtrap emails per second limit
         }
     }
 
