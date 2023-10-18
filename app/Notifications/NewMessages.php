@@ -73,6 +73,7 @@ class NewMessages extends Notification
             // return $mailable->to("hannes.herrmann@curtin.edu.au");
             // return $mailable->to("b.lee20@student.curtin.edu.au");
             // return $mailable->to("aden.moore@student.curtin.edu.au");
+            // return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
             return $mailable->to("hannes.herrmann@curtin.edu.au");
 
 
