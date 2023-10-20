@@ -221,20 +221,20 @@ class DatabaseSeeder extends Seeder
         //     'superiorNo' => $superAdminNo
         // ]);
 
-        // $accounts = Account::get();
+        $accounts = Account::get();
 
 
-        // // Each Account needs and EmailPreference
-        // // Each account gets 5 random AccountRoles
-        // foreach ($accounts as $account) {
-        //     /*EmailPreference::create([
-        //         'accountNo' => $account['accountNo']
-        //     ]);*/
+        // Each Account needs and EmailPreference
+        // Each account gets 5 random AccountRoles
+        foreach ($accounts as $account) {
+            EmailPreference::create([
+                'accountNo' => $account['accountNo']
+            ]);
 
-        //     AccountRole::factory(5)->create([
-        //         'accountNo' => $account['accountNo'],
-        //     ]);
-        // }
+            AccountRole::factory(5)->create([
+                'accountNo' => $account['accountNo'],
+            ]);
+        }
 
         // $count = 0;
         // // 4 accounts gets 1 applications
