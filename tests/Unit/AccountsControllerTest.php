@@ -80,14 +80,14 @@ class AccountsControllerTest extends TestCase
 
     public function test_api_request_for_welcomeMessageData_is_successful(): void
     {
-        $response = $this->actingAs($this->adminUser)->get("/api/getWelcomeMessageData/000000a");
+        $response = $this->actingAs($this->adminUser)->get("/api/getWelcomeMessageData/{$this->adminUser->accountNo}");
         // dd($response);
         $response->assertStatus(200);
     }
 
     public function test_api_request_for_welcomeMessageData_is_succesful_valid_structure(): void
     {
-        $response = $this->actingAs($this->adminUser)->get("/api/getWelcomeMessageData/000000a");
+        $response = $this->actingAs($this->adminUser)->get("/api/getWelcomeMessageData/{$this->adminUser->accountNo}");
         $this->assertJson($response->content());
 
         $array = json_decode($response->content(), true);

@@ -497,7 +497,7 @@ class ApplicationControllerTest extends TestCase
     public function test_api_request_for_cancelApplication_is_unsuccessful_application_does_not_belong_to_user(): void
     {
         $app = $this->applications[0];
-        $response = $this->actingAs($this->user)->getJson("/api/cancelApplication/000000a/{$app->applicationNo}");
+        $response = $this->actingAs($this->user)->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
         $response->assertStatus(500);
     }
 

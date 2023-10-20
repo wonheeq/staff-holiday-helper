@@ -14,7 +14,7 @@ class HomePageTest extends TestCase
      */
     public function test_home_page_can_render(): void
     {
-        $user = Account::where('accountNo', '000000a')->first();
+        $user = Account::where('accountNo', '0000000')->first();
         $response = $this->actingAs($user)->get('/home');
 
         $response->assertStatus(200);

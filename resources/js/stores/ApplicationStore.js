@@ -19,7 +19,6 @@ export let useApplicationStore = defineStore('applications', {
                 console.log(error);
             });
         },
-        // To do, dynamically added current user account id to replace 0000002L
         async fetchManagerApplications(accountNo){
             axios.get('/api/managerApplications/' + accountNo)
             .then((resp) => {

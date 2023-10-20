@@ -35,9 +35,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // \App\Models\Unit::factory(15)->create();
-        // \App\Models\Course::factory(10)->create();
-        // \App\Models\Major::factory(10)->create();
+        \App\Models\Unit::factory(5)->create();
+        \App\Models\Course::factory(5)->create();
+        \App\Models\Major::factory(5)->create();
 
         // schools - All 14 curtin schools shown on faculty pages on Curtin Website
         $schools = array(
@@ -72,7 +72,7 @@ class DatabaseSeeder extends Seeder
 
 
         // Create the super admin for the system
-        $superAdminNo = '000002L';
+        $superAdminNo = '0000000';
         Account::create([
             'accountNo' =>  $superAdminNo,
             'accountType' => 'sysadmin',
@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
         //     'fName' => '(Admin) Hannes',
         //     'lName' => 'Herrmann',
         //     'password' => Hash::make('testPassword1'),
-        //     'superiorNo' => '000002L',
+        //     'superiorNo' => '0000000',
         // ]);
 
         // $hannesManager = Account::factory()->create([
@@ -145,7 +145,7 @@ class DatabaseSeeder extends Seeder
         //     'fName' => '(Admin) Ian',
         //     'lName' => 'van Loosen?',
         //     'password' => Hash::make('testPassword1'),
-        //     'superiorNo' => '000002L',
+        //     'superiorNo' => '0000000',
         // ]);
 
         // $ianManager = Account::factory()->create([
@@ -166,8 +166,8 @@ class DatabaseSeeder extends Seeder
         //     'superiorNo' => $ianManager->accountNo,
         // ]);
 
-        // // TEST USER
-        // $test_id = '000000a';
+        // TEST USER
+        $test_id = $superAdminNo;
 
         // Account::factory()->create([
         //     'accountNo' => $test_id,
@@ -188,33 +188,33 @@ class DatabaseSeeder extends Seeder
         //     'superiorNo' => $superAdminNo,
         // ]);
 
-        // // 10 roles for test user
-        // AccountRole::factory(10)->create([
-        //     'accountNo' => $test_id
-        // ]);
+        // 10 roles for test user
+        AccountRole::factory(10)->create([
+            'accountNo' => $superAdminNo
+        ]);
 
-        // // create 4 of each type of application status for the test user
-        // Application::factory()->create([
-        //     'accountNo' => $test_id,
-        //     'status' => 'Y',
-        //     'processedBy' => '000002L'
-        // ]);
-        // Application::factory()->create([
-        //     'accountNo' => $test_id,
-        //     'status' => 'N',
-        // ]);
-        // Application::factory()->create([
-        //     'accountNo' => $test_id,
-        //     'status' => 'U',
-        // ]);
-        // Application::factory()->create([
-        //     'accountNo' => $test_id,
-        //     'status' => 'P',
-        // ]);
-        // Application::factory()->create([
-        //     'accountNo' => $test_id,
-        //     'status' => 'C',
-        // ]);
+        // create 4 of each type of application status for the test user
+        Application::factory()->create([
+            'accountNo' => $superAdminNo,
+            'status' => 'Y',
+            'processedBy' => '0000000'
+        ]);
+        Application::factory()->create([
+            'accountNo' => $test_id,
+            'status' => 'N',
+        ]);
+        Application::factory()->create([
+            'accountNo' => $test_id,
+            'status' => 'U',
+        ]);
+        Application::factory()->create([
+            'accountNo' => $test_id,
+            'status' => 'P',
+        ]);
+        Application::factory()->create([
+            'accountNo' => $test_id,
+            'status' => 'C',
+        ]);
 
         // // Create 30 accounts
         // Account::factory(30)->create([
@@ -297,35 +297,35 @@ class DatabaseSeeder extends Seeder
         // */
 
 
-        // CREATE messages for 000002L for DBSeederTest
+        // CREATE messages for 0000000 for DBSeederTest
         Message::factory(1)->create([
-            'receiverNo' => "000002L",
+            'receiverNo' => "0000000",
             'subject' => fake()->randomElement(["Leave Approved", "Leave Rejected"]),
             'acknowledged' => true
         ]);
 
 
 
-        // $testApps = Application::where('accountNo', $test_id)->get();
+        $testApps = Application::where('accountNo', $test_id)->get();
 
-        // // Generate 3 nominations for each application
-        // foreach ($testApps as $application) {
-        //     // Get list of AccountRoleIds associated with applicant
-        //     $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
+        // Generate 3 nominations for each application
+        foreach ($testApps as $application) {
+            // Get list of AccountRoleIds associated with applicant
+            $accountRoleIds = AccountRole::where('accountNo', $test_id)->get()->pluck('accountRoleId');
 
-        //     Nomination::factory()->create([
-        //         'applicationNo' => $application['applicationNo'],
-        //         'accountRoleId' => $accountRoleIds[0],
-        //     ]);
-        //     Nomination::factory()->create([
-        //         'applicationNo' => $application['applicationNo'],
-        //         'accountRoleId' => $accountRoleIds[1],
-        //     ]);
-        //     Nomination::factory()->create([
-        //         'applicationNo' => $application['applicationNo'],
-        //         'accountRoleId' => $accountRoleIds[2],
-        //     ]);
-        // }
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[0],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[1],
+            ]);
+            Nomination::factory()->create([
+                'applicationNo' => $application['applicationNo'],
+                'accountRoleId' => $accountRoleIds[2],
+            ]);
+        }
 
 
 

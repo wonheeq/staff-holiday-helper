@@ -45,14 +45,14 @@ class DatabaseSeederTest extends TestCase
     {
         // Asserting that Syste Admin account was successfully inserted from seeder
         $this->assertDatabaseHas('accounts', [
-            'accountNo' => '000002L',
+            'accountNo' => '0000000',
             'accountType' => 'sysadmin',
             'superiorNo' => null
         ]);
 
-        // Ensuring at least one account was given '000002L' for superiorNo
+        // Ensuring at least one account was given '0000000' for superiorNo
         $this->assertDatabaseHas('accounts', [
-            'superiorNo' => '000002L'
+            'superiorNo' => '0000000'
         ]);
     }
 
@@ -60,7 +60,7 @@ class DatabaseSeederTest extends TestCase
     {
         // Asserting that expected entry exists in account_roles
         $this->assertDatabaseHas('account_roles', [
-            'accountNo' => '000000a'           
+            'accountNo' => '0000000'           
         ]);
     }
 
@@ -68,8 +68,8 @@ class DatabaseSeederTest extends TestCase
     {
         // Asserting that expected entry exists in applications
         $this->assertDatabaseHas('applications', [
-            'accountNo' => '000000a',
-            'processedBy' => '000002L',
+            'accountNo' => '0000000',
+            'processedBy' => '0000000',
             'status' => 'Y'
         ]);
     }
@@ -95,7 +95,7 @@ class DatabaseSeederTest extends TestCase
     {
         // Asserting that expected entry exists in nominations
         $this->assertDatabaseHas('nominations', [
-            'nomineeNo' => '000002L',
+            'nomineeNo' => '0000000',
         ]);
     }
 
@@ -103,7 +103,7 @@ class DatabaseSeederTest extends TestCase
     {
         // Asserting that expected entry exists in nominations
         $this->assertDatabaseHas('messages', [
-            'receiverNo' => '000002L',
+            'receiverNo' => '0000000',
         ]);
     }
 

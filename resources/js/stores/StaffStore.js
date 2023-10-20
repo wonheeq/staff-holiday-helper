@@ -8,7 +8,6 @@ export let useStaffStore = defineStore('staffMembers', {
     }),
 
     actions: {
-        // *To do* dynamically added current user account id to replace 000002L
         async fetchStaffMembers(accountNo){
             axios.get('/api/getStaffMembers/' + accountNo)
             .then((resp) => {

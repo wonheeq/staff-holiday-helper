@@ -328,7 +328,7 @@ class UnitLookupTest extends TestCase
             'fName' => 'Static',
             'lName' => 'Test User',
             'password' => Hash::make('testPassword1'),
-            'superiorNo' => "000002L",
+            'superiorNo' => "0000000",
         ]);
     }
 
