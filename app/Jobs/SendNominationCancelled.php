@@ -11,7 +11,6 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MJML;
-use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
@@ -53,12 +52,7 @@ class SendNominationCancelled implements ShouldQueue
                 'period' => $data[1][1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
+            Mail::to($reciever->getEmail)->send(new MJML("Nomination Cancelled", "email/nominationCancelled", $dynamicData));
 
             if ($this->isUnsent)
             {

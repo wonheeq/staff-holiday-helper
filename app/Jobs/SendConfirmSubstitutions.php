@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -11,7 +10,6 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MJML;
-use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
@@ -56,12 +54,7 @@ class SendConfirmSubstitutions implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
+            Mail::to($reciever->getEmail)->send(new MJML("Confirmed Substitutions", "email/substitutionsConfirmed", $dynamicData));
 
             if ($this->isUnsent)
             {

@@ -81,12 +81,7 @@ class SendNominationEmail implements ShouldQueue
                 'rejectLink' => 'https://leaveontime.cyber.curtin.io/rejectNewNominations/'. $this->hash . '/'. $applicationNo  ,
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("New Nominations", "email/nomination", $dynamicData));
+            Mail::to($reciever->getEmail)->send(new MJML("New Nominations", "email/nomination", $dynamicData));
 
             if ($this->isUnsent)
             {

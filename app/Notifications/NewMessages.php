@@ -67,16 +67,7 @@ class NewMessages extends Notification
             // create and return mailable object
             $mailable = new MJML($subject, $mailName, $dynamicData);
 
-            // return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
-
-            // uncomment / comment so that it goes to you
-            // return $mailable->to("hannes.herrmann@curtin.edu.au");
-            // return $mailable->to("b.lee20@student.curtin.edu.au");
-            // return $mailable->to("aden.moore@student.curtin.edu.au");
-            // return $mailable->to("ellis.jansonferrall@student.curtin.edu.au");
-            return $mailable->to("hannes.herrmann@curtin.edu.au");
-
-
+            return $mailable->to($notifiable->getEmailForPasswordReset()); // The actual return for deployment
     }
 
 

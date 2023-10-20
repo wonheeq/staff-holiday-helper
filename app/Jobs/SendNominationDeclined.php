@@ -11,7 +11,6 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MJML;
-use Error;
 use Symfony\Component\Mailer\Exception\TransportException;
 use App\Models\UnsentEmail;
 
@@ -59,12 +58,7 @@ class SendNominationDeclined implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 3], // 3rd last
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
+            Mail::to($reciever->getEmail)->send(new MJML("Nomination/s Rejected", "email/nominationDeclined", $dynamicData));
 
             if ($this->isUnsent)
             {
