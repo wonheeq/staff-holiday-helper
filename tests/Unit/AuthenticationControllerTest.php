@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthenticationControllerTest extends TestCase
 {
-    private Account $account;
+    private Account $account, $user;
     protected function setup(): void
     {
         parent::setup();
@@ -24,8 +24,14 @@ class AuthenticationControllerTest extends TestCase
             'lName' => fake()->lastName(),
             'fName' => fake()->firstName(),
             'password' => Hash::make('knownPassword1'),
-            'superiorNo' => fake()->randomElement(['112237t', '123456a', '441817e', '877873p']),
+            'superiorNo' => '0000000',
             'schoolId' => '101',
+        ]);
+
+
+        $this->user = Account::factory()->create([
+            'accountNo' => 'AAAAAA2',
+            'password' => Hash::make(fake()->regexify('testPassword1')),
         ]);
 
         $this->account = Account::where('accountNo', 'AAAAAA1')->first();
@@ -40,7 +46,8 @@ class AuthenticationControllerTest extends TestCase
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
 
         // Delete any password reset tokens leftover
-        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
+        DB::table('password_reset_tokens')->where('email', 'AAAAAA1@curtin.com.au')->delete();
+        DB::table('password_reset_tokens')->where('email','AAAAAA2@curtin.edu.au')->delete();
 
         parent::teardown();
     }
@@ -189,14 +196,10 @@ class AuthenticationControllerTest extends TestCase
     // with valid credentials
     public function test_home_reset_valid_credentials(): void
     {
-        // create fake user
-        $user = Account::factory()->create([
-            'accountNo' => 'AAAAAA2',
-            'password' => Hash::make(fake()->regexify('testPassword1')),
-        ]);
-
         // request while acting as user, assert successful
-        $response = $this->actingAs($user)->post('/change-password', [
+        DB::table('password_reset_tokens')->where('email', 'AAAAAA2@curtin.edu.au')->delete();
+
+        $response = $this->actingAs($this->user)->post('/change-password', [
             'accountNo' => 'AAAAAA2',
             'currentPassword' => 'testPassword1',
             'password' => 'testPassword2',
@@ -210,14 +213,8 @@ class AuthenticationControllerTest extends TestCase
     // with no credentials
     public function test_home_reset_no_credentials(): void
     {
-        // create fake user
-        $user = Account::factory()->create([
-            'accountNo' => 'AAAAAA2',
-            'password' => Hash::make(fake()->regexify('testPassword1')),
-        ]);
-
         // request while acting as user, assert 302 (failed validation)
-        $response = $this->actingAs($user)->post('/change-password', [
+        $response = $this->actingAs($this->user)->post('/change-password', [
             'accountNo' => '',
             'currentPassword' => '',
             'password' => '',
@@ -231,14 +228,9 @@ class AuthenticationControllerTest extends TestCase
     // with no credentials
     public function test_home_reset_passwords_dont_match(): void
     {
-        // create fake user
-        $user = Account::factory()->create([
-            'accountNo' => 'AAAAAA2',
-            'password' => Hash::make(fake()->regexify('testPassword1')),
-        ]);
 
         // request while acting as user, assert 302 (failed validation)
-        $response = $this->actingAs($user)->post('/change-password', [
+        $response = $this->actingAs($this->user)->post('/change-password', [
             'accountNo' => 'AAAAAA2',
             'currentPassword' => 'testPassword1',
             'password' => 'testPassword2',
@@ -252,14 +244,9 @@ class AuthenticationControllerTest extends TestCase
     // where the current password is incorrect
     public function test_home_reset_current_password_wrong(): void
     {
-        // create fake user
-        $user = Account::factory()->create([
-            'accountNo' => 'AAAAAA2',
-            'password' => Hash::make(fake()->regexify('testPassword1')),
-        ]);
 
         // request while acting as user, assert 302 (failed validation)
-        $response = $this->actingAs($user)->post('/change-password', [
+        $response = $this->actingAs($this->user)->post('/change-password', [
             'accountNo' => 'AAAAAA2',
             'currentPassword' => 'testPassword5',
             'password' => 'testPassword2',
