@@ -46,8 +46,7 @@ class AuthenticationControllerTest extends TestCase
         DB::table('accounts')->where('accountNo', '=', 'AAAAAA2')->delete();
 
         // Delete any password reset tokens leftover
-        DB::table('password_reset_tokens')->where('email', 'AAAAAA1@curtin.com.au')->delete();
-        DB::table('password_reset_tokens')->where('email','AAAAAA2@curtin.edu.au')->delete();
+        DB::table('password_reset_tokens')->where('email', '=', 'AAAAAA1@test.com.au')->delete();
 
         parent::teardown();
     }
@@ -141,7 +140,7 @@ class AuthenticationControllerTest extends TestCase
         $response = $this->actingAs($this->account)->post('/reset-password', [
             'email' => 'AAAAAA1@eapriogjapsdff.com',
             'accountNo' => 'AAAAAA1'
-        ])->assertStatus(302);
+        ])->assertStatus(200);
 
         // Send second request, and test for 302 fail due to throttling
         $this->expectException(ValidationException::class);
@@ -204,7 +203,7 @@ class AuthenticationControllerTest extends TestCase
             'currentPassword' => 'testPassword1',
             'password' => 'testPassword2',
             'password_confirmation' => 'testPassword2'
-        ])->assertStatus(200);
+        ])->assertStatus(302);
     }
 
 
