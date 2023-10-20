@@ -58,7 +58,7 @@ class SendSubPeriodEditSubset implements ShouldQueue
                 'duration' => $data[1][sizeof($data[1]) - 1], // last index
             ];
 
-            Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
             if ($this->isUnsent)
             {

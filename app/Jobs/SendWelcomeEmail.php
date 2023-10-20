@@ -62,7 +62,7 @@ class SendWelcomeEmail implements ShouldQueue
                 // 'link' => 'http://127.0.0.1:8000/set-password/'.$hash,
             ];
 
-            Mail::to($account->getEmail)->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
+            Mail::to($account->getEmail())->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
             if ($this->isUnsent)
             {

@@ -80,7 +80,7 @@ class SendNomineeAppEdited implements ShouldQueue
                 'rejectLink' => 'https://leaveontime.cyber.curtin.io/rejectEditedNominations/'. $this->hash . '/'. $applicationNo  ,
             ];
 
-            Mail::to($reciever->getEmail)->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML("Edited Substitution Request", "email/substitutionRequestEdited", $dynamicData));
 
             if ($this->isUnsent)
             {

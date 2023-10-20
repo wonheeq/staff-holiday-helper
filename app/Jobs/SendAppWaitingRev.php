@@ -80,7 +80,7 @@ class SendAppWaitingRev implements ShouldQueue
                 'viewLink' => 'https://leaveontime.cyber.curtin.io/reviewApplication/'. $applicationNo,
             ];
 
-            Mail::to($reciever->getEmail)->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML ("Application Awaiting Review", "email/applicationAwaitingReview", $dynamicData));
 
             if ($this->isUnsent)
             {

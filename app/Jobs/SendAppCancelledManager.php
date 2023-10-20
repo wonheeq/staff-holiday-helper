@@ -55,7 +55,7 @@ class SendAppCancelledManager implements ShouldQueue
                 'period' => $data[1][1],
             ];
 
-            Mail::to($reciever->getEmail)->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML("Staff Cancelled Application", "email/applicationCancelled", $dynamicData));
 
             if ($this->isUnsent)
             {

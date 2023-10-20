@@ -48,7 +48,7 @@ class SendSystemNotification implements ShouldQueue
                 'content' => $data[1],
             ];
 
-            Mail::to($reciever->getEmail)->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
 
             if ($this->isUnsent)
             {
