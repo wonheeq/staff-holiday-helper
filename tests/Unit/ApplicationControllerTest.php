@@ -34,9 +34,7 @@ class ApplicationControllerTest extends TestCase
             'accountType' => 'staff',
         ]);
 
-        $this->adminUser = Account::factory()->create([
-            'accountType' => "sysadmin"
-        ]);
+        $this->adminUser = Account::where('accountNo', '0000000')->first();
 
         $this->otherUser1 = Account::factory()->create([
             'accountType' => "staff"
@@ -90,7 +88,7 @@ class ApplicationControllerTest extends TestCase
 
         EmailPreference::factory()->create(['accountNo' => $this->user->accountNo]);
         EmailPreference::factory()->create(['accountNo' => $this->otherUser->accountNo]);
-        EmailPreference::factory()->create(['accountNo' => $this->adminUser->accountNo]);
+        //EmailPreference::factory()->create(['accountNo' => $this->adminUser->accountNo]);
         EmailPreference::factory()->create(['accountNo' => $this->otherUser1->accountNo]);
         EmailPreference::factory()->create(['accountNo' => $this->otherUser2->accountNo]);
     }
@@ -99,7 +97,7 @@ class ApplicationControllerTest extends TestCase
     {
         EmailPreference::where(['accountNo' => $this->user->accountNo])->delete();
         EmailPreference::where(['accountNo' => $this->otherUser->accountNo])->delete();
-        EmailPreference::where(['accountNo' => $this->adminUser->accountNo])->delete();
+        //EmailPreference::where(['accountNo' => $this->adminUser->accountNo])->delete();
         EmailPreference::where(['accountNo' => $this->otherUser1->accountNo])->delete();
         EmailPreference::where(['accountNo' => $this->otherUser2->accountNo])->delete();
 
@@ -114,7 +112,7 @@ class ApplicationControllerTest extends TestCase
         AccountRole::where('accountNo', $this->otherUser['accountNo'])->delete();
         Application::where('accountNo', $this->user['accountNo'])->delete();
 
-        $this->adminUser->delete();
+        //$this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
 
@@ -497,7 +495,7 @@ class ApplicationControllerTest extends TestCase
     public function test_api_request_for_cancelApplication_is_unsuccessful_application_does_not_belong_to_user(): void
     {
         $app = $this->applications[0];
-        $response = $this->actingAs($this->user)->getJson("/api/cancelApplication/{$this->user->accountNo}/{$app->applicationNo}");
+        $response = $this->actingAs($this->adminUser)->getJson("/api/cancelApplication/{$this->adminUser->accountNo}/{$app->applicationNo}");
         $response->assertStatus(500);
     }
 
