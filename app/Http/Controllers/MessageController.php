@@ -1105,37 +1105,37 @@ class MessageController extends Controller
         }
     }
 
-    // demo function for manually testing daily message functionality without emailing all accounts.
-    public function demoSendDailyMessages()
-    {
-        $account1 = Account::where('accountNo', '000000a')->first();
-        $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
-        $account2 = Account::where('accountNo', '000002L')->first();
-        $messages2 = Message::where('receiverNo', '000002L')->where('acknowledged', 0)->get();
-        $preferences = EmailPreference::get()->where('accountNo', $account2->accountNo)->first();
+    // // demo function for manually testing daily message functionality without emailing all accounts.
+    // public function demoSendDailyMessages()
+    // {
+    //     $account1 = Account::where('accountNo', '000000a')->first();
+    //     $messages1 = Message::where('receiverNo', '000000a')->where('acknowledged', 0)->get();
+    //     $account2 = Account::where('accountNo', '0000000')->first();
+    //     $messages2 = Message::where('receiverNo', '0000000')->where('acknowledged', 0)->get();
+    //     $preferences = EmailPreference::get()->where('accountNo', $account2->accountNo)->first();
 
-        if ($messages2->count() != 0) { // if Has messages
-            try
-            {   // send email
-                $account2->sendDailyMessageNotification($messages2);
-                $newTime = new DateTime('NOW');
-                $preferences->timeLastSent = $newTime;
-                $preferences->save();
+    //     if ($messages2->count() != 0) { // if Has messages
+    //         try
+    //         {   // send email
+    //             $account2->sendDailyMessageNotification($messages2);
+    //             $newTime = new DateTime('NOW');
+    //             $preferences->timeLastSent = $newTime;
+    //             $preferences->save();
 
-            }
-            catch( TransportException $e) // Email Sending Failed
-            {
-                // check if already has a backed up archive email
-                if(!UnsentEmail::where('accountNo', $account2->accountNo)
-                ->where('subject', 'Unacknowledged Messages' )->first()){
-                    UnsentEmail::create([ // create one if not
-                        'accountNo' => $account2->accountNo,
-                        'subject' => 'Unacknowledged Messages',
-                    ]);
-                }
-            }
-        }
-    }
+    //         }
+    //         catch( TransportException $e) // Email Sending Failed
+    //         {
+    //             // check if already has a backed up archive email
+    //             if(!UnsentEmail::where('accountNo', $account2->accountNo)
+    //             ->where('subject', 'Unacknowledged Messages' )->first()){
+    //                 UnsentEmail::create([ // create one if not
+    //                     'accountNo' => $account2->accountNo,
+    //                     'subject' => 'Unacknowledged Messages',
+    //                 ]);
+    //             }
+    //         }
+    //     }
+    // }
 
 
     // function used only by MessageControllerTest to test notification functionality without

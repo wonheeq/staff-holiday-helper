@@ -253,14 +253,14 @@ class AuthenticationController extends Controller
         return redirect("/login");
     }
 
-    public function test()
-    {
-        Account::where('accountNo', 'DDDDDDD')->delete();
-        Account::factory()->create([
-            'accountNo' => 'DDDDDDD',
-            'accountType' => 'staff'
-        ]);
-        $data = '000000a';
-        SendWelcomeEmail::dispatch($data, false);
-    }
+    // public function test()
+    // {
+    //     Account::where('accountNo', 'DDDDDDD')->delete();
+    //     Account::factory()->create([
+    //         'accountNo' => 'DDDDDDD',
+    //         'accountType' => 'staff'
+    //     ]);
+    //     $data = '000000a';
+    //     SendWelcomeEmail::dispatch($data, false);
+    // }
 }

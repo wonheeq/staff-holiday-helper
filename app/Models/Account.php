@@ -59,16 +59,13 @@ class Account extends Authenticatable
     // needs to be named specifically this because of a call deep in the framework
     public function getEmailForPasswordReset()
     {
-        // $email = $this->accountNo . '@curtin.edu.au';
-        // $email = $this->accountNo . '@test.com.au';
-        $email = '20562768@student.curtin.edu.au';
+        $email = $this->accountNo . '@curtin.edu.au';
         return $email;
     }
 
     public function getEmail()
     {
-        // $email = $this->accountNo . '@curtin.edu.au';
-        $email = '20562768@student.curtin.edu.au';
+        $email = $this->accountNo . '@curtin.edu.au';
         return $email;
     }
 
@@ -79,23 +76,19 @@ class Account extends Authenticatable
 
     public function sendDailyMessageNotification($messages)
     {
-        // throw new TransportException();
         try{
             $this->notify(new NewMessages($messages, $this->isManager()));
             return true;
-
         }
         catch(TransportException $e)
         {
             return false;
         }
-
     }
 
     public function routeNotificationFor($driver, $notification = null)
     {
-        // $email = $this->accountNo . '@curtin.edu.au';
-        $email = $this->accountNo . '@test.com.au';
+        $email = $this->accountNo . '@curtin.edu.au';
         return $email;
     }
 

@@ -14,7 +14,7 @@ use DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-define("DEFAULT_ADMIN_ACCOUNT_NO", "000002L");
+define("DEFAULT_ADMIN_ACCOUNT_NO", "0000000");
 
 class AccountController extends Controller
 {

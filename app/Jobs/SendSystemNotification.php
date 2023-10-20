@@ -48,13 +48,7 @@ class SendSystemNotification implements ShouldQueue
                 'content' => $data[1],
             ];
 
-            // Real one
-            // Mail::to($reciever->getEmail)->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
+            Mail::to($reciever->getEmail())->send(new MJML("System Notification", "email/systemNotification", $dynamicData));
 
             if ($this->isUnsent)
             {

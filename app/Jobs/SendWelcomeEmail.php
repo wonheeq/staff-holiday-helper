@@ -62,16 +62,10 @@ class SendWelcomeEmail implements ShouldQueue
                 // 'link' => 'http://127.0.0.1:8000/set-password/'.$hash,
             ];
 
-            // Mail::to($reciever->getEmail)->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
-
-            // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
-            // Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
-            Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
-            // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
-
+            Mail::to($account->getEmail())->send(new MJML ("Welcome to LeaveOnTime", "email/welcomeEmail", $dynamicData));
 
             if ($this->isUnsent)
-            {   
+            {
                 UnsentEmail::where('accountNo', $accountNo)->where('subject', 'Welcome to LeaveOnTime')->delete();
             }
         }

@@ -30,14 +30,7 @@ use ErrorException;
 class EmailController extends Controller
 {
     public function nominationReminder($dynamicData, $accountNo): void {
-        // Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
-        //Mail::to("b.lee20@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
-        // Mail::to("aden.moore@student.curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
-        //Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
-        Mail::to("hannes.herrmann@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
-
-
-        // Mail::to("{$accountNo}@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
+        Mail::to("{$accountNo}@curtin.edu.au")->send(new MJML("Nomination Reminder", "email/nominationReminder", $dynamicData));
     }
 
 

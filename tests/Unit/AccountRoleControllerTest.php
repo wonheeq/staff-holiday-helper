@@ -18,6 +18,10 @@ class AccountRoleControllerTest extends TestCase
             'accountType' => "sysadmin"
         ]);
 
+        AccountRole::factory()->create([
+            'accountNo' => $this->adminUser->accountNo
+        ]);
+
         $this->otherUser1 = Account::factory()->create([
             'accountType' => "staff"
         ]);
@@ -29,6 +33,7 @@ class AccountRoleControllerTest extends TestCase
 
     protected function teardown(): void
     {
+        AccountRole::where('accountNo', $this->adminUser->accountNo)->delete();
         $this->adminUser->delete();
         $this->otherUser1->delete();
         $this->otherUser2->delete();
