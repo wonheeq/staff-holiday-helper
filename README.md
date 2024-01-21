@@ -1,4 +1,4 @@
-A year long student Capstone project for Curtin University created using PHP/Laravel, VueJS, MySQL and MJML.
+A year long (one semester for planning, the other for programming) student Capstone project for Curtin University created using PHP/Laravel, VueJS, MySQL and MJML.
 
 Created by Won Hee Qin, Ellis Janson Ferrall, Aden Moore and Benjamin Han He Lee.
 
