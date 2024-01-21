@@ -1,66 +1,58 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+A year long student Capstone project for Curtin University created using PHP/Laravel, VueJS, MySQL and MJML.
+Created by Won Hee Qin, Ellis Janson Ferrall, Aden Moore and Benjamin Han He Lee.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Please note the following:
+    This was mostly our first time using each of our chosen frameworks and programming languages, and our first time creating a fully fleshed out web application
+    Ideally we would have had 5 or 6 team members instead of 4
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The program allows users to:
+    Book leave
+    Nominate another member of staff to cover responsibilities
+    Accept or reject nominations by other staff members
+    Manage existing bookings
+    Have bookings accepted/rejected by Line Managers
+    Administrators to create and manage accounts
+    Notify staff members of leave booking status through email
+    Notify staff members of nominations through email
+    Notify line managers of leave bookings through email
+    Accept/reject nominations through email
+    Line managers to accept/reject leave applications through email
+    View their current line manager
+    View their current responsibilities
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+I was responsible for the following:
+    Home Page and associated subpages/components/controllers:
+        Small calendar
+        Large calendar
+        Navbar
+        Settings page
+    Bookings Page and associated subpages/components/controllers:
+        Applications subpage
+        Create subpage
+        Substitutions subpage
+        Edit application popup
+        Review application popup
+        Accept/Reject Some nominations popup
+        System Settings subpage for Admin page
+    Conversion of the following pages to support mobile devices:
+        Home page and associated subpages/components
+        Bookings page and associated subpages/components
+        Admin page and associated subpages/components
+    Darkmode for the following pages:
+        Home page and associated subpages/components
+        Bookings page and associated subpages/components
+        Admin page and associated subpages/components
+        Landing page and associated subpages/components
+    Base email format in MJML
+    Functional Requirement 11: Allow line managers to nominate staff member type users for their line manager duties over specific staff members and temporarily promote the staff member to a line manager for the duration of the application
+    Reminder emails
+    Routing and processing for instant email buttons
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Deployment Instructions:
+    (Note: We used Visual Studio Code, so some instructions such as the find and replace all are specific to that IDE)
+    https://docs.google.com/document/d/1xUkw0Py8cqtpKPYXoexZ3hY5IiQtX_-5Z5SZVEb-F5M
